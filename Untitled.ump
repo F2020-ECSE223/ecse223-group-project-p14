@@ -1,0 +1,184 @@
+class FlexiBookSystem
+{
+  singleton;
+  1 <@>- * Account accounts;
+}
+
+class Account
+{
+  abstract;
+  String name;
+  String password;
+  Boolean isOwner;
+}
+
+class Owner{
+  
+  isA Account;
+  singleton;
+  
+  defaulted name = "Owner";
+  defaulted password = "Owner";
+  
+  1 <@>- * Business;
+  
+}
+
+class Customer{
+  
+  isA Account;
+  unique name;
+  unique password;
+  
+}
+
+class Business{
+  String address;
+  String phoneNumber;
+  String emailAddress;
+  
+   
+  
+  
+}
+class BusinessSchedule 
+{
+  
+ 
+  1 <- 1 Business;  // this serves as calendar
+  Time lunchBreakStart;
+  Time lunchBreakEnd;
+  
+  Time openTime; 
+  Time closeTime;
+    
+// something about weekend?
+  
+}
+class ClosedDate{
+  * -> 1 BusinessSchedule;
+  Date downTimeStarts;
+  Date downTimeEnds;
+  
+}
+class Appointment
+{
+  * <@>-1 Customer;
+  * -- 1 BusinessSchedule;
+  * -- 1 Service;
+  Date ServiceStartDate;
+  Time ServiceStartTime;
+  Boolean isCancelled;
+}
+
+
+class Service{
+  * <- 1 Owner;
+  String serviceName;
+  abstract;
+}
+
+class ServiceSingle{
+  isA Service;
+  * otherService -> * ServiceCombo comboAdded;
+  1 mainService -- * ServiceCombo comboDetermined; 
+  String type; // can be enum?
+}
+
+class ServiceCombo{
+  isA Service;
+  String description;
+}
+
+class ServiceUpdate{
+  * historyUpdates -- 1 ServiceSingle;
+  1 currentUpdate <- 1 ServiceSingle;
+   * historyUpdates -- 1 ServiceCombo; // doesnt allow this asso with abs class Service
+  1 currentUpdate <- 1 ServiceCombo;
+  int price;
+  int totalTime;
+  int downTimeLength;
+  int downTimeStartAt;
+}
+
+
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class FlexiBookSystem
+{
+  position 475 13 125 41;
+  position.association Account:accounts__FlexiBookSystem 0,38 142,10;
+}
+
+class Account
+{
+  position 242 29 142 107;
+}
+
+class Owner
+{
+  position 480 112 138 75;
+  position.association Business__Owner 86,75 118,0;
+}
+
+class Customer
+{
+  position 160 178 109 41;
+}
+
+class Business
+{
+  position 293 264 170 92;
+}
+
+class BusinessSchedule
+{
+  position 316 510 175 109;
+  position.association Business__BusinessSchedule 35,0 158,109;
+  position.association BusinessSchedule__Post 105,0 6,41;
+}
+
+class ClosedDate
+{
+  position 198 778 175 75;
+  position.association BusinessSchedule__ClosedDate 151,0 37,109;
+}
+
+class Appointment
+{
+  position 8 269 183 75;
+  position.association Appointment__Customer 2,0 92,41;
+  position.association Appointment__Service 72,75 0,20;
+  position.association Appointment__BusinessSchedule 183,34 0,50;
+}
+
+class Service
+{
+  position 618 407 161 73;
+  position.association Owner__Service 6,0 112,75;
+}
+
+class ServiceSingle
+{
+  position 964 737 109 58;
+  position.association ServiceCombo__ServiceSingle:otherService 0,11 148,16;
+  position.association ServiceCombo__ServiceSingle:mainService 0,45 141,51;
+  position.association ServiceCombo:comboDetermined__ServiceSingle:mainService 0,51 148,42;
+}
+
+class ServiceCombo
+{
+  position 554 760 148 58;
+}
+
+class ServiceUpdate
+{
+  position 777 1085 169 109;
+  position.association ServiceSingle__ServiceUpdate:historyUpdates 169,2 0,28;
+  position.association ServiceSingle__ServiceUpdate:currentUpdate 169,52 25,58;
+  position.association ServiceCombo__ServiceUpdate:historyUpdates 0,13 148,5;
+  position.association ServiceCombo__ServiceUpdate:currentUpdate 0,27 148,19;
+}
