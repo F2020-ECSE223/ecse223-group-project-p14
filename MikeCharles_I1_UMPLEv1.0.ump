@@ -1,0 +1,118 @@
+class UserAccount{
+  abstract;
+}
+
+class OwnerAccount{
+  isA UserAccount;
+}
+
+class CustomerAccount{
+  isA UserAccount;
+  String userName; 
+  String password;
+  0..1 <@>- 0..* Appointment;
+  
+}
+
+class Appointment{
+  String date;
+  0..* appointments -- 0..* Service services;  
+}
+
+
+class Business{
+  String address;
+  String service;
+  Integer phoneNumber;
+  String email; 
+  String businessHour;
+  * business -- 1 OwnerAccount owner;
+  
+}
+
+class Service{
+  abstract;
+  String name;
+  String description; 
+  Integer duration;
+}
+
+class ServiceCombo{
+  isA Service;
+  String numberOfServices;
+  0..1 serviceCombo -- 0..* SpecificService servicesInCombo;
+  
+}
+
+class SpecificService{
+  isA Service;
+  0..1 mainService -- 0..1 ServiceCombo combo;
+  0..1 -> 0..1 ServiceUpdate currentServiceItems;
+}
+
+class ServiceUpdate{
+  Integer cost;
+  1..* ServiceItem -- 1 SpecificService;
+}
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class Business
+{
+  position 452 99 175 126;
+  position.association Business:business__Owner:owner 0,11 110,12;
+  position.association Business:business__OwnerAccount:owner 0,10 110,10;
+}
+
+class UserAccount
+{
+  position 115 11 109 56;
+  position.association OwnerAccount__UserAccount 110,23 0,10;
+}
+
+class SpecificService
+{
+  position 585 437 109 41;
+  position.association ServiceCombo:mainService__SpecificService 0,30 155,30;
+    position.association ServiceCombo:combo__SpecificService:mainService 0,30 195,54;
+}
+
+class OwnerAccount
+{
+  position 218 112 109 41;
+}
+
+class Service
+{
+  position 308 240 145 107;
+}
+
+class CustomerAccount
+{
+  position 43 123 140 75;
+  position.association Appointment__CustomerAccount 14,75 30,0;
+}
+
+class ServiceCombo
+{
+  position 144 409 194 58;
+  position.association ServiceCombo:serviceCombo__SpecificService:services 155,10 0,10;
+  position.association ServiceCombo:Combo__SpecificService:mainService 155,10 0,10;
+  position.association ServiceCombo__SpecificService:mainService 155,10 0,10;
+    position.association ServiceCombo:serviceCombo__SpecificService:servicesInCombo 195,2 0,10;
+}
+
+class Appointment
+{
+  position 80 238 109 58;
+  position.association Appointment:appointment__Service:services 110,10 0,10;
+  position.association Appointment:appointments__Service:services 110,10 0,10;
+}
+
+class ServiceUpdate
+{
+  position 531 562 109 41;
+  position.association ServiceUpdate:ServiceItem__SpecificService 97,0 39,41;
+}
