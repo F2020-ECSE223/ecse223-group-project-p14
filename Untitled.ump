@@ -1,3 +1,5 @@
+
+
 class FlexiBookSystem
 {
   singleton;
@@ -19,7 +21,6 @@ class Owner{
   
   defaulted name = "Owner";
   defaulted password = "Owner";
-  
   1 <@>- * Business;
   
 }

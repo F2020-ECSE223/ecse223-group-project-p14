@@ -1,0 +1,214 @@
+// NEW FEATURE:
+// Optimize the Update class
+// Implemented based on assumption that one app only support only 1 business
+// handle the "login" class in the model
+
+// PS anyone knows what "Warning 36 on line 107 of file 'Untitled.ump':
+// The specific multiplicity bounds 1 cannot be managed by generated code, since this is a directed association"
+// means?
+
+class FlexiBookSystem
+{
+  singleton;
+  lazy Date currentDate;
+  lazy Time currentTime;
+  
+  // attribute of the business
+  lazy String address;
+  lazy String phoneNumber;
+  lazy String emailAddress;
+  
+  1 <@>- * Account accounts;
+}
+
+class Account
+{
+  abstract;
+  String name;
+  String password;
+  Boolean isOwner;
+ 
+}
+
+class Owner{
+  
+  isA Account;
+  singleton;
+  
+// PLEASE REMOVE THIS LATER!!!!!!!!!!!!!!!!!!!!!!!!!
+  public int trial(){
+    system.out.print("ddd");
+  }
+  
+  defaulted name = "Owner";
+  defaulted password = "Owner";
+  
+}
+
+class Customer{
+  
+  isA Account;
+  unique name;
+  unique password;
+  
+}
+
+
+class Calendar 
+{
+  0..1 -<@> 1 FlexiBookSystem;
+  Time lunchBreakStart;
+  Time lunchBreakEnd;
+  
+  Time openTime; 
+  Time closeTime;
+  
+}
+class ClosedDate{
+  // weedend is included
+  * -- 1 Calendar calendar;
+  Date downDateStarts;
+  Date downDateEnds;
+  
+}
+class Appointment
+{
+  * <@>-1 Customer;
+  * -- 1 Calendar;
+  * -- 1 Service;
+  Date serviceStartDate;
+  Time serviceStartTime;
+  Boolean isCancelled;
+}
+
+
+class Service{
+  * -- 1 Owner;
+  String serviceName;
+  abstract;
+}
+
+class ServiceSingle{
+  isA Service;
+  * otherService -> * ServiceCombo comboAdded;
+  1 mainService -- * ServiceCombo comboDetermined; 
+  String type; // can be enum?
+}
+
+class ServiceCombo{
+  isA Service;
+  String description;
+}
+
+class ServiceUpdate{
+  * updateRecords -- 1 Service;
+
+  int price;
+  int totalTime;
+  int downTimeLength;
+  int downTimeStartAt;
+  
+  Boolean isCurrentUpdate;
+}
+
+
+
+
+namespace -;
+
+
+class Login
+{
+   *loginRecords -- 1 Account account;
+
+  Boolean isCurrentLogin;
+  Date loginDate;
+  Time loginTime;
+  
+}
+
+class FlexiBookSystem
+{
+  position 660 42 170 126;
+  position.association Account:accounts__FlexiBookSystem 0,38 142,10;
+}
+
+class Account
+{
+  position 274 71 142 107;
+  position.association Account__Login 0,18 109,4;
+}
+
+class Owner
+{
+  position 46 275 138 75;
+  position.association Business__Owner 86,75 118,0;
+}
+
+class Customer
+{
+  position 580 284 109 41;
+}
+
+
+
+class Calendar
+{
+  position 871 204 175 109;
+  position.association Business__Calendar 35,0 158,109;
+  position.association Calendar__Post 105,0 6,41;
+  position.association Calendar__FlexiBookSystem 168,0 170,77;
+}
+
+class ClosedDate
+{
+  position 866 508 175 75;
+  position.association Calendar__ClosedDate 151,0 151,109;
+}
+
+class Appointment
+{
+  position 561 377 183 92;
+  position.association Appointment__Customer 171,0 6,41;
+  position.association Appointment__Service 0,79 84,0;
+  position.association Appointment__Calendar 183,38 33,109;
+}
+
+class Service
+{
+  position 358 516 161 73;
+  position.association Owner__Service 6,0 112,75;
+}
+
+class ServiceSingle
+{
+  position 582 697 109 58;
+  position.association ServiceCombo__ServiceSingle:otherService 0,11 148,16;
+  position.association ServiceCombo__ServiceSingle:mainService 0,45 141,51;
+  position.association ServiceCombo:comboDetermined__ServiceSingle:mainService 0,33 148,42;
+  position.association ServiceCombo:comboAdded__ServiceSingle:otherService 0,0 148,10;
+}
+
+class ServiceCombo
+{
+  position 275 698 148 58;
+}
+
+class ServiceUpdate
+{
+  position 61 500 169 109;
+  position.association ServiceSingle__ServiceUpdate:historyUpdates 170,106 0,44;
+  position.association ServiceSingle__ServiceUpdate:currentUpdate 170,93 0,34;
+  position.association ServiceCombo__ServiceUpdate:historyUpdates 0,13 148,42;
+  position.association ServiceCombo__ServiceUpdate:currentUpdate 0,70 148,53;
+  position.association Service__ServiceUpdate:updateRecords 169,32 0,33;
+}//$?[End_of_model]$?
+
+namespace -;
+
+class Login
+{
+  position 1 33 185 75;
+  position.association Account__Login 139,9 0,7;
+  position.association Account:account__Login:loginRecords 185,2 0,10;
+}
