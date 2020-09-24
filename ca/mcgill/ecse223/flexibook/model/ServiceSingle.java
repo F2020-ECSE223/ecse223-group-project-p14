@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-
+package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 91 "Version 0.5 - CC, YW.ump"
-// line 183 "Version 0.5 - CC, YW.ump"
+// line 94 "../../../../../Version 0.5 - CC, YW.ump"
+// line 183 "../../../../../Version 0.5 - CC, YW.ump"
 public class ServiceSingle extends Service
 {
 

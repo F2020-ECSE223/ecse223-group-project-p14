@@ -1,22 +1,13 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-
+package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.*;
 
-/**
- * NEW FEATURE:
- * Optimize the Update class
- * Implemented based on assumption that one app only support only 1 business
- * handle the "login" class in the model
- * PS anyone knows what "Warning 36 on line 107 of file 'Untitled.ump':
- * The specific multiplicity bounds 1 cannot be managed by generated code, since this is a directed association"
- * means?
- */
-// line 10 "Version 0.5 - CC, YW.ump"
-// line 130 "Version 0.5 - CC, YW.ump"
+// line 13 "../../../../../Version 0.5 - CC, YW.ump"
+// line 130 "../../../../../Version 0.5 - CC, YW.ump"
 public class FlexiBookSystem
 {
 

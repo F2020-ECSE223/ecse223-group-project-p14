@@ -7,6 +7,9 @@
 // The specific multiplicity bounds 1 cannot be managed by generated code, since this is a directed association"
 // means?
 
+
+namespace ca.mcgill.ecse223.flexibook.model;
+
 class FlexiBookSystem
 {
   singleton;
@@ -112,9 +115,6 @@ class ServiceUpdate{
 }
 
 
-
-
-namespace -;
 
 
 class Login

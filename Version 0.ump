@@ -94,7 +94,7 @@ class ServiceCombo{
 class ServiceUpdate{
   * historyUpdates -- 1 ServiceSingle;
   1 currentUpdate <- 1 ServiceSingle;
-   * historyUpdates -- 1 ServiceCombo; // doesnt allow this asso with abs class Service
+   * historyUpdates -- 1 ServiceCombo; 
   1 currentUpdate <- 1 ServiceCombo;
   int price;
   int totalTime;

@@ -1,13 +1,13 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-
+package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 24 "Version 0.5 - CC, YW.ump"
-// line 136 "Version 0.5 - CC, YW.ump"
+// line 27 "../../../../../Version 0.5 - CC, YW.ump"
+// line 136 "../../../../../Version 0.5 - CC, YW.ump"
 public abstract class Account
 {
 

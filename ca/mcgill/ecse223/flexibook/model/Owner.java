@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-
+package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 33 "Version 0.5 - CC, YW.ump"
-// line 142 "Version 0.5 - CC, YW.ump"
+// line 36 "../../../../../Version 0.5 - CC, YW.ump"
+// line 142 "../../../../../Version 0.5 - CC, YW.ump"
 public class Owner extends Account
 {
 
@@ -216,7 +216,7 @@ public class Owner extends Account
   /**
    * PLEASE REMOVE THIS LATER!!!!!!!!!!!!!!!!!!!!!!!!!
    */
-  // line 40 "Version 0.5 - CC, YW.ump"
+  // line 43 "../../../../../Version 0.5 - CC, YW.ump"
    public int trial(){
     system.out.print("ddd");
   }
