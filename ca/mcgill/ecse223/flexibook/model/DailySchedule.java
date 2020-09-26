@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Time;
 
-// line 48 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 195 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 52 "../../../../../Domain Model v1.1.ump"
+// line 151 "../../../../../Domain Model v1.1.ump"
 public class DailySchedule
 {
 
@@ -20,23 +20,32 @@ public class DailySchedule
   private Time closeTime;
 
   //DailySchedule Associations
-  private FlexiBookSystem flexiBookSystem;
+  private Calendar calendar;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public DailySchedule(Time aLunchBreakStartTime, Time aLunchBreakEndTime, Time aOpenTime, Time aCloseTime, FlexiBookSystem aFlexiBookSystem)
+  public DailySchedule(Time aLunchBreakStartTime, Time aLunchBreakEndTime, Time aOpenTime, Time aCloseTime, Calendar aCalendar)
   {
     lunchBreakStartTime = aLunchBreakStartTime;
     lunchBreakEndTime = aLunchBreakEndTime;
     openTime = aOpenTime;
     closeTime = aCloseTime;
-    boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
-    if (!didAddFlexiBookSystem)
+    if (aCalendar == null || aCalendar.getDailySchedule() != null)
     {
-      throw new RuntimeException("Unable to create dailySchedule due to flexiBookSystem. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create DailySchedule due to aCalendar. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
+    calendar = aCalendar;
+  }
+
+  public DailySchedule(Time aLunchBreakStartTime, Time aLunchBreakEndTime, Time aOpenTime, Time aCloseTime, FlexiBookSystem aFlexiBookSystemForCalendar)
+  {
+    lunchBreakStartTime = aLunchBreakStartTime;
+    lunchBreakEndTime = aLunchBreakEndTime;
+    openTime = aOpenTime;
+    closeTime = aCloseTime;
+    calendar = new Calendar(aFlexiBookSystemForCalendar, this);
   }
 
   //------------------------
@@ -95,46 +104,18 @@ public class DailySchedule
     return closeTime;
   }
   /* Code from template association_GetOne */
-  public FlexiBookSystem getFlexiBookSystem()
+  public Calendar getCalendar()
   {
-    return flexiBookSystem;
-  }
-  /* Code from template association_SetOneToOptionalOne */
-  public boolean setFlexiBookSystem(FlexiBookSystem aNewFlexiBookSystem)
-  {
-    boolean wasSet = false;
-    if (aNewFlexiBookSystem == null)
-    {
-      //Unable to setFlexiBookSystem to null, as dailySchedule must always be associated to a flexiBookSystem
-      return wasSet;
-    }
-    
-    DailySchedule existingDailySchedule = aNewFlexiBookSystem.getDailySchedule();
-    if (existingDailySchedule != null && !equals(existingDailySchedule))
-    {
-      //Unable to setFlexiBookSystem, the current flexiBookSystem already has a dailySchedule, which would be orphaned if it were re-assigned
-      return wasSet;
-    }
-    
-    FlexiBookSystem anOldFlexiBookSystem = flexiBookSystem;
-    flexiBookSystem = aNewFlexiBookSystem;
-    flexiBookSystem.setDailySchedule(this);
-
-    if (anOldFlexiBookSystem != null)
-    {
-      anOldFlexiBookSystem.setDailySchedule(null);
-    }
-    wasSet = true;
-    return wasSet;
+    return calendar;
   }
 
   public void delete()
   {
-    FlexiBookSystem existingFlexiBookSystem = flexiBookSystem;
-    flexiBookSystem = null;
-    if (existingFlexiBookSystem != null)
+    Calendar existingCalendar = calendar;
+    calendar = null;
+    if (existingCalendar != null)
     {
-      existingFlexiBookSystem.setDailySchedule(null);
+      existingCalendar.delete();
     }
   }
 
@@ -146,6 +127,6 @@ public class DailySchedule
             "  " + "lunchBreakEndTime" + "=" + (getLunchBreakEndTime() != null ? !getLunchBreakEndTime().equals(this)  ? getLunchBreakEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "openTime" + "=" + (getOpenTime() != null ? !getOpenTime().equals(this)  ? getOpenTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "closeTime" + "=" + (getCloseTime() != null ? !getCloseTime().equals(this)  ? getCloseTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "flexiBookSystem = "+(getFlexiBookSystem()!=null?Integer.toHexString(System.identityHashCode(getFlexiBookSystem())):"null");
+            "  " + "calendar = "+(getCalendar()!=null?Integer.toHexString(System.identityHashCode(getCalendar())):"null");
   }
 }

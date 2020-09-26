@@ -3,8 +3,8 @@
 
 package ca.mcgill.ecse223.flexibook.model;
 
-// line 95 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 173 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 103 "../../../../../Domain Model v1.1.ump"
+// line 189 "../../../../../Domain Model v1.1.ump"
 public class ServiceDetail
 {
 
@@ -36,7 +36,7 @@ public class ServiceDetail
     boolean didAddService = setService(aService);
     if (!didAddService)
     {
-      throw new RuntimeException("Unable to create pastDetail due to service. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create oldDetail due to service. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -170,9 +170,9 @@ public class ServiceDetail
     service = aService;
     if (existingService != null && !existingService.equals(aService))
     {
-      existingService.removePastDetail(this);
+      existingService.removeOldDetail(this);
     }
-    service.addPastDetail(this);
+    service.addOldDetail(this);
     wasSet = true;
     return wasSet;
   }
@@ -183,7 +183,7 @@ public class ServiceDetail
     this.service = null;
     if(placeholderService != null)
     {
-      placeholderService.removePastDetail(this);
+      placeholderService.removeOldDetail(this);
     }
   }
 

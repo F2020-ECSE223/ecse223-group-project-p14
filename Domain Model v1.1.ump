@@ -1,0 +1,195 @@
+namespace ca.mcgill.ecse223.flexibook.model;
+
+enum ServiceCategory { Wash, HairExtension, Highlight, BlowDry, Cut, Color}  
+
+class FlexiBookSystem
+{
+  singleton;
+
+  
+  lazy String address;
+  lazy String phoneNumber;
+  lazy String emailAddress;
+  lazy Boolean hasUserLoggedIn;
+  
+  1 <@>- * Account accounts;
+  1 <@>- * Service services;
+}
+
+class Account
+{
+  abstract;
+  unique String name;
+  String password;
+  Boolean isOwner;
+  Boolean isActive;
+ 
+  
+}
+
+class OwnerAccount{
+  
+  isA Account;
+  defaulted name = "Owner";
+  defaulted password = "Owner";
+  defaulted isOwner = true;
+}
+
+class CustomerAccount{
+  
+  isA Account;
+  defaulted isOwner = false;
+  
+}
+
+
+class Calendar 
+{
+  0..1 -<@> 1 FlexiBookSystem; 
+  1 -- 1 DailySchedule;
+}
+
+class DailySchedule{
+  Time lunchBreakStartTime;
+  Time lunchBreakEndTime;
+  Time openTime; 
+  Time closeTime;
+}
+
+
+class Vacation{
+  * -- 1 Calendar calendar;
+  Date startDate;
+  Date endDate;
+  Time startAt;
+  Time endAt;
+  
+}
+class Appointment
+{
+  * -<@> 1 CustomerAccount;
+  * appointments<- 0..1 Calendar;
+  *  -> 1 Service serviceChosen;
+  Date appointmentStartDate;
+  Time appointmentStartTime;
+  Boolean isCancelled;
+  
+  
+  
+  
+ 
+}
+
+
+class Service{
+  * -- 1 OwnerAccount;
+  unique String serviceName;
+  String description;
+  abstract;
+}
+
+class SingleService{
+  isA Service;
+  ServiceCategory category;
+  
+  * otherServices -> * ServiceCombo combosAddedTo;
+  1 mainService -- * ServiceCombo comboDetermined; 
+}
+
+class ServiceCombo{
+  isA Service;
+}
+
+class ServiceDetail{
+    * oldDetails -- 1 Service;
+  0..1 currentDetail <- 0..1 Service;
+   
+  int price;
+  int timeLength;
+  defaulted Boolean hasDowntime = false;
+  defaulted int downTimeEndAt = 0;
+  defaulted int downTimeStartAt = 0;
+  
+}
+
+
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class FlexiBookSystem
+{
+  position 178 9 170 92;
+  position.association Account:accounts__FlexiBookSystem 26,92 30,0;
+  position.association FlexiBookSystem__Service 137,94 93,0;
+  position.association FlexiBookSystem__Service:services 150,109 30,0;
+}
+
+class Account
+{
+  position 50 130 109 45;
+}
+
+class OwnerAccount
+{
+  position 1 313 109 41;
+}
+
+class CustomerAccount
+{
+  position 409 312 160 58;
+}
+
+class Calendar
+{
+  position 600 228 109 41;
+  position.association Calendar__FlexiBookSystem 0,2 170,81;
+  position.association Calendar__DailySchedule 32,0 167,109;
+}
+
+class DailySchedule
+{
+  position 516 43 208 109;
+  position.association DailySchedule__FlexiBookSystem 0,10 170,5;
+}
+
+class Vacation
+{
+  position 765 78 129 109;
+  position.association Calendar:calendar__Vacation 64,109 94,0;
+}
+
+class Appointment
+{
+  position 610 345 185 92;
+  position.association Appointment__Service:serviceChosen 26,92 161,63;
+  position.association Appointment:appointments__Calendar 166,0 2,41;
+  position.association Appointment__CustomerAccount 0,26 160,37;
+}
+
+class Service
+{
+  position 319 454 161 90;
+  position.association OwnerAccount__Service 0,10 110,29;
+}
+
+class SingleService
+{
+  position 636 659 202 58;
+  position.association ServiceCombo:combosAddedTo__SingleService:otherServices 0,51 110,34;
+  position.association ServiceCombo:comboDetermined__SingleService:mainService 0,0 110,1;
+}
+
+class ServiceCombo
+{
+  position 171 721 109 41;
+}
+
+class ServiceDetail
+{
+  position 10 468 179 126;
+  position.association Service__ServiceDetail:pastDetails 179,16 0,43;
+  position.association Service__ServiceDetail:currentDetail 179,117 0,84;
+  position.association Service__ServiceDetail:oldDetails 179,10 0,52;
+}

@@ -4,20 +4,19 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 28 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 122 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 30 "../../../../../Domain Model v1.1.ump"
+// line 134 "../../../../../Domain Model v1.1.ump"
 public class OwnerAccount extends Account
 {
 
   //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  private static OwnerAccount theInstance = null;
-
-  //------------------------
   // MEMBER VARIABLES
   //------------------------
+
+  //OwnerAccount Attributes
+  private String name;
+  private String password;
+  private boolean isOwner;
 
   //OwnerAccount Associations
   private List<Service> services;
@@ -26,24 +25,101 @@ public class OwnerAccount extends Account
   // CONSTRUCTOR
   //------------------------
 
-  private OwnerAccount(boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public OwnerAccount(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
   {
-    super(aIsActive, aFlexiBookSystem);
+    super(aName, aPassword, aIsOwner, aIsActive, aFlexiBookSystem);
+    resetName();
+    resetPassword();
+    resetIsOwner();
     services = new ArrayList<Service>();
-  }
-
-  public static OwnerAccount getInstance()
-  {
-    if(theInstance == null)
-    {
-      theInstance = new OwnerAccount(false, null);
-    }
-    return theInstance;
   }
 
   //------------------------
   // INTERFACE
   //------------------------
+  /* Code from template attribute_SetDefaulted */
+  public boolean setName(String aName)
+  {
+    boolean wasSet = false;
+    name = aName;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean resetName()
+  {
+    boolean wasReset = false;
+    name = getDefaultName();
+    wasReset = true;
+    return wasReset;
+  }
+  /* Code from template attribute_SetDefaulted */
+  public boolean setPassword(String aPassword)
+  {
+    boolean wasSet = false;
+    password = aPassword;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean resetPassword()
+  {
+    boolean wasReset = false;
+    password = getDefaultPassword();
+    wasReset = true;
+    return wasReset;
+  }
+  /* Code from template attribute_SetDefaulted */
+  public boolean setIsOwner(boolean aIsOwner)
+  {
+    boolean wasSet = false;
+    isOwner = aIsOwner;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean resetIsOwner()
+  {
+    boolean wasReset = false;
+    isOwner = getDefaultIsOwner();
+    wasReset = true;
+    return wasReset;
+  }
+
+  public String getName()
+  {
+    return name;
+  }
+  /* Code from template attribute_GetDefaulted */
+  public String getDefaultName()
+  {
+    return "Owner";
+  }
+
+  public String getPassword()
+  {
+    return password;
+  }
+  /* Code from template attribute_GetDefaulted */
+  public String getDefaultPassword()
+  {
+    return "Owner";
+  }
+
+  public boolean getIsOwner()
+  {
+    return isOwner;
+  }
+  /* Code from template attribute_GetDefaulted */
+  public boolean getDefaultIsOwner()
+  {
+    return true;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsOwner()
+  {
+    return isOwner;
+  }
   /* Code from template association_GetMany */
   public Service getService(int index)
   {
@@ -154,4 +230,12 @@ public class OwnerAccount extends Account
     super.delete();
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "name" + ":" + getName()+ "," +
+            "password" + ":" + getPassword()+ "," +
+            "isOwner" + ":" + getIsOwner()+ "]";
+  }
 }

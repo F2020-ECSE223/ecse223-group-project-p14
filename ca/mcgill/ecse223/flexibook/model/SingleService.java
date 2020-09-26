@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 83 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 159 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 91 "../../../../../Domain Model v1.1.ump"
+// line 177 "../../../../../Domain Model v1.1.ump"
 public class SingleService extends Service
 {
 
@@ -30,9 +30,9 @@ public class SingleService extends Service
   // CONSTRUCTOR
   //------------------------
 
-  public SingleService(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, ServiceCategory aCategory)
+  public SingleService(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem, ServiceCategory aCategory)
   {
-    super(aServiceName, aDescription, aOwnerAccount);
+    super(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem);
     category = aCategory;
     combosAddedTo = new ArrayList<ServiceCombo>();
     comboDetermined = new ArrayList<ServiceCombo>();
@@ -177,9 +177,9 @@ public class SingleService extends Service
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public ServiceCombo addComboDetermined(String aServiceName, String aDescription, OwnerAccount aOwnerAccount)
+  public ServiceCombo addComboDetermined(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem)
   {
-    return new ServiceCombo(aServiceName, aDescription, aOwnerAccount, this);
+    return new ServiceCombo(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem, this);
   }
 
   public boolean addComboDetermined(ServiceCombo aComboDetermined)

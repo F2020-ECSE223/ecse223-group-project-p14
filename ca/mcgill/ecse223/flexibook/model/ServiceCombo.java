@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 91 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 168 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 99 "../../../../../Domain Model v1.1.ump"
+// line 184 "../../../../../Domain Model v1.1.ump"
 public class ServiceCombo extends Service
 {
 
@@ -20,9 +20,9 @@ public class ServiceCombo extends Service
   // CONSTRUCTOR
   //------------------------
 
-  public ServiceCombo(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, SingleService aMainService)
+  public ServiceCombo(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem, SingleService aMainService)
   {
-    super(aServiceName, aDescription, aOwnerAccount);
+    super(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem);
     boolean didAddMainService = setMainService(aMainService);
     if (!didAddMainService)
     {

@@ -3,11 +3,11 @@
 
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
-import java.sql.Date;
 import java.sql.Time;
+import java.sql.Date;
 
-// line 43 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 135 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 46 "../../../../../Domain Model v1.1.ump"
+// line 144 "../../../../../Domain Model v1.1.ump"
 public class Calendar
 {
 
@@ -17,6 +17,7 @@ public class Calendar
 
   //Calendar Associations
   private FlexiBookSystem flexiBookSystem;
+  private DailySchedule dailySchedule;
   private List<Vacation> vacations;
   private List<Appointment> appointments;
 
@@ -24,13 +25,30 @@ public class Calendar
   // CONSTRUCTOR
   //------------------------
 
-  public Calendar(FlexiBookSystem aFlexiBookSystem)
+  public Calendar(FlexiBookSystem aFlexiBookSystem, DailySchedule aDailySchedule)
   {
     boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
     if (!didAddFlexiBookSystem)
     {
       throw new RuntimeException("Unable to create calendar due to flexiBookSystem. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
+    if (aDailySchedule == null || aDailySchedule.getCalendar() != null)
+    {
+      throw new RuntimeException("Unable to create Calendar due to aDailySchedule. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    dailySchedule = aDailySchedule;
+    vacations = new ArrayList<Vacation>();
+    appointments = new ArrayList<Appointment>();
+  }
+
+  public Calendar(FlexiBookSystem aFlexiBookSystem, Time aLunchBreakStartTimeForDailySchedule, Time aLunchBreakEndTimeForDailySchedule, Time aOpenTimeForDailySchedule, Time aCloseTimeForDailySchedule)
+  {
+    boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
+    if (!didAddFlexiBookSystem)
+    {
+      throw new RuntimeException("Unable to create calendar due to flexiBookSystem. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    dailySchedule = new DailySchedule(aLunchBreakStartTimeForDailySchedule, aLunchBreakEndTimeForDailySchedule, aOpenTimeForDailySchedule, aCloseTimeForDailySchedule, this);
     vacations = new ArrayList<Vacation>();
     appointments = new ArrayList<Appointment>();
   }
@@ -42,6 +60,11 @@ public class Calendar
   public FlexiBookSystem getFlexiBookSystem()
   {
     return flexiBookSystem;
+  }
+  /* Code from template association_GetOne */
+  public DailySchedule getDailySchedule()
+  {
+    return dailySchedule;
   }
   /* Code from template association_GetMany */
   public Vacation getVacation(int index)
@@ -268,6 +291,12 @@ public class Calendar
     if (existingFlexiBookSystem != null)
     {
       existingFlexiBookSystem.setCalendar(null);
+    }
+    DailySchedule existingDailySchedule = dailySchedule;
+    dailySchedule = null;
+    if (existingDailySchedule != null)
+    {
+      existingDailySchedule.delete();
     }
     for(int i=vacations.size(); i > 0; i--)
     {

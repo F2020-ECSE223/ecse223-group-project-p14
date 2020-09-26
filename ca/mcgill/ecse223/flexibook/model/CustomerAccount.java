@@ -6,23 +6,17 @@ import java.util.*;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 35 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 128 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 38 "../../../../../Domain Model v1.1.ump"
+// line 139 "../../../../../Domain Model v1.1.ump"
 public class CustomerAccount extends Account
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  private static int nextCustomerId = 1;
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Autounique Attributes
-  private int customerId;
+  //CustomerAccount Attributes
+  private boolean isOwner;
 
   //CustomerAccount Associations
   private List<Appointment> appointments;
@@ -31,20 +25,46 @@ public class CustomerAccount extends Account
   // CONSTRUCTOR
   //------------------------
 
-  public CustomerAccount(boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public CustomerAccount(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
   {
-    super(aIsActive, aFlexiBookSystem);
-    customerId = nextCustomerId++;
+    super(aName, aPassword, aIsOwner, aIsActive, aFlexiBookSystem);
+    resetIsOwner();
     appointments = new ArrayList<Appointment>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public int getCustomerId()
+  /* Code from template attribute_SetDefaulted */
+  public boolean setIsOwner(boolean aIsOwner)
   {
-    return customerId;
+    boolean wasSet = false;
+    isOwner = aIsOwner;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean resetIsOwner()
+  {
+    boolean wasReset = false;
+    isOwner = getDefaultIsOwner();
+    wasReset = true;
+    return wasReset;
+  }
+
+  public boolean getIsOwner()
+  {
+    return isOwner;
+  }
+  /* Code from template attribute_GetDefaulted */
+  public boolean getDefaultIsOwner()
+  {
+    return false;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsOwner()
+  {
+    return isOwner;
   }
   /* Code from template association_GetMany */
   public Appointment getAppointment(int index)
@@ -82,9 +102,9 @@ public class CustomerAccount extends Account
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Appointment addAppointment(Date aAppointmentDate, Time aAppointmentTime, boolean aIsCancelled, Service aServiceChosen)
+  public Appointment addAppointment(Date aAppointmentStartDate, Time aAppointmentStartTime, boolean aIsCancelled, Service aServiceChosen)
   {
-    return new Appointment(aAppointmentDate, aAppointmentTime, aIsCancelled, this, aServiceChosen);
+    return new Appointment(aAppointmentStartDate, aAppointmentStartTime, aIsCancelled, this, aServiceChosen);
   }
 
   public boolean addAppointment(Appointment aAppointment)
@@ -165,6 +185,6 @@ public class CustomerAccount extends Account
   public String toString()
   {
     return super.toString() + "["+
-            "customerId" + ":" + getCustomerId()+ "]";
+            "isOwner" + ":" + getIsOwner()+ "]";
   }
 }

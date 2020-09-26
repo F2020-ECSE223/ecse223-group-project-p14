@@ -5,8 +5,8 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 65 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 144 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 68 "../../../../../Domain Model v1.1.ump"
+// line 163 "../../../../../Domain Model v1.1.ump"
 public class Appointment
 {
 
@@ -15,8 +15,8 @@ public class Appointment
   //------------------------
 
   //Appointment Attributes
-  private Date appointmentDate;
-  private Time appointmentTime;
+  private Date appointmentStartDate;
+  private Time appointmentStartTime;
   private boolean isCancelled;
 
   //Appointment Associations
@@ -27,10 +27,10 @@ public class Appointment
   // CONSTRUCTOR
   //------------------------
 
-  public Appointment(Date aAppointmentDate, Time aAppointmentTime, boolean aIsCancelled, CustomerAccount aCustomerAccount, Service aServiceChosen)
+  public Appointment(Date aAppointmentStartDate, Time aAppointmentStartTime, boolean aIsCancelled, CustomerAccount aCustomerAccount, Service aServiceChosen)
   {
-    appointmentDate = aAppointmentDate;
-    appointmentTime = aAppointmentTime;
+    appointmentStartDate = aAppointmentStartDate;
+    appointmentStartTime = aAppointmentStartTime;
     isCancelled = aIsCancelled;
     boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);
     if (!didAddCustomerAccount)
@@ -47,18 +47,18 @@ public class Appointment
   // INTERFACE
   //------------------------
 
-  public boolean setAppointmentDate(Date aAppointmentDate)
+  public boolean setAppointmentStartDate(Date aAppointmentStartDate)
   {
     boolean wasSet = false;
-    appointmentDate = aAppointmentDate;
+    appointmentStartDate = aAppointmentStartDate;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setAppointmentTime(Time aAppointmentTime)
+  public boolean setAppointmentStartTime(Time aAppointmentStartTime)
   {
     boolean wasSet = false;
-    appointmentTime = aAppointmentTime;
+    appointmentStartTime = aAppointmentStartTime;
     wasSet = true;
     return wasSet;
   }
@@ -71,14 +71,14 @@ public class Appointment
     return wasSet;
   }
 
-  public Date getAppointmentDate()
+  public Date getAppointmentStartDate()
   {
-    return appointmentDate;
+    return appointmentStartDate;
   }
 
-  public Time getAppointmentTime()
+  public Time getAppointmentStartTime()
   {
-    return appointmentTime;
+    return appointmentStartTime;
   }
 
   public boolean getIsCancelled()
@@ -147,8 +147,8 @@ public class Appointment
   {
     return super.toString() + "["+
             "isCancelled" + ":" + getIsCancelled()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "appointmentDate" + "=" + (getAppointmentDate() != null ? !getAppointmentDate().equals(this)  ? getAppointmentDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "appointmentTime" + "=" + (getAppointmentTime() != null ? !getAppointmentTime().equals(this)  ? getAppointmentTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "appointmentStartDate" + "=" + (getAppointmentStartDate() != null ? !getAppointmentStartDate().equals(this)  ? getAppointmentStartDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "appointmentStartTime" + "=" + (getAppointmentStartTime() != null ? !getAppointmentStartTime().equals(this)  ? getAppointmentStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "customerAccount = "+(getCustomerAccount()!=null?Integer.toHexString(System.identityHashCode(getCustomerAccount())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "serviceChosen = "+(getServiceChosen()!=null?Integer.toHexString(System.identityHashCode(getServiceChosen())):"null");
   }

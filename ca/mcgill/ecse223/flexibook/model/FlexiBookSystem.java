@@ -3,10 +3,9 @@
 
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
-import java.sql.Time;
 
-// line 5 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 110 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 5 "../../../../../Domain Model v1.1.ump"
+// line 121 "../../../../../Domain Model v1.1.ump"
 public class FlexiBookSystem
 {
 
@@ -24,11 +23,12 @@ public class FlexiBookSystem
   private String address;
   private String phoneNumber;
   private String emailAddress;
+  private boolean hasUserLoggedIn;
 
   //FlexiBookSystem Associations
   private List<Account> accounts;
+  private List<Service> services;
   private Calendar calendar;
-  private DailySchedule dailySchedule;
 
   //------------------------
   // CONSTRUCTOR
@@ -39,7 +39,9 @@ public class FlexiBookSystem
     address = null;
     phoneNumber = null;
     emailAddress = null;
+    hasUserLoggedIn = false;
     accounts = new ArrayList<Account>();
+    services = new ArrayList<Service>();
   }
 
   public static FlexiBookSystem getInstance()
@@ -79,6 +81,14 @@ public class FlexiBookSystem
     return wasSet;
   }
 
+  public boolean setHasUserLoggedIn(boolean aHasUserLoggedIn)
+  {
+    boolean wasSet = false;
+    hasUserLoggedIn = aHasUserLoggedIn;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getAddress()
   {
     return address;
@@ -92,6 +102,16 @@ public class FlexiBookSystem
   public String getEmailAddress()
   {
     return emailAddress;
+  }
+
+  public boolean getHasUserLoggedIn()
+  {
+    return hasUserLoggedIn;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isHasUserLoggedIn()
+  {
+    return hasUserLoggedIn;
   }
   /* Code from template association_GetMany */
   public Account getAccount(int index)
@@ -123,6 +143,36 @@ public class FlexiBookSystem
     int index = accounts.indexOf(aAccount);
     return index;
   }
+  /* Code from template association_GetMany */
+  public Service getService(int index)
+  {
+    Service aService = services.get(index);
+    return aService;
+  }
+
+  public List<Service> getServices()
+  {
+    List<Service> newServices = Collections.unmodifiableList(services);
+    return newServices;
+  }
+
+  public int numberOfServices()
+  {
+    int number = services.size();
+    return number;
+  }
+
+  public boolean hasServices()
+  {
+    boolean has = services.size() > 0;
+    return has;
+  }
+
+  public int indexOfService(Service aService)
+  {
+    int index = services.indexOf(aService);
+    return index;
+  }
   /* Code from template association_GetOne */
   public Calendar getCalendar()
   {
@@ -132,17 +182,6 @@ public class FlexiBookSystem
   public boolean hasCalendar()
   {
     boolean has = calendar != null;
-    return has;
-  }
-  /* Code from template association_GetOne */
-  public DailySchedule getDailySchedule()
-  {
-    return dailySchedule;
-  }
-
-  public boolean hasDailySchedule()
-  {
-    boolean has = dailySchedule != null;
     return has;
   }
   /* Code from template association_MinimumNumberOfMethod */
@@ -214,6 +253,75 @@ public class FlexiBookSystem
     }
     return wasAdded;
   }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfServices()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+
+
+  public boolean addService(Service aService)
+  {
+    boolean wasAdded = false;
+    if (services.contains(aService)) { return false; }
+    FlexiBookSystem existingFlexiBookSystem = aService.getFlexiBookSystem();
+    boolean isNewFlexiBookSystem = existingFlexiBookSystem != null && !this.equals(existingFlexiBookSystem);
+    if (isNewFlexiBookSystem)
+    {
+      aService.setFlexiBookSystem(this);
+    }
+    else
+    {
+      services.add(aService);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeService(Service aService)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aService, as it must always have a flexiBookSystem
+    if (!this.equals(aService.getFlexiBookSystem()))
+    {
+      services.remove(aService);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addServiceAt(Service aService, int index)
+  {  
+    boolean wasAdded = false;
+    if(addService(aService))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfServices()) { index = numberOfServices() - 1; }
+      services.remove(aService);
+      services.add(index, aService);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveServiceAt(Service aService, int index)
+  {
+    boolean wasAdded = false;
+    if(services.contains(aService))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfServices()) { index = numberOfServices() - 1; }
+      services.remove(aService);
+      services.add(index, aService);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addServiceAt(aService, index);
+    }
+    return wasAdded;
+  }
   /* Code from template association_SetOptionalOneToOne */
   public boolean setCalendar(Calendar aNewCalendar)
   {
@@ -241,33 +349,6 @@ public class FlexiBookSystem
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOptionalOneToOne */
-  public boolean setDailySchedule(DailySchedule aNewDailySchedule)
-  {
-    boolean wasSet = false;
-    if (dailySchedule != null && !dailySchedule.equals(aNewDailySchedule) && equals(dailySchedule.getFlexiBookSystem()))
-    {
-      //Unable to setDailySchedule, as existing dailySchedule would become an orphan
-      return wasSet;
-    }
-
-    dailySchedule = aNewDailySchedule;
-    FlexiBookSystem anOldFlexiBookSystem = aNewDailySchedule != null ? aNewDailySchedule.getFlexiBookSystem() : null;
-
-    if (!this.equals(anOldFlexiBookSystem))
-    {
-      if (anOldFlexiBookSystem != null)
-      {
-        anOldFlexiBookSystem.dailySchedule = null;
-      }
-      if (dailySchedule != null)
-      {
-        dailySchedule.setFlexiBookSystem(this);
-      }
-    }
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
@@ -278,19 +359,19 @@ public class FlexiBookSystem
       accounts.remove(aAccount);
     }
     
+    while (services.size() > 0)
+    {
+      Service aService = services.get(services.size() - 1);
+      aService.delete();
+      services.remove(aService);
+    }
+    
     Calendar existingCalendar = calendar;
     calendar = null;
     if (existingCalendar != null)
     {
       existingCalendar.delete();
       existingCalendar.setFlexiBookSystem(null);
-    }
-    DailySchedule existingDailySchedule = dailySchedule;
-    dailySchedule = null;
-    if (existingDailySchedule != null)
-    {
-      existingDailySchedule.delete();
-      existingDailySchedule.setFlexiBookSystem(null);
     }
   }
 
@@ -300,8 +381,8 @@ public class FlexiBookSystem
     return super.toString() + "["+
             "address" + ":" + getAddress()+ "," +
             "phoneNumber" + ":" + getPhoneNumber()+ "," +
-            "emailAddress" + ":" + getEmailAddress()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "calendar = "+(getCalendar()!=null?Integer.toHexString(System.identityHashCode(getCalendar())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "dailySchedule = "+(getDailySchedule()!=null?Integer.toHexString(System.identityHashCode(getDailySchedule())):"null");
+            "emailAddress" + ":" + getEmailAddress()+ "," +
+            "hasUserLoggedIn" + ":" + getHasUserLoggedIn()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "calendar = "+(getCalendar()!=null?Integer.toHexString(System.identityHashCode(getCalendar())):"null");
   }
 }

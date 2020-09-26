@@ -2,11 +2,18 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse223.flexibook.model;
+import java.util.*;
 
-// line 17 "../../../../../Domain Model (Iteration 1) v1.0.ump"
-// line 116 "../../../../../Domain Model (Iteration 1) v1.0.ump"
+// line 19 "../../../../../Domain Model v1.1.ump"
+// line 129 "../../../../../Domain Model v1.1.ump"
 public abstract class Account
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<String, Account> accountsByName = new HashMap<String, Account>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -25,12 +32,15 @@ public abstract class Account
   // CONSTRUCTOR
   //------------------------
 
-  public Account(boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public Account(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
   {
-    resetName();
-    resetPassword();
-    resetIsOwner();
+    password = aPassword;
+    isOwner = aIsOwner;
     isActive = aIsActive;
+    if (!setName(aName))
+    {
+      throw new RuntimeException("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
     if (!didAddFlexiBookSystem)
     {
@@ -41,23 +51,26 @@ public abstract class Account
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template attribute_SetDefaulted */
+
   public boolean setName(String aName)
   {
     boolean wasSet = false;
+    String anOldName = getName();
+    if (anOldName != null && anOldName.equals(aName)) {
+      return true;
+    }
+    if (hasWithName(aName)) {
+      return wasSet;
+    }
     name = aName;
     wasSet = true;
+    if (anOldName != null) {
+      accountsByName.remove(anOldName);
+    }
+    accountsByName.put(aName, this);
     return wasSet;
   }
 
-  public boolean resetName()
-  {
-    boolean wasReset = false;
-    name = getDefaultName();
-    wasReset = true;
-    return wasReset;
-  }
-  /* Code from template attribute_SetDefaulted */
   public boolean setPassword(String aPassword)
   {
     boolean wasSet = false;
@@ -66,28 +79,12 @@ public abstract class Account
     return wasSet;
   }
 
-  public boolean resetPassword()
-  {
-    boolean wasReset = false;
-    password = getDefaultPassword();
-    wasReset = true;
-    return wasReset;
-  }
-  /* Code from template attribute_SetDefaulted */
   public boolean setIsOwner(boolean aIsOwner)
   {
     boolean wasSet = false;
     isOwner = aIsOwner;
     wasSet = true;
     return wasSet;
-  }
-
-  public boolean resetIsOwner()
-  {
-    boolean wasReset = false;
-    isOwner = getDefaultIsOwner();
-    wasReset = true;
-    return wasReset;
   }
 
   public boolean setIsActive(boolean aIsActive)
@@ -102,30 +99,25 @@ public abstract class Account
   {
     return name;
   }
-  /* Code from template attribute_GetDefaulted */
-  public String getDefaultName()
+  /* Code from template attribute_GetUnique */
+  public static Account getWithName(String aName)
   {
-    return "Owner";
+    return accountsByName.get(aName);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithName(String aName)
+  {
+    return getWithName(aName) != null;
   }
 
   public String getPassword()
   {
     return password;
   }
-  /* Code from template attribute_GetDefaulted */
-  public String getDefaultPassword()
-  {
-    return "Owner";
-  }
 
   public boolean getIsOwner()
   {
     return isOwner;
-  }
-  /* Code from template attribute_GetDefaulted */
-  public boolean getDefaultIsOwner()
-  {
-    return true;
   }
 
   public boolean getIsActive()
@@ -169,6 +161,7 @@ public abstract class Account
 
   public void delete()
   {
+    accountsByName.remove(getName());
     FlexiBookSystem placeholderFlexiBookSystem = flexiBookSystem;
     this.flexiBookSystem = null;
     if(placeholderFlexiBookSystem != null)
