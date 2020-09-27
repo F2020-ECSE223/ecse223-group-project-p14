@@ -23,7 +23,6 @@ public class SingleService extends Service
   private ServiceCategory category;
 
   //SingleService Associations
-  private List<ServiceCombo> combosAddedTo;
   private List<ServiceCombo> comboDetermined;
 
   //------------------------
@@ -34,7 +33,6 @@ public class SingleService extends Service
   {
     super(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem);
     category = aCategory;
-    combosAddedTo = new ArrayList<ServiceCombo>();
     comboDetermined = new ArrayList<ServiceCombo>();
   }
 
@@ -53,36 +51,6 @@ public class SingleService extends Service
   public ServiceCategory getCategory()
   {
     return category;
-  }
-  /* Code from template association_GetMany */
-  public ServiceCombo getCombosAddedTo(int index)
-  {
-    ServiceCombo aCombosAddedTo = combosAddedTo.get(index);
-    return aCombosAddedTo;
-  }
-
-  public List<ServiceCombo> getCombosAddedTo()
-  {
-    List<ServiceCombo> newCombosAddedTo = Collections.unmodifiableList(combosAddedTo);
-    return newCombosAddedTo;
-  }
-
-  public int numberOfCombosAddedTo()
-  {
-    int number = combosAddedTo.size();
-    return number;
-  }
-
-  public boolean hasCombosAddedTo()
-  {
-    boolean has = combosAddedTo.size() > 0;
-    return has;
-  }
-
-  public int indexOfCombosAddedTo(ServiceCombo aCombosAddedTo)
-  {
-    int index = combosAddedTo.indexOf(aCombosAddedTo);
-    return index;
   }
   /* Code from template association_GetMany */
   public ServiceCombo getComboDetermined(int index)
@@ -115,71 +83,14 @@ public class SingleService extends Service
     return index;
   }
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfCombosAddedTo()
-  {
-    return 0;
-  }
-  /* Code from template association_AddUnidirectionalMany */
-  public boolean addCombosAddedTo(ServiceCombo aCombosAddedTo)
-  {
-    boolean wasAdded = false;
-    if (combosAddedTo.contains(aCombosAddedTo)) { return false; }
-    combosAddedTo.add(aCombosAddedTo);
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeCombosAddedTo(ServiceCombo aCombosAddedTo)
-  {
-    boolean wasRemoved = false;
-    if (combosAddedTo.contains(aCombosAddedTo))
-    {
-      combosAddedTo.remove(aCombosAddedTo);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addCombosAddedToAt(ServiceCombo aCombosAddedTo, int index)
-  {  
-    boolean wasAdded = false;
-    if(addCombosAddedTo(aCombosAddedTo))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfCombosAddedTo()) { index = numberOfCombosAddedTo() - 1; }
-      combosAddedTo.remove(aCombosAddedTo);
-      combosAddedTo.add(index, aCombosAddedTo);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveCombosAddedToAt(ServiceCombo aCombosAddedTo, int index)
-  {
-    boolean wasAdded = false;
-    if(combosAddedTo.contains(aCombosAddedTo))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfCombosAddedTo()) { index = numberOfCombosAddedTo() - 1; }
-      combosAddedTo.remove(aCombosAddedTo);
-      combosAddedTo.add(index, aCombosAddedTo);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addCombosAddedToAt(aCombosAddedTo, index);
-    }
-    return wasAdded;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfComboDetermined()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public ServiceCombo addComboDetermined(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem)
+  public ServiceCombo addComboDetermined(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem, SingleService... allOtherServices)
   {
-    return new ServiceCombo(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem, this);
+    return new ServiceCombo(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem, this, allOtherServices);
   }
 
   public boolean addComboDetermined(ServiceCombo aComboDetermined)
@@ -246,7 +157,6 @@ public class SingleService extends Service
 
   public void delete()
   {
-    combosAddedTo.clear();
     for(int i=comboDetermined.size(); i > 0; i--)
     {
       ServiceCombo aComboDetermined = comboDetermined.get(i - 1);

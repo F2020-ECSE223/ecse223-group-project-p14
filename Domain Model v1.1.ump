@@ -92,7 +92,7 @@ class SingleService{
   isA Service;
   ServiceCategory category;
   
-  * otherServices -> * ServiceCombo combosAddedTo;
+  1..* otherServices <- * ServiceCombo combosAddedTo;
   1 mainService -- * ServiceCombo comboDetermined; 
 }
 
