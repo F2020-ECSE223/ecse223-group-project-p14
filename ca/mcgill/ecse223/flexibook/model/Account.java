@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
 // line 19 "../../../../../Domain Model v1.1.ump"
-// line 129 "../../../../../Domain Model v1.1.ump"
+// line 120 "../../../../../Domain Model v1.1.ump"
 public abstract class Account
 {
 
@@ -22,8 +22,7 @@ public abstract class Account
   //Account Attributes
   private String name;
   private String password;
-  private boolean isOwner;
-  private boolean isActive;
+  private boolean isCurrentlyLoggedIn;
 
   //Account Associations
   private FlexiBookSystem flexiBookSystem;
@@ -32,11 +31,10 @@ public abstract class Account
   // CONSTRUCTOR
   //------------------------
 
-  public Account(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public Account(String aName, String aPassword, boolean aIsCurrentlyLoggedIn, FlexiBookSystem aFlexiBookSystem)
   {
     password = aPassword;
-    isOwner = aIsOwner;
-    isActive = aIsActive;
+    isCurrentlyLoggedIn = aIsCurrentlyLoggedIn;
     if (!setName(aName))
     {
       throw new RuntimeException("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -79,18 +77,10 @@ public abstract class Account
     return wasSet;
   }
 
-  public boolean setIsOwner(boolean aIsOwner)
+  public boolean setIsCurrentlyLoggedIn(boolean aIsCurrentlyLoggedIn)
   {
     boolean wasSet = false;
-    isOwner = aIsOwner;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setIsActive(boolean aIsActive)
-  {
-    boolean wasSet = false;
-    isActive = aIsActive;
+    isCurrentlyLoggedIn = aIsCurrentlyLoggedIn;
     wasSet = true;
     return wasSet;
   }
@@ -115,24 +105,14 @@ public abstract class Account
     return password;
   }
 
-  public boolean getIsOwner()
+  public boolean getIsCurrentlyLoggedIn()
   {
-    return isOwner;
-  }
-
-  public boolean getIsActive()
-  {
-    return isActive;
+    return isCurrentlyLoggedIn;
   }
   /* Code from template attribute_IsBoolean */
-  public boolean isIsOwner()
+  public boolean isIsCurrentlyLoggedIn()
   {
-    return isOwner;
-  }
-  /* Code from template attribute_IsBoolean */
-  public boolean isIsActive()
-  {
-    return isActive;
+    return isCurrentlyLoggedIn;
   }
   /* Code from template association_GetOne */
   public FlexiBookSystem getFlexiBookSystem()
@@ -176,8 +156,7 @@ public abstract class Account
     return super.toString() + "["+
             "name" + ":" + getName()+ "," +
             "password" + ":" + getPassword()+ "," +
-            "isOwner" + ":" + getIsOwner()+ "," +
-            "isActive" + ":" + getIsActive()+ "]" + System.getProperties().getProperty("line.separator") +
+            "isCurrentlyLoggedIn" + ":" + getIsCurrentlyLoggedIn()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBookSystem = "+(getFlexiBookSystem()!=null?Integer.toHexString(System.identityHashCode(getFlexiBookSystem())):"null");
   }
 }

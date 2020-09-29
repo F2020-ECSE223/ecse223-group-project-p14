@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 30 "../../../../../Domain Model v1.1.ump"
-// line 134 "../../../../../Domain Model v1.1.ump"
+// line 29 "../../../../../Domain Model v1.1.ump"
+// line 125 "../../../../../Domain Model v1.1.ump"
 public class OwnerAccount extends Account
 {
 
@@ -16,7 +16,6 @@ public class OwnerAccount extends Account
   //OwnerAccount Attributes
   private String name;
   private String password;
-  private boolean isOwner;
 
   //OwnerAccount Associations
   private List<Service> services;
@@ -25,12 +24,11 @@ public class OwnerAccount extends Account
   // CONSTRUCTOR
   //------------------------
 
-  public OwnerAccount(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public OwnerAccount(String aName, String aPassword, boolean aIsCurrentlyLoggedIn, FlexiBookSystem aFlexiBookSystem)
   {
-    super(aName, aPassword, aIsOwner, aIsActive, aFlexiBookSystem);
+    super(aName, aPassword, aIsCurrentlyLoggedIn, aFlexiBookSystem);
     resetName();
     resetPassword();
-    resetIsOwner();
     services = new ArrayList<Service>();
   }
 
@@ -69,22 +67,6 @@ public class OwnerAccount extends Account
     wasReset = true;
     return wasReset;
   }
-  /* Code from template attribute_SetDefaulted */
-  public boolean setIsOwner(boolean aIsOwner)
-  {
-    boolean wasSet = false;
-    isOwner = aIsOwner;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean resetIsOwner()
-  {
-    boolean wasReset = false;
-    isOwner = getDefaultIsOwner();
-    wasReset = true;
-    return wasReset;
-  }
 
   public String getName()
   {
@@ -104,21 +86,6 @@ public class OwnerAccount extends Account
   public String getDefaultPassword()
   {
     return "Owner";
-  }
-
-  public boolean getIsOwner()
-  {
-    return isOwner;
-  }
-  /* Code from template attribute_GetDefaulted */
-  public boolean getDefaultIsOwner()
-  {
-    return true;
-  }
-  /* Code from template attribute_IsBoolean */
-  public boolean isIsOwner()
-  {
-    return isOwner;
   }
   /* Code from template association_GetMany */
   public Service getService(int index)
@@ -235,7 +202,6 @@ public class OwnerAccount extends Account
   {
     return super.toString() + "["+
             "name" + ":" + getName()+ "," +
-            "password" + ":" + getPassword()+ "," +
-            "isOwner" + ":" + getIsOwner()+ "]";
+            "password" + ":" + getPassword()+ "]";
   }
 }

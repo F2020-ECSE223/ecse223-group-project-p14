@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
 // line 5 "../../../../../Domain Model v1.1.ump"
-// line 121 "../../../../../Domain Model v1.1.ump"
+// line 112 "../../../../../Domain Model v1.1.ump"
 public class FlexiBookSystem
 {
 

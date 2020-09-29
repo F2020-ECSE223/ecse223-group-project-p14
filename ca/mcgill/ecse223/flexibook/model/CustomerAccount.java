@@ -6,17 +6,14 @@ import java.util.*;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 38 "../../../../../Domain Model v1.1.ump"
-// line 139 "../../../../../Domain Model v1.1.ump"
+// line 37 "../../../../../Domain Model v1.1.ump"
+// line 130 "../../../../../Domain Model v1.1.ump"
 public class CustomerAccount extends Account
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-
-  //CustomerAccount Attributes
-  private boolean isOwner;
 
   //CustomerAccount Associations
   private List<Appointment> appointments;
@@ -25,47 +22,15 @@ public class CustomerAccount extends Account
   // CONSTRUCTOR
   //------------------------
 
-  public CustomerAccount(String aName, String aPassword, boolean aIsOwner, boolean aIsActive, FlexiBookSystem aFlexiBookSystem)
+  public CustomerAccount(String aName, String aPassword, boolean aIsCurrentlyLoggedIn, FlexiBookSystem aFlexiBookSystem)
   {
-    super(aName, aPassword, aIsOwner, aIsActive, aFlexiBookSystem);
-    resetIsOwner();
+    super(aName, aPassword, aIsCurrentlyLoggedIn, aFlexiBookSystem);
     appointments = new ArrayList<Appointment>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template attribute_SetDefaulted */
-  public boolean setIsOwner(boolean aIsOwner)
-  {
-    boolean wasSet = false;
-    isOwner = aIsOwner;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean resetIsOwner()
-  {
-    boolean wasReset = false;
-    isOwner = getDefaultIsOwner();
-    wasReset = true;
-    return wasReset;
-  }
-
-  public boolean getIsOwner()
-  {
-    return isOwner;
-  }
-  /* Code from template attribute_GetDefaulted */
-  public boolean getDefaultIsOwner()
-  {
-    return false;
-  }
-  /* Code from template attribute_IsBoolean */
-  public boolean isIsOwner()
-  {
-    return isOwner;
-  }
   /* Code from template association_GetMany */
   public Appointment getAppointment(int index)
   {
@@ -181,10 +146,4 @@ public class CustomerAccount extends Account
     super.delete();
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "isOwner" + ":" + getIsOwner()+ "]";
-  }
 }

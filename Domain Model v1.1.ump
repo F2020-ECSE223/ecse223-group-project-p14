@@ -21,8 +21,7 @@ class Account
   abstract;
   unique String name;
   String password;
-  Boolean isOwner;
-  Boolean isActive;
+  Boolean isCurrentlyLoggedIn;
  
   
 }
@@ -32,14 +31,11 @@ class OwnerAccount{
   isA Account;
   defaulted name = "Owner";
   defaulted password = "Owner";
-  defaulted isOwner = true;
+
 }
 
-class CustomerAccount{
-  
-  isA Account;
-  defaulted isOwner = false;
-  
+class CustomerAccount{ 
+  isA Account; 
 }
 
 
@@ -73,11 +69,6 @@ class Appointment
   Date appointmentStartDate;
   Time appointmentStartTime;
   Boolean isCancelled;
-  
-  
-  
-  
- 
 }
 
 

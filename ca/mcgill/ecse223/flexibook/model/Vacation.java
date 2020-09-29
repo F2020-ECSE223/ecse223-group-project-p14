@@ -5,8 +5,8 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 60 "../../../../../Domain Model v1.1.ump"
-// line 157 "../../../../../Domain Model v1.1.ump"
+// line 56 "../../../../../Domain Model v1.1.ump"
+// line 148 "../../../../../Domain Model v1.1.ump"
 public class Vacation
 {
 

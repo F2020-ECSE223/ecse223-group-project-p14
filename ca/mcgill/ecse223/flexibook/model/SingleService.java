@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 91 "../../../../../Domain Model v1.1.ump"
-// line 177 "../../../../../Domain Model v1.1.ump"
+// line 82 "../../../../../Domain Model v1.1.ump"
+// line 168 "../../../../../Domain Model v1.1.ump"
 public class SingleService extends Service
 {
 

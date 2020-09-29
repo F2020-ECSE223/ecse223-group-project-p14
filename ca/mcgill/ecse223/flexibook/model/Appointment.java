@@ -5,8 +5,8 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 68 "../../../../../Domain Model v1.1.ump"
-// line 163 "../../../../../Domain Model v1.1.ump"
+// line 64 "../../../../../Domain Model v1.1.ump"
+// line 154 "../../../../../Domain Model v1.1.ump"
 public class Appointment
 {
 
