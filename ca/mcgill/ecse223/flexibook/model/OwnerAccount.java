@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 29 "../../../../../Domain Model v1.1.ump"
-// line 125 "../../../../../Domain Model v1.1.ump"
+// line 27 "../../../../../Domain Model v1.1.ump"
+// line 122 "../../../../../Domain Model v1.1.ump"
 public class OwnerAccount extends Account
 {
 

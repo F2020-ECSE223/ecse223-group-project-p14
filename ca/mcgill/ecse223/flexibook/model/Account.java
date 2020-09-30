@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 19 "../../../../../Domain Model v1.1.ump"
-// line 120 "../../../../../Domain Model v1.1.ump"
+// line 17 "../../../../../Domain Model v1.1.ump"
+// line 117 "../../../../../Domain Model v1.1.ump"
 public abstract class Account
 {
 

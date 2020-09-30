@@ -1,7 +1,5 @@
 namespace ca.mcgill.ecse223.flexibook.model;
 
-enum ServiceCategory { Wash, HairExtension, Highlight, BlowDry, Cut, Color}  
-
 class FlexiBookSystem
 {
   singleton;
@@ -81,7 +79,6 @@ class Service{
 
 class SingleService{
   isA Service;
-  ServiceCategory category;
   
   1..* otherServices <- * ServiceCombo combosAddedTo;
   1 mainService -- * ServiceCombo comboDetermined; 

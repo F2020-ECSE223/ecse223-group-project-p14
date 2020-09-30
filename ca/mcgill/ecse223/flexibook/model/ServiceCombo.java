@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 90 "../../../../../Domain Model v1.1.ump"
-// line 175 "../../../../../Domain Model v1.1.ump"
+// line 87 "../../../../../Domain Model v1.1.ump"
+// line 172 "../../../../../Domain Model v1.1.ump"
 public class ServiceCombo extends Service
 {
 

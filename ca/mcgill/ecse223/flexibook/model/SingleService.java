@@ -4,23 +4,14 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 82 "../../../../../Domain Model v1.1.ump"
-// line 168 "../../../../../Domain Model v1.1.ump"
+// line 80 "../../../../../Domain Model v1.1.ump"
+// line 165 "../../../../../Domain Model v1.1.ump"
 public class SingleService extends Service
 {
 
   //------------------------
-  // ENUMERATIONS
-  //------------------------
-
-  public enum ServiceCategory { Wash, HairExtension, Highlight, BlowDry, Cut, Color }
-
-  //------------------------
   // MEMBER VARIABLES
   //------------------------
-
-  //SingleService Attributes
-  private ServiceCategory category;
 
   //SingleService Associations
   private List<ServiceCombo> comboDetermined;
@@ -29,29 +20,15 @@ public class SingleService extends Service
   // CONSTRUCTOR
   //------------------------
 
-  public SingleService(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem, ServiceCategory aCategory)
+  public SingleService(String aServiceName, String aDescription, OwnerAccount aOwnerAccount, FlexiBookSystem aFlexiBookSystem)
   {
     super(aServiceName, aDescription, aOwnerAccount, aFlexiBookSystem);
-    category = aCategory;
     comboDetermined = new ArrayList<ServiceCombo>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setCategory(ServiceCategory aCategory)
-  {
-    boolean wasSet = false;
-    category = aCategory;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public ServiceCategory getCategory()
-  {
-    return category;
-  }
   /* Code from template association_GetMany */
   public ServiceCombo getComboDetermined(int index)
   {
@@ -165,10 +142,4 @@ public class SingleService extends Service
     super.delete();
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "category" + "=" + (getCategory() != null ? !getCategory().equals(this)  ? getCategory().toString().replaceAll("  ","    ") : "this" : "null");
-  }
 }

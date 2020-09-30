@@ -3,8 +3,8 @@
 
 package ca.mcgill.ecse223.flexibook.model;
 
-// line 94 "../../../../../Domain Model v1.1.ump"
-// line 180 "../../../../../Domain Model v1.1.ump"
+// line 91 "../../../../../Domain Model v1.1.ump"
+// line 177 "../../../../../Domain Model v1.1.ump"
 public class ServiceDetail
 {
 

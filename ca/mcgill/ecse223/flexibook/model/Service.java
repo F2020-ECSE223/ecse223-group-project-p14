@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.flexibook.model;
 import java.util.*;
 
-// line 75 "../../../../../Domain Model v1.1.ump"
-// line 162 "../../../../../Domain Model v1.1.ump"
+// line 73 "../../../../../Domain Model v1.1.ump"
+// line 159 "../../../../../Domain Model v1.1.ump"
 public abstract class Service
 {
 

@@ -6,8 +6,8 @@ import java.util.*;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 37 "../../../../../Domain Model v1.1.ump"
-// line 130 "../../../../../Domain Model v1.1.ump"
+// line 35 "../../../../../Domain Model v1.1.ump"
+// line 127 "../../../../../Domain Model v1.1.ump"
 public class CustomerAccount extends Account
 {
 
