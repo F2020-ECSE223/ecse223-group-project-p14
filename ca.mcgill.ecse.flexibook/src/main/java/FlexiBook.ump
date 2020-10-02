@@ -1,0 +1,89 @@
+namespace ca.mcgill.ecse.flexibook.model;
+
+class FlexiBook {
+  1 <@>- 0..1 Business business;
+  1 <@>- 0..1 Owner owner;
+  1 <@>- * Customer customers;
+  1 <@>- * BusinessHour hours;
+  1 <@>- * Appointment appointments;
+  1 <@>- * TimeSlot timeSlots;
+  1 <@>- * BookableService bookableServices;
+}
+
+class User {
+  abstract;
+  unique username;
+  password;
+}
+
+class Owner {
+  isA User;
+}
+
+class Customer {
+  isA User;
+}
+
+class Business {
+  name;
+  address;
+  phoneNumber;
+  email;
+  // since there is only one business in this system, the first
+  // 0..1 should be a 1. since this is a directed association, the
+  // first multiplicity is not taken into account. hence, it is 
+  // changed to 0..1 to avoid Umple issuing warning W036
+  // Unmanaged Multiplicity
+  0..1 -> * BusinessHour businessHours;
+  0..1 -> * TimeSlot holidays;
+  0..1 -> * TimeSlot vacation;
+  // association to Owner is not modeled because there is
+  // only one owner and only one business in the system
+}
+
+class BusinessHour {
+  enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+  DayOfWeek dayOfWeek;
+  Time startTime;
+  Time endTime;
+}
+  
+class TimeSlot {
+  Date startDate;
+  Time startTime;
+  Date endDate;
+  Time endTime;
+}
+
+class BookableService {
+  abstract;
+  unique name;
+}
+
+class Service {
+  isA BookableService;
+  int duration;
+  // if downtimeDuration is 0, then downtimeStart is irrelevant
+  int downtimeDuration;
+  int downtimeStart;
+}
+
+class ServiceCombo {
+  isA BookableService;
+  * -> 1 ComboItem mainService;
+  // the services should be {ordered}; however, since Umple translates every * association
+  // or composition into a list, it is possible to order items in that list given Umple's API
+  * <@>- 2..* ComboItem services;
+}
+
+class ComboItem {
+  Boolean mandatory;
+  * -> 1 Service service;
+}
+
+class Appointment {
+  * -- 1 Customer customer;
+  * -- 1 BookableService bookableService;
+  * -> * ComboItem chosenItems;
+  0..1 -> 1 TimeSlot timeSlot;
+}
