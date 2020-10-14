@@ -18,7 +18,6 @@ Feature: Make appointment
       | cut   |       20 |             0 |                0 |
       | dry   |       10 |             0 |                0 |
     Given the following service combos exist in the system:
-    Given the following service combos exist in the system:
       | name      | mainService | services       | mandatory        |
       | dye-basic | color       | wash,color,dry | false,true,false |
       | cut-basic | cut         | wash,cut,dry   | false,true,false |

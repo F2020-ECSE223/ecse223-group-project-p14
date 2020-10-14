@@ -70,7 +70,7 @@ class Service {
 
 class ServiceCombo {
   isA BookableService;
-  * -> 1 ComboItem mainService;
+  * -> 0..1 ComboItem mainService;
   // the services should be {ordered}; however, since Umple translates every * association
   // or composition into a list, it is possible to order items in that list given Umple's API
   1 <@>- 2..* ComboItem services;

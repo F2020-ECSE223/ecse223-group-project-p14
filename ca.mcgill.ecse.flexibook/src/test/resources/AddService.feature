@@ -42,13 +42,13 @@ Feature: Add Service
 
   Scenario Outline: Add an existing service
     Given the following services exist in the system:
-      | name | duration | downtimeStarts | downtimeDuration |
+      | name | duration | downtimeStart | downtimeDuration |
       | wash |       30 |              0 |                0 |
     Given the Owner with username "owner" is logged in
     When "owner" initiates the addition of the service "<name>" with duration "<duration>", start of down time "<downtimeStart>" and down time duration "<downtimeDuration>"
     Then an error message with content "<error>" shall be raised
     Then the service "<name>" shall still preserve the following properties:
-      | name | duration | downtimeStarts | downtimeDuration |
+      | name | duration | downtimeStart | downtimeDuration |
       | wash |       30 |              0 |                0 |
     Then the number of services in the system shall be "1"
 
