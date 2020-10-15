@@ -7,6 +7,10 @@
 	<buildSpec>
 	</buildSpec>
 	<natures>
+<<<<<<< HEAD
 <nature>org.eclipse.jdt.core.javanature</nature>
+=======
+		<nature>org.eclipse.jdt.core.javanature</nature>
+>>>>>>> master
 	</natures>
 </projectDescription>

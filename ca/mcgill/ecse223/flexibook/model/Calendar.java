@@ -2,12 +2,21 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse223.flexibook.model;
+<<<<<<< HEAD
 import java.sql.Time;
 import java.util.*;
 import java.sql.Date;
 
 // line 60 "../../../../../Version 0.5 - CC, YW.ump"
 // line 155 "../../../../../Version 0.5 - CC, YW.ump"
+=======
+import java.util.*;
+import java.sql.Time;
+import java.sql.Date;
+
+// line 40 "../../../../../Domain Model v1.1.ump"
+// line 132 "../../../../../Domain Model v1.1.ump"
+>>>>>>> master
 public class Calendar
 {
 
@@ -15,6 +24,7 @@ public class Calendar
   // MEMBER VARIABLES
   //------------------------
 
+<<<<<<< HEAD
   //Calendar Attributes
   private Time lunchBreakStart;
   private Time lunchBreakEnd;
@@ -24,23 +34,35 @@ public class Calendar
   //Calendar Associations
   private FlexiBookSystem flexiBookSystem;
   private List<ClosedDate> closedDates;
+=======
+  //Calendar Associations
+  private FlexiBookSystem flexiBookSystem;
+  private DailySchedule dailySchedule;
+  private List<Vacation> vacations;
+>>>>>>> master
   private List<Appointment> appointments;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
+<<<<<<< HEAD
   public Calendar(Time aLunchBreakStart, Time aLunchBreakEnd, Time aOpenTime, Time aCloseTime, FlexiBookSystem aFlexiBookSystem)
   {
     lunchBreakStart = aLunchBreakStart;
     lunchBreakEnd = aLunchBreakEnd;
     openTime = aOpenTime;
     closeTime = aCloseTime;
+=======
+  public Calendar(FlexiBookSystem aFlexiBookSystem, DailySchedule aDailySchedule)
+  {
+>>>>>>> master
     boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
     if (!didAddFlexiBookSystem)
     {
       throw new RuntimeException("Unable to create calendar due to flexiBookSystem. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
+<<<<<<< HEAD
     closedDates = new ArrayList<ClosedDate>();
     appointments = new ArrayList<Appointment>();
   }
@@ -100,11 +122,38 @@ public class Calendar
   {
     return closeTime;
   }
+=======
+    if (aDailySchedule == null || aDailySchedule.getCalendar() != null)
+    {
+      throw new RuntimeException("Unable to create Calendar due to aDailySchedule. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    dailySchedule = aDailySchedule;
+    vacations = new ArrayList<Vacation>();
+    appointments = new ArrayList<Appointment>();
+  }
+
+  public Calendar(FlexiBookSystem aFlexiBookSystem, Time aLunchBreakStartTimeForDailySchedule, Time aLunchBreakEndTimeForDailySchedule, Time aOpenTimeForDailySchedule, Time aCloseTimeForDailySchedule)
+  {
+    boolean didAddFlexiBookSystem = setFlexiBookSystem(aFlexiBookSystem);
+    if (!didAddFlexiBookSystem)
+    {
+      throw new RuntimeException("Unable to create calendar due to flexiBookSystem. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    dailySchedule = new DailySchedule(aLunchBreakStartTimeForDailySchedule, aLunchBreakEndTimeForDailySchedule, aOpenTimeForDailySchedule, aCloseTimeForDailySchedule, this);
+    vacations = new ArrayList<Vacation>();
+    appointments = new ArrayList<Appointment>();
+  }
+
+  //------------------------
+  // INTERFACE
+  //------------------------
+>>>>>>> master
   /* Code from template association_GetOne */
   public FlexiBookSystem getFlexiBookSystem()
   {
     return flexiBookSystem;
   }
+<<<<<<< HEAD
   /* Code from template association_GetMany */
   public ClosedDate getClosedDate(int index)
   {
@@ -133,6 +182,41 @@ public class Calendar
   public int indexOfClosedDate(ClosedDate aClosedDate)
   {
     int index = closedDates.indexOf(aClosedDate);
+=======
+  /* Code from template association_GetOne */
+  public DailySchedule getDailySchedule()
+  {
+    return dailySchedule;
+  }
+  /* Code from template association_GetMany */
+  public Vacation getVacation(int index)
+  {
+    Vacation aVacation = vacations.get(index);
+    return aVacation;
+  }
+
+  public List<Vacation> getVacations()
+  {
+    List<Vacation> newVacations = Collections.unmodifiableList(vacations);
+    return newVacations;
+  }
+
+  public int numberOfVacations()
+  {
+    int number = vacations.size();
+    return number;
+  }
+
+  public boolean hasVacations()
+  {
+    boolean has = vacations.size() > 0;
+    return has;
+  }
+
+  public int indexOfVacation(Vacation aVacation)
+  {
+    int index = vacations.indexOf(aVacation);
+>>>>>>> master
     return index;
   }
   /* Code from template association_GetMany */
@@ -194,11 +278,16 @@ public class Calendar
     return wasSet;
   }
   /* Code from template association_MinimumNumberOfMethod */
+<<<<<<< HEAD
   public static int minimumNumberOfClosedDates()
+=======
+  public static int minimumNumberOfVacations()
+>>>>>>> master
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
+<<<<<<< HEAD
   public ClosedDate addClosedDate(Date aDownDateStarts, Date aDownDateEnds)
   {
     return new ClosedDate(aDownDateStarts, aDownDateEnds, this);
@@ -217,11 +306,32 @@ public class Calendar
     else
     {
       closedDates.add(aClosedDate);
+=======
+  public Vacation addVacation(Date aStartDate, Date aEndDate, Time aStartAt, Time aEndAt)
+  {
+    return new Vacation(aStartDate, aEndDate, aStartAt, aEndAt, this);
+  }
+
+  public boolean addVacation(Vacation aVacation)
+  {
+    boolean wasAdded = false;
+    if (vacations.contains(aVacation)) { return false; }
+    Calendar existingCalendar = aVacation.getCalendar();
+    boolean isNewCalendar = existingCalendar != null && !this.equals(existingCalendar);
+    if (isNewCalendar)
+    {
+      aVacation.setCalendar(this);
+    }
+    else
+    {
+      vacations.add(aVacation);
+>>>>>>> master
     }
     wasAdded = true;
     return wasAdded;
   }
 
+<<<<<<< HEAD
   public boolean removeClosedDate(ClosedDate aClosedDate)
   {
     boolean wasRemoved = false;
@@ -229,11 +339,21 @@ public class Calendar
     if (!this.equals(aClosedDate.getCalendar()))
     {
       closedDates.remove(aClosedDate);
+=======
+  public boolean removeVacation(Vacation aVacation)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aVacation, as it must always have a calendar
+    if (!this.equals(aVacation.getCalendar()))
+    {
+      vacations.remove(aVacation);
+>>>>>>> master
       wasRemoved = true;
     }
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
+<<<<<<< HEAD
   public boolean addClosedDateAt(ClosedDate aClosedDate, int index)
   {  
     boolean wasAdded = false;
@@ -243,11 +363,23 @@ public class Calendar
       if(index > numberOfClosedDates()) { index = numberOfClosedDates() - 1; }
       closedDates.remove(aClosedDate);
       closedDates.add(index, aClosedDate);
+=======
+  public boolean addVacationAt(Vacation aVacation, int index)
+  {  
+    boolean wasAdded = false;
+    if(addVacation(aVacation))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfVacations()) { index = numberOfVacations() - 1; }
+      vacations.remove(aVacation);
+      vacations.add(index, aVacation);
+>>>>>>> master
       wasAdded = true;
     }
     return wasAdded;
   }
 
+<<<<<<< HEAD
   public boolean addOrMoveClosedDateAt(ClosedDate aClosedDate, int index)
   {
     boolean wasAdded = false;
@@ -257,11 +389,26 @@ public class Calendar
       if(index > numberOfClosedDates()) { index = numberOfClosedDates() - 1; }
       closedDates.remove(aClosedDate);
       closedDates.add(index, aClosedDate);
+=======
+  public boolean addOrMoveVacationAt(Vacation aVacation, int index)
+  {
+    boolean wasAdded = false;
+    if(vacations.contains(aVacation))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfVacations()) { index = numberOfVacations() - 1; }
+      vacations.remove(aVacation);
+      vacations.add(index, aVacation);
+>>>>>>> master
       wasAdded = true;
     } 
     else 
     {
+<<<<<<< HEAD
       wasAdded = addClosedDateAt(aClosedDate, index);
+=======
+      wasAdded = addVacationAt(aVacation, index);
+>>>>>>> master
     }
     return wasAdded;
   }
@@ -270,16 +417,21 @@ public class Calendar
   {
     return 0;
   }
+<<<<<<< HEAD
   /* Code from template association_AddManyToOne */
   public Appointment addAppointment(Date aServiceStartDate, Time aServiceStartTime, boolean aIsCancelled, Customer aCustomer, Service aService)
   {
     return new Appointment(aServiceStartDate, aServiceStartTime, aIsCancelled, aCustomer, this, aService);
   }
 
+=======
+  /* Code from template association_AddUnidirectionalMany */
+>>>>>>> master
   public boolean addAppointment(Appointment aAppointment)
   {
     boolean wasAdded = false;
     if (appointments.contains(aAppointment)) { return false; }
+<<<<<<< HEAD
     Calendar existingCalendar = aAppointment.getCalendar();
     boolean isNewCalendar = existingCalendar != null && !this.equals(existingCalendar);
     if (isNewCalendar)
@@ -290,6 +442,9 @@ public class Calendar
     {
       appointments.add(aAppointment);
     }
+=======
+    appointments.add(aAppointment);
+>>>>>>> master
     wasAdded = true;
     return wasAdded;
   }
@@ -297,8 +452,12 @@ public class Calendar
   public boolean removeAppointment(Appointment aAppointment)
   {
     boolean wasRemoved = false;
+<<<<<<< HEAD
     //Unable to remove aAppointment, as it must always have a calendar
     if (!this.equals(aAppointment.getCalendar()))
+=======
+    if (appointments.contains(aAppointment))
+>>>>>>> master
     {
       appointments.remove(aAppointment);
       wasRemoved = true;
@@ -346,6 +505,7 @@ public class Calendar
     {
       existingFlexiBookSystem.setCalendar(null);
     }
+<<<<<<< HEAD
     for(int i=closedDates.size(); i > 0; i--)
     {
       ClosedDate aClosedDate = closedDates.get(i - 1);
@@ -368,4 +528,20 @@ public class Calendar
             "  " + "closeTime" + "=" + (getCloseTime() != null ? !getCloseTime().equals(this)  ? getCloseTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBookSystem = "+(getFlexiBookSystem()!=null?Integer.toHexString(System.identityHashCode(getFlexiBookSystem())):"null");
   }
+=======
+    DailySchedule existingDailySchedule = dailySchedule;
+    dailySchedule = null;
+    if (existingDailySchedule != null)
+    {
+      existingDailySchedule.delete();
+    }
+    for(int i=vacations.size(); i > 0; i--)
+    {
+      Vacation aVacation = vacations.get(i - 1);
+      aVacation.delete();
+    }
+    appointments.clear();
+  }
+
+>>>>>>> master
 }

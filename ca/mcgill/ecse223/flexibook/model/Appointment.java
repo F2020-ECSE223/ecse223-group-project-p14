@@ -5,8 +5,13 @@ package ca.mcgill.ecse223.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 
+<<<<<<< HEAD
 // line 77 "../../../../../Version 0.5 - CC, YW.ump"
 // line 169 "../../../../../Version 0.5 - CC, YW.ump"
+=======
+// line 62 "../../../../../Domain Model v1.1.ump"
+// line 151 "../../../../../Domain Model v1.1.ump"
+>>>>>>> master
 public class Appointment
 {
 
@@ -15,6 +20,7 @@ public class Appointment
   //------------------------
 
   //Appointment Attributes
+<<<<<<< HEAD
   private Date serviceStartDate;
   private Time serviceStartTime;
   private boolean isCancelled;
@@ -23,11 +29,21 @@ public class Appointment
   private Customer customer;
   private Calendar calendar;
   private Service service;
+=======
+  private Date appointmentStartDate;
+  private Time appointmentStartTime;
+  private boolean isCancelled;
+
+  //Appointment Associations
+  private CustomerAccount customerAccount;
+  private Service serviceChosen;
+>>>>>>> master
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
+<<<<<<< HEAD
   public Appointment(Date aServiceStartDate, Time aServiceStartTime, boolean aIsCancelled, Customer aCustomer, Calendar aCalendar, Service aService)
   {
     serviceStartDate = aServiceStartDate;
@@ -47,6 +63,21 @@ public class Appointment
     if (!didAddService)
     {
       throw new RuntimeException("Unable to create appointment due to service. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+=======
+  public Appointment(Date aAppointmentStartDate, Time aAppointmentStartTime, boolean aIsCancelled, CustomerAccount aCustomerAccount, Service aServiceChosen)
+  {
+    appointmentStartDate = aAppointmentStartDate;
+    appointmentStartTime = aAppointmentStartTime;
+    isCancelled = aIsCancelled;
+    boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);
+    if (!didAddCustomerAccount)
+    {
+      throw new RuntimeException("Unable to create appointment due to customerAccount. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    if (!setServiceChosen(aServiceChosen))
+    {
+      throw new RuntimeException("Unable to create Appointment due to aServiceChosen. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+>>>>>>> master
     }
   }
 
@@ -54,18 +85,32 @@ public class Appointment
   // INTERFACE
   //------------------------
 
+<<<<<<< HEAD
   public boolean setServiceStartDate(Date aServiceStartDate)
   {
     boolean wasSet = false;
     serviceStartDate = aServiceStartDate;
+=======
+  public boolean setAppointmentStartDate(Date aAppointmentStartDate)
+  {
+    boolean wasSet = false;
+    appointmentStartDate = aAppointmentStartDate;
+>>>>>>> master
     wasSet = true;
     return wasSet;
   }
 
+<<<<<<< HEAD
   public boolean setServiceStartTime(Time aServiceStartTime)
   {
     boolean wasSet = false;
     serviceStartTime = aServiceStartTime;
+=======
+  public boolean setAppointmentStartTime(Time aAppointmentStartTime)
+  {
+    boolean wasSet = false;
+    appointmentStartTime = aAppointmentStartTime;
+>>>>>>> master
     wasSet = true;
     return wasSet;
   }
@@ -78,6 +123,7 @@ public class Appointment
     return wasSet;
   }
 
+<<<<<<< HEAD
   public Date getServiceStartDate()
   {
     return serviceStartDate;
@@ -86,6 +132,16 @@ public class Appointment
   public Time getServiceStartTime()
   {
     return serviceStartTime;
+=======
+  public Date getAppointmentStartDate()
+  {
+    return appointmentStartDate;
+  }
+
+  public Time getAppointmentStartTime()
+  {
+    return appointmentStartTime;
+>>>>>>> master
   }
 
   public boolean getIsCancelled()
@@ -98,6 +154,7 @@ public class Appointment
     return isCancelled;
   }
   /* Code from template association_GetOne */
+<<<<<<< HEAD
   public Customer getCustomer()
   {
     return customer;
@@ -117,10 +174,27 @@ public class Appointment
   {
     boolean wasSet = false;
     if (aCustomer == null)
+=======
+  public CustomerAccount getCustomerAccount()
+  {
+    return customerAccount;
+  }
+  /* Code from template association_GetOne */
+  public Service getServiceChosen()
+  {
+    return serviceChosen;
+  }
+  /* Code from template association_SetOneToMany */
+  public boolean setCustomerAccount(CustomerAccount aCustomerAccount)
+  {
+    boolean wasSet = false;
+    if (aCustomerAccount == null)
+>>>>>>> master
     {
       return wasSet;
     }
 
+<<<<<<< HEAD
     Customer existingCustomer = customer;
     customer = aCustomer;
     if (existingCustomer != null && !existingCustomer.equals(aCustomer))
@@ -167,11 +241,33 @@ public class Appointment
     }
     service.addAppointment(this);
     wasSet = true;
+=======
+    CustomerAccount existingCustomerAccount = customerAccount;
+    customerAccount = aCustomerAccount;
+    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount))
+    {
+      existingCustomerAccount.removeAppointment(this);
+    }
+    customerAccount.addAppointment(this);
+    wasSet = true;
+    return wasSet;
+  }
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setServiceChosen(Service aNewServiceChosen)
+  {
+    boolean wasSet = false;
+    if (aNewServiceChosen != null)
+    {
+      serviceChosen = aNewServiceChosen;
+      wasSet = true;
+    }
+>>>>>>> master
     return wasSet;
   }
 
   public void delete()
   {
+<<<<<<< HEAD
     Customer existingCustomer = customer;
     customer = null;
     if (existingCustomer != null)
@@ -190,6 +286,15 @@ public class Appointment
     {
       placeholderService.removeAppointment(this);
     }
+=======
+    CustomerAccount placeholderCustomerAccount = customerAccount;
+    this.customerAccount = null;
+    if(placeholderCustomerAccount != null)
+    {
+      placeholderCustomerAccount.removeAppointment(this);
+    }
+    serviceChosen = null;
+>>>>>>> master
   }
 
 
@@ -197,10 +302,17 @@ public class Appointment
   {
     return super.toString() + "["+
             "isCancelled" + ":" + getIsCancelled()+ "]" + System.getProperties().getProperty("line.separator") +
+<<<<<<< HEAD
             "  " + "serviceStartDate" + "=" + (getServiceStartDate() != null ? !getServiceStartDate().equals(this)  ? getServiceStartDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "serviceStartTime" + "=" + (getServiceStartTime() != null ? !getServiceStartTime().equals(this)  ? getServiceStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "calendar = "+(getCalendar()!=null?Integer.toHexString(System.identityHashCode(getCalendar())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "service = "+(getService()!=null?Integer.toHexString(System.identityHashCode(getService())):"null");
+=======
+            "  " + "appointmentStartDate" + "=" + (getAppointmentStartDate() != null ? !getAppointmentStartDate().equals(this)  ? getAppointmentStartDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "appointmentStartTime" + "=" + (getAppointmentStartTime() != null ? !getAppointmentStartTime().equals(this)  ? getAppointmentStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "customerAccount = "+(getCustomerAccount()!=null?Integer.toHexString(System.identityHashCode(getCustomerAccount())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "serviceChosen = "+(getServiceChosen()!=null?Integer.toHexString(System.identityHashCode(getServiceChosen())):"null");
+>>>>>>> master
   }
 }
