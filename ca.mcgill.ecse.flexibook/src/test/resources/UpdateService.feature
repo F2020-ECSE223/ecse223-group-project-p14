@@ -12,7 +12,7 @@ Feature: Update Service
       | color |       75 |            45 |               30 |
     Given the Owner with username "owner" is logged in
     When "owner" initiates the update of the service "color" to name "<name>", duration "<duration>", start of down time "<downtimeStart>" and down time duration "<downtimeDuration>"
-    Then the service "color" shall be updated to name "<name>", duration "<duration>", start of down time "<downTimeStart>" and down time duration "<downtimeDuration>"
+    Then the service "color" shall be updated to name "<name>", duration "<duration>", start of down time "<downtimeStart>" and down time duration "<downtimeDuration>"
 
     Examples: 
       | name              | duration | downtimeStart | downtimeDuration |
