@@ -6,7 +6,7 @@ import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
-// line 3 "../../../../../FlexiBookTransferObjects.ump"
+// line 3 "../../../../../FlexiBook.ump"
 public class FlexiBook
 {
 
