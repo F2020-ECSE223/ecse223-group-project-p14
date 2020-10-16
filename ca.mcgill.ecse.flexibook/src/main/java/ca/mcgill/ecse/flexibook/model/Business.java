@@ -4,7 +4,7 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
-// line 27 "../../../../../FlexiBook.ump"
+// line 27 "../../../../../FlexiBookTransferObjects.ump"
 public class Business
 {
 

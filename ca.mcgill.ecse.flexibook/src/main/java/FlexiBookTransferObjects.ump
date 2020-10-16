@@ -1,0 +1,25 @@
+namespace ca.mcgill.ecse.flexibook.controller;
+
+class TOTimeSlot {
+	Date startDate;
+	Time startTime;
+	Date endDate;
+	Time endTime;
+}
+
+class TOAppointment{
+
+	0..1 -> 1 TOTimeSlot timeSlot;
+	0..1 -> * TOComboItem chosenItems;
+	String customerName;
+	String serviceName;
+	
+
+}
+
+class TOComboItem{
+
+	Boolean isMandatory;
+	String serviceName;
+
+}

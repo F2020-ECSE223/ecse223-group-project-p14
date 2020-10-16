@@ -1,42 +1,34 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-package ca.mcgill.ecse.flexibook.model;
+package ca.mcgill.ecse.flexibook.controller;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 51 "../../../../../FlexiBookTransferObjects.ump"
-public class TimeSlot
+// line 3 "../../../../../FlexiBookTransferObjects.ump"
+public class TOTimeSlot
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //TimeSlot Attributes
+  //TOTimeSlot Attributes
   private Date startDate;
   private Time startTime;
   private Date endDate;
   private Time endTime;
 
-  //TimeSlot Associations
-  private FlexiBook flexiBook;
-
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public TimeSlot(Date aStartDate, Time aStartTime, Date aEndDate, Time aEndTime, FlexiBook aFlexiBook)
+  public TOTimeSlot(Date aStartDate, Time aStartTime, Date aEndDate, Time aEndTime)
   {
     startDate = aStartDate;
     startTime = aStartTime;
     endDate = aEndDate;
     endTime = aEndTime;
-    boolean didAddFlexiBook = setFlexiBook(aFlexiBook);
-    if (!didAddFlexiBook)
-    {
-      throw new RuntimeException("Unable to create timeSlot due to flexiBook. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
   }
 
   //------------------------
@@ -94,40 +86,9 @@ public class TimeSlot
   {
     return endTime;
   }
-  /* Code from template association_GetOne */
-  public FlexiBook getFlexiBook()
-  {
-    return flexiBook;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setFlexiBook(FlexiBook aFlexiBook)
-  {
-    boolean wasSet = false;
-    if (aFlexiBook == null)
-    {
-      return wasSet;
-    }
-
-    FlexiBook existingFlexiBook = flexiBook;
-    flexiBook = aFlexiBook;
-    if (existingFlexiBook != null && !existingFlexiBook.equals(aFlexiBook))
-    {
-      existingFlexiBook.removeTimeSlot(this);
-    }
-    flexiBook.addTimeSlot(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
-  {
-    FlexiBook placeholderFlexiBook = flexiBook;
-    this.flexiBook = null;
-    if(placeholderFlexiBook != null)
-    {
-      placeholderFlexiBook.removeTimeSlot(this);
-    }
-  }
+  {}
 
 
   public String toString()
@@ -136,7 +97,6 @@ public class TimeSlot
             "  " + "startDate" + "=" + (getStartDate() != null ? !getStartDate().equals(this)  ? getStartDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "startTime" + "=" + (getStartTime() != null ? !getStartTime().equals(this)  ? getStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "endDate" + "=" + (getEndDate() != null ? !getEndDate().equals(this)  ? getEndDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
+            "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null");
   }
 }
