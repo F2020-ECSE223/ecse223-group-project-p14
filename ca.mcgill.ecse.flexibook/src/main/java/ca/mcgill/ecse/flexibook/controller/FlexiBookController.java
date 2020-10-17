@@ -16,7 +16,9 @@ public class FlexiBookController {
 		
 	}
 	
-	/* This method adds a service to the database
+	/** 
+	 * @author chengchen
+	 * This method adds a service to the database
 	 * @param name - name of the service to be added
 	 * @param durantion - duration of the service to be added
 	 * @param downtimeDuration - duration of the downtime of the service to be added
@@ -35,8 +37,9 @@ public class FlexiBookController {
 	}
 	
 	
-	/*
-	 * This method remove the service with specified name from the database
+	/**
+	 * @author chengchen
+	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
 	 */
 	public static void removeService(String name) throws InvalidInputException{
@@ -48,8 +51,9 @@ public class FlexiBookController {
 	}
 	
 	
-	/*
-	 * This method update the attributes of the specified service
+	/**
+	 * @author chengchen
+	 * This method updates the attributes of the specified service
 	 * @param name - name of the service to be updated
 	 * @param durantion - duration of the service to be updated
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
@@ -137,7 +141,8 @@ public class FlexiBookController {
 	
 /*----------------------------------------------- private helper methods -----------------------------------------------------*/
 	
-	/*
+	/**
+	 * @author chengchen
 	 * This method finds the service with specified name
 	 * @param name - the name of the service to found 
 	 * @return the service found 
