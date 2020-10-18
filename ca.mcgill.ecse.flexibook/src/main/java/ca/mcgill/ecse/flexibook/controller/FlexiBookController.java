@@ -135,17 +135,29 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void signUpCustomer(String username, String password) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-		try {
-			Customer aCustomer = new Customer(username, password, flexiBook);
-			flexiBook.addCustomer(aCustomer); //@ TODO check if this is necessary or if new Customer does it already
-		} catch (RuntimeException e) {
-			throw new InvalidInputException(e.getMessage());
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
+		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
+		// check if owner is logged in if yes, throw error
+		if (user.getUsername() == "owner" || user instanceof Owner) {
+			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 		}
-		// @ TODO may need if statements to capture all edge cases: 
-		// add code to capture incomplete form
-		// add code to capture if owner is logged in when customer account is trying to be made (use getCurrentLoginUser)
-		// may need to overwrite error messages, as described in feature description
+		// if username empty or password empty throw error
+		if (username == null || username == "") {
+			throw new InvalidInputException("The user name cannot be empty");
+		}
+		if (password == null || password == "") {
+			throw new InvalidInputException("The password cannot be empty");
+		}
+		// if username already taken throw error
+		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+			throw new InvalidInputException("The username already exists");
+		}
+		//if it gets to here, create a customer!
+		Customer aCustomer = new Customer(username, password, flexiBook);
+		flexiBook.addCustomer(aCustomer);
+		//assuming signing up also logs you in:
+		FlexiBookApplication.setCurrentLoginUser(aCustomer);
 	}
 	
 	/**
