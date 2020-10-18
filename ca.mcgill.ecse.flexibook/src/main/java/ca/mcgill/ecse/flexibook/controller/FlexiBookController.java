@@ -512,10 +512,14 @@ public class FlexiBookController {
 		for(int i = 0; i < orderedServices.size(); i++){
 			mandatory = listOfMandatory.get(i);
 			service = orderedServices.get(i);
-			new ComboItem(mandatory, service, serviceCombo);
+			ComboItem comboItem = new ComboItem(mandatory, service, serviceCombo);
 			//sets appropirate main service
 			if(service.equals(mainService)){
-				serviceCombo.setMainService(service);
+				//throws an exception if mainService is not mandatory
+				if(!mandatory){
+					throw new InvalidInputException("Main Service must be mandatory.");
+				}
+				serviceCombo.setMainService(comboItem);
 			}
 
 		}
@@ -532,7 +536,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method deletes a Service Combo
+	 * This method deletes a Service Combo given a name
 	 * @author gtjarvis
 	 */
 	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
