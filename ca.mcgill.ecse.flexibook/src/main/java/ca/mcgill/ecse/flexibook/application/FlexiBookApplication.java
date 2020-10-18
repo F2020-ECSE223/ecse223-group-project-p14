@@ -23,6 +23,7 @@ public class FlexiBookApplication {
 	private static FlexiBook flexiBook;
    
 	public static void main(String[] args) {
+
 		
 
     }
@@ -77,7 +78,7 @@ public class FlexiBookApplication {
     /**
      * @author AntoineW
      */
-    public static Time setCurrentTime() {
+    public static Time getCurrentTime() {
     	return new Time(System.currentTimeMillis()); 	
     }
 }
