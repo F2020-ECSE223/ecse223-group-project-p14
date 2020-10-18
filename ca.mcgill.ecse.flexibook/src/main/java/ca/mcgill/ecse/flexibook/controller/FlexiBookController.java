@@ -157,23 +157,34 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-		User user = FlexiBookApplication.getCurrentLoginUser();
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
+		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
 		//check if current username is the same as currently logged in
-		// if not --> permission issue
-		// if yes, continue
+		if (user.getUsername() != currentUsername) {
+			throw new InvalidInputException("You do not have permission to update this account"); //technically not in scope of feature
+		}
 		// check if newusername is null/empty --> if yes, throw error else continue	
+		if (newUsername == null || newUsername == "") {
+			throw new InvalidInputException("The user name cannot be empty");
+		}
 		// check if currentUsername == owner && newUsername != owner --> cant change owner username else continue
+		if (currentUsername == "owner" && newUsername != "owner") {
+			throw new InvalidInputException("Changing username of owner is not allowed");
+		}
 		// check if password is null/empty --> if yes, throw error else continue
+		if (newPassword == null || newPassword == "") {
+			throw new InvalidInputException("The password cannot be empty");
+		}
 		// check if username already used --> if yes, throw error else continue
+		// this one may already be covered in the setUsername method. @ TODO check if setUsername covers this case
+		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { //this is a crazy line
+		//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+			throw new InvalidInputException("Username not available");
+		}
 		// if it gets to here, then just update username and password!
-		
-		
-		//@ TODO update customer username and password
-		// update owner password only (but enters owner as username)
-		// code to capture incomplete form
-		// code to capture username already taken
-		// code to capture owner trying to change username
+		user.setUsername(newUsername);
+		user.setPassword(newPassword);
+
 	}
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
