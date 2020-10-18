@@ -178,7 +178,7 @@ public class FlexiBookController {
 		// add code to capture if trying to delete !currentLoginUser 
 	}
 	
-	
+	//testing how to use github
 /*----------------------------------------------- Query methods --------------------------------------------------------------*/
 	
 	
