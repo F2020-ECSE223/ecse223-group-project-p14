@@ -151,8 +151,9 @@ public class FlexiBookController {
 	/**
 	 * This method updates the username and/or password for a customer account, 
 	 * or the password for an owner account
-	 * @param username
-	 * @param password
+	 * @param currentUsername
+	 * @param newUsername
+	 * @param newPassword
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
@@ -184,6 +185,7 @@ public class FlexiBookController {
 		// if it gets to here, then just update username and password!
 		user.setUsername(newUsername);
 		user.setPassword(newPassword);
+		//FlexiBookApplication.setCurrentLoginUser(user); //pretty sure this isn't needed
 
 	}
 	/**
@@ -192,12 +194,18 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
-	public static void deleteCustomerAccount(String username) throws InvalidInputException{
-		// @TODO check if customer to be deleted is currently logged in
-		// delete customer account and associated appointments (captured already in Customer)
-		// log out (use setCurrentLoginUser)
+	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
+		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
+		// check if customer to be deleted is currently logged in
 		// add code to stop owner from deleting account
-		// add code to capture if trying to delete !currentLoginUser 
+		if (user.getUsername() != username || user.getUsername() == "owner") {
+			throw new InvalidInputException("You do not have permission to delete this account");
+		}
+		// delete customer account and associated appointments (captured already in Customer)
+		user.delete();
+		// log out
+		FlexiBookApplication.clearCurrentLoginUser();
 	}
 	
 
