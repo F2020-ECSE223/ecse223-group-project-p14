@@ -18,7 +18,9 @@ public class FlexiBookController {
 		
 	}
 	
-	/* This method adds a service to the database
+	/** 
+	 * @author chengchen
+	 * This method adds a service to the database
 	 * @param name - name of the service to be added
 	 * @param durantion - duration of the service to be added
 	 * @param downtimeDuration - duration of the downtime of the service to be added
@@ -37,8 +39,9 @@ public class FlexiBookController {
 	}
 	
 	
-	/*
-	 * This method remove the service with specified name from the database
+	/**
+	 * @author chengchen
+	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
 	 */
 	public static void removeService(String name) throws InvalidInputException{
@@ -50,8 +53,9 @@ public class FlexiBookController {
 	}
 	
 	
-	/*
-	 * This method update the attributes of the specified service
+	/**
+	 * @author chengchen
+	 * This method updates the attributes of the specified service
 	 * @param name - name of the service to be updated
 	 * @param durantion - duration of the service to be updated
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
@@ -241,6 +245,61 @@ public class FlexiBookController {
 			throw new InvalidInputException("No such service or service Combo exist!");
 		}
 	}
+	
+	
+	/**
+	 * This method creates a new customer account when a customer signs up
+	 * @param username
+	 * @param password
+	 * @throws InvalidInputException
+	 * @author Catherine
+	 */
+	public static void signUpCustomer(String username, String password) throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		try {
+			Customer aCustomer = new Customer(username, password, flexiBook);
+			flexiBook.addCustomer(aCustomer); //@ TODO check if this is necessary or if new Customer does it already
+		} catch (RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		// @ TODO may need if statements to capture all edge cases: 
+		// add code to capture incomplete form
+		// add code to capture if owner is logged in when customer account is trying to be made (use getCurrentLoginUser)
+		// may need to overwrite error messages, as described in feature description
+	}
+	
+	/**
+	 * This method updates the username and/or password for a customer account, 
+	 * or the password for an owner account
+	 * @param username
+	 * @param password
+	 * @throws InvalidInputException
+	 * @author Catherine
+	 */
+	public static void updateUserAccount(String newUsername, String newPassword) throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		//@ TODO update customer username and password
+		// update owner password only (but enters owner as username)
+		// code to capture incomplete form
+		// code to capture username already taken
+		// code to capture owner trying to change username
+	}
+	/**
+	 * This method deletes the current customer's account so their personal information is deleted
+	 * @param username
+	 * @throws InvalidInputException
+	 * @author Catherine
+	 */
+	public static void deleteCustomerAccount(String username) throws InvalidInputException{
+		// @TODO check if customer to be deleted is currently logged in
+		// delete customer account and associated appointments (captured already in Customer)
+		// log out (use setCurrentLoginUser)
+		// add code to stop owner from deleting account
+		// add code to capture if trying to delete !currentLoginUser 
+	}
+	
+	
+
 /*----------------------------------------------- Query methods --------------------------------------------------------------*/
 	
 	
@@ -251,7 +310,8 @@ public class FlexiBookController {
 	
 /*----------------------------------------------- private helper methods -----------------------------------------------------*/
 	
-	/*
+	/**
+	 * @author chengchen
 	 * This method finds the service with specified name
 	 * @param name - the name of the service to found 
 	 * @return the service found 
