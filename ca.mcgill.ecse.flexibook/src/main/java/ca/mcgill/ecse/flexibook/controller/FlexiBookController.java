@@ -502,7 +502,7 @@ public class FlexiBookController {
 		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
-			throw new InvalidInputException("Error with additional services. Please try again.");
+			throw new InvalidInputException("Error with additional services.");
 		}
 		//creates new serviceCombo object
 		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
@@ -535,8 +535,12 @@ public class FlexiBookController {
 	 * This method deletes a Service Combo
 	 * @author gtjarvis
 	 */
-	public static void deleteServiceCombo() { 
-		
+	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
+		BookableService service = findBookableService(name);
+		if(service = null){
+			throw new InvalidInputException("Service does not exist.");
+		}
+		service.delete();
 	}
 
 
