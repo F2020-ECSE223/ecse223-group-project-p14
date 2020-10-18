@@ -52,8 +52,7 @@ Feature: Make appointment
 
   Scenario Outline: A customer attempts to make various valid appointments for service combos
     Given "customer1" is logged in to their account
-    When "customer1" selects "<optionalServices>" for the service combo
-    When "customer1" schedules an appointment on "<date>" for "<serviceName>" at "<startTime>"
+    When "customer1" schedules an appointment on "<date>" for "<serviceName>" with "<optionalServices>" at "<startTime>"
     Then "customer1" shall have a "<serviceName>" appointment on "<date>" from "<startTime>" to "<endTime>"
     Then there shall be 1 more appointment in the system
 
@@ -85,8 +84,7 @@ Feature: Make appointment
 
   Scenario Outline: A customer attempts to make various invalid appointments for service combos
     Given "customer1" is logged in to their account
-    When "customer1" selects "<optionalServices>" for the service combo
-    When "customer1" schedules an appointment on "<date>" for "<serviceName>" at "<startTime>"
+    When "customer1" schedules an appointment on "<date>" for "<serviceName>" with "<optionalServices>" at "<startTime>"
     Then the system shall report "There are no available slots for <serviceName> on <date> at <startTime>"
     Then there shall be 0 more appointment in the system
 
