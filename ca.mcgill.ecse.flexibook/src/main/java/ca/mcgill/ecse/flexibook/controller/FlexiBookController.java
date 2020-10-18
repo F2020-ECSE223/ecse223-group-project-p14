@@ -441,7 +441,6 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
 			throw new InvalidInputException("You do not have permission to delete this account");
