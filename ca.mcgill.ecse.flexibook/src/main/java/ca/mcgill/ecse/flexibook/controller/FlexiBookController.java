@@ -135,25 +135,21 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void signUpCustomer(String username, String password) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
-		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
-		// check if owner is logged in if yes, throw error
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() == "owner" || user instanceof Owner) {
 			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 		}
-		// if username empty or password empty throw error
 		if (username == null || username == "") {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
 		if (password == null || password == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		// if username already taken throw error
 		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
 			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
 			throw new InvalidInputException("The username already exists");
 		}
-		//if it gets to here, create a customer!
 		Customer aCustomer = new Customer(username, password, flexiBook);
 		flexiBook.addCustomer(aCustomer);
 		//assuming signing up also logs you in:
@@ -170,31 +166,25 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
-		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
-		//check if current username is the same as currently logged in
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() != currentUsername) {
 			throw new InvalidInputException("You do not have permission to update this account"); //technically not in scope of feature
 		}
-		// check if newusername is null/empty --> if yes, throw error else continue	
 		if (newUsername == null || newUsername == "") {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		// check if currentUsername == owner && newUsername != owner --> cant change owner username else continue
 		if (currentUsername == "owner" && newUsername != "owner") {
 			throw new InvalidInputException("Changing username of owner is not allowed");
 		}
-		// check if password is null/empty --> if yes, throw error else continue
 		if (newPassword == null || newPassword == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		// check if username already used --> if yes, throw error else continue
-		// this one may already be covered in the setUsername method. @ TODO check if setUsername covers this case
+		// @ TODO check if setUsername covers this case
 		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { //this is a crazy line
 		//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
 			throw new InvalidInputException("Username not available");
 		}
-		// if it gets to here, then just update username and password!
 		user.setUsername(newUsername);
 		user.setPassword(newPassword);
 		//FlexiBookApplication.setCurrentLoginUser(user); //pretty sure this isn't needed
@@ -207,16 +197,12 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); //this app
-		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
-		// check if customer to be deleted is currently logged in
-		// add code to stop owner from deleting account
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
-		// delete customer account and associated appointments (captured already in Customer)
-		((Customer)user).delete(); // I want to use the customer delete method
-		// log out
+		((Customer)user).delete(); 
 		FlexiBookApplication.clearCurrentLoginUser();
 	}
 	
