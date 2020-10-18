@@ -513,34 +513,102 @@ public class FlexiBookController {
 	}
 	
 	/**
-	 * requires getTOAppointment to finish
+	 * This is a query method which returns a list of TOAppointmentCanlander with a chosen data and a chosen mode
+	 * 
 	 * @param date
+	 * @param ByDay
+	 * @param ByMonth
+	 * @param ByYear
 	 * @return
 	 * @author mikewang
 	 */
-	public static List<TOAppointmentCanlander> viewAppointmentCalnader(Date date){
+	public static List<TOAppointmentCanlander> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
 		//@ TODO
+		ArrayList<TOAppointmentCanlander> appointmentCanlanders = new ArrayList<TOAppointmentCanlander>();
+		if (ByDay == true && ByMonth == false && ByYear == false) {
+			for (TOAppointment toAppointments: getTOAppointment()) {
+				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
+					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCanlanders.add(toAppointmentCanlander);
+				}
+			}
+		}
+		else if(ByDay == false && ByMonth == true && ByYear == false) {
+			for (TOAppointment toAppointments: getTOAppointment()) {
+				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
+					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCanlanders.add(toAppointmentCanlander);
+				}
+			}
+		}
+		else if(ByDay == false && ByMonth == false && ByYear == true) {
+			for (TOAppointment toAppointments: getTOAppointment()) {
+				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
+					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCanlanders.add(toAppointmentCanlander);
+				}
+			}
+		}
+		return appointmentCanlanders;
 	}
 	
 	/**
-	 * requires getTOTimeSlot and getTOComboItem to finsih
+	 * This is a query method which can gives a list of all TOAppointment 
 	 * @return
 	 * @author mikewang
 	 */
 	public static List<TOAppointment> getTOAppointment(){
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
-			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(), appointment.getBookableService().getName(), appointment.getTOTimeSlot());
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(), appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			appointments.add(toAppointment);
 		}
+		return appointments;
 		
 	}	
 	
-	public static List<TOTimeSlot> getTOTimeSlot(){
-		//@ TODO
+	/**
+	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
+	 * @param timeSlot
+	 * @return
+	 * @author mikewang
+	 */
+	public static TOTimeSlot CovertToTOTimeSlot(TimeSlot timeSlot) {
+		TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(),timeSlot.getEndDate(),timeSlot.getEndTime());
+		return toTimeSlot;
 	}
 	
-	public static List<TOComboItem> getTOComboItem(){
+	
+	/**
+	 * This is a query method which can get a list of TOTimeSlot from all timeSlots in the systems
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOTimeSlot> getTOTimeSlot(){
 		//@ TODO
+		ArrayList<TOTimeSlot> timeSlots = new ArrayList<TOTimeSlot>();
+		for (TimeSlot timeSlot : FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+			TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(), timeSlot.getEndDate(), timeSlot.getEndTime());
+			timeSlots.add(toTimeSlot);
+		}
+		return timeSlots;
+	}
+	
+	
+	
+	/**
+	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
+	 * @param appointment
+	 * @return
+	 */
+	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
+		//@ TODO
+		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
+		for (ComboItem comboitems: appointment.getChosenItems()) {
+			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
+			comboItems.add(toComboItem);
+		}
+		return comboItems;
 	}
 	
 	
