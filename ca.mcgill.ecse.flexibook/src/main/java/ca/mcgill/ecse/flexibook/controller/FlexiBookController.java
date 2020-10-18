@@ -156,8 +156,19 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
-	public static void updateUserAccount(String newUsername, String newPassword) throws InvalidInputException {
+	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		User user = FlexiBookApplication.getCurrentLoginUser();
+		//check if current username is the same as currently logged in
+		// if not --> permission issue
+		// if yes, continue
+		// check if newusername is null/empty --> if yes, throw error else continue	
+		// check if currentUsername == owner && newUsername != owner --> cant change owner username else continue
+		// check if password is null/empty --> if yes, throw error else continue
+		// check if username already used --> if yes, throw error else continue
+		// if it gets to here, then just update username and password!
+		
+		
 		//@ TODO update customer username and password
 		// update owner password only (but enters owner as username)
 		// code to capture incomplete form
@@ -178,7 +189,7 @@ public class FlexiBookController {
 		// add code to capture if trying to delete !currentLoginUser 
 	}
 	
-	//testing how to use github
+
 /*----------------------------------------------- Query methods --------------------------------------------------------------*/
 	
 	
