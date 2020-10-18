@@ -450,11 +450,14 @@ public class FlexiBookController {
 		FlexiBookApplication.clearCurrentLoginUser();
 	}
 	
+	
+	
 	/**
 	 * This method logins the user based on their Username and password information
 	 * @param username
 	 * @param password
 	 * @throws InvalidInputException
+	 * @author mikewang
 	 */
 	public static void logIn(String username, String password) throws InvalidInputException{
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
@@ -476,6 +479,8 @@ public class FlexiBookController {
 			throw new InvalidInputException("There is another user currently login, please try again later");
 		}
 	}
+	
+	
 
 	/**
 	 * This method logout the user 
@@ -511,6 +516,8 @@ public class FlexiBookController {
 		}
 		return Customers;
 	}
+	
+	
 	
 	/**
 	 * This is a query method which returns a list of TOAppointmentCanlander with a chosen data and a chosen mode
@@ -552,6 +559,9 @@ public class FlexiBookController {
 		return appointmentCanlanders;
 	}
 	
+	
+	
+	
 	/**
 	 * This is a query method which can gives a list of all TOAppointment 
 	 * @return
@@ -579,6 +589,8 @@ public class FlexiBookController {
 	}
 	
 	
+	
+	
 	/**
 	 * This is a query method which can get a list of TOTimeSlot from all timeSlots in the systems
 	 * @return
@@ -593,6 +605,8 @@ public class FlexiBookController {
 		}
 		return timeSlots;
 	}
+	
+	
 	
 	
 	
