@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
@@ -449,11 +450,98 @@ public class FlexiBookController {
 		FlexiBookApplication.clearCurrentLoginUser();
 	}
 	
+	/**
+	 * This method logins the user based on their Username and password information
+	 * @param username
+	 * @param password
+	 * @throws InvalidInputException
+	 */
+	public static void logIn(String username, String password) throws InvalidInputException{
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		Customer ThisCustomer = findCustomer(username);
+		Owner ThisOwner2 = findOwner(username);
+
+		if (currentUser == null) {
+			if (ThisOwner2 != null && ThisOwner2.getPassword() == password) {
+				FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
+			}
+			else if (ThisCustomer != null && ThisCustomer.getPassword()==password) {
+				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
+			}
+			else {
+					throw new InvalidInputException("Password or Username is incorrect, please try again!");
+				}
+		}
+		else {
+			throw new InvalidInputException("There is another user currently login, please try again later");
+		}
+	}
+
+	/**
+	 * This method logout the user 
+	 * @author mikewang
+	 */
+	
+	// requires UI for more detailed implementation
+	public static void logOut() throws InvalidInputException{ 
+		User currentLoginUser = FlexiBookApplication.getCurrentLoginUser();
+		if (currentLoginUser == null) {
+			throw new InvalidInputException("Password or Username is incorrect, please try again!");
+		}
+		else {
+			FlexiBookApplication.clearCurrentLoginUser();
+		}
+	}
+	
+	
 
 
 /*----------------------------------------------- Query methods --------------------------------------------------------------*/
 	
+	/**
+	 * This method is a helper method of finding all existing customers objects into an TO ArrayList
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOCustomer> getTOCustomers(){
+		ArrayList<TOCustomer> Customers = new ArrayList<TOCustomer>();
+		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			TOCustomer toCustomer = new TOCustomer(user.getUsername(), user.getPassword());
+			Customers.add(toCustomer);
+		}
+		return Customers;
+	}
 	
+	/**
+	 * requires getTOAppointment to finish
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOAppointmentCanlander> viewAppointmentCalnader(Date date){
+		//@ TODO
+	}
+	
+	/**
+	 * requires getTOTimeSlot and getTOComboItem to finsih
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOAppointment> getTOAppointment(){
+		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(), appointment.getBookableService().getName(), appointment.getTOTimeSlot());
+		}
+		
+	}	
+	
+	public static List<TOTimeSlot> getTOTimeSlot(){
+		//@ TODO
+	}
+	
+	public static List<TOComboItem> getTOComboItem(){
+		//@ TODO
+	}
 	
 	
 	
@@ -722,5 +810,75 @@ public class FlexiBookController {
 		
 	}
 	
+
 	
+	
+	
+	/**
+	 * This method is a helper method of finding a particular customer 
+	 * @param userName
+	 * @return
+	 * @author mikewang
+	 */
+	
+	private static Customer findCustomer (String userName){
+		Customer foundCustomer = null;
+		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			if (user.getUsername() == userName ) {
+				foundCustomer = user;
+				break;
+			}else {
+				foundCustomer = null;
+			}
+		}
+		return foundCustomer;
+	}
+	
+	/**
+	 * This method is a helper method of finding the owner 
+	 * @param userName
+	 * @return
+	 * @author mikewang
+	 */
+	private static Owner findOwner(String userName) {
+		Owner foundOwner = null;
+		if (userName == "owner") {
+			foundOwner = FlexiBookApplication.getFlexiBook().getOwner();
+		}
+		return foundOwner;
+	}
+	
+	
+	/**
+	 * This method is a helper method of finding is the date we specifying is today. 
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static Boolean isToday(Date date) {
+		java.util.Date tempToday = getCurrentDate();
+		Boolean check =false; 
+		if (date == tempToday) {
+			check = true;
+		}
+		return check; 
+	}
+	
+	
+	/**
+	 * This is a helper method of finding the current date
+	 * @return
+	 * @author BTMS.getCurrentDate()
+	 */
+   private static java.util.Date getCurrentDate(){
+	    java.util.Calendar cal = java.util.Calendar.getInstance();
+	    cal.set(Calendar.HOUR_OF_DAY, 0);
+	    cal.set(Calendar.MINUTE, 0);
+	    cal.set(Calendar.SECOND, 0);
+	    cal.set(Calendar.MILLISECOND, 0);
+	    java.util.Date date = cal.getTime();
+	    return date;
+	  }
 }
+
+
