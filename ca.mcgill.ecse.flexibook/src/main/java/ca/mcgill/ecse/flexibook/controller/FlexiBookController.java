@@ -492,6 +492,54 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+
+	/**
+	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
+	 	which otherServices are mandatory.
+	 * @author gtjarvis
+	 */
+	public static void defineServiceCombo(String name, Service mainService, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
+		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
+		//throws an exception if length of orderedServices does not match length of listOfMandatory
+		if(orderedServices.size() != listOfMandatory.size()){
+			throw new InvalidInputException("Error with additional services. Please try again.");
+		}
+		//creates new serviceCombo object
+		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
+		//goes through list of orderedServices and creates a ComboItem for every service
+		Boolean mandatory;
+		Service service;
+		for(int i = 0; i < orderedServices.size(); i++){
+			mandatory = listOfMandatory.get(i);
+			service = orderedServices.get(i);
+			new ComboItem(mandatory, service, serviceCombo);
+			//sets appropirate main service
+			if(service.equals(mainService)){
+				serviceCombo.setMainService(service);
+			}
+
+		}
+		
+
+	}
+
+	/**
+	 * This method updates a Service Combo
+	 * @author gtjarvis
+	 */
+	public static void updateServiceCombo() { 
+		
+	}
+
+	/**
+	 * This method deletes a Service Combo
+	 * @author gtjarvis
+	 */
+	public static void deleteServiceCombo() { 
+		
+	}
+
+
 	
 	
 
