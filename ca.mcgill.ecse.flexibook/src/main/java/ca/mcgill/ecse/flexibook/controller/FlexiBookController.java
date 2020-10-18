@@ -199,11 +199,11 @@ public class FlexiBookController {
 		User user = FlexiBookApplication.getCurrentLoginUser(); //this user
 		// check if customer to be deleted is currently logged in
 		// add code to stop owner from deleting account
-		if (user.getUsername() != username || user.getUsername() == "owner") {
+		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
 		// delete customer account and associated appointments (captured already in Customer)
-		user.delete();
+		((Customer)user).delete(); // I want to use the customer delete method
 		// log out
 		FlexiBookApplication.clearCurrentLoginUser();
 	}
