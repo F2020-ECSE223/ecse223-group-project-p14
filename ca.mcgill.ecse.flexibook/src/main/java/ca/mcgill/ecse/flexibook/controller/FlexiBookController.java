@@ -4,10 +4,12 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
+import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 
 
 public class FlexiBookController {
@@ -69,10 +71,19 @@ public class FlexiBookController {
 	}
 	
 	
+
 	/**
+	 * This method handle adding appointment for a single service.
+	 * (there will be a wrapper method to add a general BookableService,
+	 * but to fit the UI design, kept this method public for direct use)
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * @throws InvalidInputException
+	 * 
 	 * @author AntoineW
 	 */
-	public static void addAppointmentForService(String serviceName, Date date, Time time, boolean isSingleService) 
+	public static void addAppointmentForService(String serviceName, Date date, Time time) 
 			throws InvalidInputException{
 		
 		User user = FlexiBookApplication.getCurrentLoginUser();
@@ -96,37 +107,140 @@ public class FlexiBookController {
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
+		
 		// here handle Scenario: A customer attempts to make various invalid appointments for services
-		if(!isNotOverlapWithOtherTimeSlots (timeSlot)) {
-			if (!isDuringDowntime(timeSlot)) {
-				throw new InvalidInputException("There are no available slots for " + serviceName + " on "
-						+ date + " at " + time);
+		// there are three time constraints to check:
+		// 1. if in the business time, if not, fail directly
+		// 		2. if overlop with other time slot (other appointment/vacation/holiday). if there is overlap, we check the downtime!
+		// 		3. if not in the downtime of other app, fail
+		if (!isDuringWorkTime(timeSlot)) {
+			// the added timeslot is not good. So we remove it because the appointment booking fails
+			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+			throw new InvalidInputException("There are no available slots for " + serviceName + " on "
+					+ date + " at " + time);
+		}else {
+			if(!isNotOverlapWithOtherTimeSlots (timeSlot)) {
+				if (!isDuringDowntime(timeSlot)) {
+					
+					// the added timeslot is not good. So we remove it because the appointment booking fails
+					FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+					throw new InvalidInputException("There are no available slots for " + serviceName + " on "
+							+ date + " at " + time);
 				}
+			}
 		}
 		
-		//@ TODO
-		// need to check if it is in on the workday and in the business time schedule
+		
+		// after making sure time is OK, lets add appointment for a single service.
+		
+		try {
+			FlexiBookApplication.getFlexiBook().addAppointment((Customer) user, s, timeSlot);
+		} catch (RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		
+		
+		
+
+	}
+	
+	/**
+	 * This method handle adding appointment for a service combo.
+	 * (there will be a wrapper method to add a general BookableService,
+	 * but to fit the UI design, kept this method public for direct use)
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * @param optService String defines all optional service name, need to be parsed!
+	 * @throws InvalidInputException
+	 * 
+	 * @author AntoineW
+	 */
+	public static void addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
+			throws InvalidInputException{
+	
+		User user = FlexiBookApplication.getCurrentLoginUser();
+		// Scenario: The owner attempts to make an appointment
+		if(user instanceof Owner) {
+			throw new InvalidInputException("An owner cannot make an appointment");
+		}else if (user == null) {
+			throw new InvalidInputException("An User is not logged in");
+		}
+		
+		ServiceCombo sCombo = findServiceCombo(serviceName);
+		if(sCombo == null) {
+			throw new InvalidInputException("No such service Combo exist!");
+		}
+		
+		
+		List<ComboItem> itemList = sCombo.getServices();
+		int actualTotalTime = getActualTimeOfAppointment(itemList, optService);
+		
+		LocalTime aEndtime = time.toLocalTime().plusMinutes(actualTotalTime);
+		Time endTime = Time.valueOf(aEndtime);
+		
+		// Here handle constraints: start and end date of an appointment have to be the same
+		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
+						FlexiBookApplication.getFlexiBook());
+		
+		
+		// here handle Scenario: A customer attempts to make various invalid appointments for services
+		// there are three time constraints to check:
+		// 1. if in the business time, if not, fail directly
+		// 		2. if overlop with other time slot (other appointment/vacation/holiday). if there is overlap, we check the downtime!
+		// 		3. if not in the downtime of other app, fail
+		if (!isDuringWorkTime(timeSlot)) {
+			// the added timeslot is not good. So we remove it because the appointment booking fails
+			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+			throw new InvalidInputException("There are no available slots for " + serviceName + " on "
+							+ date + " at " + time);
+		}else {
+			if(!isNotOverlapWithOtherTimeSlots (timeSlot)) {
+				if (!isDuringDowntime(timeSlot)) {
+							
+					// the added timeslot is not good. So we remove it because the appointment booking fails
+					FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+					throw new InvalidInputException("There are no available slots for " + serviceName + " on "
+									+ date + " at " + time);
+				}
+			}
+		}
+				
+				
+		// after making sure time is OK, lets add appointment for a single service.
+				
+		try {
+			FlexiBookApplication.getFlexiBook().addAppointment((Customer) user, sCombo, timeSlot);
+		} catch (RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		
+		
 		
 	}
 	
 	/**
-	 * 
+	 * wrapper method combining creating appointment for single service and combo
 	 * @param serviceName
+	 * @param optService
 	 * @param date
 	 * @param time
-	 * @param isSingleService
-	 * @throws InvalidInputException
+	 * 
 	 * @author AntoineW
+	 * @throws InvalidInputException 
 	 */
-	public static void addAppointmentForComboService(String serviceName, Date date, Time time, boolean isSingleService) 
-			throws InvalidInputException{
-	
+	public static void makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
+		BookableService bs = findBookableService(serviceName);
 		
-		//@ TODO
-		// This is for the combo
-		
+		if(bs instanceof Service) {
+			addAppointmentForService(serviceName, date, time);
+		}else if(bs instanceof ServiceCombo) {
+			addAppointmentForComboService(serviceName, optService, date, time);
+		}else {
+			//BookableService might be null
+			throw new InvalidInputException("No such service or service Combo exist!");
+		}
 	}
-	
 /*----------------------------------------------- Query methods --------------------------------------------------------------*/
 	
 	
@@ -167,8 +281,22 @@ public class FlexiBookController {
 		return s;
 	}
 
+	/**
+	 * @author AntoineW
+	 */
+	private static ServiceCombo findServiceCombo(String name) {
+		
+		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bservice.getName() == name && bservice instanceof ServiceCombo) {
+				return (ServiceCombo)bservice;
+			}
+		}
+		return null;
+	}
 	
 
+	
+	
 
 	/**
 	 * Check if the time slot overlaps with other appointment
@@ -230,5 +358,71 @@ public class FlexiBookController {
 		}
 		return isDuringDowntime;
 	}
+	
+	
+	/**
+	 * appointment cannot be made on holidays or during vacation
+	 * @param timeSlot
+	 * @return
+	 * @author AntoineW
+	 */
+	private static boolean isDuringWorkTime(TimeSlot timeSlot) {
+		
+		boolean isDuringWorkTime = false;
+		
+		//First get the weekday
+		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
+		// then check all businessHour list
+		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		
+		for(BusinessHour bh: bhList) {
+			// check weekday
+			if(dOfWeek == bh.getDayOfWeek()) {
+				// if the appointment is on that day, compare if the timeslot is included by business hour
+				if(timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime()) &&
+						timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())) {
+					isDuringWorkTime = true;
+					break;
+				}
+			}
+			
+		}
+		return isDuringWorkTime;
+	}
+	
+	/**
+	 * This method is a helper method determining the actual time of a appointment
+	 * It will only be used for a serviceCombo.<p>
+	 * This is implemented because customer can choose to not have certain optional services in a combo.
+	 * @param sc
+	 * @param chosenItemNames String only contain chosen optional service. The main one is already included
+	 * @return
+	 */
+	private static int getActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames) {
+		
+		int actualTime = 0;
+		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames);
+	
+		for (ComboItem ci : comboItemList) {
+			
+			if(ci.getMandatory()) {
+				actualTime = actualTime + ci.getService().getDuration();
+			}else {
+				// check the chosen list if a NON-mandatory service is chosen
+				// if yes then we add time
+				for (String name : itemNameList ) {
+					// loop through all chosen name, see if equals to the current item
+					if (name.compareTo(ci.getService().getName()) == 0) {
+						actualTime = actualTime + ci.getService().getDuration();
+					}
+				}
+				
+			}
+		}
+		
+		return actualTime;
+		
+	}
+	
 	
 }

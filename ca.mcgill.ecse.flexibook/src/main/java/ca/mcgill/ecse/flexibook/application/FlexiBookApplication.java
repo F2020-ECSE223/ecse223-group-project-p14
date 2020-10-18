@@ -6,6 +6,7 @@ package ca.mcgill.ecse.flexibook.application;
 import java.sql.Date;
 import java.sql.Time;
 
+import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.User;
 
@@ -20,9 +21,9 @@ public class FlexiBookApplication {
 	private static User currentUser;
 	
 	private static FlexiBook flexiBook;
-
    
 	public static void main(String[] args) {
+		
 
     }
 	
