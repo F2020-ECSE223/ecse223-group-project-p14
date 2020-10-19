@@ -118,7 +118,11 @@ public class CucumberStepDefinitions {
 		flexiBook.delete();
 	}
 	
+	/**
+	 * @author Catherine
+	 */
 	
+/*---------------------------Test Sign Up Customer--------------------------*/
 	
 	
 	

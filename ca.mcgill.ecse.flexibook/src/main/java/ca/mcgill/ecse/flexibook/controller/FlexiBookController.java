@@ -469,17 +469,19 @@ public class FlexiBookController {
 		
 	}
 
+	
 	/**
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
 	 * @param password
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	// boolean to see if worked or not
-	public static void signUpCustomer(String username, String password) throws InvalidInputException {
+	public static boolean signUpCustomer(String username, String password) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
+		boolean signUpSuccessful = false;
 		if (user.getUsername() == "owner" || user instanceof Owner) {
 			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 		}
@@ -489,18 +491,21 @@ public class FlexiBookController {
 		else if (password == null || password == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { 
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
 			throw new InvalidInputException("The username already exists");
 		}
-		//else
-		//@ TODO try catch?
-		Customer aCustomer = new Customer(username, password, flexiBook);
-		flexiBook.addCustomer(aCustomer);
-		//assuming signing up also logs you in:
-		FlexiBookApplication.setCurrentLoginUser(aCustomer); 
+		else {
+			Customer aCustomer = new Customer(username, password, flexiBook);
+			flexiBook.addCustomer(aCustomer);
+			//assuming signing up also logs you in:
+			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
+			signUpSuccessful = true;
+		}
+		return signUpSuccessful;
 	}
 
+	
 	/**
 	 * This method updates the username and/or password for a customer account, 
 	 * or the password for an owner account
@@ -508,48 +513,57 @@ public class FlexiBookController {
 	 * @param newUsername
 	 * @param newPassword
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	// return a boolean to say if it worked or not
-	// else ifs
-	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
+	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
+		boolean updateSuccessful = false;
 		if (user.getUsername() != currentUsername) {
-			throw new InvalidInputException("You do not have permission to update this account"); //technically not in scope of feature
+			throw new InvalidInputException("You do not have permission to update this account"); 
 		}
-		if (newUsername == null || newUsername == "") {
+		else if (newUsername == null || newUsername == "") {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		if (currentUsername == "owner" && newUsername != "owner") {
+		else if (currentUsername == "owner" && newUsername != "owner") {
 			throw new InvalidInputException("Changing username of owner is not allowed");
 		}
-		if (newPassword == null || newPassword == "") {
+		else if (newPassword == null || newPassword == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		// @ TODO check if setUsername covers this case
-		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { //this is a crazy line
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { 
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
 			throw new InvalidInputException("Username not available");
 		}
-		user.setUsername(newUsername);
-		user.setPassword(newPassword);
-
+		else {
+			user.setUsername(newUsername);
+			user.setPassword(newPassword);
+			updateSuccessful = true;
+		}
+		return updateSuccessful;
 	}
+	
+	
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
 	 * @param username
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	// return boolean if it works or not
-	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
+	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
-		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
+		boolean deleteSuccessful = false;
+		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { 
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
-		((Customer)user).delete(); 
-		FlexiBookApplication.clearCurrentLoginUser();
+		else {
+			((Customer)user).delete(); 
+			FlexiBookApplication.clearCurrentLoginUser();
+			deleteSuccessful = true;
+		}
+		return deleteSuccessful;
 	}
 
 
@@ -642,44 +656,44 @@ public class FlexiBookController {
 	 * This method updates a Service Combo
 	 * @author gtjarvis
 	 */
-	public static void updateServiceCombo(String name, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
-		//make sure current user is owner
-		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
-			throw new InvalidInputException("Only Owner may define a Service Combo");
-		}
-		BookableService serviceCombo = findBookableService(name);
-		//throws an exception if comboService does not exist
-		if(serviceCombo == null){
-			throw new InvalidInputException("Updating service that does not exist.");
-		}
-		//throws an exception if length of orderedServices does not match length of listOfMandatory
-		if(orderedServices.size() != listOfMandatory.size()){
-			throw new InvalidInputException("Error with additional services.");
-		}
-		//deletes current services
-		while(serviceCombo.getServices().size() > 0){
-			serviceCombo.removeService(serviceCombo.getServices().get(0));
-		}
-		//resets additional services with new list of ordered services
-		boolean hasMainService = false;
-		boolean mandatory;
-		Service service;
-		ComboItem comboItem;
-		for(int i = 0; i < orderedServices.size(); i++){
-			mandatory = listOfMandatory.get(i);
-			service = orderedServices.get(i);
-			comboItem = serviceCombo.addService(mandatory, service);
-			//sets appropirate main service
-			if(service.equals(mainService) && mandatory){
-				serviceCombo.setMainService(comboItem);
-				hasMainService = true;
-			}
-		}
-		//throws an exception if mainService not found in list
-		if(!hasMainService){
-			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
-		}
-	}
+//	public static void updateServiceCombo(String name, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
+//		//make sure current user is owner
+//		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+//			throw new InvalidInputException("Only Owner may define a Service Combo");
+//		}
+//		BookableService serviceCombo = findBookableService(name);
+//		//throws an exception if comboService does not exist
+//		if(serviceCombo == null){
+//			throw new InvalidInputException("Updating service that does not exist.");
+//		}
+//		//throws an exception if length of orderedServices does not match length of listOfMandatory
+//		if(orderedServices.size() != listOfMandatory.size()){
+//			throw new InvalidInputException("Error with additional services.");
+//		}
+//		//deletes current services
+//		while(serviceCombo.getServices().size() > 0){
+//			serviceCombo.removeService(serviceCombo.getServices().get(0));
+//		}
+//		//resets additional services with new list of ordered services
+//		boolean hasMainService = false;
+//		boolean mandatory;
+//		Service service;
+//		ComboItem comboItem;
+//		for(int i = 0; i < orderedServices.size(); i++){
+//			mandatory = listOfMandatory.get(i);
+//			service = orderedServices.get(i);
+//			comboItem = serviceCombo.addService(mandatory, service);
+//			//sets appropirate main service
+//			if(service.equals(mainService) && mandatory){
+//				serviceCombo.setMainService(comboItem);
+//				hasMainService = true;
+//			}
+//		}
+//		//throws an exception if mainService not found in list
+//		if(!hasMainService){
+//			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+//		}
+//	}
 
 	/**
 	 * This method deletes a Service Combo given a name
@@ -762,39 +776,39 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author jedla
 	 */
-	public static void setUpHolidayVacation( String type ,Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-		Business business = flexiBook.getBusiness();
-		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-		TimeSlot VacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
-
-		if (currentUser instanceof Customer) { 
-			throw new InvalidInputException("No permission to set up Holidays or Vacation");
-		}
-		else {
-			if (!isInTheFuture(VacationHoliday)) {
-				throw new InvalidInputException("The time slot is not in the futre");
-			}
-			else {
-				if (!isNotOverlapWithOtherTimeSlots(VacationHoliday)){
-					throw new InvalidInputException("The time slot is overlapping with another time slot");
-				}
-
-				else {
-					if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) { 
-
-						if (type.equals("vacation")) {
-							business.addVacation(VacationHoliday);				
-						}
-
-						else if (type.equals("holiday")) {
-							business.addHoliday(VacationHoliday);
-						}
-
-
-					} else {throw new InvalidInputException("Start time must be before end time "); 	}
-				}	}}
-	}
+//	public static void setUpHolidayVacation( String type ,Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		Business business = flexiBook.getBusiness();
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		TimeSlot VacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
+//
+//		if (currentUser instanceof Customer) { 
+//			throw new InvalidInputException("No permission to set up Holidays or Vacation");
+//		}
+//		else {
+//			if (!isInTheFuture(VacationHoliday)) {
+//				throw new InvalidInputException("The time slot is not in the futre");
+//			}
+//			else {
+//				if (!isNotOverlapWithOtherTimeSlots(VacationHoliday)){
+//					throw new InvalidInputException("The time slot is overlapping with another time slot");
+//				}
+//
+//				else {
+//					if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) { 
+//
+//						if (type.equals("vacation")) {
+//							business.addVacation(VacationHoliday);				
+//						}
+//
+//						else if (type.equals("holiday")) {
+//							business.addHoliday(VacationHoliday);
+//						}
+//
+//
+//					} else {throw new InvalidInputException("Start time must be before end time "); 	}
+//				}	}}
+//	}
 
 	/**
 	 * This method is used to update a Vacation or a Holiday
@@ -808,39 +822,39 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author jedla
 	 */
-	public static void UdpateHolidayVacation( String type ,Date oldStartDate, Time oldStartTime, Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-		Business business = flexiBook.getBusiness();
-		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-		TimeSlot VacationHoliday = new TimeSlot(oldStartDate, oldStartTime, endDate, endTime, flexiBook);
-		TimeSlot newVacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
-		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
-		}
-		else { 
-			if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) {
-				if(isNotOverlapWithOtherTimeSlots(newVacationHoliday)) {
-					if (type.equals("vacation")) {
-						TimeSlot vacation = (isTheVacation(VacationHoliday));
-						vacation.setEndDate(endDate);
-						vacation.setEndTime(endTime);
-						vacation.setStartDate(startDate);
-						vacation.setStartTime(startTime);
-					}
-
-					else if (type.equals("holiday")){
-						TimeSlot holiday = (isTheHoliday(VacationHoliday));
-						holiday.setEndDate(endDate);
-						holiday.setEndTime(endTime);
-						holiday.setStartDate(startDate);
-						holiday.setStartTime(startTime);
-					}
-
-				} else {throw new InvalidInputException("The time slot is overlapping with another time slot");}
-			}
-			else {
-				throw new InvalidInputException("Start time must be before end time ");
-			}
-		}}
+//	public static void UdpateHolidayVacation( String type ,Date oldStartDate, Time oldStartTime, Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		Business business = flexiBook.getBusiness();
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		TimeSlot VacationHoliday = new TimeSlot(oldStartDate, oldStartTime, endDate, endTime, flexiBook);
+//		TimeSlot newVacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+//		}
+//		else { 
+//			if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) {
+//				if(isNotOverlapWithOtherTimeSlots(newVacationHoliday)) {
+//					if (type.equals("vacation")) {
+//						TimeSlot vacation = (isTheVacation(VacationHoliday));
+//						vacation.setEndDate(endDate);
+//						vacation.setEndTime(endTime);
+//						vacation.setStartDate(startDate);
+//						vacation.setStartTime(startTime);
+//					}
+//
+//					else if (type.equals("holiday")){
+//						TimeSlot holiday = (isTheHoliday(VacationHoliday));
+//						holiday.setEndDate(endDate);
+//						holiday.setEndTime(endTime);
+//						holiday.setStartDate(startDate);
+//						holiday.setStartTime(startTime);
+//					}
+//
+//				} else {throw new InvalidInputException("The time slot is overlapping with another time slot");}
+//			}
+//			else {
+//				throw new InvalidInputException("Start time must be before end time ");
+//			}
+//		}}
 
 	/**
 	 * This method is used to remove a Holiday or a Vacation
@@ -1123,17 +1137,17 @@ public class FlexiBookController {
 
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-
-	public static List<TOServiceCombo> getTOServiceCombos(){
-		//@ TODO
-	}
-
-	public static List<TOService> getTOServices(){
-		//@ TODO
-	}
-	
-	
-	
+//
+//	public static List<TOServiceCombo> getTOServiceCombos(){
+//		//@ TODO
+//	}
+//
+//	public static List<TOService> getTOServices(){
+//		//@ TODO
+//	}
+//	
+//	
+//	
 	
 	
 /*----------------------------------------------- private helper methods -----------------------------------------------------*/
