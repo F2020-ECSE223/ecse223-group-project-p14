@@ -197,7 +197,7 @@ public class FlexiBookController {
 					appointment.addChosenItem(item);
 				}else {
 					
-					for(String name : ControllerUtils.parseString(optService)) {
+					for(String name : ControllerUtils.parseString(optService, ",")) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
 						}
@@ -304,7 +304,7 @@ public class FlexiBookController {
 		}
 		
 		
-		List<String> serviceNameList = ControllerUtils.parseString(optService);
+		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
 		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
 		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
 		if (action.equals("remove")) {
@@ -365,10 +365,34 @@ public class FlexiBookController {
 	}
 	
 	/**
+	 * This method handles the cancellation of an existing appointment
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * 
 	 * @author AntoineW
+	 * @throws InvalidInputException 
 	 */
-	public static void cancelAppointment() {
-		//@ TODO
+	public static void cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
+		
+		Appointment appInSystem = findAppointment(serviceName,date, time);
+		
+		// Scenario: check if the current user is cancelling his/her own appointment
+		if(! (appInSystem.getCustomer().getUsername() == FlexiBookApplication.getCurrentLoginUser().getUsername())) {
+			throw new InvalidInputException("A customer can only cancel their own appointments");
+		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			throw new InvalidInputException("An owner cannot cancel an appointment");
+		}
+		
+		Date today = FlexiBookApplication.getCurrentDate(true);
+		if(date.equals(today)) {
+			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
+		}else if(date.after(today)){
+			//make sure the customer can only cancel appointment in the future
+			FlexiBookApplication.getFlexiBook().removeAppointment(appInSystem);
+
+		}
+		
 	}
 	
 	/**
@@ -796,8 +820,8 @@ public class FlexiBookController {
 	private static boolean isInTheFuture(TimeSlot timeSlot) {
 		boolean isInFuture = true;
 		
-		Date currentDate = FlexiBookApplication.getCurrentDate();
-		Time currentTime = FlexiBookApplication.getCurrentTime();
+		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
 		
 		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
@@ -851,7 +875,7 @@ public class FlexiBookController {
 	private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames) {
 		
 		int actualTime = 0;
-		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames);
+		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames,",");
 	
 		for (ComboItem ci : comboItemList) {
 			
