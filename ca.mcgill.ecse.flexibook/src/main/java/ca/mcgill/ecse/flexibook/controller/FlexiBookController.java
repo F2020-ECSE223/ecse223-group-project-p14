@@ -10,6 +10,8 @@ import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
 
 
+
+
 public class FlexiBookController {
 	
 	public FlexiBookController() {
@@ -25,15 +27,63 @@ public class FlexiBookController {
 	 * @param downtimeStart - the start time of the downtime of the service to be added
 	 *
 	 */
-	public static void addService(String name, int duration, int downtimeDuration, int downtimeStart) throws InvalidInputException{
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+	public static void addService(Service aService) throws InvalidInputException{
+		
+		
+		
+		
+		
+		
+		
 		try {
-			BookableService aBookableService = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
-			flexiBook.addBookableService(aBookableService);
+			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
+				aService = null;
+				throw new InvalidInputException("Only owner can add a service");
+			}
+
+				
+			if (aService.getDuration() <= 0) {
+				aService= null;
+				throw new InvalidInputException("Duration must be positive");
+			}
+			else if (aService.getDowntimeDuration() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be 0");
+			
+			}	
+			else if (aService.getDowntimeDuration() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be positive");
+			}
+			
+			
+				
+			else if (aService.getDowntimeStart() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start at the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start before the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not end after the service");
+				
+			}
+			else if (aService.getDowntimeStart() > aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start after the end of the service");
+				
+			}
+			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+			flexiBook.addBookableService(aService);
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		
+
 	}
 	
 	
@@ -143,9 +193,9 @@ public class FlexiBookController {
 	
 	/**
 	 * @author chengchen
-	 * This method finds the service with specified name
+	 * This method finds the bookable service with specified name
 	 * @param name - the name of the service to found 
-	 * @return the service found 
+	 * @return the bookable service found 
 	 */
 	private static BookableService findBookableService(String name) {
 		BookableService foundBookableService = null;
@@ -160,6 +210,8 @@ public class FlexiBookController {
 
 	/**
 	 * @author AntoineW
+	 * This method finds the single service with specified name
+	 * @return the single service found
 	 */
 	private static Service findSingleService(String name) {
 		Service s = null;

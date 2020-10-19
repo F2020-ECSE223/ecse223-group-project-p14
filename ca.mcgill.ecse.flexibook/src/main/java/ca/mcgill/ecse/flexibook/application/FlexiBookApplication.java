@@ -27,7 +27,9 @@ public class FlexiBookApplication {
     }
 	
 	
-	
+	/**
+	 * @author chengchen
+	 */
     public static FlexiBook getFlexiBook() {
 		if (flexiBook == null) {
 			
