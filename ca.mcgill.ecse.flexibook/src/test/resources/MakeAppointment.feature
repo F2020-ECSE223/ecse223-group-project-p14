@@ -23,19 +23,19 @@ Feature: Make appointment
       | cut-basic | cut         | wash,cut,dry   | false,true,false |
     Given the business has the following opening hours
       | day       | startTime | endTime |
-      | Monday    | 9:00      | 17:00   |
-      | Tuesday   | 9:00      | 17:00   |
-      | Wednesday | 9:00      | 17:00   |
-      | Thursday  | 9:00      | 17:00   |
-      | Friday    | 9:00      | 15:00   |
+      | Monday    | 09:00      | 17:00   |
+      | Tuesday   | 09:00      | 17:00   |
+      | Wednesday | 09:00      | 17:00   |
+      | Thursday  | 09:00      | 17:00   |
+      | Friday    | 09:00      | 15:00   |
     Given the business has the following holidays
       | startDate  | endDate    | startTime | endTime |
-      | 2020-12-31 | 2021-01-01 | 0:00      | 23:59   |
+      | 2020-12-31 | 2021-01-01 | 00:00      | 23:59   |
     Given the following appointments exist in the system:
       | customer  | serviceName | optServices | date       | startTime | endTime |
-      | customer1 | dye-basic   | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
+      | customer1 | dye-basic   | wash,dry    | 2020-12-28 | 09:00      | 10:35   |
       | customer2 | cut-basic   | wash,dry    | 2020-12-28 | 13:00     | 13:40   |
-      | customer3 | cut-basic   | wash,dry    | 2020-12-29 | 9:00      | 9:40    |
+      | customer3 | cut-basic   | wash,dry    | 2020-12-29 | 09:00      | 09:40    |
 
   Scenario Outline: A customer attempts to make various valid appointments for services
     Given "customer1" is logged in to their account
@@ -47,7 +47,7 @@ Feature: Make appointment
       # row 1: appointment in regular available slot
       # row 2: appointment during downtime of dye-basic
       | serviceName | date       | startTime | endTime |
-      | cut         | 2020-12-29 | 9:40      | 10:00   |
+      | cut         | 2020-12-29 | 09:40      | 10:00   |
       | cut         | 2020-12-28 | 10:00     | 10:20   |
 
   Scenario Outline: A customer attempts to make various valid appointments for service combos
@@ -61,7 +61,7 @@ Feature: Make appointment
       # row 2: appointment during downtime of dye-basic
       | serviceName | optionalServices | date       | startTime | endTime |
       | cut-basic   | wash,dry         | 2020-12-30 | 10:00     | 10:40   |
-      | cut-basic   | dry              | 2020-12-28 | 9:55      | 10:25   |
+      | cut-basic   | dry              | 2020-12-28 | 09:55      | 10:25   |
 
   Scenario Outline: A customer attempts to make various invalid appointments for services
     Given "customer1" is logged in to their account
@@ -76,11 +76,11 @@ Feature: Make appointment
       # row 4: slot is not during a business hour (saturday)
       # row 5: slot is in 2019
       | serviceName | date       | startTime |
-      | cut         | 2020-12-29 | 9:00      |
+      | cut         | 2020-12-29 | 09:00      |
       | color       | 2020-12-28 | 10:00     |
-      | cut         | 2020-12-31 | 9:00      |
-      | cut         | 2021-01-02 | 9:00      |
-      | cut         | 2019-12-31 | 9:00      |
+      | cut         | 2020-12-31 | 09:00      |
+      | cut         | 2021-01-02 | 09:00      |
+      | cut         | 2019-12-31 | 09:00      |
 
   Scenario Outline: A customer attempts to make various invalid appointments for service combos
     Given "customer1" is logged in to their account
@@ -95,11 +95,11 @@ Feature: Make appointment
       # row 4: slot is not during a business hour (saturday)
       # row 5: slot is in 2019
       | serviceName | optionalServices | date       | startTime |
-      | cut-basic   | wash,dry         | 2020-12-29 | 9:00      |
+      | cut-basic   | wash,dry         | 2020-12-29 | 09:00      |
       | dye-basic   | wash,dry         | 2020-12-28 | 10:00     |
-      | cut-basic   | dry              | 2020-12-31 | 9:00      |
-      | cut-basic   | dry              | 2021-01-02 | 9:00      |
-      | cut-basic   | dry              | 2019-01-02 | 9:00      |
+      | cut-basic   | dry              | 2020-12-31 | 09:00      |
+      | cut-basic   | dry              | 2021-01-02 | 09:00      |
+      | cut-basic   | dry              | 2019-01-02 | 09:00      |
 
   Scenario: The owner attempts to make an appointment
     Given "owner" is logged in to their account

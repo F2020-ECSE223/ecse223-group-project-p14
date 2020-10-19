@@ -102,15 +102,15 @@ public class CucumberStepDefinitionForAppointmentTests {
 			
 			 ServiceCombo sc = new ServiceCombo(map.get("name"), flb);
 			 
-			 // set main service, main service is always mandatory
-			 ComboItem mSer = new ComboItem(true, FlexiBookController.findSingleService(map.get("mainService")), sc);
-			 sc.setMainService(mSer);
+			
 			 
 			 // adding a list of comboItems
 			 List<String> namelist = ControllerUtils.parseString(map.get("services"), ",");
 			 List<String> mandatorylist = ControllerUtils.parseString(map.get("mandatory"), ",");
 			 for(String servicename: namelist) {
 				 int index = namelist.indexOf(servicename);
+				 
+				 
 				 
 				 if(mandatorylist.get(index).equals("true")) {
 					 ComboItem optSer = new ComboItem(true, FlexiBookController.findSingleService(servicename), sc);
@@ -120,7 +120,17 @@ public class CucumberStepDefinitionForAppointmentTests {
 					 sc.addService(optSer);
 				 }			 
 			 }
+			 
+			 // set main service
+			 try {
+				ComboItem mSer = ControllerUtils.findComboItemByServiceName(sc, map.get("mainService"));
+				sc.setMainService(mSer);
+			} catch (InvalidInputException e) {
+				error = e.getMessage();
+			}
+	
 			 flb.addBookableService(sc);
+			 
 		 }
 	 }
 	 
@@ -136,25 +146,22 @@ public class CucumberStepDefinitionForAppointmentTests {
 			Time endTime = Time.valueOf(tEn);
 			
 			BusinessHour bh = new BusinessHour(null, startTime, endTime, flb);
-			switch (map.get("day")) {
-				// a genius plz tell me how to do this in a better way :(
-				case "Monday":
-					bh.setDayOfWeek(DayOfWeek.Monday);
-				case "Tuesday":
-					bh.setDayOfWeek(DayOfWeek.Tuesday);
-				case "Wednesday":
-					bh.setDayOfWeek(DayOfWeek.Wednesday);
-				case "Thursday":
-					bh.setDayOfWeek(DayOfWeek.Thursday);
-				case "Friday":	
-					bh.setDayOfWeek(DayOfWeek.Friday);
-				case "Saturday":	
-					bh.setDayOfWeek(DayOfWeek.Saturday);
-				case "Sunday":
-					bh.setDayOfWeek(DayOfWeek.Sunday);
-				default:
-					System.out.print("problem in recognizing weekday here");		
-			}		 
+			if(map.get("day").equals("Monday")) {
+				bh.setDayOfWeek(DayOfWeek.Monday);
+			}else if (map.get("day").equals("Tuesday")) {
+				bh.setDayOfWeek(DayOfWeek.Tuesday);
+			}else if (map.get("day").equals("Wednesday")) {
+				bh.setDayOfWeek(DayOfWeek.Wednesday);
+			}else if (map.get("day").equals("Thursday")) {
+				bh.setDayOfWeek(DayOfWeek.Thursday);
+			}else if (map.get("day").equals("Friday")) {
+				bh.setDayOfWeek(DayOfWeek.Friday);
+			}else if (map.get("day").equals("Saturday")) {
+				bh.setDayOfWeek(DayOfWeek.Saturday);
+			}else if (map.get("day").equals("Sunday")) {
+				bh.setDayOfWeek(DayOfWeek.Sunday);
+			}
+			flb.getBusiness().addBusinessHour(bh);
 			flb.addHour(bh);
 		 }
 	 }
@@ -188,13 +195,15 @@ public class CucumberStepDefinitionForAppointmentTests {
 		 for(Map<String, String> map : datatable) {
 			 
 			 String custname = map.get("customer");
+			
 			 Customer c = FlexiBookController.findCustomer(custname);
+			 
 			 
 			 BookableService bs = FlexiBookController.findBookableService(map.get("serviceName"));
 			 
 			
 			 
-			 LocalDate startd = LocalDate.parse(map.get("Date"), DateTimeFormatter.ISO_DATE);
+			 LocalDate startd = LocalDate.parse(map.get("date"), DateTimeFormatter.ISO_DATE);
 			 Date date = Date.valueOf(startd);
 			 LocalTime startt = LocalTime.parse(map.get("startTime"), DateTimeFormatter.ISO_TIME);
 			 Time startTime = Time.valueOf(startt);
@@ -209,8 +218,8 @@ public class CucumberStepDefinitionForAppointmentTests {
 	
 			 List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
 			 for(String name :serviceNameList ) {
-				 Service s =  FlexiBookController.findSingleService(name);
-				 app.addChosenItem(new ComboItem( false,s, (ServiceCombo)bs));
+				 //Service s =  FlexiBookController.findSingleService(name);
+				 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
 			 }
 			 flb.addAppointment(app);	 
 		 }
@@ -225,7 +234,7 @@ public class CucumberStepDefinitionForAppointmentTests {
 		 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));		 
 	 }
 
-	 @When ("When {string} schedules an appointment on {string} for {string} at {string}")
+	 @When ("{string} schedules an appointment on {string} for {string} at {string}")
 	 public void customerScheduleOnDateForServiceAtTime(String customer, String date, String Servicename, String time) {
 		 
 		 // customer name is not used since it is in the current user
@@ -233,6 +242,9 @@ public class CucumberStepDefinitionForAppointmentTests {
 			FlexiBookController.addAppointmentForService(Servicename, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
+			if(error.length()>0) {
+				System.out.print(error);
+			}
 		}
 		 
 	 }
@@ -242,8 +254,10 @@ public class CucumberStepDefinitionForAppointmentTests {
 		 
 		 boolean isTheCase = false;
 		 for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
-			 if(app.getCustomer().getUsername() == customer &&
-					 app.getBookableService().getName() == Servicename &&
+
+			 
+			 if(app.getCustomer().getUsername() .equals (customer) &&
+					 app.getBookableService().getName() .equals (Servicename) &&
 					 app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
 					 app.getTimeSlot().getStartTime().equals(stringToTime(timeStart)) && 
 			 		 app.getTimeSlot().getEndTime().equals(stringToTime(timeEnd))){
@@ -261,6 +275,11 @@ public class CucumberStepDefinitionForAppointmentTests {
 		 
 		 appointmentCount = flb.getAppointments().size();
 	 }
+	 
+
+
+
+	 
 	 
 	 private static Date stringToDate(String str) {
 		 return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
