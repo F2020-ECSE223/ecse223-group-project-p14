@@ -95,7 +95,7 @@ public class FlexiBookController {
 	 * 
 	 * @author AntoineW
 	 */
-	public static void addAppointmentForService(String serviceName, Date date, Time time) 
+	public static Appointment addAppointmentForService(String serviceName, Date date, Time time) 
 			throws InvalidInputException{
 		
 		User user = FlexiBookApplication.getCurrentLoginUser();
@@ -128,7 +128,10 @@ public class FlexiBookController {
 		
 		// after making sure time is OK, lets add appointment for a single service.
 		try {
-			FlexiBookApplication.getFlexiBook().addAppointment((Customer) user, s, timeSlot);
+			
+			Appointment appointment = new Appointment((Customer) user, s, timeSlot,FlexiBookApplication.getFlexiBook() );
+			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+			return appointment;
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
@@ -150,7 +153,7 @@ public class FlexiBookController {
 	 * 
 	 * @author AntoineW
 	 */
-	public static void addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
+	public static Appointment addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
 			throws InvalidInputException{
 	
 		User user = FlexiBookApplication.getCurrentLoginUser();
@@ -206,6 +209,8 @@ public class FlexiBookController {
 			}
 			
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+			
+			return appointment;
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
@@ -224,13 +229,13 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 * @throws InvalidInputException 
 	 */
-	public static void makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
+	public static Appointment makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
 		BookableService bs = findBookableService(serviceName);
 		
 		if(bs instanceof Service) {
-			addAppointmentForService(serviceName, date, time);
+			return(addAppointmentForService(serviceName, date, time));
 		}else if(bs instanceof ServiceCombo) {
-			addAppointmentForComboService(serviceName, optService, date, time);
+			return(addAppointmentForComboService(serviceName, optService, date, time));
 		}else {
 			//BookableService might be null
 			throw new InvalidInputException("No such service or service Combo exist!");
@@ -373,7 +378,7 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 * @throws InvalidInputException 
 	 */
-	public static void cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
+	public static boolean cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
 		
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 		
@@ -390,8 +395,10 @@ public class FlexiBookController {
 		}else if(date.after(today)){
 			//make sure the customer can only cancel appointment in the future
 			FlexiBookApplication.getFlexiBook().removeAppointment(appInSystem);
+			return true;
 
 		}
+		return false;
 		
 	}
 	
@@ -662,7 +669,7 @@ public class FlexiBookController {
 	 * 
 	 * @author chengchen
 	 */
-	private static BookableService findBookableService(String name) {
+	public static BookableService findBookableService(String name) {
 		BookableService foundBookableService = null;
 		for (BookableService service : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (service.getName() == name) {
@@ -676,7 +683,7 @@ public class FlexiBookController {
 	/**
 	 * @author AntoineW
 	 */
-	private static Service findSingleService(String name) {
+	public static Service findSingleService(String name) {
 		Service s = null;
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof Service) {
@@ -690,7 +697,7 @@ public class FlexiBookController {
 	/**
 	 * @author AntoineW
 	 */
-	private static ServiceCombo findServiceCombo(String name) {
+	public static ServiceCombo findServiceCombo(String name) {
 		
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
@@ -927,7 +934,7 @@ public class FlexiBookController {
 	 * @author mikewang
 	 */
 	
-	private static Customer findCustomer (String userName){
+	public static Customer findCustomer (String userName){
 		Customer foundCustomer = null;
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
 			if (user.getUsername() == userName ) {
