@@ -1,6 +1,7 @@
 package ca.mcgill.ecse.flexibook.features;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -11,9 +12,11 @@ import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.model.BookableService;
 import ca.mcgill.ecse.flexibook.model.Business;
+import ca.mcgill.ecse.flexibook.model.Customer;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;
+import ca.mcgill.ecse.flexibook.model.User;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -118,26 +121,73 @@ public class CucumberStepDefinitions {
 		flexiBook.delete();
 	}
 	
-	/**
-	 * @author Catherine
-	 */
+	
 	
 /*---------------------------Test Sign Up Customer--------------------------*/
 	
+	/**
+	 * Feature: Sign up for customer account
+	 * As a prospective customer, I want to create an account with username and password
+	 * so that I can log in later
+	 * 
+	 * @author Catherine
+	 */
 	
+	//Scenario: Create a new account successfully
+	@Given("there is no existing username {string}") 
+	public void there_is_no_existing_username(String username){
+		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			if (user.getUsername().equals("username") ) {
+				user.delete();
+				break;
+			}
+		}
+	}
+
+	@When("the user provides a new username {string} and a password {string}")
+	public void the_user_provides_a_new_username_and_a_password(String username, String password) {
+		try {
+			FlexiBookController.signUpCustomer(username, password);
+		}
+		catch(InvalidInputException e){
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
 	
+	@Then("a new customer account shall be created")
+	public void a_new_customer_account_shall_be_created() {
+		assertEquals(1, flexiBook.getCustomers().size());
+	}
 	
+	@Then("the account shall have username {string} and password {string}")
+	public void the_account_shall_have_username_and_password(String username, String password) {
+		assertEquals(username, flexiBook.getCustomer(0).getUsername());
+		assertEquals(password, flexiBook.getCustomer(0).getPassword());
+	}
 	
+	@Then("no new account shall be created")
+	public void no_new_account_shall_be_created() {
+		assertEquals(0, flexiBook.getCustomers().size()); //@ TODO what if there was a customer already?
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@Then("an error message {string} shall be raised")
+	public void an_error_message_shall_be_raised(String errorMsg) {
+		assertTrue(error.contains(errorMsg));
+	}
+
+	//there is an existing username "owner"
+	@Given("there is an existing username {string}")
+	public void there_is_an_existing_username(String string) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+	//logged in as owner
+	@Given("the user is logged in to an account with username {string}")
+	public void the_user_is_logged_in_to_an_account_with_username(String string) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
 	
 	
 	

@@ -478,6 +478,8 @@ public class FlexiBookController {
 	 * 
 	 * @author Catherine
 	 */
+	
+	// @ TODO Need to capture if input is "    "  ie string with only spaces
 	public static boolean signUpCustomer(String username, String password) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
@@ -491,7 +493,7 @@ public class FlexiBookController {
 		else if (password == null || password == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { 
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
 			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
 			throw new InvalidInputException("The username already exists");
 		}
@@ -516,6 +518,8 @@ public class FlexiBookController {
 	 * 
 	 * @author Catherine
 	 */
+	
+	// @ TODO Need to capture if input is "    "  ie string with only spaces
 	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
