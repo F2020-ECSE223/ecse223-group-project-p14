@@ -506,7 +506,7 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author jedla
 	 */
-	//email needs to be fixed
+	//email needs to be fixed <anything>@<anything>.<anything>
 	public static void setUpBusinessInfo(String businessName, String adress, String email, String phoneNumber) throws InvalidInputException { 
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
@@ -552,35 +552,122 @@ public class FlexiBookController {
 		}
 	}
 	
-	
-	public static void setUpHolidayVacation(Date startDate, Time startTime, Date endDate, Time endTime ) {
-		
-	}
 
-//	public static void setUpVacation(TimeSlot time) {
-//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
-//		}
-//		else { if() {
-//
-//		}
-//
-//
-//		}}// need to find a way to differentiare between holiday and vacation 
-//
-//	public static void setUpHoliday(TimeSlot time) { //Don't forget that it should be in the past
-//		//it shouldn't overlap with other TimeSlot, espacially other vacation and other holiday
-//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
-//		}
-//		else { 
-//			if() {
-//			}
-//		}
-//
-//	}
+	/**
+	 * This method is used to create a Vacation or a Holiday
+	 * @param startDatea 
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	public static void setUpHolidayVacation( String type ,Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		Business business = flexiBook.getBusiness();
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		TimeSlot VacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
+
+		if (currentUser instanceof Customer) { 
+			throw new InvalidInputException("No permission to set up Holidays or Vacation");
+		}
+		else {
+			if (!isInTheFuture(VacationHoliday)) {
+				throw new InvalidInputException("The time slot is not in the futre");
+			}
+			else {
+				if (!isNotOverlapWithOtherTimeSlots(VacationHoliday)){
+					throw new InvalidInputException("The time slot is overlapping with another time slot");
+				}
+
+				else {
+					if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) { 
+						
+					if (type.equals("vacation")) {
+						business.addVacation(VacationHoliday);				
+					}
+
+					else if (type.equals("holiday")) {
+							business.addHoliday(VacationHoliday);
+					}
+
+
+				} else {throw new InvalidInputException("Start time must be before end time "); 	}
+		}	}}
+	}
+	
+	/**
+	 * This method is used to update a Vacation or a Holiday
+	 * @param type
+	 * @param oldStartDate
+	 * @param oldStartTIme
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	public static void UdpateHolidayVacation( String type ,Date oldStartDate, Time oldStartTime, Date startDate, Time startTime, Date endDate, Time endTime ) throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		Business business = flexiBook.getBusiness();
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		TimeSlot VacationHoliday = new TimeSlot(oldStartDate, oldStartTime, endDate, endTime, flexiBook);
+		TimeSlot newVacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+		}
+		else { 
+			if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) {
+				if(isNotOverlapWithOtherTimeSlots(newVacationHoliday)) {
+					if (type.equals("vacation")) {
+						TimeSlot vacation = (isTheVacation(VacationHoliday));
+						vacation.setEndDate(endDate);
+						vacation.setEndTime(endTime);
+						vacation.setStartDate(startDate);
+						vacation.setStartTime(startTime);
+					}
+
+					else if (type.equals("holiday")){
+						TimeSlot holiday = (isTheHoliday(VacationHoliday));
+						holiday.setEndDate(endDate);
+						holiday.setEndTime(endTime);
+						holiday.setStartDate(startDate);
+						holiday.setStartTime(startTime);
+					}
+
+				} else {throw new InvalidInputException("The time slot is overlapping with another time slot");}
+			}
+			else {
+				throw new InvalidInputException("Start time must be before end time ");
+			}
+		}}
+	
+	/**
+	 * This method is used to remove a Holiday or a Vacation
+	 * @param day
+	 * @param startTime
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	public static void removeHolidayVacation(String type, Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
+		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		Business business = flexiBook.getBusiness();
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		TimeSlot VacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+		}
+		else { 
+			if (type.equals("vacation")) {
+				business.removeVacation(isTheVacation(VacationHoliday));			
+			}
+
+			else if (type.equals("holiday")){
+					business.removeHoliday(isTheHoliday(VacationHoliday));
+			}
+		}		
+	}
+	
 	
 	/**
 	 * This method is used to update the Business Hours
@@ -667,8 +754,31 @@ public class FlexiBookController {
 			}
 		}
 
-	}// need to add smth so that my business info is seen by the business users
-	//same thing
+	}
+
+	/**
+	 * This method is used to remove a Business Hours
+	 * @param day
+	 * @param startTime
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	
+	public static void removeBusinessHour(DayOfWeek day, Time startTime) throws InvalidInputException {
+		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		Business currentBusiness = flexiBook.getBusiness();
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		Time endTime = startTime;
+		BusinessHour bh = new BusinessHour(day, startTime, endTime, flexiBook);
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+		}
+		else {
+			currentBusiness.removeBusinessHour(isTheBusinessHour(bh));		
+		}	
+	}
+	
+	
 
 
 
@@ -802,11 +912,10 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static List<TOBusiness> getBusinessInfo(){
-		ArrayList<TOBusiness> business = new ArrayList<TOBusiness>();
-		TOBusiness toBusiness = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
+	public static TOBusiness getBusinessInfo(){
+		
+		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
 				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
-		business.add(toBusiness);
 		return business;
 }
 
@@ -1196,6 +1305,43 @@ public class FlexiBookController {
 			y = x;
 			break;
 }
-	} return y;}}
+	} return y;}
+	
+	/**
+	 * This helper method finds the corresponding Vacation
+	 * @param vacation
+	 * @return
+	 * @author jedla
+	 */
+	private static TimeSlot isTheVacation(TimeSlot vacation) {
+
+		TimeSlot y = null;
+
+		List<TimeSlot> vacationList = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		for(TimeSlot x: vacationList) {
+			if( x.getStartDate() == vacation.getStartDate() && x.getStartTime() == vacation.getStartTime()) {
+				y = x;
+				break;
+			}
+		} 
+		return y;
+	}
+	
+	private static TimeSlot isTheHoliday(TimeSlot holiday) {
+
+		TimeSlot y = null;
+
+		List<TimeSlot> holidayList = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		for(TimeSlot x: holidayList) {
+			if( x.getStartDate() == holiday.getStartDate() && x.getStartTime() == holiday.getStartTime()) {
+				y = x;
+				break;
+			}
+		} 
+		return y;
+	}
+	
+	
+}
 
 
