@@ -103,6 +103,6 @@ Feature: Make appointment
 
   Scenario: The owner attempts to make an appointment
     Given "owner" is logged in to their account
-    When "owner" schedules an appointment on on "2020-12-29" for "cut" at "9:40"
+    When "owner" schedules an appointment on "2020-12-29" for "cut" at "9:40"
     Then the system shall report "An owner cannot make an appointment"
     Then there shall be 0 more appointment in the system
