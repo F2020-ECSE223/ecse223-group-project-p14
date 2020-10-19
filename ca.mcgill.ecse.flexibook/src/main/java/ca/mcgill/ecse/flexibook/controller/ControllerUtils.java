@@ -7,9 +7,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
+import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 
 
 public class ControllerUtils {
@@ -26,7 +28,7 @@ public class ControllerUtils {
 	}
 
 	/**
-	 * getDowntimes() returns the downtime time slots for a given appointment as List<TimeSlot>
+	 * returns the downtime time slots for a given appointment as List<TOTimeSlot>
 	 * @author AntoineW
 	 */
 	public static List<TOTimeSlot> getDowntimesByAppointment(Appointment app) {
@@ -77,9 +79,60 @@ public class ControllerUtils {
 				
 			}
 		}
-		
 		return ret;
+	}
 	
+	
+
+	/**
+	 * Helper method to get the day of week by passing the date
+	 * @return Enum DayOfWeek defined in ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek
+	 * @author AntoineW
+	 */
+	public static DayOfWeek getDoWByDate(Date date) {
+		
+		DayOfWeek ret = null;
+		java.time.DayOfWeek dow = date.toLocalDate().getDayOfWeek();
+		
+		switch(dow) {
+			case SUNDAY:
+				ret = DayOfWeek.Sunday;
+			case MONDAY:
+				ret = DayOfWeek.Monday;
+			case TUESDAY:
+				ret = DayOfWeek.Tuesday;
+			case WEDNESDAY:
+				ret = DayOfWeek.Wednesday;
+			case THURSDAY:
+				ret = DayOfWeek.Tuesday;
+			case FRIDAY:
+				ret = DayOfWeek.Friday;
+			case SATURDAY:
+				ret = DayOfWeek.Saturday;
+			
+		}
+		return ret;
+	}
+	
+	/**
+	 * This method parse the input string.
+	 * A java String Tokenizer is used.
+	 * This method can be used for general propose, but it was create to parse "cut, wash, ..." for the chosen item
+	 * in creating appointment out of a service combo.
+	 * @param string
+	 * @return
+	 * @author AntoineW
+	 * 
+	 * 
+	 */
+	public static List<String> parseString(String string ,String delim){
+		
+		List<String> tokens = new ArrayList<String>();
+	    StringTokenizer tokenizer = new StringTokenizer(string, delim);
+	    while (tokenizer.hasMoreElements()) {
+	        tokens.add(tokenizer.nextToken());
+	    }
+	    return tokens;
 	}
 	
 
