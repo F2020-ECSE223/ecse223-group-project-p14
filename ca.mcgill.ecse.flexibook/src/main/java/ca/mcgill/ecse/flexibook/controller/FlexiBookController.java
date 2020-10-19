@@ -243,13 +243,13 @@ public class FlexiBookController {
 				if(item.getMandatory() == true) {
 					appointment.addChosenItem(item);
 				}else {
-<<<<<<< HEAD
+
 
 					for(String name : ControllerUtils.parseString(optService)) {
-=======
+
 					
 					for(String name : ControllerUtils.parseString(optService, ",")) {
->>>>>>> master
+
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
 						}
@@ -354,15 +354,10 @@ public class FlexiBookController {
 		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("An owner cannot update a customer's appointment");
 		}
-<<<<<<< HEAD
-
-
 		List<String> serviceNameList = ControllerUtils.parseString(optService);
-=======
 		
 		
 		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
->>>>>>> master
 		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
 		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
 		if (action.equals("remove")) {
@@ -579,10 +574,6 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 	/**
 	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
 	 	which otherServices are mandatory.
@@ -682,7 +673,6 @@ public class FlexiBookController {
 	}
 
 
-<<<<<<< HEAD
 	/**
 	 * This method is used to setup the business with all the information
 	 * @param buisnessName
@@ -962,10 +952,7 @@ public class FlexiBookController {
 			currentBusiness.removeBusinessHour(isTheBusinessHour(bh));		
 		}	
 	}
-=======
-	
-	
->>>>>>> master
+
 
 
 
@@ -1095,7 +1082,6 @@ public class FlexiBookController {
 		return comboItems;
 	}
 
-<<<<<<< HEAD
 	/**
 	 * This is a query method which can get the BusinessInformation from the business
 	 * @param Business Business
@@ -1113,7 +1099,6 @@ public class FlexiBookController {
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
 
-=======
 	public static List<TOServiceCombo> getTOServiceCombos(){
 		//@ TODO
 	}
@@ -1128,7 +1113,7 @@ public class FlexiBookController {
 	
 /*----------------------------------------------- private helper methods -----------------------------------------------------*/
 	
->>>>>>> master
+
 	/**
 	 * This method finds the service with specified name
 	 * @param name - the name of the service to found 
@@ -1295,15 +1280,10 @@ public class FlexiBookController {
 	 */
 	private static boolean isInTheFuture(TimeSlot timeSlot) {
 		boolean isInFuture = true;
-<<<<<<< HEAD
-
 		Date currentDate = FlexiBookApplication.getCurrentDate();
 		Time currentTime = FlexiBookApplication.getCurrentTime();
-=======
-		
 		Date currentDate = FlexiBookApplication.getCurrentDate(true);
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
->>>>>>> master
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
 
 		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
@@ -1357,13 +1337,9 @@ public class FlexiBookController {
 	private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames) {
 
 		int actualTime = 0;
-<<<<<<< HEAD
 		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames);
-
-=======
 		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames,",");
 	
->>>>>>> master
 		for (ComboItem ci : comboItemList) {
 
 			if(ci.getMandatory()) {
