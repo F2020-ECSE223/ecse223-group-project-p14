@@ -76,7 +76,7 @@ Feature: Update appointment
       # row 3: additional extensions service does not fit in available slot
       # row 4: remove an optional service
       # row 5: additional cut service fits in available slot
-      | action | comboItem  | result       | newEndime |
+      | action | comboItem  | result       | newEndTime |
       | remove | color      | unsuccessful | 11:35     |
       | remove | dry        | unsuccessful | 11:35     |
       | add    | extensions | unsuccessful | 11:35     |

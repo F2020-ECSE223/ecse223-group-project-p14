@@ -18,6 +18,7 @@ import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.model.*;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -32,6 +33,7 @@ public class CucumberStepDefinitionForAppointmentTests {
 	
 	private int appointmentCount = 0;
 	private int errorCount = 0;
+	private boolean status = false;
 	private String error = "";
 	
 	private FlexiBook flb;
@@ -138,14 +140,8 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 @Given ("the business has the following opening hours")
 	 public void theBusinessHasFollowingOpeningHours(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
-			 
-			LocalTime tSt = LocalTime.parse(map.get("startTime"));
-			Time startTime = Time.valueOf(tSt);
 			
-			LocalTime tEn = LocalTime.parse(map.get("endTime"));
-			Time endTime = Time.valueOf(tEn);
-			
-			BusinessHour bh = new BusinessHour(null, startTime, endTime, flb);
+			BusinessHour bh = new BusinessHour(null, stringToTime(map.get("startTime")), stringToTime(map.get("endTime")), flb);
 			if(map.get("day").equals("Monday")) {
 				bh.setDayOfWeek(DayOfWeek.Monday);
 			}else if (map.get("day").equals("Tuesday")) {
@@ -170,20 +166,8 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 public void theBusinessHasFollowingHolidays(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
 			 
-			LocalDate startd = LocalDate.parse(map.get("startDate"), DateTimeFormatter.ISO_DATE);
-			Date startDate = Date.valueOf(startd);
-			
-			LocalDate endd = LocalDate.parse(map.get("endDate"), DateTimeFormatter.ISO_DATE);
-			Date endDate = Date.valueOf(endd);
-				
-			LocalTime startt = LocalTime.parse(map.get("startTime"), DateTimeFormatter.ISO_TIME);
-			Time startTime = Time.valueOf(startt);
-			
-			LocalTime endt = LocalTime.parse(map.get("endTime"), DateTimeFormatter.ISO_TIME);
-			Time endTime = Time.valueOf(endt);
-				
-			 
-			TimeSlot ts = new TimeSlot(startDate, startTime, endDate, endTime, flb);
+			TimeSlot ts = new TimeSlot(stringToDate(map.get("startDate")), 
+					stringToTime(map.get("startTime")), stringToDate(map.get("endDate")), stringToTime(map.get("endTime")), flb);
 			flb.getBusiness().addHoliday(ts);
 			//flb.addTimeSlot(ts);
 		 }			 
@@ -198,24 +182,15 @@ public class CucumberStepDefinitionForAppointmentTests {
 			
 			 Customer c = FlexiBookController.findCustomer(custname);
 			 
-			 
 			 BookableService bs = FlexiBookController.findBookableService(map.get("serviceName"));
+			  
 			 
-			
-			 
-			 LocalDate startd = LocalDate.parse(map.get("date"), DateTimeFormatter.ISO_DATE);
-			 Date date = Date.valueOf(startd);
-			 LocalTime startt = LocalTime.parse(map.get("startTime"), DateTimeFormatter.ISO_TIME);
-			 Time startTime = Time.valueOf(startt);
-			 LocalTime endt = LocalTime.parse(map.get("endTime"), DateTimeFormatter.ISO_TIME);
-			 Time endTime = Time.valueOf(endt);
-			 
-			 TimeSlot ts = new TimeSlot(date,startTime, date, endTime, flb);
-			 
+			 TimeSlot ts = new TimeSlot(stringToDate(map.get("date")),stringToTime(map.get("startTime")), 
+					 stringToDate(map.get("date")), stringToTime(map.get("endTime")), flb);		 
 	
 			 Appointment app = new Appointment(c,bs, ts, flb );
 			 
-			 if(map.get("optServices").equals("none")) {
+			 if(!map.containsKey("optServices")||map.get("optServices").equals("none")) {
 				 
 			 }else {
 				 
@@ -272,20 +247,15 @@ public class CucumberStepDefinitionForAppointmentTests {
 			FlexiBookController.addAppointmentForService(Servicename, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
-//			if(error.length()>0) {
-//				System.out.print(error);
-//			}
 		}
 		 
 	 }
 	 
 	 @Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
 	 public void customerShallHaveServiceAppointmentOnDateFromStoE(String customer, String Servicename, String date,  String timeStart, String timeEnd) {
-		 
 		 boolean isTheCase = false;
 		 for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
-
-			 
+ 
 			 if(app.getCustomer().getUsername() .equals (customer) &&
 					 app.getBookableService().getName() .equals (Servicename) &&
 					 app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
@@ -302,7 +272,6 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 @Then ("there shall be {int} more appointment in the system")
 	 public void checkHowMuchMoreAppointments(int i) {
 		 assertEquals(flb.getAppointments().size() - appointmentCount, i);
-		 
 		 appointmentCount = flb.getAppointments().size();
 	 }
 	 
@@ -317,7 +286,7 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
 			 String optService, String time) {
 		 
-		 try {
+		try {
 			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
@@ -326,6 +295,138 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 }
 
 
+//---------------------------------------- updating app -----------------------------------------------------------------------------
+
+	 @When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
+	 public void attempts_to_update_their_appointment_on_at_to_at(String customer, String serviceName, String oldDate, 
+			 String oldTime, String newD, String newT) {
+		 
+		 try {
+			status = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), stringToDate(newD) ,stringToTime(newT));
+		} catch (InvalidInputException e) {
+			error = error + e.getMessage();
+		}
+		     
+	 }
+
+
+	 @Then("the system shall report that the update was {string}")
+	 public void the_system_shall_report_that_the_update_was(String string) {
+		 String statusStr = "";
+		 // returned from the controller method!
+		 if (status) {
+			 statusStr = "successful";
+		 }else {
+			 statusStr = "unsuccessful";
+		 }
+		 
+		 assertEquals(statusStr, string);
+	 }
+
+
+	 
+
+	 @Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
+	 public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
+			 String date, String time) {
+		 
+		 try {
+				FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
+			} catch (InvalidInputException e) {
+				error = error+ e.getMessage();
+			}
+	 }
+		 
+
+
+	 @When("{string} attempts to {string} {string} from their {string} appointment on {string} at {string}")
+	 public void attempts_to_from_their_appointment_on_at(String customer, String action, String comboItem, String serviceName,
+			 String date, String time) {
+		 try {
+				status = FlexiBookController.updateAppointmentForServiceCombo(serviceName, 
+						stringToDate(date), stringToTime(time), action, comboItem);
+				
+				appointmentCount = flb.getAppointments().size();
+			} catch (InvalidInputException e) {
+				error = error + e.getMessage();
+			}
+	 }
+	 
+
+	 @When("{string} attempts to update {string}'s {string} appointment on {string} at {string} to {string} at {string}")
+	 public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
+			 String oldDate, String  oldTime, String newD, String newT) {
+		 
+		 if(FlexiBookController.findCustomer(user) !=null) {
+			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(user));	
+		 }else if (user.equals("owner")) {
+			 FlexiBookApplication.setCurrentLoginUser(flb.getOwner());	
+		 }
+		 try {
+			status = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), 
+					stringToDate(newD) ,stringToTime(newT));
+		} catch (InvalidInputException e) {
+			error = error + e.getMessage();
+		}
+		 
+		 
+		 
+	 }
+
+
+//--------------------------------------- cancel Appointment ------------------------------------------------
+
+	 @When("{string} attempts to cancel their {string} appointment on {string} at {string}")
+	 public void attempts_to_cancel_their_appointment_on_at(String user, String serviceName, String date, String time) {
+		 
+		 try {
+				status = FlexiBookController.cancelAppointment(serviceName, stringToDate(date),stringToTime(time));
+		} catch (InvalidInputException e) {
+				error = error + e.getMessage();
+		}
+	
+	 }
+
+
+	 @Then("{string}'s {string} appointment on {string} at {string} shall be removed from the system")
+	 public void s_appointment_on_at_shall_be_removed_from_the_system(String string, String string2, String string3, String string4) {
+
+		 Appointment app = FlexiBookController.findAppointment(string2, stringToDate(string3), stringToTime(string4)); 
+		 // should be removed thus no longer found in the system -> assert to be null
+		 assertEquals(null, app);
+	 }
+	 
+	 @Then("there shall be {int} less appointment in the system")
+	 public void there_shall_be_less_appointment_in_the_system(Integer int1) {
+		 // one less -> thus subtraction should be negative number
+		 assertEquals(flb.getAppointments().size() - appointmentCount, int1 * (-1));
+		 appointmentCount = flb.getAppointments().size();
+	 }
+
+
+
+
+	 @When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
+	 public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
+		 if(FlexiBookController.findCustomer(curUser) !=null) {
+			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(curUser));	
+		 }else if (curUser.equals("owner")) {
+			 FlexiBookApplication.setCurrentLoginUser(flb.getOwner());	
+		 }
+		 try {
+			status = FlexiBookController.cancelAppointment(serviceName, stringToDate(date), stringToTime(time));
+		} catch (InvalidInputException e) {
+			error = error + e.getMessage();
+		}
+		 
+	 }
+
+
+	 @After
+	 public void tearDown() {
+		flb.delete();
+	}
+
 
 	 
 	 private static Date stringToDate(String str) {
@@ -333,6 +434,9 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 }
 	 
 	 private static Time stringToTime(String str) {
+		 if (str.charAt(2) != ':') {
+			 str = "0" + str;
+		 }
 		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	 }
 }

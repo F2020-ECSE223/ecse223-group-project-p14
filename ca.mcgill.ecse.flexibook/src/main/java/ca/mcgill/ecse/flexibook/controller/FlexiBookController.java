@@ -166,11 +166,16 @@ public class FlexiBookController {
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
-
-		if(!isInGoodTiming(timeSlot)) {
+		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+		if(!isInGoodTiming(timeSlot, index,-1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
-			throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
+			if(time.toString().charAt(0) == '0') {
+				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
+				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + timeStr);
+			}else {
+				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
+			}
 		}
 
 		// after making sure time is OK, lets add appointment for a single service.
@@ -226,10 +231,18 @@ public class FlexiBookController {
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
-		if(!isInGoodTiming(timeSlot)) {
+		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+		if(!isInGoodTiming(timeSlot,index, -1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
-			throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
+			// tweak format to pass tests
+			if(time.toString().charAt(0) == '0') {
+				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
+				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + timeStr);
+			}else {
+				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
+			}
+			
 		}
 
 
@@ -241,9 +254,9 @@ public class FlexiBookController {
 			// add all mandatory and chosen optional combo item to appointment
 			for (ComboItem item: sCombo.getServices()) {
 
-				if(item.getService().getName().equals(sCombo.getMainService().getService().getName())) {
+				if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
 					appointment.addChosenItem(ControllerUtils.findComboItemByServiceName(sCombo, item.getService().getName()));
-				}else {
+				}else{
 					for(String name : ControllerUtils.parseString(optService, ",")) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
@@ -254,6 +267,8 @@ public class FlexiBookController {
 			
 			
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+			
+			
 			return appointment;
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
@@ -300,10 +315,10 @@ public class FlexiBookController {
 		Appointment appInSystem = findAppointment(serviceName, date, time);
 
 		// Scenario: check if the current user is tweaking his/her own appointment
-		if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
-			throw new InvalidInputException("A customer can only update their own appointments");
-		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
-			throw new InvalidInputException("An owner cannot update a customer's appointment");
+		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			throw new InvalidInputException("Error: An owner cannot update a customer's appointment");
+		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
+			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
 
 
@@ -316,7 +331,10 @@ public class FlexiBookController {
 
 
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
-		if (!isInGoodTiming(timeSlot)) {
+		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+		
+		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			return false;
 		}
@@ -346,10 +364,10 @@ public class FlexiBookController {
 		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
 
 		// Scenario: check if the current user is tweaking his/her own appointment
-		if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
-			throw new InvalidInputException("A customer can only update their own appointments");
-		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
-			throw new InvalidInputException("An owner cannot update a customer's appointment");
+		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			throw new InvalidInputException("Error: An owner cannot update a customer's appointment");
+		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
+			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
 		
 		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
@@ -363,14 +381,18 @@ public class FlexiBookController {
 				}
 			}
 
+			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
+			List<ComboItem> copy= new ArrayList<ComboItem>();
 			for(ComboItem item: appInSystem.getChosenItems()) {
+				copy.add(item);
+			}
+			for(ComboItem item: copy) {
 				for (String name: serviceNameList) {
 					if(item.getService().getName().equals(name)) {
 						if(item.getMandatory()) {
 							// bad request: cannot remove mandatory service
 							return false;
-						}else {
-							// start remove this optional item
+						}else {					
 							appInSystem.removeChosenItem(item);
 						}
 					}	
@@ -395,9 +417,11 @@ public class FlexiBookController {
 		int newDuration = calcActualTimeOfAppointment(appInSystem.getChosenItems());
 		Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
 
-		TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), newEndTime, FlexiBookApplication.getFlexiBook());
-
-		if (!isInGoodTiming(timeSlot)) {
+		TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
+				newEndTime, FlexiBookApplication.getFlexiBook());
+		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			// remove all newly added service since the time is not good
 			// update fails, later return false
@@ -425,11 +449,11 @@ public class FlexiBookController {
 		
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 		
-		// Scenario: check if the current user is cancelling his/her own appointment
-		if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
+		// Scenario: check if the current user is tweaking his/her own appointment
+		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			throw new InvalidInputException("An owner cannot cancel an appointment  ");
+		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("A customer can only cancel their own appointments");
-		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
-			throw new InvalidInputException("An owner cannot cancel an appointment");
 		}
 		
 		Date today = FlexiBookApplication.getCurrentDate(true);
@@ -437,7 +461,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
 		}else if(date.after(today)){
 			//make sure the customer can only cancel appointment in the future
-			FlexiBookApplication.getFlexiBook().removeAppointment(appInSystem);
+			appInSystem.delete();
 			return true;
 
 		}
@@ -1160,7 +1184,7 @@ public class FlexiBookController {
 	/**
 	 * @author AntoineW
 	 */
-	private static Appointment findAppointment(String serviceName, Date date, Time time) {
+	public static Appointment findAppointment(String serviceName, Date date, Time time) {
 		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
 			// check service name, date, time and customer
 			if (app.getBookableService().getName().compareTo(serviceName) == 0 &&
@@ -1180,7 +1204,7 @@ public class FlexiBookController {
 	 * solves constraint: checks whether there is no overlap between two time slots
 	 * @author AntoineW
 	 */
-	private static boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot) {
+	private static boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot, int index, int oldIndex) {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
 		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
@@ -1193,7 +1217,8 @@ public class FlexiBookController {
 
 			
 			if(timeSlotEnd.isBefore(tsStart) || tsEnd.isBefore(timeSlotStart) || timeSlotEnd.equals(tsStart)||tsEnd.equals(timeSlotStart) ||
-					flexiBook.getTimeSlots().indexOf(ts) ==  flexiBook.getTimeSlots().size() - 1 ) {
+					flexiBook.getTimeSlots().indexOf(ts) ==  index ||
+					flexiBook.getTimeSlots().indexOf(ts) ==  oldIndex) {
 				isTheCase = true;
 			}else {
 				isTheCase = false;
@@ -1223,7 +1248,6 @@ public class FlexiBookController {
 		for (Appointment app: flexiBook.getAppointments()) {
 
 			List<TOTimeSlot> tsList = ControllerUtils.getDowntimesByAppointment(app);
-			System.out.print(tsList +"\n\n\n\n\n");
 			for(TOTimeSlot TOTs: tsList) {
 				LocalDateTime tsStart = ControllerUtils.combineDateAndTime(TOTs.getStartDate(), TOTs.getStartTime());
 				LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(TOTs.getEndDate(), TOTs.getEndTime());
@@ -1301,7 +1325,7 @@ public class FlexiBookController {
 	 * 
 	 * @author AntoineW
 	 */
-	private static boolean isInGoodTiming(TimeSlot timeSlot) {
+	private static boolean isInGoodTiming(TimeSlot timeSlot, int index, int oldIndex) {
 
 		// here handle Scenario: A customer attempts to make various invalid appointments for services
 		// there are three time constraints to check:
@@ -1311,7 +1335,7 @@ public class FlexiBookController {
 		if (!isDuringWorkTime(timeSlot)) {
 			return false;
 		}else {
-			if(!isNotOverlapWithOtherTimeSlots (timeSlot)) {
+			if(!isNotOverlapWithOtherTimeSlots (timeSlot, index, oldIndex)) {
 				if (!isDuringDowntime(timeSlot)) {
 				return false;
 				}
