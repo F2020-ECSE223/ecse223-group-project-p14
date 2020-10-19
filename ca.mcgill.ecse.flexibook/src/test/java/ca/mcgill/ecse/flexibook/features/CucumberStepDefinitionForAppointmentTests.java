@@ -231,7 +231,13 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 
 	 @Given ("{string} is logged in to their account")
 	 public void whoIsCurrentlyLoggedIn(String name){
-		 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));		 
+		 
+		 if(FlexiBookController.findCustomer(name) !=null) {
+			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));	
+		 }else if (name.equals("owner")) {
+			 FlexiBookApplication.setCurrentLoginUser(flb.getOwner());	
+		 }
+		 	 
 	 }
 
 	 @When ("{string} schedules an appointment on {string} for {string} at {string}")
@@ -277,9 +283,26 @@ public class CucumberStepDefinitionForAppointmentTests {
 	 }
 	 
 
+	 @Then("the system shall report {string}")
+	 public void systemShouldReportErrorMessage(String str) {
+		 assertTrue(error.contains(str));
+	 }
 
 
-	 
+	 @When("{string} schedules an appointment on {string} for {string} with {string} at {string}")
+	 public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
+			 String optService, String time) {
+		 
+		 try {
+			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
+		} catch (InvalidInputException e) {
+			error = error+ e.getMessage();
+		}
+		    
+	 }
+
+
+
 	 
 	 private static Date stringToDate(String str) {
 		 return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
