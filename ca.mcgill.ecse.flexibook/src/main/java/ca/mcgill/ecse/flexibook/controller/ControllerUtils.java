@@ -125,10 +125,10 @@ public class ControllerUtils {
 	 * 
 	 * 
 	 */
-	public static List<String> parseString(String string){
+	public static List<String> parseString(String string ,String delim){
 		
 		List<String> tokens = new ArrayList<String>();
-	    StringTokenizer tokenizer = new StringTokenizer(string, ",");
+	    StringTokenizer tokenizer = new StringTokenizer(string, delim);
 	    while (tokenizer.hasMoreElements()) {
 	        tokens.add(tokenizer.nextToken());
 	    }

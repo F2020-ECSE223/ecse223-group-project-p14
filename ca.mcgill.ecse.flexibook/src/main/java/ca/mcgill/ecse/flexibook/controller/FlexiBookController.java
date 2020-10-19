@@ -14,6 +14,8 @@ import ca.mcgill.ecse.flexibook.model.*;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 
 
+
+
 public class FlexiBookController {
 
 	public FlexiBookController() {
@@ -32,11 +34,56 @@ public class FlexiBookController {
 	 * @author chengchen
 	 *
 	 */
-	public static void addService(String name, int duration, int downtimeDuration, int downtimeStart) throws InvalidInputException{
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+	public static void addService(Service aService) throws InvalidInputException{
+		
+		
+		
+		
 		try {
-			BookableService aBookableService = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
-			flexiBook.addBookableService(aBookableService);
+			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
+				aService = null;
+				throw new InvalidInputException("Only owner can add a service");
+			}
+
+				
+			if (aService.getDuration() <= 0) {
+				aService= null;
+				throw new InvalidInputException("Duration must be positive");
+			}
+			else if (aService.getDowntimeDuration() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be 0");
+			
+			}	
+			else if (aService.getDowntimeDuration() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be positive");
+			}
+			
+			
+				
+			else if (aService.getDowntimeStart() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start at the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start before the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not end after the service");
+				
+			}
+			else if (aService.getDowntimeStart() > aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start after the end of the service");
+				
+			}
+			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+			flexiBook.addBookableService(aService);
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
@@ -196,8 +243,13 @@ public class FlexiBookController {
 				if(item.getMandatory() == true) {
 					appointment.addChosenItem(item);
 				}else {
+<<<<<<< HEAD
 
 					for(String name : ControllerUtils.parseString(optService)) {
+=======
+					
+					for(String name : ControllerUtils.parseString(optService, ",")) {
+>>>>>>> master
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
 						}
@@ -302,9 +354,15 @@ public class FlexiBookController {
 		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("An owner cannot update a customer's appointment");
 		}
+<<<<<<< HEAD
 
 
 		List<String> serviceNameList = ControllerUtils.parseString(optService);
+=======
+		
+		
+		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
+>>>>>>> master
 		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
 		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
 		if (action.equals("remove")) {
@@ -365,10 +423,34 @@ public class FlexiBookController {
 	}
 
 	/**
+	 * This method handles the cancellation of an existing appointment
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * 
 	 * @author AntoineW
+	 * @throws InvalidInputException 
 	 */
-	public static void cancelAppointment() {
-		//@ TODO
+	public static void cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
+		
+		Appointment appInSystem = findAppointment(serviceName,date, time);
+		
+		// Scenario: check if the current user is cancelling his/her own appointment
+		if(! (appInSystem.getCustomer().getUsername() == FlexiBookApplication.getCurrentLoginUser().getUsername())) {
+			throw new InvalidInputException("A customer can only cancel their own appointments");
+		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			throw new InvalidInputException("An owner cannot cancel an appointment");
+		}
+		
+		Date today = FlexiBookApplication.getCurrentDate(true);
+		if(date.equals(today)) {
+			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
+		}else if(date.after(today)){
+			//make sure the customer can only cancel appointment in the future
+			FlexiBookApplication.getFlexiBook().removeAppointment(appInSystem);
+
+		}
+		
 	}
 
 	/**
@@ -497,6 +579,10 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 	/**
 	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
 	 	which otherServices are mandatory.
@@ -596,6 +682,7 @@ public class FlexiBookController {
 	}
 
 
+<<<<<<< HEAD
 	/**
 	 * This method is used to setup the business with all the information
 	 * @param buisnessName
@@ -875,6 +962,10 @@ public class FlexiBookController {
 			currentBusiness.removeBusinessHour(isTheBusinessHour(bh));		
 		}	
 	}
+=======
+	
+	
+>>>>>>> master
 
 
 
@@ -1004,6 +1095,7 @@ public class FlexiBookController {
 		return comboItems;
 	}
 
+<<<<<<< HEAD
 	/**
 	 * This is a query method which can get the BusinessInformation from the business
 	 * @param Business Business
@@ -1021,6 +1113,22 @@ public class FlexiBookController {
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
 
+=======
+	public static List<TOServiceCombo> getTOServiceCombos(){
+		//@ TODO
+	}
+
+	public static List<TOService> getTOServices(){
+		//@ TODO
+	}
+	
+	
+	
+	
+	
+/*----------------------------------------------- private helper methods -----------------------------------------------------*/
+	
+>>>>>>> master
 	/**
 	 * This method finds the service with specified name
 	 * @param name - the name of the service to found 
@@ -1041,6 +1149,8 @@ public class FlexiBookController {
 
 	/**
 	 * @author AntoineW
+	 * This method finds the single service with specified name
+	 * @return the single service found
 	 */
 	private static Service findSingleService(String name) {
 		Service s = null;
@@ -1185,9 +1295,15 @@ public class FlexiBookController {
 	 */
 	private static boolean isInTheFuture(TimeSlot timeSlot) {
 		boolean isInFuture = true;
+<<<<<<< HEAD
 
 		Date currentDate = FlexiBookApplication.getCurrentDate();
 		Time currentTime = FlexiBookApplication.getCurrentTime();
+=======
+		
+		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+		Time currentTime = FlexiBookApplication.getCurrentTime(true);
+>>>>>>> master
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
 
 		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
@@ -1241,8 +1357,13 @@ public class FlexiBookController {
 	private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames) {
 
 		int actualTime = 0;
+<<<<<<< HEAD
 		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames);
 
+=======
+		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames,",");
+	
+>>>>>>> master
 		for (ComboItem ci : comboItemList) {
 
 			if(ci.getMandatory()) {
