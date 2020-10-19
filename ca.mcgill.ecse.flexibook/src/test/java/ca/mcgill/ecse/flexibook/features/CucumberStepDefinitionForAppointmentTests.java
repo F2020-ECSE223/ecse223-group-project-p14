@@ -24,11 +24,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-/**
- * 
- * @author AntoineW
- *
- */
+
 public class CucumberStepDefinitionForAppointmentTests {
 	
 	private int appointmentCount = 0;
@@ -38,7 +34,12 @@ public class CucumberStepDefinitionForAppointmentTests {
 	
 	private FlexiBook flb;
 	
-	
+	/**
+	 * 
+	 * @author AntoineW
+	 *
+	 */
+	//----------------------------------------make app -----------------------------------------------------------------------------
 	@Before
 	public static void setUp() {
 		// clear all data
