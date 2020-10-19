@@ -543,7 +543,6 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	// return boolean if it works or not
-	//testing github and eclipse again
 	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
