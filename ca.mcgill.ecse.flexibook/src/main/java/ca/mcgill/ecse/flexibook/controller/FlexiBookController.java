@@ -402,26 +402,29 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
+	// boolean to see if worked or not
 	public static void signUpCustomer(String username, String password) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() == "owner" || user instanceof Owner) {
 			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 		}
-		if (username == null || username == "") {
+		else if (username == null || username == "") {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		if (password == null || password == "") {
+		else if (password == null || password == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
 			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
 			throw new InvalidInputException("The username already exists");
 		}
+		//else
+		//@ TODO try catch?
 		Customer aCustomer = new Customer(username, password, flexiBook);
 		flexiBook.addCustomer(aCustomer);
 		//assuming signing up also logs you in:
-		FlexiBookApplication.setCurrentLoginUser(aCustomer);
+		FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 	}
 	
 	/**
@@ -433,6 +436,8 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
+	// return a boolean to say if it worked or not
+	// else ifs
 	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
@@ -455,7 +460,6 @@ public class FlexiBookController {
 		}
 		user.setUsername(newUsername);
 		user.setPassword(newPassword);
-		//FlexiBookApplication.setCurrentLoginUser(user); //pretty sure this isn't needed
 
 	}
 	/**
@@ -464,6 +468,7 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author Catherine
 	 */
+	// return boolean if it works or not
 	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
