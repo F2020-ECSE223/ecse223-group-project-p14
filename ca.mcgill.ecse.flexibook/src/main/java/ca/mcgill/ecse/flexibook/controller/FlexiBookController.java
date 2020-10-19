@@ -497,6 +497,104 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+	/**
+	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
+	 	which otherServices are mandatory.
+	 * @author gtjarvis
+	 */
+	public static void defineServiceCombo(String name, Service mainService, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		//throws an exception if length of orderedServices does not match length of listOfMandatory
+		if(orderedServices.size() != listOfMandatory.size()){
+			throw new InvalidInputException("Error with additional services.");
+		}
+		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
+		//creates new serviceCombo object
+		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
+		//goes through list of orderedServices and creates a ComboItem for every service
+		boolean hasMainService = false;
+		boolean mandatory;
+		Service service;
+		ComboItem comboItem;
+		for(int i = 0; i < orderedServices.size(); i++){
+			mandatory = listOfMandatory.get(i);
+			service = orderedServices.get(i);
+			comboItem = serviceCombo.addService(mandatory, service);
+			//sets appropirate main service
+			if(service.equals(mainService) && mandatory){
+				serviceCombo.setMainService(comboItem);
+				hasMainService = true;
+			}
+
+		}
+		//throws an exception if mainService not found in list
+		if(!hasMainService){
+			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+		}
+	}
+
+	/**
+	 * This method updates a Service Combo
+	 * @author gtjarvis
+	 */
+	public static void updateServiceCombo(String name, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		BookableService serviceCombo = findBookableService(name);
+		//throws an exception if comboService does not exist
+		if(serviceCombo == null){
+			throw new InvalidInputException("Updating service that does not exist.");
+		}
+		//throws an exception if length of orderedServices does not match length of listOfMandatory
+		if(orderedServices.size() != listOfMandatory.size()){
+			throw new InvalidInputException("Error with additional services.");
+		}
+		//deletes current services
+		while(serviceCombo.getServices().size() > 0){
+			serviceCombo.removeService(serviceCombo.getServices().get(0));
+		}
+		//resets additional services with new list of ordered services
+		boolean hasMainService = false;
+		boolean mandatory;
+		Service service;
+		ComboItem comboItem;
+		for(int i = 0; i < orderedServices.size(); i++){
+			mandatory = listOfMandatory.get(i);
+			service = orderedServices.get(i);
+			comboItem = serviceCombo.addService(mandatory, service);
+			//sets appropirate main service
+			if(service.equals(mainService) && mandatory){
+				serviceCombo.setMainService(comboItem);
+				hasMainService = true;
+			}
+		}
+		//throws an exception if mainService not found in list
+		if(!hasMainService){
+			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+		}
+	}
+
+	/**
+	 * This method deletes a Service Combo given a name
+	 * @author gtjarvis
+	 */
+	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		BookableService comboService = findBookableService(name);
+		if(comboService == null){
+			throw new InvalidInputException("Deleting service that does not exist.");
+		}
+		comboService.delete();
+	}
+
 
 	/**
 	 * This method is used to setup the business with all the information
@@ -541,7 +639,7 @@ public class FlexiBookController {
 			if (startTime.compareTo(endTime) < 0) { 
 				if ( isOverlappingWithBusinessHours(bh)) {
 					throw new InvalidInputException(" The business hours cannot overlap");
-						} 
+				} 
 				else {
 					flexiBook.addHour(bh);
 				}
@@ -551,7 +649,7 @@ public class FlexiBookController {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * This method is used to create a Vacation or a Holiday
@@ -582,20 +680,20 @@ public class FlexiBookController {
 
 				else {
 					if ((startTime.toLocalTime().isBefore(endTime.toLocalTime()))&&startDate.toLocalDate().isBefore(endDate.toLocalDate())) { 
-						
-					if (type.equals("vacation")) {
-						business.addVacation(VacationHoliday);				
-					}
 
-					else if (type.equals("holiday")) {
+						if (type.equals("vacation")) {
+							business.addVacation(VacationHoliday);				
+						}
+
+						else if (type.equals("holiday")) {
 							business.addHoliday(VacationHoliday);
-					}
+						}
 
 
-				} else {throw new InvalidInputException("Start time must be before end time "); 	}
-		}	}}
+					} else {throw new InvalidInputException("Start time must be before end time "); 	}
+				}	}}
 	}
-	
+
 	/**
 	 * This method is used to update a Vacation or a Holiday
 	 * @param type
@@ -641,7 +739,7 @@ public class FlexiBookController {
 				throw new InvalidInputException("Start time must be before end time ");
 			}
 		}}
-	
+
 	/**
 	 * This method is used to remove a Holiday or a Vacation
 	 * @param day
@@ -650,7 +748,7 @@ public class FlexiBookController {
 	 * @author jedla
 	 */
 	public static void removeHolidayVacation(String type, Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
-		
+
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		Business business = flexiBook.getBusiness();
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
@@ -663,12 +761,12 @@ public class FlexiBookController {
 			}
 
 			else if (type.equals("holiday")){
-					business.removeHoliday(isTheHoliday(VacationHoliday));
+				business.removeHoliday(isTheHoliday(VacationHoliday));
 			}
 		}		
 	}
-	
-	
+
+
 	/**
 	 * This method is used to update the Business Hours
 	 * @param oldStart
@@ -699,35 +797,35 @@ public class FlexiBookController {
 			{ throw new InvalidInputException("Start time must be before end time ");}	
 		}
 	}
-	
-	
+
+
 	//Tried to do updateBusinessHour with tryCatch if the one above doesn't work
-//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
-//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
-//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
-//		BusinessHour temp = null;
-//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
-//		}
-//		else { 
-//			if (newStart.compareTo(newEnd) < 0) { 
-//				try {
-//					temp = isTheBusinessHour(oldB);
-//					temp.setDayOfWeek(day);
-//					temp.setEndTime(newEnd);
-//					temp.setStartTime(newStart);
-//					if (isOverlappingWithBusinessHours(temp)) {
-//						throw new InvalidInputException(" The business hours cannot overlap");
-//					}	
-//				}
-//				catch (InvalidInputException e) {
-//				}
-//			} 
-//			else 
-//			{ throw new InvalidInputException("Start time must be before end time ");}	
-//		}
-//	}
+	//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
+	//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+	//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+	//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
+	//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
+	//		BusinessHour temp = null;
+	//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
+	//		}
+	//		else { 
+	//			if (newStart.compareTo(newEnd) < 0) { 
+	//				try {
+	//					temp = isTheBusinessHour(oldB);
+	//					temp.setDayOfWeek(day);
+	//					temp.setEndTime(newEnd);
+	//					temp.setStartTime(newStart);
+	//					if (isOverlappingWithBusinessHours(temp)) {
+	//						throw new InvalidInputException(" The business hours cannot overlap");
+	//					}	
+	//				}
+	//				catch (InvalidInputException e) {
+	//				}
+	//			} 
+	//			else 
+	//			{ throw new InvalidInputException("Start time must be before end time ");}	
+	//		}
+	//	}
 
 	/**
 	 * This method is used to updates the business information
@@ -763,9 +861,9 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author jedla
 	 */
-	
+
 	public static void removeBusinessHour(DayOfWeek day, Time startTime) throws InvalidInputException {
-		
+
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		Business currentBusiness = flexiBook.getBusiness();
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
@@ -777,8 +875,8 @@ public class FlexiBookController {
 			currentBusiness.removeBusinessHour(isTheBusinessHour(bh));		
 		}	
 	}
-	
-	
+
+
 
 
 
@@ -913,11 +1011,10 @@ public class FlexiBookController {
 	 * @author jedla
 	 */
 	public static TOBusiness getBusinessInfo(){
-		
 		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
 				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
 		return business;
-}
+	}
 
 
 
@@ -1288,7 +1385,7 @@ public class FlexiBookController {
 
 		} return isOverlaping;
 	}
-	
+
 	/**
 	 * This helper method finds the corresponding BusinessHour, that needs to be updated.
 	 * @param BusinessHour
@@ -1296,17 +1393,17 @@ public class FlexiBookController {
 	 * @author jedla
 	 */
 	private static BusinessHour isTheBusinessHour(BusinessHour hour) {
-		
+
 		BusinessHour y = null;
 
 		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour x: hoursList) {
-		if(x.getDayOfWeek() == hour.getDayOfWeek()&& x.getStartTime()== hour.getStartTime()) {
-			y = x;
-			break;
-}
-	} return y;}
-	
+			if(x.getDayOfWeek() == hour.getDayOfWeek()&& x.getStartTime()== hour.getStartTime()) {
+				y = x;
+				break;
+			}
+		} return y;}
+
 	/**
 	 * This helper method finds the corresponding Vacation
 	 * @param vacation
@@ -1326,7 +1423,7 @@ public class FlexiBookController {
 		} 
 		return y;
 	}
-	
+
 	private static TimeSlot isTheHoliday(TimeSlot holiday) {
 
 		TimeSlot y = null;
@@ -1340,8 +1437,8 @@ public class FlexiBookController {
 		} 
 		return y;
 	}
-	
-	
+
+
 }
 
 
