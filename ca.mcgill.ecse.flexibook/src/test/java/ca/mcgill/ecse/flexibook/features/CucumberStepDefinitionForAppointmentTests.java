@@ -1,35 +1,33 @@
+
 package ca.mcgill.ecse.flexibook.features;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
-import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
-import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
-import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
-import ca.mcgill.ecse.flexibook.model.*;
-import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertTrue;
 //
-///**
-// * 
-// * @author AntoineW
-// *
-// */
-public class CucumberStepDefinitionForAppointmentTests {}
+//import java.sql.Date;
+//import java.sql.Time;
+//import java.time.LocalDate;
+//import java.time.LocalTime;
+//import java.time.format.DateTimeFormatter;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.Map;
+//
+//import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
+//import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
+//import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
+//import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+//import ca.mcgill.ecse.flexibook.model.*;
+//import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+//import io.cucumber.java.After;
+//import io.cucumber.java.Before;
+//import io.cucumber.java.en.Given;
+//import io.cucumber.java.en.Then;
+//import io.cucumber.java.en.When;
+//
+//
+public class CucumberStepDefinitionForAppointmentTests { }
+
 //	
 //	private int appointmentCount = 0;
 //	private int errorCount = 0;
@@ -38,7 +36,13 @@ public class CucumberStepDefinitionForAppointmentTests {}
 //	
 //	private FlexiBook flb;
 //	
-//	
+
+//	/**
+//	 * 
+//	 * @author AntoineW
+//	 *
+//	 */
+//	//----------------------------------------make app -----------------------------------------------------------------------------
 //	@Before
 //	public static void setUp() {
 //		// clear all data
