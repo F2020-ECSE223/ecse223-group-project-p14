@@ -15,11 +15,11 @@ import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 
 
 public class FlexiBookController {
-	
+
 	public FlexiBookController() {
-		
+
 	}
-	
+
 	/** 
 	 * 
 	 * This method adds a service to the database
@@ -40,10 +40,10 @@ public class FlexiBookController {
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * This method removes the service with specified name from the database
@@ -56,10 +56,10 @@ public class FlexiBookController {
 		if (bookableService!= null) {
 			bookableService.delete();
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * This method updates the attributes of the specified service
@@ -79,10 +79,10 @@ public class FlexiBookController {
 			service.setDowntimeStart(downtimeStart);
 			service.setDowntimeDuration(downtimeDuration);
 		}
-	
+
 	}
-	
-	
+
+
 
 	/**
 	 * This method handle adding appointment for a single service.
@@ -97,7 +97,7 @@ public class FlexiBookController {
 	 */
 	public static void addAppointmentForService(String serviceName, Date date, Time time) 
 			throws InvalidInputException{
-		
+
 		User user = FlexiBookApplication.getCurrentLoginUser();
 		// Scenario: The owner attempts to make an appointment
 		if(user instanceof Owner) {
@@ -105,39 +105,39 @@ public class FlexiBookController {
 		}else if (user == null) {
 			throw new InvalidInputException("An User is not logged in");
 		}
-		
+
 		Service s = findSingleService(serviceName);
 		if(s == null) {
 			throw new InvalidInputException("No such single service exist!");
 		}
-		
-		
-		
+
+
+
 		LocalTime aEndtime = time.toLocalTime().plusMinutes(s.getDuration());
 		Time endTime = Time.valueOf(aEndtime);
-		
+
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
-		
+
 		if(!isInGoodTiming(timeSlot)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
 		}
-		
+
 		// after making sure time is OK, lets add appointment for a single service.
 		try {
 			FlexiBookApplication.getFlexiBook().addAppointment((Customer) user, s, timeSlot);
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		
-		
-		
+
+
+
 
 	}
-	
+
 	/**
 	 * This method handle adding appointment for a service combo.
 	 * (there will be a wrapper method to add a general BookableService,
@@ -152,7 +152,7 @@ public class FlexiBookController {
 	 */
 	public static void addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
 			throws InvalidInputException{
-	
+
 		User user = FlexiBookApplication.getCurrentLoginUser();
 		// Scenario: The owner attempts to make an appointment
 		if(user instanceof Owner) {
@@ -160,43 +160,43 @@ public class FlexiBookController {
 		}else if (user == null) {
 			throw new InvalidInputException("An User is not logged in");
 		}
-		
+
 		ServiceCombo sCombo = findServiceCombo(serviceName);
 		if(sCombo == null) {
 			throw new InvalidInputException("No such service Combo exist!");
 		}
-		
-		
+
+
 		List<ComboItem> itemList = sCombo.getServices();
 		int actualTotalTime = calcActualTimeOfAppointment(itemList, optService);
-		
+
 		LocalTime aEndtime = time.toLocalTime().plusMinutes(actualTotalTime);
 		Time endTime = Time.valueOf(aEndtime);
-		
+
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
-						FlexiBookApplication.getFlexiBook());
-		
+				FlexiBookApplication.getFlexiBook());
+
 		if(!isInGoodTiming(timeSlot)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
 		}
-		
-		
-	
 
-				
+
+
+
+
 		try {
 			Appointment appointment = new Appointment((Customer) user, sCombo, timeSlot, FlexiBookApplication.getFlexiBook());
-			
+
 			// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
 			// add all mandatory and chosen optional combo item to appointment
 			for (ComboItem item: sCombo.getServices()) {
 				if(item.getMandatory() == true) {
 					appointment.addChosenItem(item);
 				}else {
-					
+
 					for(String name : ControllerUtils.parseString(optService)) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
@@ -204,16 +204,16 @@ public class FlexiBookController {
 					}
 				}	
 			}
-			
+
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	/**
 	 * wrapper method combining creating appointment for single service and combo
 	 * @param serviceName
@@ -226,7 +226,7 @@ public class FlexiBookController {
 	 */
 	public static void makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
 		BookableService bs = findBookableService(serviceName);
-		
+
 		if(bs instanceof Service) {
 			addAppointmentForService(serviceName, date, time);
 		}else if(bs instanceof ServiceCombo) {
@@ -236,7 +236,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("No such service or service Combo exist!");
 		}
 	}
-	
+
 	/**
 	 * This method handles customer wants to update appointments time
 	 * @param appointment
@@ -247,37 +247,37 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	public static boolean updateAppointment(String serviceName, Date date, Time time, Date newDate ,Time newStartTime) throws InvalidInputException {
-		
+
 		Appointment appInSystem = findAppointment(serviceName, date, time);
-		
+
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(! (appInSystem.getCustomer().getUsername() == FlexiBookApplication.getCurrentLoginUser().getUsername())) {
 			throw new InvalidInputException("A customer can only update their own appointments");
 		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("An owner cannot update a customer's appointment");
 		}
-		
-		
+
+
 		// get duration of the original service
 		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
 		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
 		// get the duration to set new end time. Since there is no change in combo item, the time is same
 		int durationMinutes = (int) d.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
-		
-		
+
+
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
 		if (!isInGoodTiming(timeSlot)) {
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			return false;
 		}
-				
-		
+
+
 		appInSystem.setTimeSlot(timeSlot);
 		return true;
 	}
-	
-	
+
+
 
 	/**
 	 * This method handles a customer wants to change appointment content.
@@ -292,18 +292,18 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	public static boolean updateAppointmentForServiceCombo(String serviceName, Date date, Time time, String action, String optService) throws InvalidInputException {
-		
+
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
-		
+
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(! (appInSystem.getCustomer().getUsername() == FlexiBookApplication.getCurrentLoginUser().getUsername())) {
 			throw new InvalidInputException("A customer can only update their own appointments");
 		}else if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("An owner cannot update a customer's appointment");
 		}
-		
-		
+
+
 		List<String> serviceNameList = ControllerUtils.parseString(optService);
 		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
 		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
@@ -314,7 +314,7 @@ public class FlexiBookController {
 					return false;
 				}
 			}
-			
+
 			for(ComboItem item: appInSystem.getChosenItems()) {
 				for (String name: serviceNameList) {
 					if(item.getService().getName().equals(name)) {
@@ -322,14 +322,14 @@ public class FlexiBookController {
 							// bad request: cannot remove mandatory service
 							return false;
 						}else {
-						    // start remove this optional item
+							// start remove this optional item
 							appInSystem.removeChosenItem(item);
 						}
 					}	
 				}
 			}
 		}else if (action.equals("add")) {
-			
+
 			for(String name: serviceNameList) {
 				for(ComboItem item: findServiceCombo(serviceName).getServices()) {
 					if(item.getService().getName().equals(name)) {
@@ -340,15 +340,15 @@ public class FlexiBookController {
 					}
 				}
 			}
-			
+
 		}
-		
-		
+
+
 		int newDuration = calcActualTimeOfAppointment(appInSystem.getChosenItems());
 		Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
-		
+
 		TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), newEndTime, FlexiBookApplication.getFlexiBook());
-		 
+
 		if (!isInGoodTiming(timeSlot)) {
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			// remove all newly added service since the time is not good
@@ -358,19 +358,19 @@ public class FlexiBookController {
 			}
 			return false;
 		}
-				
-		
+
+
 		appInSystem.setTimeSlot(timeSlot);
 		return true;
 	}
-	
+
 	/**
 	 * @author AntoineW
 	 */
 	public static void cancelAppointment() {
 		//@ TODO
 	}
-	
+
 	/**
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
@@ -399,7 +399,7 @@ public class FlexiBookController {
 		//assuming signing up also logs you in:
 		FlexiBookApplication.setCurrentLoginUser(aCustomer);
 	}
-	
+
 	/**
 	 * This method updates the username and/or password for a customer account, 
 	 * or the password for an owner account
@@ -426,7 +426,7 @@ public class FlexiBookController {
 		}
 		// @ TODO check if setUsername covers this case
 		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { //this is a crazy line
-		//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
 			throw new InvalidInputException("Username not available");
 		}
 		user.setUsername(newUsername);
@@ -449,9 +449,9 @@ public class FlexiBookController {
 		((Customer)user).delete(); 
 		FlexiBookApplication.clearCurrentLoginUser();
 	}
-	
-	
-	
+
+
+
 	/**
 	 * This method logins the user based on their Username and password information
 	 * @param username
@@ -472,21 +472,21 @@ public class FlexiBookController {
 				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
 			}
 			else {
-					throw new InvalidInputException("Password or Username is incorrect, please try again!");
-				}
+				throw new InvalidInputException("Password or Username is incorrect, please try again!");
+			}
 		}
 		else {
 			throw new InvalidInputException("There is another user currently login, please try again later");
 		}
 	}
-	
-	
+
+
 
 	/**
 	 * This method logout the user 
 	 * @author mikewang
 	 */
-	
+
 	// requires UI for more detailed implementation
 	public static void logOut() throws InvalidInputException{ 
 		User currentLoginUser = FlexiBookApplication.getCurrentLoginUser();
@@ -497,12 +497,185 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+
+	/**
+	 * This method is used to setup the business with all the information
+	 * @param buisnessName
+	 * @param email
+	 * @param phoneNumber
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	//email needs to be fixed
+	public static void setUpBusinessInfo(String businessName, String adress, String email, String phoneNumber) throws InvalidInputException { 
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+		}
+		else {
+			Business business = new Business(businessName,adress, phoneNumber, email, flexiBook);
+			if (!(flexiBook.hasBusiness())) {
+				flexiBook.setBusiness(business);
+			}else {
+				throw new InvalidInputException("A business already exists");
+			}
+
+		}}
+
+	/**
+	 * This method is used to setup the business hour for a day
+	 * @param startTime
+	 * @param endTime
+	 * @param DayOfWeek
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	public static void setUpBusinessHours(Time startTime, Time endTime, DayOfWeek day) throws InvalidInputException{// need to add that the business hours can't overlap
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		BusinessHour bh = new BusinessHour(day,startTime, endTime, flexiBook);
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business hour");
+		}
+		else {
+			if (startTime.compareTo(endTime) < 0) { 
+				if ( isOverlappingWithBusinessHours(bh)) {
+					throw new InvalidInputException(" The business hours cannot overlap");
+						} 
+				else {
+					flexiBook.addHour(bh);
+				}
+			}
+			else 
+			{ throw new InvalidInputException("Start time must be before end time ");
+			}
+		}
+	}
 	
 	
+	public static void setUpHolidayVacation(Date startDate, Time startTime, Date endDate, Time endTime ) {
+		
+	}
+
+//	public static void setUpVacation(TimeSlot time) {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+//		}
+//		else { if() {
+//
+//		}
+//
+//
+//		}}// need to find a way to differentiare between holiday and vacation 
+//
+//	public static void setUpHoliday(TimeSlot time) { //Don't forget that it should be in the past
+//		//it shouldn't overlap with other TimeSlot, espacially other vacation and other holiday
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+//		}
+//		else { 
+//			if() {
+//			}
+//		}
+//
+//	}
+	
+	/**
+	 * This method is used to update the Business Hours
+	 * @param oldStart
+	 * @param day
+	 * @param newStart
+	 * @param newEnd
+	 * @throws InvalidInputException
+	 * @author jedla
+	 */
+	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
+		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
+		BusinessHour temp = null;
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
+		}
+		else {
+			if (newStart.compareTo(newEnd) < 0) { 
+				temp =  isTheBusinessHour(oldB);
+				flexiBook.getBusiness().removeBusinessHour(temp);
+				if ( isOverlappingWithBusinessHours(newB)) {
+					throw new InvalidInputException(" The business hours cannot overlap");
+				} 
+				else {
+					flexiBook.addHour(newB);}}
+			else 
+			{ throw new InvalidInputException("Start time must be before end time ");}	
+		}
+	}
+	
+	
+	//Tried to do updateBusinessHour with tryCatch if the one above doesn't work
+//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
+//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
+//		BusinessHour temp = null;
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
+//		}
+//		else { 
+//			if (newStart.compareTo(newEnd) < 0) { 
+//				try {
+//					temp = isTheBusinessHour(oldB);
+//					temp.setDayOfWeek(day);
+//					temp.setEndTime(newEnd);
+//					temp.setStartTime(newStart);
+//					if (isOverlappingWithBusinessHours(temp)) {
+//						throw new InvalidInputException(" The business hours cannot overlap");
+//					}	
+//				}
+//				catch (InvalidInputException e) {
+//				}
+//			} 
+//			else 
+//			{ throw new InvalidInputException("Start time must be before end time ");}	
+//		}
+//	}
+
+	/**
+	 * This method is used to updates the business information
+	 * @param businessName
+	 * @param adress
+	 * @param email
+	 * @throws phoneNumber
+	 * @author jedla
+	 */
+	public static void updateBusinessInfo(String businessName, String adress, String email, String phoneNumber) throws InvalidInputException{
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		Business currentBusiness = flexiBook.getBusiness();
+		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to set up business information");
+		}
+		else {
+			//throw exception that there is no business under this name or that you don't have permission 
+			//or that the email doesn't work
+			if (currentBusiness != null) {
+				currentBusiness.setAddress(adress);
+				currentBusiness.setEmail(email);
+				currentBusiness.setName(businessName);
+				currentBusiness.setPhoneNumber(phoneNumber);
+			}
+		}
+
+	}// need to add smth so that my business info is seen by the business users
+	//same thing
 
 
-/*----------------------------------------------- Query methods --------------------------------------------------------------*/
-	
+
+
+
+	/*----------------------------------------------- Query methods --------------------------------------------------------------*/
+
 	/**
 	 * This method is a helper method of finding all existing customers objects into an TO ArrayList
 	 * @return
@@ -516,9 +689,9 @@ public class FlexiBookController {
 		}
 		return Customers;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * This is a query method which returns a list of TOAppointmentCanlander with a chosen data and a chosen mode
 	 * 
@@ -558,10 +731,10 @@ public class FlexiBookController {
 		}
 		return appointmentCanlanders;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * This is a query method which can gives a list of all TOAppointment 
 	 * @return
@@ -574,9 +747,9 @@ public class FlexiBookController {
 			appointments.add(toAppointment);
 		}
 		return appointments;
-		
+
 	}	
-	
+
 	/**
 	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
 	 * @param timeSlot
@@ -587,10 +760,10 @@ public class FlexiBookController {
 		TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(),timeSlot.getEndDate(),timeSlot.getEndTime());
 		return toTimeSlot;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * This is a query method which can get a list of TOTimeSlot from all timeSlots in the systems
 	 * @return
@@ -605,11 +778,9 @@ public class FlexiBookController {
 		}
 		return timeSlots;
 	}
-	
-	
-	
-	
-	
+
+
+
 	/**
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
 	 * @param appointment
@@ -624,13 +795,26 @@ public class FlexiBookController {
 		}
 		return comboItems;
 	}
-	
-	
-	
-	
-	
-/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-	
+
+	/**
+	 * This is a query method which can get the BusinessInformation from the business
+	 * @param Business Business
+	 * @return
+	 * @author jedla
+	 */
+	public static List<TOBusiness> getBusinessInfo(){
+		ArrayList<TOBusiness> business = new ArrayList<TOBusiness>();
+		TOBusiness toBusiness = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
+				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
+		business.add(toBusiness);
+		return business;
+}
+
+
+
+
+	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
+
 	/**
 	 * This method finds the service with specified name
 	 * @param name - the name of the service to found 
@@ -667,7 +851,7 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static ServiceCombo findServiceCombo(String name) {
-		
+
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
 				return (ServiceCombo)bservice;
@@ -675,7 +859,7 @@ public class FlexiBookController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @author AntoineW
 	 */
@@ -685,32 +869,32 @@ public class FlexiBookController {
 			if (app.getBookableService().getName().compareTo(serviceName) == 0 &&
 					app.getTimeSlot().getStartDate().equals(date) &&
 					app.getTimeSlot().getStartTime().equals(time) ){
-				
+
 				return app;
 			}
 		}
 		return null;
 	}
-	
-	
+
+
 
 	/**
 	 * Check if the time slot overlaps with other appointment
 	 * solves constraint: checks whether there is no overlap between two time slots
-     * @author AntoineW
+	 * @author AntoineW
 	 */
 	private static boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot) {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-		
+
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
 		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
-		
+
 		boolean isTheCase = true;
-		
+
 		for (TimeSlot ts :flexiBook.getTimeSlots()){
 			LocalDateTime tsStart = ControllerUtils.combineDateAndTime(ts.getStartDate(), ts.getStartTime());
 			LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(ts.getEndDate(), ts.getEndTime());
-			
+
 			if(timeSlotEnd.isBefore(tsStart) || tsEnd.isBefore(timeSlotStart)) {
 				isTheCase = true;
 			}else {
@@ -720,7 +904,7 @@ public class FlexiBookController {
 		}		
 		return isTheCase;
 	}
-	
+
 	/**
 	 * appointments do not overlap UNLESS the overlap is during the downtime;
 	 * @param timeSlot
@@ -728,24 +912,24 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static boolean isDuringDowntime(TimeSlot timeSlot) {
-		
+
 		// Initially false, if there is a downtime period completely contains a timeslot
 		// then will be turned true
 		boolean isDuringDowntime = false;
-		
+
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-		
+
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
 		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
-		
+
 		for (Appointment app: flexiBook.getAppointments()) {
-			
+
 			List<TOTimeSlot> tsList = ControllerUtils.getDowntimesByAppointment(app);
-			
+
 			for(TOTimeSlot TOTs: tsList) {
 				LocalDateTime tsStart = ControllerUtils.combineDateAndTime(TOTs.getStartDate(), TOTs.getStartTime());
 				LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(TOTs.getEndDate(), TOTs.getEndTime());
-				
+
 				if(timeSlotStart.isAfter(tsStart) && timeSlotEnd.isBefore(tsEnd)) {
 					isDuringDowntime = true;
 					break;
@@ -754,8 +938,8 @@ public class FlexiBookController {
 		}
 		return isDuringDowntime;
 	}
-	
-	
+
+
 	/**
 	 * appointment cannot be made on holidays or during vacation
 	 * @param timeSlot
@@ -763,14 +947,14 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static boolean isDuringWorkTime(TimeSlot timeSlot) {
-		
+
 		boolean isDuringWorkTime = false;
-		
+
 		//First get the weekday
 		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
 		// then check all businessHour list
 		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
-		
+
 		for(BusinessHour bh: bhList) {
 			// check weekday
 			if(dOfWeek == bh.getDayOfWeek()) {
@@ -781,11 +965,11 @@ public class FlexiBookController {
 					break;
 				}
 			}
-			
+
 		}
 		return isDuringWorkTime;
 	}
-	
+
 	/**
 	 * Check if the appointment is made before now (which is not allowed)
 	 * @param timeSlot
@@ -795,20 +979,20 @@ public class FlexiBookController {
 	 */
 	private static boolean isInTheFuture(TimeSlot timeSlot) {
 		boolean isInFuture = true;
-		
+
 		Date currentDate = FlexiBookApplication.getCurrentDate();
 		Time currentTime = FlexiBookApplication.getCurrentTime();
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
-		
+
 		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
 		if(appointmentDateTime.isBefore(now)) {
 			isInFuture = false;
 		}
-		
+
 		return isInFuture;
-		
+
 	}
-	
+
 	/**
 	 * wrapper method of isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot), isDuringDowntime(TimeSlot timeSlot), isDuringWorkTime(TimeSlot timeSlot) and isInTheFuture(TimeSlot timeSlot)
 	 * The method will return true if the timeslot passes through all 4 tests in a specific order.
@@ -817,7 +1001,7 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static boolean isInGoodTiming(TimeSlot timeSlot) {
-		
+
 		// here handle Scenario: A customer attempts to make various invalid appointments for services
 		// there are three time constraints to check:
 		// 1. if in the business time, if not, fail directly
@@ -832,14 +1016,14 @@ public class FlexiBookController {
 				}
 			}
 		}
-								
+
 		// Make sure appointment is made in the future not in the past
 		if (!isInTheFuture(timeSlot)) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * This method is a helper method determining the actual time of a appointment
 	 * It will only be used for a serviceCombo.<p>
@@ -849,12 +1033,12 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames) {
-		
+
 		int actualTime = 0;
 		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames);
-	
+
 		for (ComboItem ci : comboItemList) {
-			
+
 			if(ci.getMandatory()) {
 				actualTime = actualTime + ci.getService().getDuration();
 			}else {
@@ -866,14 +1050,14 @@ public class FlexiBookController {
 						actualTime = actualTime + ci.getService().getDuration();
 					}
 				}
-				
+
 			}
 		}
-		
+
 		return actualTime;
-		
+
 	}
-	
+
 	/**
 	 * This method is a helper method determining the actual time of a appointment
 	 * This is the overloaded version, which simply adds all services time
@@ -881,28 +1065,24 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList) {
-		
+
 		int actualTime = 0;
-	
+
 		for (ComboItem ci : comboItemList) {
 			actualTime = actualTime + ci.getService().getDuration();
 		}
-		
-		return actualTime;
-		
-	}
-	
 
-	
-	
-	
+		return actualTime;
+
+	}
+
 	/**
 	 * This method is a helper method of finding a particular customer 
 	 * @param userName
 	 * @return
 	 * @author mikewang
 	 */
-	
+
 	private static Customer findCustomer (String userName){
 		Customer foundCustomer = null;
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
@@ -915,7 +1095,7 @@ public class FlexiBookController {
 		}
 		return foundCustomer;
 	}
-	
+
 	/**
 	 * This method is a helper method of finding the owner 
 	 * @param userName
@@ -929,8 +1109,8 @@ public class FlexiBookController {
 		}
 		return foundOwner;
 	}
-	
-	
+
+
 	/**
 	 * This method is a helper method of finding is the date we specifying is today. 
 	 * @param date
@@ -945,22 +1125,77 @@ public class FlexiBookController {
 		}
 		return check; 
 	}
-	
-	
+
+
 	/**
 	 * This is a helper method of finding the current date
 	 * @return
 	 * @author BTMS.getCurrentDate()
 	 */
-   private static java.util.Date getCurrentDate(){
-	    java.util.Calendar cal = java.util.Calendar.getInstance();
-	    cal.set(Calendar.HOUR_OF_DAY, 0);
-	    cal.set(Calendar.MINUTE, 0);
-	    cal.set(Calendar.SECOND, 0);
-	    cal.set(Calendar.MILLISECOND, 0);
-	    java.util.Date date = cal.getTime();
-	    return date;
-	  }
+	private static java.util.Date getCurrentDate(){
+		java.util.Calendar cal = java.util.Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		java.util.Date date = cal.getTime();
+		return date;
+	}
+
+	/**
+	 * This is a helper method to know if the current BusinessHour overlaps with other Business Hour
+	 * @param BusinessHour
+	 * @return
+	 * @author jedla
+	 */
+	private static boolean isOverlappingWithBusinessHours(BusinessHour hour) {
+
+		boolean isOverlaping = false;
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+
+
+		for(BusinessHour x: hoursList) {
+			// check weekday
+			if(x.getDayOfWeek() == hour.getDayOfWeek()) {
+				// if the appointment is on that day, compare if the time slot is included by business hour
+				if (hour.getStartTime().toLocalTime().isBefore(x.getStartTime().toLocalTime())&& hour.getEndTime().toLocalTime().isAfter(x.getStartTime().toLocalTime())) {
+					isOverlaping = true;
+					break;
+
+				}
+				else if (hour.getStartTime().toLocalTime().isAfter(x.getStartTime().toLocalTime())&& hour.getEndTime().toLocalTime().isBefore(x.getEndTime().toLocalTime()) )
+				{
+					isOverlaping = true;
+					break;
+				}
+				else if (hour.getStartTime().toLocalTime().isAfter(x.getStartTime().toLocalTime())&& hour.getEndTime().toLocalTime().isAfter(x.getEndTime().toLocalTime()) )
+				{
+					isOverlaping = true;
+					break;
+				}
+
+
+			}
+
+		} return isOverlaping;
+	}
+	
+	/**
+	 * This helper method finds the corresponding BusinessHour, that needs to be updated.
+	 * @param BusinessHour
+	 * @return
+	 * @author jedla
+	 */
+	private static BusinessHour isTheBusinessHour(BusinessHour hour) {
+		
+		BusinessHour y = null;
+
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		for(BusinessHour x: hoursList) {
+		if(x.getDayOfWeek() == hour.getDayOfWeek()&& x.getStartTime()== hour.getStartTime()) {
+			y = x;
+			break;
 }
+	} return y;}}
 
 
