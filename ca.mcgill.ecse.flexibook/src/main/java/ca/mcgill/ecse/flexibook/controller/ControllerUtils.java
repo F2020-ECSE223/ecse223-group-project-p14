@@ -55,7 +55,7 @@ public class ControllerUtils {
 			int totalTimeElapsed = 0;
 			
 			// ordered list of all service in the service combo
-			for(ComboItem ci: ((ServiceCombo)bs).getServices()) {
+			for(ComboItem ci: app.getChosenItems()) {
 				Service s = ci.getService();
 				int dtStartAt = s.getDowntimeStart();
 				int dtDuration = s.getDowntimeDuration();

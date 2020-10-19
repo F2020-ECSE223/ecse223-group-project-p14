@@ -226,7 +226,6 @@ public class FlexiBookController {
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
-
 		if(!isInGoodTiming(timeSlot)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
@@ -234,28 +233,26 @@ public class FlexiBookController {
 		}
 
 
-
-
-
 		try {
 			Appointment appointment = new Appointment((Customer) user, sCombo, timeSlot, FlexiBookApplication.getFlexiBook());
+			
 
-			//@ TODO solve sequence plz
 			// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
 			// add all mandatory and chosen optional combo item to appointment
 			for (ComboItem item: sCombo.getServices()) {
-				if(item.getMandatory() == true) {
-					appointment.addChosenItem(item);
-				}else {	
-					for(String name : ControllerUtils.parseString(optService, ",")) {
 
+				if(item.getService().getName().equals(sCombo.getMainService().getService().getName())) {
+					appointment.addChosenItem(ControllerUtils.findComboItemByServiceName(sCombo, item.getService().getName()));
+				}else {
+					for(String name : ControllerUtils.parseString(optService, ",")) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
 						}
 					}
-				}	
-			}
-
+				}
+			}	
+			
+			
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 			return appointment;
 		} catch (RuntimeException e) {
@@ -1151,7 +1148,7 @@ public class FlexiBookController {
 	/**
 	 * @author AntoineW
 	 */
-	private static ServiceCombo findServiceCombo(String name) {
+	public static ServiceCombo findServiceCombo(String name) {
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
 				return (ServiceCombo)bservice;
@@ -1226,11 +1223,13 @@ public class FlexiBookController {
 		for (Appointment app: flexiBook.getAppointments()) {
 
 			List<TOTimeSlot> tsList = ControllerUtils.getDowntimesByAppointment(app);
+			System.out.print(tsList +"\n\n\n\n\n");
 			for(TOTimeSlot TOTs: tsList) {
 				LocalDateTime tsStart = ControllerUtils.combineDateAndTime(TOTs.getStartDate(), TOTs.getStartTime());
 				LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(TOTs.getEndDate(), TOTs.getEndTime());
 
-				if(timeSlotStart.isAfter(tsStart) && timeSlotEnd.isBefore(tsEnd)) {
+				if((timeSlotStart.isAfter(tsStart)||timeSlotStart.equals(tsStart))
+						&& (timeSlotEnd.isBefore(tsEnd)||timeSlotEnd.equals(tsEnd))) {
 					isDuringDowntime = true;
 					break;
 				}
@@ -1314,7 +1313,7 @@ public class FlexiBookController {
 		}else {
 			if(!isNotOverlapWithOtherTimeSlots (timeSlot)) {
 				if (!isDuringDowntime(timeSlot)) {
-					return false;
+				return false;
 				}
 			}
 		}

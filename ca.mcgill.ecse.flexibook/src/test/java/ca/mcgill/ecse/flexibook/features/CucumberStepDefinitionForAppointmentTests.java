@@ -215,13 +215,37 @@ public class CucumberStepDefinitionForAppointmentTests {
 	
 			 Appointment app = new Appointment(c,bs, ts, flb );
 			 
-	
-			 List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
-			 for(String name :serviceNameList ) {
-				 //Service s =  FlexiBookController.findSingleService(name);
-				 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+			 if(map.get("optServices").equals("none")) {
+				 
+			 }else {
+				 
+				 ServiceCombo sc = FlexiBookController.findServiceCombo(map.get("serviceName"));
+				 
+				 List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
+				 
+				 for (ComboItem item: sc.getServices() ) {
+					 //add main service no matter what
+					 if(item.getService().getName().equals(sc.getMainService().getService().getName())) {
+						 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, item.getService().getName()));
+					 }else {
+						 //if not, we check all input option string component in certain order. If
+						 // a component exist then we add
+						 for(String name :serviceNameList ) {
+							 if (item.getService().getName().equals(name)) {
+								 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+							 }
+							 // if the optional service name is not mentioned, we skip
+						 }					 
+					 }			 
+				 }
+				 for(String name :serviceNameList ) {
+					 //Service s =  FlexiBookController.findSingleService(name);
+					 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+				 }
+				 flb.addAppointment(app);
+				 
 			 }
-			 flb.addAppointment(app);	 
+				 
 		 }
 		 
 		 appointmentCount = flb.getAppointments().size();
@@ -248,9 +272,9 @@ public class CucumberStepDefinitionForAppointmentTests {
 			FlexiBookController.addAppointmentForService(Servicename, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
-			if(error.length()>0) {
-				System.out.print(error);
-			}
+//			if(error.length()>0) {
+//				System.out.print(error);
+//			}
 		}
 		 
 	 }
