@@ -17,7 +17,7 @@ Feature: Update appointment
       | color      |       75 |            45 |               30 |
       | cut        |       20 |             0 |                0 |
       | dry        |       10 |             0 |                0 |
-      | extentions |      100 |             0 |                0 |
+      | extensions |      100 |             0 |                0 |
     Given the following service combos exist in the system:
       | name         | mainService | services                      | mandatory                   |
       | dye-basic    | color       | wash,color,dry                | false,true,false            |
@@ -58,7 +58,7 @@ Feature: Update appointment
       | 2020-12-31 | 10:00     | unsuccessful | 2020-12-29 | 9:00         | 9:20       |
       | 2021-01-02 | 10:00     | unsuccessful | 2020-12-29 | 9:00         | 9:20       |
       | 2020-12-28 | 13:00     | unsuccessful | 2020-12-29 | 9:00         | 9:20       |
-      | 2020-12-29 | 16:50     | unsuccessful | 2020-12-29 | 9:10         | 9:30       |
+      | 2020-12-29 | 16:50     | unsuccessful | 2020-12-29 | 9:00         | 9:20       |
       | 2020-12-29 | 9:10      | successful   | 2020-12-29 | 9:10         | 9:30       |
       | 2020-12-28 | 10:00     | successful   | 2020-12-28 | 10:00        | 10:20      |
 
@@ -73,13 +73,13 @@ Feature: Update appointment
     Examples: 
       # row 1: cannot remove main service
       # row 2: cannot remove mandatory service
-      # row 3: additional extentions service does not fit in available slot
+      # row 3: additional extensions service does not fit in available slot
       # row 4: remove an optional service
       # row 5: additional cut service fits in available slot
       | action | comboItem  | result       | newEndime |
       | remove | color      | unsuccessful | 11:35     |
       | remove | dry        | unsuccessful | 11:35     |
-      | add    | extentions | unsuccessful | 11:35     |
+      | add    | extensions | unsuccessful | 11:35     |
       | remove | wash       | successful   | 11:25     |
       | add    | cut        | successful   | 11:55     |
 

@@ -14,6 +14,8 @@ import ca.mcgill.ecse.flexibook.model.*;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 
 
+
+
 public class FlexiBookController {
 	
 	public FlexiBookController() {
@@ -32,15 +34,60 @@ public class FlexiBookController {
 	 * @author chengchen
 	 *
 	 */
-	public static void addService(String name, int duration, int downtimeDuration, int downtimeStart) throws InvalidInputException{
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+	public static void addService(Service aService) throws InvalidInputException{
+		
+		
+		
+		
 		try {
-			BookableService aBookableService = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
-			flexiBook.addBookableService(aBookableService);
+			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
+				aService = null;
+				throw new InvalidInputException("Only owner can add a service");
+			}
+
+				
+			if (aService.getDuration() <= 0) {
+				aService= null;
+				throw new InvalidInputException("Duration must be positive");
+			}
+			else if (aService.getDowntimeDuration() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be 0");
+			
+			}	
+			else if (aService.getDowntimeDuration() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime duration must be positive");
+			}
+			
+			
+				
+			else if (aService.getDowntimeStart() == 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start at the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < 0) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start before the beginning of the service");
+				
+			}
+			else if (aService.getDowntimeStart() < aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not end after the service");
+				
+			}
+			else if (aService.getDowntimeStart() > aService.getDuration()) {
+				aService= null;
+				throw new InvalidInputException("Downtime must not start after the end of the service");
+				
+			}
+			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+			flexiBook.addBookableService(aService);
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		
+
 	}
 	
 	
@@ -528,6 +575,106 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+
+	/**
+	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
+	 	which otherServices are mandatory.
+	 * @author gtjarvis
+	 */
+	public static void defineServiceCombo(String name, Service mainService, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		//throws an exception if length of orderedServices does not match length of listOfMandatory
+		if(orderedServices.size() != listOfMandatory.size()){
+			throw new InvalidInputException("Error with additional services.");
+		}
+		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
+		//creates new serviceCombo object
+		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
+		//goes through list of orderedServices and creates a ComboItem for every service
+		boolean hasMainService = false;
+		boolean mandatory;
+		Service service;
+		ComboItem comboItem;
+		for(int i = 0; i < orderedServices.size(); i++){
+			mandatory = listOfMandatory.get(i);
+			service = orderedServices.get(i);
+			comboItem = serviceCombo.addService(mandatory, service);
+			//sets appropirate main service
+			if(service.equals(mainService) && mandatory){
+				serviceCombo.setMainService(comboItem);
+				hasMainService = true;
+			}
+
+		}
+		//throws an exception if mainService not found in list
+		if(!hasMainService){
+			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+		}
+	}
+
+	/**
+	 * This method updates a Service Combo
+	 * @author gtjarvis
+	 */
+	public static void updateServiceCombo(String name, List<Service> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		BookableService serviceCombo = findBookableService(name);
+		//throws an exception if comboService does not exist
+		if(serviceCombo == null){
+			throw new InvalidInputException("Updating service that does not exist.");
+		}
+		//throws an exception if length of orderedServices does not match length of listOfMandatory
+		if(orderedServices.size() != listOfMandatory.size()){
+			throw new InvalidInputException("Error with additional services.");
+		}
+		//deletes current services
+		while(serviceCombo.getServices().size() > 0){
+			serviceCombo.removeService(serviceCombo.getServices().get(0));
+		}
+		//resets additional services with new list of ordered services
+		boolean hasMainService = false;
+		boolean mandatory;
+		Service service;
+		ComboItem comboItem;
+		for(int i = 0; i < orderedServices.size(); i++){
+			mandatory = listOfMandatory.get(i);
+			service = orderedServices.get(i);
+			comboItem = serviceCombo.addService(mandatory, service);
+			//sets appropirate main service
+			if(service.equals(mainService) && mandatory){
+				serviceCombo.setMainService(comboItem);
+				hasMainService = true;
+			}
+		}
+		//throws an exception if mainService not found in list
+		if(!hasMainService){
+			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+		}
+	}
+
+	/**
+	 * This method deletes a Service Combo given a name
+	 * @author gtjarvis
+	 */
+	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("Only Owner may define a Service Combo");
+		}
+		BookableService comboService = findBookableService(name);
+		if(comboService == null){
+			throw new InvalidInputException("Deleting service that does not exist.");
+		}
+		comboService.delete();
+	}
+
+
 	
 	
 
@@ -655,6 +802,14 @@ public class FlexiBookController {
 		}
 		return comboItems;
 	}
+
+	public static List<TOServiceCombo> getTOServiceCombos(){
+		//@ TODO
+	}
+
+	public static List<TOService> getTOServices(){
+		//@ TODO
+	}
 	
 	
 	
@@ -682,6 +837,8 @@ public class FlexiBookController {
 
 	/**
 	 * @author AntoineW
+	 * This method finds the single service with specified name
+	 * @return the single service found
 	 */
 	public static Service findSingleService(String name) {
 		Service s = null;
