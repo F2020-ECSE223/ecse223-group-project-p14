@@ -42,7 +42,6 @@ public class CucumberStepDefinitions {
 	private FlexiBook flexiBook;
 	
 	private Owner owner;
-	private Customer customer; 
 	private Business business;
 	private String error;
 	private int errorCntr; 
@@ -162,6 +161,7 @@ public class CucumberStepDefinitions {
 	@Given("a Flexibook system exists")
 	public void aFlexibookSystemExists() {
 		flexiBook = FlexiBookApplication.getFlexiBook();
+		FlexiBookApplication.clearCurrentLoginUser();
 		error = "";
 		errorCount = 0;
 		appointmentCount = flexiBook.getAppointments().size();
@@ -557,7 +557,6 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 	
-	//Scenario: Create a new account successfully
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
 		customerCount = flexiBook.getCustomers().size();
@@ -565,7 +564,6 @@ public class CucumberStepDefinitions {
 			if(username != "owner") customerCount--;
 			FlexiBookController.findUser(username).delete();
 		}
-		FlexiBookApplication.clearCurrentLoginUser();
 		
 	}
 
@@ -598,29 +596,26 @@ public class CucumberStepDefinitions {
 	
 	@Then("an error message {string} shall be raised")
 	public void an_error_message_shall_be_raised(String errorMsg) {
+		assertFalse(FlexiBookApplication.getCurrentLoginUser() instanceof Customer); //for debugging only
 		assertTrue(error.contains(errorMsg));
 	}
 
-	//there is an existing username "owner"
 	@Given("there is an existing username {string}")
 	public void there_is_an_existing_username(String username) {
 		customerCount = flexiBook.getCustomers().size();
 		if(FlexiBookController.findUser(username) == null) {
-			if(username == "owner") {
-				owner = new Owner(username, "owner", flexiBook);
+			if(username.equals("owner")) { 
+				owner = new Owner("owner", "owner", flexiBook);
 				flexiBook.setOwner(owner);
 			}
 			else {
-				customer = new Customer(username, "password", flexiBook); //this code should not be reached
-				flexiBook.addCustomer(customer);
+				flexiBook.addCustomer(username, "password");
 				customerCount++;
 			}
 		}
-		FlexiBookApplication.clearCurrentLoginUser();
 		
 	}
 	
-	//logged in as owner
 	@Given("the user is logged in to an account with username {string}")
 	public void the_user_is_logged_in_to_an_account_with_username(String username) {
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));

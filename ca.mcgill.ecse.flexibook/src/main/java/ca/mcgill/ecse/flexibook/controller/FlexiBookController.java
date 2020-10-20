@@ -1464,17 +1464,18 @@ public class FlexiBookController {
 	 */
 	public static User findUser(String username){
 		User foundUser = null;
-		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			if (user.getUsername().equals(username) ) {
-				foundUser = user;
-				break;
+		if (username.equals("owner")) {
+			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
+		}
+		else {
+			for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+				if (user.getUsername().equals(username) ) {
+					foundUser = user;
+					break;
+				}
+				else foundUser = null;
 			}
-			else if (username == "owner") {
-				foundUser = FlexiBookApplication.getFlexiBook().getOwner();
-			}
-			else {
-				foundUser = null;
-			}
+		
 		}
 		return foundUser;
 	}
