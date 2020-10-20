@@ -478,19 +478,18 @@ public class FlexiBookController {
 	 * 
 	 * @author Catherine
 	 */
-	
-	// @ TODO Need to capture if input is "    "  ie string with only spaces
 	public static boolean signUpCustomer(String username, String password) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean signUpSuccessful = false;
-		if (user.getUsername() == "owner" || user instanceof Owner) {
-			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
+		if (FlexiBookApplication.getCurrentLoginUser() != null) {
+			if (FlexiBookApplication.getCurrentLoginUser().getUsername() == "owner" || FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
+			}
 		}
-		else if (username == null || username == "") {
+		else if (username == null || username == "" || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		else if (password == null || password == "") {
+		else if (password == null || password == "" || password.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
 		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
@@ -499,7 +498,7 @@ public class FlexiBookController {
 		}
 		else {
 			Customer aCustomer = new Customer(username, password, flexiBook);
-			flexiBook.addCustomer(aCustomer);
+			flexiBook.addCustomer(aCustomer); //this seems unecessary
 			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 			signUpSuccessful = true;
@@ -1454,6 +1453,30 @@ public class FlexiBookController {
 			foundOwner = FlexiBookApplication.getFlexiBook().getOwner();
 		}
 		return foundOwner;
+	}
+	
+	/**
+	 * This method is a helper method for finding a particular user by username
+	 * User can be the owner or a customer 
+	 * @param username
+	 * @return 
+	 * @author Catherine
+	 */
+	public static User findUser(String username){
+		User foundUser = null;
+		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			if (user.getUsername().equals(username) ) {
+				foundUser = user;
+				break;
+			}
+			else if (username == "owner") {
+				foundUser = FlexiBookApplication.getFlexiBook().getOwner();
+			}
+			else {
+				foundUser = null;
+			}
+		}
+		return foundUser;
 	}
 
 

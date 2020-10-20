@@ -22,6 +22,7 @@ import ca.mcgill.ecse.flexibook.model.Business;
 import ca.mcgill.ecse.flexibook.model.BusinessHour;
 import ca.mcgill.ecse.flexibook.model.ComboItem;
 import ca.mcgill.ecse.flexibook.model.Customer;
+import ca.mcgill.ecse.flexibook.model.User;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;
@@ -41,6 +42,7 @@ public class CucumberStepDefinitions {
 	private FlexiBook flexiBook;
 	
 	private Owner owner;
+	private Customer customer; 
 	private Business business;
 	private String error;
 	private int errorCntr; 
@@ -49,6 +51,7 @@ public class CucumberStepDefinitions {
 	
 	private int appointmentCount = 0;
 	private int errorCount = 0;
+	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
 	
 	
@@ -543,7 +546,6 @@ public class CucumberStepDefinitions {
 		 }
 		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	 }
-/////////////////////////////
 
 /*---------------------------Test Sign Up Customer--------------------------*/
 	
@@ -558,12 +560,13 @@ public class CucumberStepDefinitions {
 	//Scenario: Create a new account successfully
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
-		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			if (user.getUsername().equals("username") ) {
-				user.delete();
-				break;
-			}
+		customerCount = flexiBook.getCustomers().size();
+		if(FlexiBookController.findUser(username) != null) {
+			if(username != "owner") customerCount--;
+			FlexiBookController.findUser(username).delete();
 		}
+		FlexiBookApplication.clearCurrentLoginUser();
+		
 	}
 
 	@When("the user provides a new username {string} and a password {string}")
@@ -573,13 +576,12 @@ public class CucumberStepDefinitions {
 		}
 		catch(InvalidInputException e){
 			error += e.getMessage();
-			errorCntr++;
 		}
 	}
 	
 	@Then("a new customer account shall be created")
 	public void a_new_customer_account_shall_be_created() {
-		assertEquals(1, flexiBook.getCustomers().size());
+		assertEquals(1, flexiBook.getCustomers().size() - customerCount);
 	}
 	
 	@Then("the account shall have username {string} and password {string}")
@@ -590,9 +592,8 @@ public class CucumberStepDefinitions {
 	
 	@Then("no new account shall be created")
 	public void no_new_account_shall_be_created() {
-		assertEquals(0, flexiBook.getCustomers().size()); //@ TODO what if there was a customer already?
+		assertEquals(0, flexiBook.getCustomers().size() - customerCount);
 	}
-
 
 	
 	@Then("an error message {string} shall be raised")
@@ -602,15 +603,27 @@ public class CucumberStepDefinitions {
 
 	//there is an existing username "owner"
 	@Given("there is an existing username {string}")
-	public void there_is_an_existing_username(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void there_is_an_existing_username(String username) {
+		customerCount = flexiBook.getCustomers().size();
+		if(FlexiBookController.findUser(username) == null) {
+			if(username == "owner") {
+				owner = new Owner(username, "owner", flexiBook);
+				flexiBook.setOwner(owner);
+			}
+			else {
+				customer = new Customer(username, "password", flexiBook); //this code should not be reached
+				flexiBook.addCustomer(customer);
+				customerCount++;
+			}
+		}
+		FlexiBookApplication.clearCurrentLoginUser();
+		
 	}
+	
 	//logged in as owner
 	@Given("the user is logged in to an account with username {string}")
-	public void the_user_is_logged_in_to_an_account_with_username(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void the_user_is_logged_in_to_an_account_with_username(String username) {
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));
 	}
 	
 	
