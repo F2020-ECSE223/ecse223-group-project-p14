@@ -596,7 +596,6 @@ public class CucumberStepDefinitions {
 	
 	@Then("an error message {string} shall be raised")
 	public void an_error_message_shall_be_raised(String errorMsg) {
-		assertFalse(FlexiBookApplication.getCurrentLoginUser() instanceof Customer); //for debugging only
 		assertTrue(error.contains(errorMsg));
 	}
 
