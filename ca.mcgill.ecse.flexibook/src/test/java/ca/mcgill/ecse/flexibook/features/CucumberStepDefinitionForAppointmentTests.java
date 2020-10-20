@@ -1,5 +1,6 @@
-//package ca.mcgill.ecse.flexibook.features;
-//
+
+package ca.mcgill.ecse.flexibook.features;
+
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.junit.jupiter.api.Assertions.assertTrue;
 //
@@ -25,7 +26,8 @@
 //import io.cucumber.java.en.When;
 //
 //
-//public class CucumberStepDefinitionForAppointmentTests {
+public class CucumberStepDefinitionForAppointmentTests { }
+
 //	
 //	private int appointmentCount = 0;
 //	private int errorCount = 0;
@@ -34,6 +36,7 @@
 //	
 //	private FlexiBook flb;
 //	
+
 //	/**
 //	 * 
 //	 * @author AntoineW

@@ -469,35 +469,44 @@ public class FlexiBookController {
 		
 	}
 
+	
 	/**
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
 	 * @param password
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	public static void signUpCustomer(String username, String password) throws InvalidInputException {
+	public static boolean signUpCustomer(String username, String password) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-		User user = FlexiBookApplication.getCurrentLoginUser(); 
-		if (user.getUsername() == "owner" || user instanceof Owner) {
-			throw new InvalidInputException("You must log out of the owner account before creating a customer account");
+		boolean signUpSuccessful = false;
+		if (FlexiBookApplication.getCurrentLoginUser() != null) {
+			if (FlexiBookApplication.getCurrentLoginUser().getUsername() == "owner" || FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
+			}
 		}
-		if (username == null || username == "") {
+		else if (username == null || username == "" || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		if (password == null || password == "") {
+		else if (password == null || password == "" || password.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //this is a crazy line
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
 			throw new InvalidInputException("The username already exists");
 		}
-		Customer aCustomer = new Customer(username, password, flexiBook);
-		flexiBook.addCustomer(aCustomer);
-		//assuming signing up also logs you in:
-		FlexiBookApplication.setCurrentLoginUser(aCustomer);
+		else {
+			Customer aCustomer = new Customer(username, password, flexiBook);
+			flexiBook.addCustomer(aCustomer); //this seems unecessary
+			//assuming signing up also logs you in:
+			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
+			signUpSuccessful = true;
+		}
+		return signUpSuccessful;
 	}
 
+	
 	/**
 	 * This method updates the username and/or password for a customer account, 
 	 * or the password for an owner account
@@ -505,47 +514,59 @@ public class FlexiBookController {
 	 * @param newUsername
 	 * @param newPassword
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	public static void updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
+	
+	// @ TODO Need to capture if input is "    "  ie string with only spaces
+	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
+		boolean updateSuccessful = false;
 		if (user.getUsername() != currentUsername) {
-			throw new InvalidInputException("You do not have permission to update this account"); //technically not in scope of feature
+			throw new InvalidInputException("You do not have permission to update this account"); 
 		}
-		if (newUsername == null || newUsername == "") {
+		else if (newUsername == null || newUsername == "") {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		if (currentUsername == "owner" && newUsername != "owner") {
+		else if (currentUsername == "owner" && newUsername != "owner") {
 			throw new InvalidInputException("Changing username of owner is not allowed");
 		}
-		if (newPassword == null || newPassword == "") {
+		else if (newPassword == null || newPassword == "") {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		// @ TODO check if setUsername covers this case
-		if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { //this is a crazy line
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead! it's simpler!
+		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { 
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
 			throw new InvalidInputException("Username not available");
 		}
-		user.setUsername(newUsername);
-		user.setPassword(newPassword);
-		//FlexiBookApplication.setCurrentLoginUser(user); //pretty sure this isn't needed
-
+		else {
+			user.setUsername(newUsername);
+			user.setPassword(newPassword);
+			updateSuccessful = true;
+		}
+		return updateSuccessful;
 	}
+	
+	
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
 	 * @param username
 	 * @throws InvalidInputException
+	 * 
 	 * @author Catherine
 	 */
-	public static void deleteCustomerAccount(String username) throws InvalidInputException{ //maybe this should take a user as param and not username?
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
-		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { //definitely some overlap here
+		boolean deleteSuccessful = false;
+		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { 
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
-		((Customer)user).delete(); 
-		FlexiBookApplication.clearCurrentLoginUser();
+		else {
+			((Customer)user).delete(); 
+			FlexiBookApplication.clearCurrentLoginUser();
+			deleteSuccessful = true;
+		}
+		return deleteSuccessful;
 	}
 
 
@@ -836,7 +857,8 @@ public class FlexiBookController {
 			else {
 				throw new InvalidInputException("Start time must be before end time ");
 			}
-		}}
+		}
+	}
 
 	/**
 	 * This method is used to remove a Holiday or a Vacation
@@ -1119,17 +1141,17 @@ public class FlexiBookController {
 
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-
-	public static List<TOServiceCombo> getTOServiceCombos(){
-		//@ TODO
-	}
-
-	public static List<TOService> getTOServices(){
-		//@ TODO
-	}
-	
-	
-	
+//
+//	public static List<TOServiceCombo> getTOServiceCombos(){
+//		//@ TODO
+//	}
+//
+//	public static List<TOService> getTOServices(){
+//		//@ TODO
+//	}
+//	
+//	
+//	
 	
 	
 /*----------------------------------------------- private helper methods -----------------------------------------------------*/
@@ -1432,6 +1454,31 @@ public class FlexiBookController {
 			foundOwner = FlexiBookApplication.getFlexiBook().getOwner();
 		}
 		return foundOwner;
+	}
+	
+	/**
+	 * This method is a helper method for finding a particular user by username
+	 * User can be the owner or a customer 
+	 * @param username
+	 * @return 
+	 * @author Catherine
+	 */
+	public static User findUser(String username){
+		User foundUser = null;
+		if (username.equals("owner")) {
+			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
+		}
+		else {
+			for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+				if (user.getUsername().equals(username) ) {
+					foundUser = user;
+					break;
+				}
+				else foundUser = null;
+			}
+		
+		}
+		return foundUser;
 	}
 
 
