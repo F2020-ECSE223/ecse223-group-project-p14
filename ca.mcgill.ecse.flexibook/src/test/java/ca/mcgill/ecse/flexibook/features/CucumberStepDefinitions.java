@@ -53,21 +53,17 @@ public class CucumberStepDefinitions {
 	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
 	
-	
+	@Before
+	public static void setUp() {
+		// clear all data
+		FlexiBookApplication.getFlexiBook().delete();
+	}
 	
 	/**
 	 * @author chengchen
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
-//	
-//	@Given("a Flexibook system exists")
-//	public void aFlexiBookExists() {
-//		flexiBook = FlexiBookApplication.getFlexiBook();
-//		error = "";
-//		errorCntr = 0;
-//				
-//	}
 
 	@Given("an owner account exists in the system")
 	public void anOwnerAccountExists() {
@@ -75,10 +71,6 @@ public class CucumberStepDefinitions {
 		flexiBook.setOwner(owner);
 
 	}
-//	@Given("a business exists in the system")
-//	public void aBusinessExistsInTheSystem () {
-//		business = flexiBook.getBusiness();
-//	}
 	
 	@Given("the Owner with username {string} is logged in")
 	public void theOwnerWithUsernameIsLoggedIn(String username) {
@@ -139,27 +131,19 @@ public class CucumberStepDefinitions {
 
 	
 	
-	@After
-	public void tearDown() {
-		flexiBook.delete();
-	}
-	
-	
+
 	/**
 	 * 
 	 * @author AntoineW
 	 *
+	 * @Feature: Make appointment
+  		As a customer, I wish to be able to make an appointment so that I can schedule a service
 	 */
 	//----------------------------------------make app -----------------------------------------------------------------------------
-	@Before
-	public static void setUp() {
-		// clear all data
-		FlexiBookApplication.getFlexiBook().delete();
-	}
-	
+
 
 	@Given("a Flexibook system exists")
-	public void aFlexibookSystemExists() {
+	public void a_Flexibook_System_Exists() {
 		flexiBook = FlexiBookApplication.getFlexiBook();
 		FlexiBookApplication.clearCurrentLoginUser();
 		error = "";
@@ -168,7 +152,7 @@ public class CucumberStepDefinitions {
 	}
 	
 	@Given("the system's time and date is {string}")
-	public void systemTimeAndDateIs(String string) {
+	public void system_Time_And_Date_Is(String string) {
 		
 		List<String> dateTime = ControllerUtils.parseString(string, "+");
 		
@@ -180,20 +164,14 @@ public class CucumberStepDefinitions {
 		
 	}
 	
-//	 @Given ("an owner account exists in the system")
-//	 public void aOwnerExist() {
-//		 Owner aNewOwner = new Owner("owner", "owner", flb);
-//		 flb.setOwner(aNewOwner);
-//	 }
-//	 
 	 @Given ("a business exists in the system")
-	 public void aBusinessExistsInTheSystem() {
+	 public void a_Business_Exists_In_The_System() {
 		 Business b = new Business("test", "test", "test", "test", flexiBook);
 		 flexiBook.setBusiness(b);
 	 }
 	
 	 @Given ("the following customers exist in the system:")
-	 public void theFollowingCustomersExist(List<Map<String, String>> datatable){
+	 public void the_Following_Customers_Exist(List<Map<String, String>> datatable){
 		 for(Map<String, String> map : datatable) {
 			 Customer c = new Customer(map.get("username"), map.get("password"), flexiBook);
 			 flexiBook.addCustomer(c);
@@ -201,7 +179,7 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	 @Given ("the following services exist in the system:")
-	 public void theFollowingServicesExist(List<Map<String, String>> datatable) {
+	 public void the_Following_Services_Exist(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
 			 Service s = new Service(map.get("name"), flexiBook, 
 					 Integer.parseInt(map.get("duration")),
@@ -213,7 +191,7 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	 @Given ("the following service combos exist in the system:")
-	 public void theFollowingServiceCombosExist(List<Map<String, String>> datatable) {
+	 public void the_Following_ServiceCombos_Exist(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
 			
 			 ServiceCombo sc = new ServiceCombo(map.get("name"), flexiBook);
@@ -252,7 +230,7 @@ public class CucumberStepDefinitions {
 	 
 	 
 	 @Given ("the business has the following opening hours")
-	 public void theBusinessHasFollowingOpeningHours(List<Map<String, String>> datatable) {
+	 public void the_business_has_the_following_opening_hours(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
 			
 			BusinessHour bh = new BusinessHour(null, stringToTime(map.get("startTime")), stringToTime(map.get("endTime")), flexiBook);
@@ -277,7 +255,7 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	 @Given ("the business has the following holidays")
-	 public void theBusinessHasFollowingHolidays(List<Map<String, String>> datatable) {
+	 public void the_business_has_the_following_holidays(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
 			 
 			TimeSlot ts = new TimeSlot(stringToDate(map.get("startDate")), 
@@ -289,7 +267,7 @@ public class CucumberStepDefinitions {
 	 
 	 
 	 @Given ("the following appointments exist in the system:")
-	 public void theFollowingAppointmentExist(List<Map<String, String>> datatable) throws InvalidInputException {
+	 public void the_following_appointments_exist_in_the_system(List<Map<String, String>> datatable) throws InvalidInputException {
 		 for(Map<String, String> map : datatable) {
 			 
 			 String custname = map.get("customer");
@@ -343,7 +321,7 @@ public class CucumberStepDefinitions {
 	 
 	 
 	 @Given ("{string} is logged in to their account")
-	 public void whoIsCurrentlyLoggedIn(String name){
+	 public void user_is_logged_in_to_their_account(String name){
 		 
 		 if(FlexiBookController.findCustomer(name) !=null) {
 			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));	
@@ -354,7 +332,7 @@ public class CucumberStepDefinitions {
 	 }
 
 	 @When ("{string} schedules an appointment on {string} for {string} at {string}")
-	 public void customerScheduleOnDateForServiceAtTime(String customer, String date, String Servicename, String time) {
+	 public void customer_schedules_an_appointment_on_date_for_service_at_time(String customer, String date, String Servicename, String time) {
 		 
 		 // customer name is not used since it is in the current user
 		 try {
@@ -366,7 +344,8 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	 @Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
-	 public void customerShallHaveServiceAppointmentOnDateFromStoE(String customer, String Servicename, String date,  String timeStart, String timeEnd) {
+	 public void customer_shall_have_a_service_appointment_on_date_from_startTime_to_endTime(String customer, String Servicename, 
+			 String date,  String timeStart, String timeEnd) {
 		 boolean isTheCase = false;
 		 for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
  
@@ -384,14 +363,14 @@ public class CucumberStepDefinitions {
 	 }
 	 
 	 @Then ("there shall be {int} more appointment in the system")
-	 public void checkHowMuchMoreAppointments(int i) {
+	 public void there_shall_be_some_more_appointment_in_the_system(int i) {
 		 assertEquals(flexiBook.getAppointments().size() - appointmentCount, i);
 		 appointmentCount = flexiBook.getAppointments().size();
 	 }
 	 
 
 	 @Then("the system shall report {string}")
-	 public void systemShouldReportErrorMessage(String str) {
+	 public void the_system_shall_report_error(String str) {
 		 assertTrue(error.contains(str));
 	 }
 
@@ -408,7 +387,12 @@ public class CucumberStepDefinitions {
 		    
 	 }
 
-
+	 
+	 /**
+	  * @author AntoineW
+	  * @Feature: Update appointment
+	  * As a customer, I wish to be able to update my appointment so that I can edit my optional combo items or change my appointment time
+	  */
 //---------------------------------------- updating app -----------------------------------------------------------------------------
 
 	 @When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
@@ -488,6 +472,12 @@ public class CucumberStepDefinitions {
 	 }
 
 
+	 
+	 /**
+	  * @author AntoineW
+	  * @Feature: Cancel appointment
+  		As a customer, I wish to be able to cancel an appointment so that my appointment time slot becomes available for other customers
+	  */
 //--------------------------------------- cancel Appointment ------------------------------------------------
 
 	 @When("{string} attempts to cancel their {string} appointment on {string} at {string}")
@@ -536,16 +526,7 @@ public class CucumberStepDefinitions {
 	 }
 
 	 
-	 private static Date stringToDate(String str) {
-		 return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
-	 }
-	 
-	 private static Time stringToTime(String str) {
-		 if (str.charAt(2) != ':') {
-			 str = "0" + str;
-		 }
-		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
-	 }
+	
 
 /*---------------------------Test Sign Up Customer--------------------------*/
 	
@@ -623,7 +604,34 @@ public class CucumberStepDefinitions {
 	
 	
 	
+	@After
+	public void tearDown() {
+		flexiBook.delete();
+	}
 	
+	//--------------------------------------- some helper method coping with time format---------------------
+	/**
+	 * 
+	 * @param str
+	 * @return
+	 * @author AntoineW
+	 */
+	 private static Date stringToDate(String str) {
+		 return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
+	 }
+	 
+	 /**
+	  * 
+	  * @param str
+	  * @return
+	  * @author AntoineW
+	  */
+	 private static Time stringToTime(String str) {
+		 if (str.charAt(2) != ':') {
+			 str = "0" + str;
+		 }
+		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
+	 }
 	
 	
 }
