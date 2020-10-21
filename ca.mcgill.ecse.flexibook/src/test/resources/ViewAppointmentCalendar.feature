@@ -18,9 +18,9 @@ Feature: View appointment calendar
       | cut   |       20 |             0 |                0 |
       | dry   |       10 |             0 |                0 |
     Given the following service combos exist in the system:
-      | name      | mainService | services       | mandatory        |
-      | dye-basic | color       | wash,color,dry | false,true,false |
-      | cut-basic | cut         | wash,cut,dry   | false,true,false |
+      | name        | mainService | services       | mandatory        |
+      | color-basic | color       | wash,color,dry | false,true,false |
+      | cut-basic   | cut         | wash,cut,dry   | false,true,false |
     Given the business has the following opening hours:
       | day       | startTime | endTime |
       | Monday    | 9:00      | 17:00   |
@@ -33,7 +33,7 @@ Feature: View appointment calendar
       | 2020-12-31 | 2021-01-01 | 0:00      | 23:59   |
     Given the following appointments exist in the system:
       | customer  | serviceName | optServices | date       | startTime | endTime |
-      | customer1 | dye-basic   | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
+      | customer1 | color-basic | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
       | customer2 | cut-basic   | wash,dry    | 2020-12-28 | 13:00     | 13:40   |
       | customer3 | cut-basic   | wash,dry    | 2020-12-29 | 9:00      | 9:40    |
 
@@ -41,7 +41,7 @@ Feature: View appointment calendar
     Given "<user>" is logged in to their account
     When "<user>" requests the appointment calendar for the week starting on "2020-12-27"
     Then the following slots shall be unavailable:
-      # row 1,2: dye-basic appointment has a downtime
+      # row 1,2: color-basic appointment has a downtime
       | date       | startTime | endTime |
       | 2020-12-28 | 9:00      | 9:55    |
       | 2020-12-28 | 10:25     | 10:35   |
@@ -50,7 +50,7 @@ Feature: View appointment calendar
       | 2020-12-31 | 9:00      | 17:00   |
       | 2021-01-01 | 9:00      | 15:00   |
     Then the following slots shall be available:
-      # row 1: available slot during downtime of dye-basic
+      # row 1: available slot during downtime of color-basic
       | date       | startTime | endTime |
       | 2020-12-28 | 9:55      | 10:25   |
       | 2020-12-28 | 10:35     | 13:00   |
@@ -67,13 +67,13 @@ Feature: View appointment calendar
     Given "<user>" is logged in to their account
     When "<user>" requests the appointment calendar for the day of "2020-12-28"
     Then the following slots shall be unavailable:
-      # row 1,2: dye-basic appointment has a downtime
+      # row 1,2: color-basic appointment has a downtime
       | date       | startTime | endTime |
       | 2020-12-28 | 9:00      | 9:55    |
       | 2020-12-28 | 10:25     | 10:35   |
       | 2020-12-28 | 13:00     | 13:40   |
     Then the following slots shall be available:
-      # row 1: available slot during downtime of dye-basic
+      # row 1: available slot during downtime of color-basic
       | date       | startTime | endTime |
       | 2020-12-28 | 9:55      | 10:25   |
       | 2020-12-28 | 10:35     | 13:00   |

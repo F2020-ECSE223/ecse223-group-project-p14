@@ -20,9 +20,9 @@ Feature: Update appointment
       | extensions |      100 |             0 |                0 |
     Given the following service combos exist in the system:
       | name         | mainService | services                      | mandatory                   |
-      | dye-basic    | color       | wash,color,dry                | false,true,false            |
+      | color-basic  | color       | wash,color,dry                | false,true,false            |
       | cut-basic    | cut         | wash,cut,dry                  | false,true,false            |
-      | super-deluxe | color       | wash,extensions,color,dry,cut | false,false,true,true,false |
+      | color-deluxe | color       | wash,extensions,color,dry,cut | false,false,true,true,false |
     Given the business has the following opening hours
       | day       | startTime | endTime |
       | Monday    | 9:00      | 17:00   |
@@ -38,7 +38,7 @@ Feature: Update appointment
       | customer3 | cut         | none        | 2020-12-29 | 9:00      | 9:20    |
       | customer2 | cut-basic   | wash,dry    | 2020-12-28 | 13:00     | 13:40   |
       | customer1 | cut         | none        | 2020-12-29 | 12:00     | 12:20   |
-      | customer1 | dye-basic   | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
+      | customer1 | color-basic | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
 
   Scenario Outline: A customer updates his appointment to various time slots
     Given "customer3" is logged in to their account
@@ -64,10 +64,10 @@ Feature: Update appointment
 
   Scenario Outline: A customer updates his service combo appointment to add or remove combo items
     Given "customer3" is logged in to their account
-    Given "customer3" has a "super-deluxe" appointment with optional sevices "wash" on "2020-12-29" at "10:00"
-    When "customer3" attempts to "<action>" "<comboItem>" from their "super-deluxe" appointment on "2020-12-29" at "10:00"
+    Given "customer3" has a "color-deluxe" appointment with optional sevices "wash" on "2020-12-29" at "10:00"
+    When "customer3" attempts to "<action>" "<comboItem>" from their "color-deluxe" appointment on "2020-12-29" at "10:00"
     Then the system shall report that the update was "<result>"
-    Then "customer3" shall have a "super-deluxe" appointment on "2020-12-29" from "10:00" to "<newEndTime>"
+    Then "customer3" shall have a "color-deluxe" appointment on "2020-12-29" from "10:00" to "<newEndTime>"
     Then there shall be 0 more appointment in the system
 
     Examples: 
@@ -76,12 +76,12 @@ Feature: Update appointment
       # row 3: additional extensions service does not fit in available slot
       # row 4: remove an optional service
       # row 5: additional cut service fits in available slot
-      | action | comboItem  | result       | newEndime |
-      | remove | color      | unsuccessful | 11:35     |
-      | remove | dry        | unsuccessful | 11:35     |
-      | add    | extensions | unsuccessful | 11:35     |
-      | remove | wash       | successful   | 11:25     |
-      | add    | cut        | successful   | 11:55     |
+      | action | comboItem  | result       | newEndTime |
+      | remove | color      | unsuccessful | 11:35      |
+      | remove | dry        | unsuccessful | 11:35      |
+      | add    | extensions | unsuccessful | 11:35      |
+      | remove | wash       | successful   | 11:25      |
+      | add    | cut        | successful   | 11:55      |
 
   Scenario Outline: A user attempts to update another user's appointment
     Given "<user>" is logged in to their account
