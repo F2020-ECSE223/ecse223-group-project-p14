@@ -18,9 +18,9 @@ Feature: Make appointment
       | cut   |       20 |             0 |                0 |
       | dry   |       10 |             0 |                0 |
     Given the following service combos exist in the system:
-      | name      | mainService | services       | mandatory        |
-      | dye-basic | color       | wash,color,dry | false,true,false |
-      | cut-basic | cut         | wash,cut,dry   | false,true,false |
+      | name        | mainService | services       | mandatory        |
+      | color-basic | color       | wash,color,dry | false,true,false |
+      | cut-basic   | cut         | wash,cut,dry   | false,true,false |
     Given the business has the following opening hours
       | day       | startTime | endTime |
       | Monday    | 9:00      | 17:00   |
@@ -33,7 +33,7 @@ Feature: Make appointment
       | 2020-12-31 | 2021-01-01 | 0:00      | 23:59   |
     Given the following appointments exist in the system:
       | customer  | serviceName | optServices | date       | startTime | endTime |
-      | customer1 | dye-basic   | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
+      | customer1 | color-basic | wash,dry    | 2020-12-28 | 9:00      | 10:35   |
       | customer2 | cut-basic   | wash,dry    | 2020-12-28 | 13:00     | 13:40   |
       | customer3 | cut-basic   | wash,dry    | 2020-12-29 | 9:00      | 9:40    |
 
@@ -45,7 +45,7 @@ Feature: Make appointment
 
     Examples: 
       # row 1: appointment in regular available slot
-      # row 2: appointment during downtime of dye-basic
+      # row 2: appointment during downtime of color-basic
       | serviceName | date       | startTime | endTime |
       | cut         | 2020-12-29 | 9:40      | 10:00   |
       | cut         | 2020-12-28 | 10:00     | 10:20   |
@@ -58,7 +58,7 @@ Feature: Make appointment
 
     Examples: 
       # row 1: appointment in regular available slot
-      # row 2: appointment during downtime of dye-basic
+      # row 2: appointment during downtime of color-basic
       | serviceName | optionalServices | date       | startTime | endTime |
       | cut-basic   | wash,dry         | 2020-12-30 | 10:00     | 10:40   |
       | cut-basic   | dry              | 2020-12-28 | 9:55      | 10:25   |
@@ -96,7 +96,7 @@ Feature: Make appointment
       # row 5: slot is in 2019
       | serviceName | optionalServices | date       | startTime |
       | cut-basic   | wash,dry         | 2020-12-29 | 9:00      |
-      | dye-basic   | wash,dry         | 2020-12-28 | 10:00     |
+      | color-basic | wash,dry         | 2020-12-28 | 10:00     |
       | cut-basic   | dry              | 2020-12-31 | 9:00      |
       | cut-basic   | dry              | 2021-01-02 | 9:00      |
       | cut-basic   | dry              | 2019-01-02 | 9:00      |

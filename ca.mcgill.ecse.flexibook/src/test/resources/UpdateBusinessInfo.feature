@@ -121,6 +121,8 @@ Feature: Update business information
     Then an error message "No permission to update business information" shall "<result>" be raised
 
     Examples: 
-      | username | result |
-      | owner    | not    |
-      | User1    |        |
+      | username | type     | startDate  | startTime | endDate    | endTime | result |
+      | owner    | vacation | 2020-07-30 | 09:00     | 2020-08-10 | 16:00   | not    |
+      | User1    | vacation | 2020-07-30 | 09:00     | 2020-08-10 | 16:00   |        |
+      | owner    | holiday  | 2020-08-15 | 16:00     | 2020-08-17 | 09:00   | not    |
+      | User1    | holiday  | 2020-08-15 | 16:00     | 2020-08-17 | 09:00   |        |

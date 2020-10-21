@@ -47,12 +47,12 @@ Feature: Define Service Combo
     Then the number of service combos in the system shall be "1"
 
     Examples: 
-      | name          | mainService | services                | mandatory            | error                                            |
-      | Cut-Highlight | highlight   | wash,dry,cut            | false,false,true     | Service highlight does not exist                 |
-      | Cut-Highlight | highlights  | wash,dry,cut            | false,false,true     | Main service must be included in the services    |
-      | Cut-Extension | extensions  | wash,dry,cut,extensions | true,true,true,false | Main service must be mandatory                   |
-      | Cut-Normal    | cut         | cut                     | true                 | A service Combo must contain at least 2 services |
-      | Cut-Lunch     | cut         | wash,dry,cut,lunch      | true,true,true,false | Service lunch does not exist                     |
+      | name           | mainService | services                | mandatory            | error                                            |
+      | Cut-Highlight  | highlight   | wash,dry,cut            | false,false,true     | Service highlight does not exist                 |
+      | Cut-Highlights | highlights  | wash,dry,cut            | false,false,true     | Main service must be included in the services    |
+      | Cut-Extensions | extensions  | wash,dry,cut,extensions | true,true,true,false | Main service must be mandatory                   |
+      | Cut-Normal     | cut         | cut                     | true                 | A service Combo must contain at least 2 services |
+      | Cut-Lunch      | cut         | wash,dry,cut,lunch      | true,true,true,false | Service lunch does not exist                     |
 
   Scenario Outline: Define an existing service combo
     Given the following services exist in the system:
@@ -64,8 +64,8 @@ Feature: Define Service Combo
       | cut        |       20 |             0 |                0 |
       | dry        |       10 |             0 |                0 |
     Given the following service combos exist in the system:
-      | name          | mainService | services                | mandatory            |
-      | Cut-Regular   | cut         | wash,dry,cut            | false,false,true     |
+      | name        | mainService | services     | mandatory        |
+      | Cut-Regular | cut         | wash,dry,cut | false,false,true |
     Given the Owner with username "owner" is logged in
     When "owner" initiates the definition of a service combo "<name>" with main service "<mainService>", services "<services>" and mandatory setting "<mandatory>"
     Then an error message with content "<error>" shall be raised
@@ -74,7 +74,7 @@ Feature: Define Service Combo
       | Cut-Regular | cut         | wash,dry,cut | false,false,true |
     Then the number of service combos in the system shall be "1"
 
-    Examples:
+    Examples: 
       | name        | mainService | services | mandatory  | error                                    |
       | Cut-Regular | cut         | wash,cut | false,true | Service combo Cut-Regular already exists |
 
