@@ -5,8 +5,6 @@ package ca.mcgill.ecse.flexibook.application;
 
 import java.sql.Date;
 import java.sql.Time;
-
-import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.User;
 
@@ -20,16 +18,19 @@ public class FlexiBookApplication {
 	 */
 	private static User currentUser;
 	
+	private static Date currentDate;
+	private static Time currentTime;
+	
 	private static FlexiBook flexiBook;
    
 	public static void main(String[] args) {
 
-		
-
     }
 	
 	
-	
+	/**
+	 * @author chengchen
+	 */
     public static FlexiBook getFlexiBook() {
 		if (flexiBook == null) {
 			
@@ -81,4 +82,43 @@ public class FlexiBookApplication {
     public static Time getCurrentTime() {
     	return new Time(System.currentTimeMillis()); 	
     }
+    
+    /**
+     * @param date
+     * @author AntoineW
+     */
+    public static void setCurrentDate(Date date) {
+    	currentDate = date;
+    }
+    
+    /**
+     * @param time
+     * @author AntoineW
+     */
+    public static void setCurrentTime(Time time) {
+    	currentTime = time;
+    }
+    
+    /**
+     * Overloaded version for cucumber test. It needs to input a date and time as current time
+     * @param isForTesting Parameter for overloading, can either be true or false
+     * @return
+     * @author AntoineW
+     */
+    public static Time getCurrentTime(boolean isForTesting) {
+    	return currentTime;
+    }
+    
+    /**
+     * Overloaded version for cucumber test. It needs to input a date and time as current
+     * @param isForTesting Parameter for overloading, can either be true or false
+     * @return
+     * @author AntoineW
+     */
+    public static Date getCurrentDate(boolean isForTesting) {
+    	return currentDate;
+    }
+    
+    
+    
 }
