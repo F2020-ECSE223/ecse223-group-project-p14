@@ -2,6 +2,7 @@ package ca.mcgill.ecse.flexibook.features;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Date;
@@ -9,6 +10,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,19 +42,20 @@ import io.cucumber.java.en.When;
 
 public class CucumberStepDefinitions {
 	private FlexiBook flexiBook;
-	
+
 	private Owner owner;
 	private Business business;
 	private String error;
 	private int errorCntr; 
-	
-	
-	
+
+
+
 	private int appointmentCount = 0;
 	private int errorCount = 0;
 	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
 	
+	private boolean statusOfAccount = false;
 	@Before
 	public static void setUp() {
 		// clear all data
@@ -65,56 +68,58 @@ public class CucumberStepDefinitions {
 	
 /*---------------------------Test Add Service--------------------------*/
 
+
+
 	@Given("an owner account exists in the system")
 	public void anOwnerAccountExists() {
 		owner = new Owner("owner", "owner", flexiBook);
 		flexiBook.setOwner(owner);
 
 	}
-	
+
 	@Given("the Owner with username {string} is logged in")
 	public void theOwnerWithUsernameIsLoggedIn(String username) {
 		FlexiBookApplication.setCurrentLoginUser(owner);
 	}
-	
+
 	@When("{string} initiates the addition of the service {string} with duration {string}, start of down time {string} and down time duration {string}")
 	public void initiates_the_addition_of_the_service_with_duration_start_of_down_time_and_down_time_duratrion(String username, String name, String duration, String downtimeDuration, String downtimeStart) throws Throwable{
-		
-			if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(username)){
-		
-				try {
-					Service service = new Service(name, flexiBook, Integer.parseInt(duration), Integer.parseInt(downtimeStart), Integer.parseInt(downtimeDuration));
-					FlexiBookController.addService(service);
-			
-					}
-				catch (InvalidInputException e) {
-					error += e.getMessage();
-					errorCntr++;
-				}
+
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(username)){
+
+			try {
+				Service service = new Service(name, flexiBook, Integer.parseInt(duration), Integer.parseInt(downtimeStart), Integer.parseInt(downtimeDuration));
+				FlexiBookController.addService(service);
+
 			}
-		
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+
 	}
-		
-	
+
+
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
 		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
-	
+
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
 	public void the_service_shall_have_duration_start_of_down_time_and_down_time_duration(String name, String duration, String downtimeStart, String downtimeDuration) {
 		Service service = (Service)flexiBook.getBookableServices().get(0);
 		assertEquals(Integer.parseInt(duration),service.getDuration());
 		assertEquals(Integer.parseInt(downtimeDuration),service.getDowntimeDuration());
 		assertEquals(Integer.parseInt(downtimeStart),service.getDowntimeStart());
-		
+
 	}
-	
+
 	@Then("the number of services in the system shall be {string}")
 	public void the_number_of_services_shall_be(String numService) {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
-	
+
 	@Then("an error message with content {string} shall be raised")
 	public void an_error_message_with_content_shall_be_raised(String errorMsg) {
 		assertTrue(error.contains(errorMsg));
@@ -123,14 +128,12 @@ public class CucumberStepDefinitions {
 	public void the_service_shall_not_exist(String name) {
 		assertEquals(null, flexiBook.getBookableServices());
 	}
-	
+
 	@Then("the number of services in the system shall be zero {string}")
 	public void the_number_of_services_shall_be_zero(String numService) {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
 
-	
-	
 
 	/**
 	 * 
@@ -150,15 +153,15 @@ public class CucumberStepDefinitions {
 		errorCount = 0;
 		appointmentCount = flexiBook.getAppointments().size();
 	}
-	
+
 	@Given("the system's time and date is {string}")
 	public void system_Time_And_Date_Is(String string) {
 		
 		List<String> dateTime = ControllerUtils.parseString(string, "+");
-		
+
 		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
 		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
-		
+
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		
@@ -257,7 +260,7 @@ public class CucumberStepDefinitions {
 	 @Given ("the business has the following holidays")
 	 public void the_business_has_the_following_holidays(List<Map<String, String>> datatable) {
 		 for(Map<String, String> map : datatable) {
-			 
+
 			TimeSlot ts = new TimeSlot(stringToDate(map.get("startDate")), 
 					stringToTime(map.get("startTime")), stringToDate(map.get("endDate")), stringToTime(map.get("endTime")), flexiBook);
 			flexiBook.getBusiness().addHoliday(ts);
@@ -339,8 +342,7 @@ public class CucumberStepDefinitions {
 			FlexiBookController.addAppointmentForService(Servicename, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
-		}
-		 
+		}		 
 	 }
 	 
 	 @Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
@@ -378,14 +380,13 @@ public class CucumberStepDefinitions {
 	 @When("{string} schedules an appointment on {string} for {string} with {string} at {string}")
 	 public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
 			 String optService, String time) {
-		 
 		try {
 			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
 		}
-		    
-	 }
+
+	}
 
 	 
 	 /**
@@ -394,85 +395,81 @@ public class CucumberStepDefinitions {
 	  * As a customer, I wish to be able to update my appointment so that I can edit my optional combo items or change my appointment time
 	  */
 //---------------------------------------- updating app -----------------------------------------------------------------------------
+	@When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
+	public void attempts_to_update_their_appointment_on_at_to_at(String customer, String serviceName, String oldDate, 
+			String oldTime, String newD, String newT) {
 
-	 @When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
-	 public void attempts_to_update_their_appointment_on_at_to_at(String customer, String serviceName, String oldDate, 
-			 String oldTime, String newD, String newT) {
-		 
-		 try {
-			 statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), stringToDate(newD) ,stringToTime(newT));
+		try {
+			statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), stringToDate(newD) ,stringToTime(newT));
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
 		}
-		     
-	 }
+
+	}
 
 
-	 @Then("the system shall report that the update was {string}")
-	 public void the_system_shall_report_that_the_update_was(String string) {
-		 String statusStr = "";
-		 // returned from the controller method!
-		 if (statusOfAppointment) {
-			 statusStr = "successful";
-		 }else {
-			 statusStr = "unsuccessful";
-		 }
-		 
-		 assertEquals(statusStr, string);
-	 }
+	@Then("the system shall report that the update was {string}")
+	public void the_system_shall_report_that_the_update_was(String string) {
+		String statusStr = "";
+		// returned from the controller method!
+		if (statusOfAppointment) {
+			statusStr = "successful";
+		}else {
+			statusStr = "unsuccessful";
+		}
+
+		assertEquals(statusStr, string);
+	}
 
 
-	 
-
-	 @Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
-	 public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
-			 String date, String time) {
-		 
-		 try {
-				FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
-			} catch (InvalidInputException e) {
-				error = error+ e.getMessage();
-			}
-	 }
-		 
 
 
-	 @When("{string} attempts to {string} {string} from their {string} appointment on {string} at {string}")
-	 public void attempts_to_from_their_appointment_on_at(String customer, String action, String comboItem, String serviceName,
-			 String date, String time) {
-		 try {
-			 statusOfAppointment = FlexiBookController.updateAppointmentForServiceCombo(serviceName, 
-						stringToDate(date), stringToTime(time), action, comboItem);
-				
-				appointmentCount = flexiBook.getAppointments().size();
-			} catch (InvalidInputException e) {
-				error = error + e.getMessage();
-			}
-	 }
-	 
+	@Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
+	public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
+			String date, String time) {
 
-	 @When("{string} attempts to update {string}'s {string} appointment on {string} at {string} to {string} at {string}")
-	 public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
-			 String oldDate, String  oldTime, String newD, String newT) {
-		 
-		 if(FlexiBookController.findCustomer(user) !=null) {
-			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(user));	
-		 }else if (user.equals("owner")) {
-			 FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
-		 }
-		 try {
-			 statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), 
+		try {
+			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
+		} catch (InvalidInputException e) {
+			error = error+ e.getMessage();
+		}
+	}
+
+
+
+	@When("{string} attempts to {string} {string} from their {string} appointment on {string} at {string}")
+	public void attempts_to_from_their_appointment_on_at(String customer, String action, String comboItem, String serviceName,
+			String date, String time) {
+		try {
+			statusOfAppointment = FlexiBookController.updateAppointmentForServiceCombo(serviceName, 
+					stringToDate(date), stringToTime(time), action, comboItem);
+
+			appointmentCount = flexiBook.getAppointments().size();
+		} catch (InvalidInputException e) {
+			error = error + e.getMessage();
+		}
+	}
+
+
+	@When("{string} attempts to update {string}'s {string} appointment on {string} at {string} to {string} at {string}")
+	public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
+			String oldDate, String  oldTime, String newD, String newT) {
+
+		if(FlexiBookController.findCustomer(user) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(user));	
+		}else if (user.equals("owner")) {
+			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
+		}
+		try {
+			statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), 
 					stringToDate(newD) ,stringToTime(newT));
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
 		}
-		 
-		 
-		 
-	 }
+	}
 
 
-	 
+
 	 /**
 	  * @author AntoineW
 	  * @Feature: Cancel appointment
@@ -480,56 +477,54 @@ public class CucumberStepDefinitions {
 	  */
 //--------------------------------------- cancel Appointment ------------------------------------------------
 
-	 @When("{string} attempts to cancel their {string} appointment on {string} at {string}")
-	 public void attempts_to_cancel_their_appointment_on_at(String user, String serviceName, String date, String time) {
-		 
-		 try {
-			 statusOfAppointment = FlexiBookController.cancelAppointment(serviceName, stringToDate(date),stringToTime(time));
-		} catch (InvalidInputException e) {
-				error = error + e.getMessage();
-		}
-	
-	 }
+	@When("{string} attempts to cancel their {string} appointment on {string} at {string}")
+	public void attempts_to_cancel_their_appointment_on_at(String user, String serviceName, String date, String time) {
 
-
-	 @Then("{string}'s {string} appointment on {string} at {string} shall be removed from the system")
-	 public void s_appointment_on_at_shall_be_removed_from_the_system(String string, String string2, String string3, String string4) {
-
-		 Appointment app = FlexiBookController.findAppointment(string2, stringToDate(string3), stringToTime(string4)); 
-		 // should be removed thus no longer found in the system -> assert to be null
-		 assertEquals(null, app);
-	 }
-	 
-	 @Then("there shall be {int} less appointment in the system")
-	 public void there_shall_be_less_appointment_in_the_system(Integer int1) {
-		 // one less -> thus subtraction should be negative number
-		 assertEquals(flexiBook.getAppointments().size() - appointmentCount, int1 * (-1));
-		 appointmentCount = flexiBook.getAppointments().size();
-	 }
-
-
-
-
-	 @When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
-	 public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
-		 if(FlexiBookController.findCustomer(curUser) !=null) {
-			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(curUser));	
-		 }else if (curUser.equals("owner")) {
-			 FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
-		 }
-		 try {
-			 statusOfAppointment = FlexiBookController.cancelAppointment(serviceName, stringToDate(date), stringToTime(time));
+		try {
+			statusOfAppointment = FlexiBookController.cancelAppointment(serviceName, stringToDate(date),stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
 		}
-		 
-	 }
 
-	 
-	
+	}
 
-/*---------------------------Test Sign Up Customer--------------------------*/
-	
+
+	@Then("{string}'s {string} appointment on {string} at {string} shall be removed from the system")
+	public void s_appointment_on_at_shall_be_removed_from_the_system(String string, String string2, String string3, String string4) {
+
+		Appointment app = FlexiBookController.findAppointment(string2, stringToDate(string3), stringToTime(string4)); 
+		// should be removed thus no longer found in the system -> assert to be null
+		assertEquals(null, app);
+	}
+
+	@Then("there shall be {int} less appointment in the system")
+	public void there_shall_be_less_appointment_in_the_system(Integer int1) {
+		// one less -> thus subtraction should be negative number
+		assertEquals(flexiBook.getAppointments().size() - appointmentCount, int1 * (-1));
+		appointmentCount = flexiBook.getAppointments().size();
+	}
+
+
+
+
+	@When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
+	public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
+		if(FlexiBookController.findCustomer(curUser) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(curUser));	
+		}else if (curUser.equals("owner")) {
+			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
+		}
+		try {
+			statusOfAppointment = FlexiBookController.cancelAppointment(serviceName, stringToDate(date), stringToTime(time));
+		} catch (InvalidInputException e) {
+			error = error + e.getMessage();
+		}
+
+	}
+
+
+	/*---------------------------Test Sign Up Customer Account--------------------------*/
+
 	/**
 	 * Feature: Sign up for customer account
 	 * As a prospective customer, I want to create an account with username and password
@@ -537,7 +532,7 @@ public class CucumberStepDefinitions {
 	 * 
 	 * @author Catherine
 	 */
-	
+
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
 		customerCount = flexiBook.getCustomers().size();
@@ -545,7 +540,7 @@ public class CucumberStepDefinitions {
 			if(username != "owner") customerCount--;
 			FlexiBookController.findUser(username).delete();
 		}
-		
+
 	}
 
 	@When("the user provides a new username {string} and a password {string}")
@@ -557,24 +552,30 @@ public class CucumberStepDefinitions {
 			error += e.getMessage();
 		}
 	}
-	
+
 	@Then("a new customer account shall be created")
 	public void a_new_customer_account_shall_be_created() {
 		assertEquals(1, flexiBook.getCustomers().size() - customerCount);
 	}
-	
+
 	@Then("the account shall have username {string} and password {string}")
 	public void the_account_shall_have_username_and_password(String username, String password) {
-		assertEquals(username, flexiBook.getCustomer(0).getUsername());
-		assertEquals(password, flexiBook.getCustomer(0).getPassword());
+		if(FlexiBookController.findUser(username) instanceof Owner) {
+			assertEquals(username, flexiBook.getOwner().getUsername());
+			assertEquals(password, flexiBook.getOwner().getPassword());
+		}
+		else {
+			assertEquals(username, flexiBook.getCustomer(0).getUsername());
+			assertEquals(password, flexiBook.getCustomer(0).getPassword());
+		}
 	}
-	
+
 	@Then("no new account shall be created")
 	public void no_new_account_shall_be_created() {
 		assertEquals(0, flexiBook.getCustomers().size() - customerCount);
 	}
 
-	
+
 	@Then("an error message {string} shall be raised")
 	public void an_error_message_shall_be_raised(String errorMsg) {
 		assertTrue(error.contains(errorMsg));
@@ -592,46 +593,152 @@ public class CucumberStepDefinitions {
 				flexiBook.addCustomer(username, "password");
 				customerCount++;
 			}
-		}
-		
+		}	
 	}
-	
+
 	@Given("the user is logged in to an account with username {string}")
 	public void the_user_is_logged_in_to_an_account_with_username(String username) {
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));
 	}
+
+
+	/*---------------------------Test Update Account--------------------------*/
+
+	/**
+	 * Feature: Update customer or owner account
+	 * As a user, I want to be update my username and password so that I can login later with the 
+	 * new information
+	 * 
+	 * @author Catherine
+	 */
+
+
+	@Given("an owner account exists in the system with username {string} and password {string}")
+	public void an_owner_account_exists_in_the_system_with_username_and_password(String username, String password) {
+		owner = new Owner(username, password, flexiBook);
+		flexiBook.setOwner(owner);
+	}
+
+	@When("the user tries to update account with a new username {string} and password {string}")
+	public void the_user_tries_to_update_account_with_a_new_username_and_password(String newUsername, String newPassword) {
+		try {
+			statusOfAccount = FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), newUsername, newPassword);
+		}
+		catch(InvalidInputException e){
+			error += e.getMessage();
+		}
+	}
+
+	@Then("the account shall not be updated")
+	public void the_account_shall_not_be_updated() {
+		assertFalse(statusOfAccount); //this feels illegal
+	}
+
+	/*---------------------------Test Update Account--------------------------*/
+
+	/**
+	 * Feature: Delete customer account
+	 * As a user, I want to delete my own account so that 
+	 * the personal information is deleted from the system
+	 * 
+	 * @author Catherine
+	 */
+
+
+	@Given("the account with username {string} has pending appointments")
+	public void the_account_with_username_has_pending_appointments(String username) {
+		Date date = new Date(1634814000); //Thursday, October 21, 2021 11:00:00 AM 
+		Time time = new Time(1634814000); //Thursday, October 21, 2021 11:00:00 AM 
+		Time endTime = new Time(1634814000 + 3600); //one hour later
+		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, FlexiBookApplication.getFlexiBook());
+		Service service = new Service("service", FlexiBookApplication.getFlexiBook(), 2, 0, 0);
+		FlexiBookApplication.getFlexiBook().addBookableService(service);
+		Appointment appointment = new Appointment((FlexiBookController.findCustomer(username)), service , timeSlot, FlexiBookApplication.getFlexiBook());
+		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+	}
+
+	@When("the user tries to delete account with the username {string}")
+	public void the_user_tries_to_delete_account_with_the_username(String username) {
+		try {
+			FlexiBookController.deleteCustomerAccount(username);
+		}
+		catch(InvalidInputException e){
+			error += e.getMessage();
+		}
+	}
+
+	@Then("the account with the username {string} does not exist")
+	public void the_account_with_the_username_does_not_exist(String username) {
+		assertNull(FlexiBookController.findUser(username));
+	}
+
+	@Then("all associated appointments of the account with the username {string} shall not exist")
+	public void all_associated_appointments_of_the_account_with_the_username_shall_not_exist(String username) {
+		assertTrue(findAppointmentsForCustomer(username).isEmpty());
+	}
+
+	@Then("the user shall be logged out")
+	public void the_user_shall_be_logged_out() {
+		assertNull(FlexiBookApplication.getCurrentLoginUser());
+	}
+
+	@Then("the account with the username {string} exists")
+	public void the_account_with_the_username_exists(String username) {
+		assertFalse(FlexiBookController.findUser(username) == null);
+	}
+
+
+
+	/*---------------------------private helper methods--------------------------*/
+
+	/**
+	 * Converts string to date
+	 * @param str
+	 * @return
+	 * @author AntoineW
+	 */
+	private static Date stringToDate(String str) {
+		return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
+	}
+
+	/**
+	 * Converts string to time
+	 * @param str
+	 * @return
+	 * @author AntoineW
+	 */
+
+	private static Time stringToTime(String str) {
+		if (str.charAt(2) != ':') {
+			str = "0" + str;
+		}
+		return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
+	}
+
+
 	
-	
-	
-	
+
 	@After
 	public void tearDown() {
 		flexiBook.delete();
 	}
 	
-	//--------------------------------------- some helper method coping with time format---------------------
+	
 	/**
-	 * 
-	 * @param str
-	 * @return
-	 * @author AntoineW
+	 * Helper method to find an appointment associated to an account
+	 * @param username
+	 * @return List of associated appointments
+	 * @author Catherine
 	 */
-	 private static Date stringToDate(String str) {
-		 return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
-	 }
-	 
-	 /**
-	  * 
-	  * @param str
-	  * @return
-	  * @author AntoineW
-	  */
-	 private static Time stringToTime(String str) {
-		 if (str.charAt(2) != ':') {
-			 str = "0" + str;
-		 }
-		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
-	 }
-	
-	
+	private static List<Appointment> findAppointmentsForCustomer(String username) {
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getCustomer().getUsername().equals(username)){
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
+
+
 }

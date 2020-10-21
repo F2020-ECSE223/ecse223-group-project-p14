@@ -35,17 +35,11 @@ public class FlexiBookController {
 	 *
 	 */
 	public static void addService(Service aService) throws InvalidInputException{
-		
-		
-		
-		
 		try {
 			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
 				aService = null;
 				throw new InvalidInputException("Only owner can add a service");
 			}
-
-				
 			if (aService.getDuration() <= 0) {
 				aService= null;
 				throw new InvalidInputException("Duration must be positive");
@@ -53,34 +47,32 @@ public class FlexiBookController {
 			else if (aService.getDowntimeDuration() < 0) {
 				aService= null;
 				throw new InvalidInputException("Downtime duration must be 0");
-			
+
 			}	
 			else if (aService.getDowntimeDuration() == 0) {
 				aService= null;
 				throw new InvalidInputException("Downtime duration must be positive");
 			}
-			
-			
-				
+
 			else if (aService.getDowntimeStart() == 0) {
 				aService= null;
 				throw new InvalidInputException("Downtime must not start at the beginning of the service");
-				
+
 			}
 			else if (aService.getDowntimeStart() < 0) {
 				aService= null;
 				throw new InvalidInputException("Downtime must not start before the beginning of the service");
-				
+
 			}
 			else if (aService.getDowntimeStart() < aService.getDuration()) {
 				aService= null;
 				throw new InvalidInputException("Downtime must not end after the service");
-				
+
 			}
 			else if (aService.getDowntimeStart() > aService.getDuration()) {
 				aService= null;
 				throw new InvalidInputException("Downtime must not start after the end of the service");
-				
+
 			}
 			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 			flexiBook.addBookableService(aService);
@@ -157,12 +149,10 @@ public class FlexiBookController {
 		if(s == null) {
 			throw new InvalidInputException("No such single service exist!");
 		}
-
-
-
+		
 		LocalTime aEndtime = time.toLocalTime().plusMinutes(s.getDuration());
 		Time endTime = Time.valueOf(aEndtime);
-	
+
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
 				FlexiBookApplication.getFlexiBook());
@@ -180,7 +170,7 @@ public class FlexiBookController {
 
 		// after making sure time is OK, lets add appointment for a single service.
 		try {
-			
+
 			Appointment appointment = new Appointment((Customer) user, s, timeSlot,FlexiBookApplication.getFlexiBook() );
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 			return appointment;
@@ -242,13 +232,13 @@ public class FlexiBookController {
 			}else {
 				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + time);
 			}
-			
+
 		}
 
 
 		try {
 			Appointment appointment = new Appointment((Customer) user, sCombo, timeSlot, FlexiBookApplication.getFlexiBook());
-			
+
 
 			// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
 			// add all mandatory and chosen optional combo item to appointment
@@ -264,11 +254,11 @@ public class FlexiBookController {
 					}
 				}
 			}	
-			
-			
+
+
 			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
-			
-			
+
+
 			return appointment;
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
@@ -333,7 +323,7 @@ public class FlexiBookController {
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
 		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
 		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
-		
+
 		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
 			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
 			return false;
@@ -369,7 +359,7 @@ public class FlexiBookController {
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
-		
+
 		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
 		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
 		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
@@ -446,16 +436,16 @@ public class FlexiBookController {
 	 * @throws InvalidInputException 
 	 */
 	public static boolean cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
-		
+
 		Appointment appInSystem = findAppointment(serviceName,date, time);
-		
+
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("An owner cannot cancel an appointment  ");
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("A customer can only cancel their own appointments");
 		}
-		
+
 		Date today = FlexiBookApplication.getCurrentDate(true);
 		if(date.equals(today)) {
 			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
@@ -466,10 +456,10 @@ public class FlexiBookController {
 
 		}
 		return false;
-		
+
 	}
 
-	
+
 	/**
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
@@ -486,10 +476,10 @@ public class FlexiBookController {
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
-		else if (username == null || username == "" || username.replaceAll("\\s+", "").length() == 0) {
+		else if (username == null || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		else if (password == null || password == "" || password.replaceAll("\\s+", "").length() == 0) {
+		else if (password == null || password.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
 		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
@@ -506,7 +496,7 @@ public class FlexiBookController {
 		return signUpSuccessful;
 	}
 
-	
+
 	/**
 	 * This method updates the username and/or password for a customer account, 
 	 * or the password for an owner account
@@ -517,8 +507,6 @@ public class FlexiBookController {
 	 * 
 	 * @author Catherine
 	 */
-	
-	// @ TODO Need to capture if input is "    "  ie string with only spaces
 	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
@@ -526,13 +514,13 @@ public class FlexiBookController {
 		if (user.getUsername() != currentUsername) {
 			throw new InvalidInputException("You do not have permission to update this account"); 
 		}
-		else if (newUsername == null || newUsername == "") {
+		else if (newUsername == null || newUsername.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
-		else if (currentUsername == "owner" && newUsername != "owner") {
+		else if (currentUsername.equals("owner") && !newUsername.equals("owner")) {
 			throw new InvalidInputException("Changing username of owner is not allowed");
 		}
-		else if (newPassword == null || newPassword == "") {
+		else if (newPassword == null || newPassword.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
 		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { 
@@ -546,8 +534,8 @@ public class FlexiBookController {
 		}
 		return updateSuccessful;
 	}
-	
-	
+
+
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
 	 * @param username
@@ -558,7 +546,7 @@ public class FlexiBookController {
 	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean deleteSuccessful = false;
-		if (user.getUsername() != username || user.getUsername() == "owner" || user instanceof Owner) { 
+		if (!user.getUsername().equals(username) || user.getUsername().equals("owner") || user instanceof Owner) { 
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
 		else {
@@ -919,33 +907,33 @@ public class FlexiBookController {
 	}
 
 
-	//Tried to do updateBusinessHour with tryCatch if the one above doesn't work
-	//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
-	//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-	//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-	//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
-	//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
-	//		BusinessHour temp = null;
-	//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
-	//		}
-	//		else { 
-	//			if (newStart.compareTo(newEnd) < 0) { 
-	//				try {
-	//					temp = isTheBusinessHour(oldB);
-	//					temp.setDayOfWeek(day);
-	//					temp.setEndTime(newEnd);
-	//					temp.setStartTime(newStart);
-	//					if (isOverlappingWithBusinessHours(temp)) {
-	//						throw new InvalidInputException(" The business hours cannot overlap");
-	//					}	
-	//				}
-	//				catch (InvalidInputException e) {
-	//				}
-	//			} 
-	//			else 
-	//			{ throw new InvalidInputException("Start time must be before end time ");}	
-	//		}
-	//	}
+//	Tried to do updateBusinessHour with tryCatch if the one above doesn't work
+//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
+//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
+//		BusinessHour temp = null;
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
+//		}
+//		else { 
+//			if (newStart.compareTo(newEnd) < 0) { 
+//				try {
+//					temp = isTheBusinessHour(oldB);
+//					temp.setDayOfWeek(day);
+//					temp.setEndTime(newEnd);
+//					temp.setStartTime(newStart);
+//					if (isOverlappingWithBusinessHours(temp)) {
+//						throw new InvalidInputException(" The business hours cannot overlap");
+//					}	
+//				}
+//				catch (InvalidInputException e) {
+//				}
+//			} 
+//			else 
+//			{ throw new InvalidInputException("Start time must be before end time ");}	
+//		}
+//	}
 
 	/**
 	 * This method is used to updates the business information
@@ -1148,21 +1136,21 @@ public class FlexiBookController {
 
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-//
-//	public static List<TOServiceCombo> getTOServiceCombos(){
-//		//@ TODO
-//	}
-//
-//	public static List<TOService> getTOServices(){
-//		//@ TODO
-//	}
-//	
-//	
-//	
-	
-	
-/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-	
+	//
+	//	public static List<TOServiceCombo> getTOServiceCombos(){
+	//		//@ TODO
+	//	}
+	//
+	//	public static List<TOService> getTOServices(){
+	//		//@ TODO
+	//	}
+	//	
+	//	
+	//	
+
+
+	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
+
 
 	/**
 	 * This method finds the service with specified name
@@ -1227,7 +1215,6 @@ public class FlexiBookController {
 	}
 
 
-
 	/**
 	 * Check if the time slot overlaps with other appointment
 	 * solves constraint: checks whether there is no overlap between two time slots
@@ -1244,7 +1231,7 @@ public class FlexiBookController {
 			LocalDateTime tsStart = ControllerUtils.combineDateAndTime(ts.getStartDate(), ts.getStartTime());
 			LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(ts.getEndDate(), ts.getEndTime());
 
-			
+
 			if(timeSlotEnd.isBefore(tsStart) || tsEnd.isBefore(timeSlotStart) || timeSlotEnd.equals(tsStart)||tsEnd.equals(timeSlotStart) ||
 					flexiBook.getTimeSlots().indexOf(ts) ==  index ||
 					flexiBook.getTimeSlots().indexOf(ts) ==  oldIndex) {
@@ -1308,7 +1295,7 @@ public class FlexiBookController {
 		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour bh: bhList) {
 			// check weekday
-			
+
 			if(dOfWeek .equals(bh.getDayOfWeek())) {
 				// if the appointment is on that day, compare if the time slot is included by business hour
 				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
@@ -1366,7 +1353,7 @@ public class FlexiBookController {
 		}else {
 			if(!isNotOverlapWithOtherTimeSlots (timeSlot, index, oldIndex)) {
 				if (!isDuringDowntime(timeSlot)) {
-				return false;
+					return false;
 				}
 			}
 		}
@@ -1390,7 +1377,7 @@ public class FlexiBookController {
 
 		int actualTime = 0;
 		List<String> itemNameList = ControllerUtils.parseString(chosenItemNames,",");
-	
+
 		for (ComboItem ci : comboItemList) {
 
 			if(ci.getMandatory()) {
@@ -1462,7 +1449,7 @@ public class FlexiBookController {
 		}
 		return foundOwner;
 	}
-	
+
 	/**
 	 * This method is a helper method for finding a particular user by username
 	 * User can be the owner or a customer 
@@ -1483,7 +1470,7 @@ public class FlexiBookController {
 				}
 				else foundUser = null;
 			}
-		
+
 		}
 		return foundUser;
 	}
