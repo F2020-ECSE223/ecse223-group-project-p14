@@ -54,23 +54,21 @@ public class CucumberStepDefinitions {
 	private int errorCount = 0;
 	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
+	
 	private boolean statusOfAccount = false;
-
-
-
+	@Before
+	public static void setUp() {
+		// clear all data
+		FlexiBookApplication.getFlexiBook().delete();
+	}
+	
 	/**
 	 * @author chengchen
 	 */
+	
+/*---------------------------Test Add Service--------------------------*/
 
-	/*---------------------------Test Add Service--------------------------*/
-	//	
-	//	@Given("a Flexibook system exists")
-	//	public void aFlexiBookExists() {
-	//		flexiBook = FlexiBookApplication.getFlexiBook();
-	//		error = "";
-	//		errorCntr = 0;
-	//				
-	//	}
+
 
 	@Given("an owner account exists in the system")
 	public void anOwnerAccountExists() {
@@ -78,10 +76,6 @@ public class CucumberStepDefinitions {
 		flexiBook.setOwner(owner);
 
 	}
-	//	@Given("a business exists in the system")
-	//	public void aBusinessExistsInTheSystem () {
-	//		business = flexiBook.getBusiness();
-	//	}
 
 	@Given("the Owner with username {string} is logged in")
 	public void theOwnerWithUsernameIsLoggedIn(String username) {
@@ -141,28 +135,18 @@ public class CucumberStepDefinitions {
 	}
 
 
-
-	@After
-	public void tearDown() {
-		flexiBook.delete();
-	}
-
-
 	/**
 	 * 
 	 * @author AntoineW
 	 *
+	 * @Feature: Make appointment
+  		As a customer, I wish to be able to make an appointment so that I can schedule a service
 	 */
 	//----------------------------------------make app -----------------------------------------------------------------------------
-	@Before
-	public static void setUp() {
-		// clear all data
-		FlexiBookApplication.getFlexiBook().delete();
-	}
 
 
 	@Given("a Flexibook system exists")
-	public void aFlexibookSystemExists() {
+	public void a_Flexibook_System_Exists() {
 		flexiBook = FlexiBookApplication.getFlexiBook();
 		FlexiBookApplication.clearCurrentLoginUser();
 		error = "";
@@ -171,8 +155,8 @@ public class CucumberStepDefinitions {
 	}
 
 	@Given("the system's time and date is {string}")
-	public void systemTimeAndDateIs(String string) {
-
+	public void system_Time_And_Date_Is(String string) {
+		
 		List<String> dateTime = ControllerUtils.parseString(string, "+");
 
 		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
@@ -180,84 +164,78 @@ public class CucumberStepDefinitions {
 
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-
+		
 	}
-
-	//	 @Given ("an owner account exists in the system")
-	//	 public void aOwnerExist() {
-	//		 Owner aNewOwner = new Owner("owner", "owner", flb);
-	//		 flb.setOwner(aNewOwner);
-	//	 }
-	//	 
-	@Given ("a business exists in the system")
-	public void aBusinessExistsInTheSystem() {
-		Business b = new Business("test", "test", "test", "test", flexiBook);
-		flexiBook.setBusiness(b);
-	}
-
-	@Given ("the following customers exist in the system:")
-	public void theFollowingCustomersExist(List<Map<String, String>> datatable){
-		for(Map<String, String> map : datatable) {
-			Customer c = new Customer(map.get("username"), map.get("password"), flexiBook);
-			flexiBook.addCustomer(c);
-		}
-	}
-
-	@Given ("the following services exist in the system:")
-	public void theFollowingServicesExist(List<Map<String, String>> datatable) {
-		for(Map<String, String> map : datatable) {
-			Service s = new Service(map.get("name"), flexiBook, 
-					Integer.parseInt(map.get("duration")),
-					Integer.parseInt(map.get("downtimeDuration")), 
-					Integer.parseInt(map.get("downtimeStart")) );
-
-			flexiBook.addBookableService(s);
-		}
-	}
-
-	@Given ("the following service combos exist in the system:")
-	public void theFollowingServiceCombosExist(List<Map<String, String>> datatable) {
-		for(Map<String, String> map : datatable) {
-
-			ServiceCombo sc = new ServiceCombo(map.get("name"), flexiBook);
-
-
-
-			// adding a list of comboItems
-			List<String> namelist = ControllerUtils.parseString(map.get("services"), ",");
-			List<String> mandatorylist = ControllerUtils.parseString(map.get("mandatory"), ",");
-			for(String servicename: namelist) {
-				int index = namelist.indexOf(servicename);
-
-
-
-				if(mandatorylist.get(index).equals("true")) {
-					ComboItem optSer = new ComboItem(true, FlexiBookController.findSingleService(servicename), sc);
-					sc.addService(optSer);
-				}else if(mandatorylist.get(index).equals("false")) {
-					ComboItem optSer = new ComboItem(false, FlexiBookController.findSingleService(servicename), sc);
-					sc.addService(optSer);
-				}			 
-			}
-
-			// set main service
-			try {
+	
+	 @Given ("a business exists in the system")
+	 public void a_Business_Exists_In_The_System() {
+		 Business b = new Business("test", "test", "test", "test", flexiBook);
+		 flexiBook.setBusiness(b);
+	 }
+	
+	 @Given ("the following customers exist in the system:")
+	 public void the_Following_Customers_Exist(List<Map<String, String>> datatable){
+		 for(Map<String, String> map : datatable) {
+			 Customer c = new Customer(map.get("username"), map.get("password"), flexiBook);
+			 flexiBook.addCustomer(c);
+		 }
+	 }
+	 
+	 @Given ("the following services exist in the system:")
+	 public void the_Following_Services_Exist(List<Map<String, String>> datatable) {
+		 for(Map<String, String> map : datatable) {
+			 Service s = new Service(map.get("name"), flexiBook, 
+					 Integer.parseInt(map.get("duration")),
+					 Integer.parseInt(map.get("downtimeDuration")), 
+					 Integer.parseInt(map.get("downtimeStart")) );
+			 
+			 flexiBook.addBookableService(s);
+		 }
+	 }
+	 
+	 @Given ("the following service combos exist in the system:")
+	 public void the_Following_ServiceCombos_Exist(List<Map<String, String>> datatable) {
+		 for(Map<String, String> map : datatable) {
+			
+			 ServiceCombo sc = new ServiceCombo(map.get("name"), flexiBook);
+			 
+			
+			 
+			 // adding a list of comboItems
+			 List<String> namelist = ControllerUtils.parseString(map.get("services"), ",");
+			 List<String> mandatorylist = ControllerUtils.parseString(map.get("mandatory"), ",");
+			 for(String servicename: namelist) {
+				 int index = namelist.indexOf(servicename);
+				 
+				 
+				 
+				 if(mandatorylist.get(index).equals("true")) {
+					 ComboItem optSer = new ComboItem(true, FlexiBookController.findSingleService(servicename), sc);
+					 sc.addService(optSer);
+				 }else if(mandatorylist.get(index).equals("false")) {
+					 ComboItem optSer = new ComboItem(false, FlexiBookController.findSingleService(servicename), sc);
+					 sc.addService(optSer);
+				 }			 
+			 }
+			 
+			 // set main service
+			 try {
 				ComboItem mSer = ControllerUtils.findComboItemByServiceName(sc, map.get("mainService"));
 				sc.setMainService(mSer);
 			} catch (InvalidInputException e) {
 				error = e.getMessage();
 			}
-
-			flexiBook.addBookableService(sc);
-
-		}
-	}
-
-
-	@Given ("the business has the following opening hours")
-	public void theBusinessHasFollowingOpeningHours(List<Map<String, String>> datatable) {
-		for(Map<String, String> map : datatable) {
-
+	
+			 flexiBook.addBookableService(sc);
+			 
+		 }
+	 }
+	 
+	 
+	 @Given ("the business has the following opening hours")
+	 public void the_business_has_the_following_opening_hours(List<Map<String, String>> datatable) {
+		 for(Map<String, String> map : datatable) {
+			
 			BusinessHour bh = new BusinessHour(null, stringToTime(map.get("startTime")), stringToTime(map.get("endTime")), flexiBook);
 			if(map.get("day").equals("Monday")) {
 				bh.setDayOfWeek(DayOfWeek.Monday);
@@ -276,133 +254,132 @@ public class CucumberStepDefinitions {
 			}
 			flexiBook.getBusiness().addBusinessHour(bh);
 			flexiBook.addHour(bh);
-		}
-	}
-
-	@Given ("the business has the following holidays")
-	public void theBusinessHasFollowingHolidays(List<Map<String, String>> datatable) {
-		for(Map<String, String> map : datatable) {
+		 }
+	 }
+	 
+	 @Given ("the business has the following holidays")
+	 public void the_business_has_the_following_holidays(List<Map<String, String>> datatable) {
+		 for(Map<String, String> map : datatable) {
 
 			TimeSlot ts = new TimeSlot(stringToDate(map.get("startDate")), 
 					stringToTime(map.get("startTime")), stringToDate(map.get("endDate")), stringToTime(map.get("endTime")), flexiBook);
 			flexiBook.getBusiness().addHoliday(ts);
 			//flb.addTimeSlot(ts);
-		}			 
-	}
+		 }			 
+	 }
+	 
+	 
+	 @Given ("the following appointments exist in the system:")
+	 public void the_following_appointments_exist_in_the_system(List<Map<String, String>> datatable) throws InvalidInputException {
+		 for(Map<String, String> map : datatable) {
+			 
+			 String custname = map.get("customer");
+			
+			 Customer c = FlexiBookController.findCustomer(custname);
+			 
+			 BookableService bs = FlexiBookController.findBookableService(map.get("serviceName"));
+			  
+			 
+			 TimeSlot ts = new TimeSlot(stringToDate(map.get("date")),stringToTime(map.get("startTime")), 
+					 stringToDate(map.get("date")), stringToTime(map.get("endTime")), flexiBook);		 
+	
+			 Appointment app = new Appointment(c,bs, ts, flexiBook );
+			 
+			 if(!map.containsKey("optServices")||map.get("optServices").equals("none")) {
+				 
+			 }else {
+				 
+				 ServiceCombo sc = FlexiBookController.findServiceCombo(map.get("serviceName"));
+				 
+				 List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
+				 
+				 for (ComboItem item: sc.getServices() ) {
+					 //add main service no matter what
+					 if(item.getService().getName().equals(sc.getMainService().getService().getName())) {
+						 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, item.getService().getName()));
+					 }else {
+						 //if not, we check all input option string component in certain order. If
+						 // a component exist then we add
+						 for(String name :serviceNameList ) {
+							 if (item.getService().getName().equals(name)) {
+								 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+							 }
+							 // if the optional service name is not mentioned, we skip
+						 }					 
+					 }			 
+				 }
+				 for(String name :serviceNameList ) {
+					 //Service s =  FlexiBookController.findSingleService(name);
+					 app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+				 }
+				 flexiBook.addAppointment(app);
+				 
+			 }
+				 
+		 }
+		 
+		 appointmentCount = flexiBook.getAppointments().size();
+	 }
+	 
+	 
+	 
+	 @Given ("{string} is logged in to their account")
+	 public void user_is_logged_in_to_their_account(String name){
+		 
+		 if(FlexiBookController.findCustomer(name) !=null) {
+			 FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));	
+		 }else if (name.equals("owner")) {
+			 FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
+		 }
+		 	 
+	 }
 
-
-	@Given ("the following appointments exist in the system:")
-	public void theFollowingAppointmentExist(List<Map<String, String>> dataTable) throws InvalidInputException {
-		for(Map<String, String> map : dataTable) {
-
-			String custName = map.get("customer");
-
-			Customer c = FlexiBookController.findCustomer(custName);
-
-			BookableService bs = FlexiBookController.findBookableService(map.get("serviceName"));
-
-
-			TimeSlot ts = new TimeSlot(stringToDate(map.get("date")),stringToTime(map.get("startTime")), 
-					stringToDate(map.get("date")), stringToTime(map.get("endTime")), flexiBook);		 
-
-			Appointment app = new Appointment(c,bs, ts, flexiBook );
-
-			if(!map.containsKey("optServices")||map.get("optServices").equals("none")) {
-
-			}else {
-
-				ServiceCombo sc = FlexiBookController.findServiceCombo(map.get("serviceName"));
-
-				List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
-
-				for (ComboItem item: sc.getServices() ) {
-					//add main service no matter what
-					if(item.getService().getName().equals(sc.getMainService().getService().getName())) {
-						app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, item.getService().getName()));
-					}else {
-						//if not, we check all input option string component in certain order. If
-						// a component exist then we add
-						for(String name :serviceNameList ) {
-							if (item.getService().getName().equals(name)) {
-								app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
-							}
-							// if the optional service name is not mentioned, we skip
-						}					 
-					}			 
-				}
-				for(String name :serviceNameList ) {
-					//Service s =  FlexiBookController.findSingleService(name);
-					app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
-				}
-				flexiBook.addAppointment(app);
-
-			}
-
-		}
-
-		appointmentCount = flexiBook.getAppointments().size();
-	}
-
-
-
-	@Given ("{string} is logged in to their account")
-	public void whoIsCurrentlyLoggedIn(String name){
-
-		if(FlexiBookController.findCustomer(name) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));	
-		}else if (name.equals("owner")) {
-			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
-		}
-
-	}
-
-	@When ("{string} schedules an appointment on {string} for {string} at {string}")
-	public void customerScheduleOnDateForServiceAtTime(String customer, String date, String Servicename, String time) {
-
-		// customer name is not used since it is in the current user
-		try {
+	 @When ("{string} schedules an appointment on {string} for {string} at {string}")
+	 public void customer_schedules_an_appointment_on_date_for_service_at_time(String customer, String date, String Servicename, String time) {
+		 
+		 // customer name is not used since it is in the current user
+		 try {
 			FlexiBookController.addAppointmentForService(Servicename, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
 			error = error+ e.getMessage();
-		}
+		}		 
+	 }
+	 
+	 @Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
+	 public void customer_shall_have_a_service_appointment_on_date_from_startTime_to_endTime(String customer, String Servicename, 
+			 String date,  String timeStart, String timeEnd) {
+		 boolean isTheCase = false;
+		 for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
+ 
+			 if(app.getCustomer().getUsername() .equals (customer) &&
+					 app.getBookableService().getName() .equals (Servicename) &&
+					 app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
+					 app.getTimeSlot().getStartTime().equals(stringToTime(timeStart)) && 
+			 		 app.getTimeSlot().getEndTime().equals(stringToTime(timeEnd))){
+				 
+				 	isTheCase = true;
+			 		 }
+		 }
+		 
+		 assertEquals(isTheCase, true);
+	 }
+	 
+	 @Then ("there shall be {int} more appointment in the system")
+	 public void there_shall_be_some_more_appointment_in_the_system(int i) {
+		 assertEquals(flexiBook.getAppointments().size() - appointmentCount, i);
+		 appointmentCount = flexiBook.getAppointments().size();
+	 }
+	 
 
-	}
-
-	@Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
-	public void customerShallHaveServiceAppointmentOnDateFromStoE(String customer, String Servicename, String date,  String timeStart, String timeEnd) {
-		boolean isTheCase = false;
-		for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
-
-			if(app.getCustomer().getUsername() .equals (customer) &&
-					app.getBookableService().getName() .equals (Servicename) &&
-					app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
-					app.getTimeSlot().getStartTime().equals(stringToTime(timeStart)) && 
-					app.getTimeSlot().getEndTime().equals(stringToTime(timeEnd))){
-
-				isTheCase = true;
-			}
-		}
-
-		assertEquals(isTheCase, true);
-	}
-
-	@Then ("there shall be {int} more appointment in the system")
-	public void checkHowMuchMoreAppointments(int i) {
-		assertEquals(flexiBook.getAppointments().size() - appointmentCount, i);
-		appointmentCount = flexiBook.getAppointments().size();
-	}
+	 @Then("the system shall report {string}")
+	 public void the_system_shall_report_error(String str) {
+		 assertTrue(error.contains(str));
+	 }
 
 
-	@Then("the system shall report {string}")
-	public void systemShouldReportErrorMessage(String str) {
-		assertTrue(error.contains(str));
-	}
-
-
-	@When("{string} schedules an appointment on {string} for {string} with {string} at {string}")
-	public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
-			String optService, String time) {
-
+	 @When("{string} schedules an appointment on {string} for {string} with {string} at {string}")
+	 public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
+			 String optService, String time) {
 		try {
 			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
 		} catch (InvalidInputException e) {
@@ -411,9 +388,13 @@ public class CucumberStepDefinitions {
 
 	}
 
-
-	//---------------------------------------- updating app -----------------------------------------------------------------------------
-
+	 
+	 /**
+	  * @author AntoineW
+	  * @Feature: Update appointment
+	  * As a customer, I wish to be able to update my appointment so that I can edit my optional combo items or change my appointment time
+	  */
+//---------------------------------------- updating app -----------------------------------------------------------------------------
 	@When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
 	public void attempts_to_update_their_appointment_on_at_to_at(String customer, String serviceName, String oldDate, 
 			String oldTime, String newD, String newT) {
@@ -485,13 +466,16 @@ public class CucumberStepDefinitions {
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
 		}
-
-
-
 	}
 
 
-	//--------------------------------------- cancel Appointment ------------------------------------------------
+
+	 /**
+	  * @author AntoineW
+	  * @Feature: Cancel appointment
+  		As a customer, I wish to be able to cancel an appointment so that my appointment time slot becomes available for other customers
+	  */
+//--------------------------------------- cancel Appointment ------------------------------------------------
 
 	@When("{string} attempts to cancel their {string} appointment on {string} at {string}")
 	public void attempts_to_cancel_their_appointment_on_at(String user, String serviceName, String date, String time) {
@@ -724,6 +708,7 @@ public class CucumberStepDefinitions {
 	 * @return
 	 * @author AntoineW
 	 */
+
 	private static Time stringToTime(String str) {
 		if (str.charAt(2) != ':') {
 			str = "0" + str;
@@ -732,6 +717,14 @@ public class CucumberStepDefinitions {
 	}
 
 
+	
+
+	@After
+	public void tearDown() {
+		flexiBook.delete();
+	}
+	
+	
 	/**
 	 * Helper method to find an appointment associated to an account
 	 * @param username
@@ -747,7 +740,6 @@ public class CucumberStepDefinitions {
 		}
 		return appointments;
 	}
-
 
 
 }

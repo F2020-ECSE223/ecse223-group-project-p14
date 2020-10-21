@@ -1056,11 +1056,19 @@ public class FlexiBookController {
 	 * This is a query method which can gives a list of all TOAppointment 
 	 * @return
 	 * @author mikewang
+	 * @author AntoineW later made a change
 	 */
 	public static List<TOAppointment> getTOAppointment(){
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
-			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(), appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
+					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			// ToAppointment need to show all the service item (comboitem)
+			// by AnTW
+			for (TOComboItem toc:getToTOComboItem(appointment)) {
+				toAppointment.addChosenItem(toc);
+			}
 			appointments.add(toAppointment);
 		}
 		return appointments;
@@ -1124,7 +1132,6 @@ public class FlexiBookController {
 				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
 		return business;
 	}
-
 
 
 
