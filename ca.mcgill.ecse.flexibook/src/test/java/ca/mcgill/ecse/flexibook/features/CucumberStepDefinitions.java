@@ -638,7 +638,7 @@ public class CucumberStepDefinitions {
 	@When("the user tries to update account with a new username {string} and password {string}")
 	public void the_user_tries_to_update_account_with_a_new_username_and_password(String newUsername, String newPassword) {
 		try {
-			statusOfAccount = FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), newUsername, newPassword);
+			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), newUsername, newPassword);
 		}
 		catch(InvalidInputException e){
 			error += e.getMessage();
@@ -647,7 +647,8 @@ public class CucumberStepDefinitions {
 
 	@Then("the account shall not be updated")
 	public void the_account_shall_not_be_updated() {
-		assertFalse(statusOfAccount); //this feels illegal
+		assertEquals(FlexiBookApplication.getCurrentLoginUser().getUsername(), "User1");
+		assertEquals(FlexiBookApplication.getCurrentLoginUser().getPassword(), "apple"); //using literals to keep it simple
 	}
 
 	/*---------------------------Test Update Account--------------------------*/
