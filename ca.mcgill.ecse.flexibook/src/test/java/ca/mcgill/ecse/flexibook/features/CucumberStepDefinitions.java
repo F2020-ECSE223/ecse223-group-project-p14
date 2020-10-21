@@ -52,6 +52,7 @@ public class CucumberStepDefinitions {
 	private int errorCount = 0;
 	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
+	private boolean statusOfAccount = false;
 	
 	
 	
@@ -547,7 +548,7 @@ public class CucumberStepDefinitions {
 		 return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	 }
 
-/*---------------------------Test Sign Up Customer--------------------------*/
+/*---------------------------Test Sign Up Customer Account--------------------------*/
 	
 	/**
 	 * Feature: Sign up for customer account
@@ -584,8 +585,14 @@ public class CucumberStepDefinitions {
 	
 	@Then("the account shall have username {string} and password {string}")
 	public void the_account_shall_have_username_and_password(String username, String password) {
-		assertEquals(username, flexiBook.getCustomer(0).getUsername());
-		assertEquals(password, flexiBook.getCustomer(0).getPassword());
+		if(FlexiBookController.findUser(username) instanceof Owner) {
+			assertEquals(username, flexiBook.getOwner().getUsername());
+			assertEquals(password, flexiBook.getOwner().getPassword());
+		}
+		else {
+			assertEquals(username, flexiBook.getCustomer(0).getUsername());
+			assertEquals(password, flexiBook.getCustomer(0).getPassword());
+		}
 	}
 	
 	@Then("no new account shall be created")
@@ -611,8 +618,7 @@ public class CucumberStepDefinitions {
 				flexiBook.addCustomer(username, "password");
 				customerCount++;
 			}
-		}
-		
+		}	
 	}
 	
 	@Given("the user is logged in to an account with username {string}")
@@ -621,9 +627,37 @@ public class CucumberStepDefinitions {
 	}
 	
 	
+/*---------------------------Test Update Account--------------------------*/
 	
+	/**
+	 * Feature: Update customer or owner account
+	 * As a user, I want to be update my username and password so that I can login later with the 
+	 * new information
+	 * 
+	 * @author Catherine
+	 */
 	
+
+	@Given("an owner account exists in the system with username {string} and password {string}")
+	public void an_owner_account_exists_in_the_system_with_username_and_password(String username, String password) {
+		owner = new Owner(username, password, flexiBook);
+		flexiBook.setOwner(owner);
+	}
+
+	@When("the user tries to update account with a new username {string} and password {string}")
+	public void the_user_tries_to_update_account_with_a_new_username_and_password(String newUsername, String newPassword) {
+		try {
+			statusOfAccount = FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), newUsername, newPassword);
+		}
+		catch(InvalidInputException e){
+			error += e.getMessage();
+		}
+	}
 	
+	@Then("the account shall not be updated")
+	public void the_account_shall_not_be_updated() {
+		assertFalse(statusOfAccount); //this feels illegal
+	}
 	
 	
 }
