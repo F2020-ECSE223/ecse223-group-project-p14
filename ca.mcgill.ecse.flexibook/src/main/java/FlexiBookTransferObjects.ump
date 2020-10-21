@@ -25,9 +25,9 @@ class TOComboItem{
 }
 
 class TOBusiness{
-	String Name;
-	String Adress;
-	String PhoneNumber;
-	String Email;
+	String name;
+	String adress;
+	String phoneNumber;
+	String email;
 
 }
