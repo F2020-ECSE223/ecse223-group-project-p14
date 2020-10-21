@@ -35,17 +35,11 @@ public class FlexiBookController {
 	 *
 	 */
 	public static void addService(Service aService) throws InvalidInputException{
-
-
-
-
 		try {
 			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
 				aService = null;
 				throw new InvalidInputException("Only owner can add a service");
 			}
-
-
 			if (aService.getDuration() <= 0) {
 				aService= null;
 				throw new InvalidInputException("Duration must be positive");
@@ -59,8 +53,6 @@ public class FlexiBookController {
 				aService= null;
 				throw new InvalidInputException("Downtime duration must be positive");
 			}
-
-
 
 			else if (aService.getDowntimeStart() == 0) {
 				aService= null;
@@ -157,9 +149,7 @@ public class FlexiBookController {
 		if(s == null) {
 			throw new InvalidInputException("No such single service exist!");
 		}
-
-
-
+		
 		LocalTime aEndtime = time.toLocalTime().plusMinutes(s.getDuration());
 		Time endTime = Time.valueOf(aEndtime);
 
