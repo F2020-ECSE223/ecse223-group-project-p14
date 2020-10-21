@@ -907,33 +907,33 @@ public class FlexiBookController {
 	}
 
 
-	Tried to do updateBusinessHour with tryCatch if the one above doesn't work
-	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
-		User currentUser = FlexiBookApplication.getCurrentLoginUser();
-		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
-		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
-		BusinessHour temp = null;
-		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
-		}
-		else { 
-			if (newStart.compareTo(newEnd) < 0) { 
-				try {
-					temp = isTheBusinessHour(oldB);
-					temp.setDayOfWeek(day);
-					temp.setEndTime(newEnd);
-					temp.setStartTime(newStart);
-					if (isOverlappingWithBusinessHours(temp)) {
-						throw new InvalidInputException(" The business hours cannot overlap");
-					}	
-				}
-				catch (InvalidInputException e) {
-				}
-			} 
-			else 
-			{ throw new InvalidInputException("Start time must be before end time ");}	
-		}
-	}
+//	Tried to do updateBusinessHour with tryCatch if the one above doesn't work
+//	public static void updateBusinessHour(Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
+//		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+//		User currentUser = FlexiBookApplication.getCurrentLoginUser();
+//		BusinessHour oldB = new BusinessHour(day,oldStart, newEnd, flexiBook);
+//		BusinessHour newB = new BusinessHour(day,newStart, newEnd, flexiBook);
+//		BusinessHour temp = null;
+//		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to udpate business hour");
+//		}
+//		else { 
+//			if (newStart.compareTo(newEnd) < 0) { 
+//				try {
+//					temp = isTheBusinessHour(oldB);
+//					temp.setDayOfWeek(day);
+//					temp.setEndTime(newEnd);
+//					temp.setStartTime(newStart);
+//					if (isOverlappingWithBusinessHours(temp)) {
+//						throw new InvalidInputException(" The business hours cannot overlap");
+//					}	
+//				}
+//				catch (InvalidInputException e) {
+//				}
+//			} 
+//			else 
+//			{ throw new InvalidInputException("Start time must be before end time ");}	
+//		}
+//	}
 
 	/**
 	 * This method is used to updates the business information
