@@ -652,11 +652,16 @@ public class FlexiBookController {
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("Only Owner may define a Service Combo");
 		}
-		BookableService serviceCombo = findBookableService(name);
+		BookableService bookableService = findBookableService(name);
 		//throws an exception if comboService does not exist
-		if(serviceCombo == null){
+		if(bookableService == null){
 			throw new InvalidInputException("Updating service that does not exist.");
 		}
+		//throws an exception if comboService is not of type ComboService
+		if(!(bookableService instanceof ServiceCombo)){
+			throw new InvalidInputException("Name does not refer to a ServiceCombo");
+		}
+		ServiceCombo serviceCombo = (ServiceCombo) bookableService;
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
 			throw new InvalidInputException("Error with additional services.");
@@ -675,7 +680,7 @@ public class FlexiBookController {
 			service = orderedServices.get(i);
 			comboItem = serviceCombo.addService(mandatory, service);
 			//sets appropirate main service
-			if(service.equals(mainService) && mandatory){
+			if(service.equals(service) && mandatory){
 				serviceCombo.setMainService(comboItem);
 				hasMainService = true;
 			}

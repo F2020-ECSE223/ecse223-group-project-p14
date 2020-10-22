@@ -688,6 +688,13 @@ public class CucumberStepDefinitions {
 		assertFalse(FlexiBookController.findUser(username) == null);
 	}
 
+	/*---------------------------Test Define ServiceCombo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+
 
 
 	/*---------------------------private helper methods--------------------------*/
