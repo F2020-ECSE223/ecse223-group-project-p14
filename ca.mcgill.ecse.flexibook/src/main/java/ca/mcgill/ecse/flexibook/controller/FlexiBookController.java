@@ -1155,6 +1155,61 @@ public class FlexiBookController {
 		return business;
 	}
 
+	/**
+	 * This is a query method which returns all TOServiceCombo objects
+	 * @param
+	 * @return
+	 * @author gtjarvis
+	 */
+	public static List<TOServiceCombo> getTOServiceCombos(){
+		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
+		List<TOServiceCombo> serviceCombos;
+		List<ComboItem> comboItems;
+		for(BookableService s: bookableServices){
+			if(s instanceof ServiceCombo) {
+				TOServiceCombo sc = new TOServiceCombo(s.getName());
+				ServiceCombo currentServiceCombo = (ServiceCombo) s;
+				comboItems = currentServiceCombo.getServices();
+				for(ComboItem c: comboItems){
+					TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
+					sc.addService(comboItemTO);
+				}
+				serviceCombos.add(sc);
+			}
+		}
+		return serviceCombos;
+	}
+
+	/**
+	 * This is a query method which returns a specific TOServiceCombo by name
+	 * @param
+	 * @return
+	 * @author gtjarvis
+	 */
+	public static TOServiceCombo getTOServiceCombo(String name){
+		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
+		List<ComboItem> comboItems;
+		TOServiceCombo serviceCombo;
+		for(BookableService s: bookableServices){
+			if(s instanceof ServiceCombo && s.getName().equals(name)) {
+				serviceCombo = new TOServiceCombo(name);
+				ServiceCombo currentServiceCombo = (ServiceCombo) s;
+				comboItems = currentServiceCombo.getServices();
+				for(ComboItem c: comboItems){
+					TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
+					serviceCombo.addService(comboItemTO);
+				}
+			}
+			break;
+		}
+		//Exception if no serviceCombo is found
+		if(serviceCombo == null){
+			throw new InvalidInputException("Service does not exist");
+		}
+		return serviceCombo;
+	}
+
+
 
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
