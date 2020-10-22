@@ -695,7 +695,36 @@ public class CucumberStepDefinitions {
 	 * @author gtjarvis
 	 */
 
+	@Given("the Owner with username {string} is logged in)"
+	public void the_Owner_with_username_u_is_logged_in(String u){
+		Owner owner = new Owner(u, "test", flexibook);
+		flexibook.setCurrentLoginUser(owner);
+	}
 
+	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
+	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
+			try {
+				List<String> services = Arrays.asList(servicesString.split(","));
+				List<String> mandatorySettingsStringList = Arrays.asList(mandatorySettingsString.split(","));
+				List<boolean> mandatorySettings;
+				for(int i = 0; i < mandatorySettingsStringList.size(); i++){
+					mandatorySettings.add(Boolean.parseBoolean(mandatorySettingsStringList.get(i)));
+				}
+				FlexiBookController.defineServiceCombo(serviceComboName, mainServiceName, services, mandatorySettings);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+		
+	}
+
+	@Then("the service combo {string} shall exist in the system")
+	public void the_service_combo_name_shall_exist_in_the_system(String name){
+		
+	}
 
 	/*---------------------------private helper methods--------------------------*/
 

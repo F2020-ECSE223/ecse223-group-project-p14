@@ -618,17 +618,30 @@ public class FlexiBookController {
 		if(orderedServices.size() != listOfMandatory.size()){
 			throw new InvalidInputException("Error with additional services.");
 		}
+		//throws an exception if name is empty or null
+		if(name == null || name.equals("")){
+			throw new InvalidInputException("Name is invalid.");
+		}
+
 		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
 		//creates new serviceCombo object
 		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
+		//finds mainService
+		Service mainService = findSingleService(mainServiceName);
+
+		//throws an exception if main service cannot be found
+		if(mainService == null){
+			throw new InvalidInputException("Main service not found.");
+		}
 		//goes through list of orderedServices and creates a ComboItem for every service
 		boolean hasMainService = false;
+		boolean success = false;
 		boolean mandatory;
 		Service service;
 		ComboItem comboItem;
 		for(int i = 0; i < orderedServices.size(); i++){
 			mandatory = listOfMandatory.get(i);
-			service = orderedServices.get(i);
+			service = findSingleService(orderedServices.get(i));
 			comboItem = serviceCombo.addService(mandatory, service);
 			//sets appropirate main service
 			if(service.equals(mainService) && mandatory){
