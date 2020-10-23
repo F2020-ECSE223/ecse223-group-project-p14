@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 43 "../../../../../FlexiBookTransferObjects.ump"
+// line 58 "../../../../../FlexiBookTransferObjects.ump"
 public class TOAppointmentCalender
 {
 
@@ -22,7 +22,7 @@ public class TOAppointmentCalender
   // CONSTRUCTOR
   //------------------------
 
-  public TOAppointmentCalender(String aNameOfTheCustomer, TOTimeSlot aTimeSlot, String aServiceName)
+  public TOAppointmentCalender(String aNameOfTheCustomer, String aServiceName, TOTimeSlot aTimeSlot)
   {
     nameOfTheCustomer = aNameOfTheCustomer;
     serviceName = aServiceName;
