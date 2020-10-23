@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 20 "../../../../../FlexiBookTransferObjects.ump"
+// line 21 "../../../../../FlexiBookTransferObjects.ump"
 public class TOComboItem
 {
 

@@ -4,7 +4,7 @@
 package ca.mcgill.ecse.flexibook.controller;
 import java.util.*;
 
-// line 37 "../../../../../FlexiBookTransferObjects.ump"
+// line 38 "../../../../../FlexiBookTransferObjects.ump"
 public class TOServiceCombo
 {
 

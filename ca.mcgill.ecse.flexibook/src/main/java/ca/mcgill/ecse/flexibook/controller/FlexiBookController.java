@@ -1185,6 +1185,7 @@ public class FlexiBookController {
 		//@ TODO
 		ArrayList<TOAppointmentCalender> appointmentCalendars = new ArrayList<TOAppointmentCalender>();
 		if (ByDay == true && ByMonth == false && ByYear == false) {
+			if (isInHoliday)
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
 					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(), toAppointments.getServiceName(), toAppointments.getTimeSlot());
@@ -1222,14 +1223,63 @@ public class FlexiBookController {
 	 * @author mikewang
 	 * @return
 	 */
-	public static List<TOTimeSlot> getUnavailbleTime(Date date, Boolean ByDay, Boolean ByWeek){
+	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		Date date = Date.valueOf(date1);
 		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
 		if (ByDay == true && ByWeek == false) {
 			//TODO
+			// first check if the input is valid
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			// second check if it is in Holiday or Vacation
+			else if (checkIsInHoliday(date)||checkIsInVacation(date)) {
+				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
+				for (BusinessHour BH: Business.getBusinessHours()) {
+					if ( BH.getDayOfWeek() == dayOfWeek) {
+						TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
+						unavailbleTimeSlots.add(toHolidayOrVacationTS);
+					}
+				}
+			} 
+			// if above cases both failed 
+			else {
+				for (TOAppointment toAppointments: getTOAppointment()) {
+					if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
+						
+							// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
+							// unavailbleTimeSlots.add(getUnavailbleTimes);
+						for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+							if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+								TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+								TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+								unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+								unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+							}
+						}
+						unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+						
+					}
+				}
+			}
+			return unavailbleTimeSlots;
 		}
-		if (ByDay == false && ByWeek == true) {
+		else if (ByDay == false && ByWeek == true) {
 			//TODO
+			// i need to get some sleep, i will resume my part after i get up
+			// first check if the input is valid
+			
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			else {
+				for (i=0;i<7;i++) {
+					
+				}
+			}
+			return unavailbleTimeSlots;
 		}
+		
 	}
 	
 	
@@ -1256,6 +1306,7 @@ public class FlexiBookController {
 
 	/**
 	 * This is a query method which can gives a list of all TOAppointment 
+	 * Which includes all appointments combo items and time slot 
 	 * @return
 	 * @author mikewang
 	 * @author AntoineW later made a change
@@ -1266,6 +1317,11 @@ public class FlexiBookController {
 			
 			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
 					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			// Added feature TOAppointment can show all downtime
+			// by mikewang
+			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
+				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
+			}
 			// ToAppointment need to show all the service item (comboitem)
 			// by AnTW
 			for (TOComboItem toc:getToTOComboItem(appointment)) {
@@ -1818,6 +1874,165 @@ public class FlexiBookController {
 		}
 		return signUpSuccessful;
 	}
+	
+	
+	/**
+	 * This is a helper method which checks if a specific date in within a holiday
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInHoliday(Date date) {
+		Boolean isInHoliday = false; 
+		List<TimeSlot> holidayList = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		for(TimeSlot x: holidayList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInHoliday = true; 
+			}
+		}
+		return isInHoliday; 
+	}
+	
+	
+	/**
+	 * This is a helper method which checks if a specific date in within a vacation
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInVacation(Date date) {
+		Boolean isInVacation = false; 
+		List<TimeSlot> VacationList = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		for(TimeSlot x: VacationList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInVacation = true; 
+			}
+		}
+		return isInVacation; 
+	}
+	
+	
+	/**
+	 * This is a helper method which could detect if certain string writen date is valid
+	 * @param s
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean isValidDate(String s){
+		Boolean isValid = true; 
+		if (s == null) {
+			isValid = false; 
+		}
+        final int YEAR_LENGTH = 4;
+        final int MONTH_LENGTH = 2;
+        final int DAY_LENGTH = 2;
+        final int MAX_MONTH = 12;
+        final int MAX_DAY = 31;
+        final int MAX_YEAR = 8099;
+        final int MIN_YEAR = 1970;
+        int firstDash = s.indexOf('-');
+        int secondDash = s.indexOf('-', firstDash + 1);
+        int len = s.length();
+        
+        if ((firstDash <= 0) || (secondDash <= 0) || (secondDash >= len - 1)) {
+        	isValid = false; 
+        }
+        
+        else if (firstDash != YEAR_LENGTH ||
+                (secondDash - firstDash <= 1 || secondDash - firstDash > MONTH_LENGTH + 1) ||
+                (len - secondDash <= 1 && len - secondDash > DAY_LENGTH + 1)) {
+        	isValid = false; 
+        }
+        
+        int year = Integer.parseInt(s, 0, firstDash, 10);
+        int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+        int day = Integer.parseInt(s, secondDash + 1, len, 10);
+        
+        if ((month < 1 || month > MAX_MONTH) || (day < 1 || day > MAX_DAY) || (year < MIN_YEAR || year > MAX_YEAR)) {
+            isValid = false; 
+        }
+        
+        return isValid;
+	}
+	
+	/**
+	 * This is a helper method which would return the string version of the date of the next day 
+	 * @param date1
+	 * @return
+	 * @author mikewang
+	 */
+	public static String NextDate(String date1) {
+		String resultDate;
+        final int MAX_MONTH = 12;
+        final int MAX_DAY = 31;
+        final int MAX_YEAR = 8099;
+        Date d = null;
+
+        int firstDash = date1.indexOf('-');
+        int secondDash = date1.indexOf('-', firstDash + 1);
+        int len = date1.length();
+        
+        int year = Integer.parseInt(date1, 0, firstDash, 10);
+        int month = Integer.parseInt(date1, firstDash + 1, secondDash, 10);
+        int day = Integer.parseInt(date1, secondDash + 1, len, 10);
+        
+        if (day <= MAX_DAY - 1) {
+            day = day+1;
+        }
+        else if(month <= MAX_MONTH -1) {
+        	day = 1;
+        	month = month + 1;
+        }
+        else if (year <= MAX_YEAR - 1) {
+        	day = 1; 
+        	month = 1;
+        	year = year + 1;
+        }
+        resultDate = year+"-"+month+"-"+day;
+        return resultDate;
+        
+	}
+	
+	
+	
+	
+    public static Date valueOf(String s) {
+        if (s == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+        final int YEAR_LENGTH = 4;
+        final int MONTH_LENGTH = 2;
+        final int DAY_LENGTH = 2;
+        final int MAX_MONTH = 12;
+        final int MAX_DAY = 31;
+        Date d = null;
+
+        int firstDash = s.indexOf('-');
+        int secondDash = s.indexOf('-', firstDash + 1);
+        int len = s.length();
+
+        if ((firstDash > 0) && (secondDash > 0) && (secondDash < len - 1)) {
+            if (firstDash == YEAR_LENGTH &&
+                    (secondDash - firstDash > 1 && secondDash - firstDash <= MONTH_LENGTH + 1) &&
+                    (len - secondDash > 1 && len - secondDash <= DAY_LENGTH + 1)) {
+                int year = Integer.parseInt(s, 0, firstDash, 10);
+                int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+                int day = Integer.parseInt(s, secondDash + 1, len, 10);
+
+                if ((month >= 1 && month <= MAX_MONTH) && (day >= 1 && day <= MAX_DAY)) {
+                    d = new Date(year - 1900, month - 1, day);
+                }
+            }
+        }
+        if (d == null) {
+            throw new java.lang.IllegalArgumentException();
+        }
+
+        return d;
+
+    }
+	
+	
 	
 
 	/**

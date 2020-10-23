@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 58 "../../../../../FlexiBookTransferObjects.ump"
+// line 59 "../../../../../FlexiBookTransferObjects.ump"
 public class TOAppointmentCalender
 {
 

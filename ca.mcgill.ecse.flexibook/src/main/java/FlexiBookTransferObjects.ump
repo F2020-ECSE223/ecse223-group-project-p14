@@ -13,6 +13,7 @@ class TOAppointment{
 	0..1 -> * TOComboItem chosenItems;
 	String customerName;
 	String serviceName;
+	0..1 -> * TOTimeSlot downTimeTimeSlot;
 	
 
 }
