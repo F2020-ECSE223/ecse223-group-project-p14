@@ -620,6 +620,7 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
+	
 	/**
 	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
 	 	which otherServices are mandatory.
@@ -1589,7 +1590,7 @@ public class FlexiBookController {
 	 * @author mikewang
 	 */
 	private static Boolean isToday(Date date) {
-		java.util.Date tempToday = getCurrentDate();
+		java.util.Date tempToday = FlexiBookApplication.getCurrentDate();
 		Boolean check =false; 
 		if (date == tempToday) {
 			check = true;
@@ -1598,10 +1599,12 @@ public class FlexiBookController {
 	}
 
 
+	// not a useful method DO NOT USE!!! USE the method defined in the FlexiBook application instead
 	/**
 	 * This is a helper method of finding the current date
 	 * @return
-	 * @author BTMS.getCurrentDate()
+	 * @author mikewang
+	 * @deprecated use the FlexiBookApplication.getcurrentTime(Boolean) instead
 	 */
 	private static java.util.Date getCurrentDate(){
 		java.util.Calendar cal = java.util.Calendar.getInstance();
