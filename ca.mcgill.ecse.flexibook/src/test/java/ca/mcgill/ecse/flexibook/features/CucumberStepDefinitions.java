@@ -75,6 +75,8 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * @author chengchen
+	 *  As a business owner, I wish to add services to my business 
+	 *  so that my customers can make appointments for them.
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
@@ -105,7 +107,8 @@ public class CucumberStepDefinitions {
 	
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
-		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
+		assertEquals(name, FlexiBookController.findSingleService(name).getName());
+//		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
 
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
@@ -119,16 +122,22 @@ public class CucumberStepDefinitions {
 
 	@Then("the number of services in the system shall be {string}")
 	public void the_number_of_services_shall_be(String numService) {
-		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
+		List<Service> services = new ArrayList<Service>();
+		for (BookableService bookableService :flexiBook.getBookableServices()) {
+			if (bookableService instanceof Service) {
+				services.add((Service) bookableService);
+			}
+		}
+		assertEquals(Integer.parseInt(numService), services.size());
 	}
 
 	@Then("an error message with content {string} shall be raised")
 	public void an_error_message_with_content_shall_be_raised(String errorMsg) {
-		assertTrue(error.contains(errorMsg));
+		assertEquals(errorMsg, error);
 	}
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
-		assertTrue(FlexiBookController.findBookableService(name)==null);
+		assertEquals(null, FlexiBookController.findBookableService(name));;
 	}
 
 	@Then("the number of services in the system shall be zero {string}")
@@ -136,19 +145,118 @@ public class CucumberStepDefinitions {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
 
-	 @Then("the service {string} shall still preserve the following properties:")
-	 public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
-		 for(Map<String, String> map : datatable) {
+	@Then("the service {string} shall still preserve the following properties:")
+	public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
+		for(Map<String, String> map : datatable) {
 			 assertEquals(Integer.parseInt(map.get("duration")),FlexiBookController.findSingleService(name).getDuration());
 			 assertEquals(Integer.parseInt(map.get("downtimeDuration")),FlexiBookController.findSingleService(name).getDowntimeDuration());
 			 assertEquals(Integer.parseInt(map.get("downtimeStart")),FlexiBookController.findSingleService(name).getDowntimeStart()); 
 		 }
 		 
-	 }
+	}
 	 @Then("the number of services in the system shall be {int}")
 	 public void the_number_of_services_in_the_system_shall_be(int number) {
 		 assertEquals(1, flexiBook.getBookableServices().size());
 	 }
+
+	 @Given("Customer with username {string} is logged in")
+	 public void customer_with_username_is_logged_in(String username) {
+		 Customer customer = FlexiBookController.findCustomer(username);
+		 FlexiBookApplication.setCurrentLoginUser(customer);
+	}
+	 
+
+
+/**
+ * @author chengchen
+ * As a business owner, I wish to delete a service 
+ * so that I can keep my customers up to date.
+ */
+/*---------------------------Test delete Service--------------------------*/
+
+	@When("{string} initiates the deletion of service {string}")
+	public void initiates_the_deletion_of_service(String username, String serviceName) throws Throwable {
+		try {
+			FlexiBookController.deleteService(serviceName);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	@Then("the number of appointments in the system with service {string} shall be {string}")
+	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
+		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
+		assertEquals(Integer.parseInt(numService), appointments.size());
+	}
+	@Then("the number of appointments in the system shall be {string}")
+	public void the_number_of_appointments_in_the_system_shall_be(String numAppointment) {
+		assertEquals(Integer.parseInt(numAppointment), flexiBook.getAppointments().size());
+	}
+
+
+	@Then("the service combos {string} shall not exist in the system")
+	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
+		assertTrue(FlexiBookController.findServiceCombo(comboName)==null);
+	}
+
+	@Then("the service combos {string} shall not contain service {string}")
+	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
+		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
+		for (ComboItem comboItem:serviceCombo.getServices()) {
+			assertEquals(false, comboItem.getService().getName().equals(serviceName));
+		}
+
+	}
+	@Then("the number of service combos in the system shall be {string}")
+	public void the_number_of_service_combos_in_the_system_shall_be(String string) {
+		
+	}
+
+
+/**
+ * @author chengchen
+ * As a business owner, I wish to update my existing services 
+ * in my business so that I can keep my customers up to date.
+ *
+ */
+/*------------------------------Test update Service--------------------------*/
+
+
+	@When("{string} initiates the update of the service {string} to name {string}, duration {string}, start of down time {string} and down time duration {string}")
+	public void initiates_the_update_of_the_service_to_name_duration_start_of_down_time_and_down_time_duration(String username, String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) throws InvalidInputException{
+		try {
+			FlexiBookController.updateService(serviceName,newServiceName, Integer.parseInt(newDuration), Integer.parseInt(newDowntimeDuration), Integer.parseInt(newDowntimeStart));
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+		
+	}
+		
+	@Then("the service {string} shall be updated to name {string}, duration {string}, start of down time {string} and down time duration {string}")
+	public void the_service_shall_be_updated_to_name_duration_start_of_down_time_and_down_time_duration(String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) {
+		   for (BookableService bookableService:flexiBook.getBookableServices()) {
+			   if (bookableService instanceof Service) {
+				   if (bookableService.getName().equals(serviceName)) {
+					   assertEquals(Integer.parseInt(newDowntimeDuration), ((Service) bookableService).getDowntimeDuration());
+					   assertEquals(Integer.parseInt(newDowntimeStart), ((Service) bookableService).getDowntimeStart());
+					   assertEquals(Integer.parseInt(newDuration), ((Service) bookableService).getDuration());
+				   }
+			   }
+		   }
+		  
+		  
+	}
+
+
+
+
+
+
+	
+
+
 
 	 
 
