@@ -614,7 +614,7 @@ public class FlexiBookController {
 	public static void logOut() throws InvalidInputException{ 
 		User currentLoginUser = FlexiBookApplication.getCurrentLoginUser();
 		if (currentLoginUser == null) {
-			throw new InvalidInputException("Password or Username is incorrect, please try again!");
+			throw new InvalidInputException("The User is already logged out!");
 		}
 		else {
 			FlexiBookApplication.clearCurrentLoginUser();
