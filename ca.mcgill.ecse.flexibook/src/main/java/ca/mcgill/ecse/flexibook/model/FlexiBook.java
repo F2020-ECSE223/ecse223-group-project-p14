@@ -188,7 +188,8 @@ public class FlexiBook
     return aBookableService;
   }
 
-  public List<BookableService> getBookableServices()
+  // modified by mikewang
+  public static List<BookableService> getBookableServices()
   {
     List<BookableService> newBookableServices = Collections.unmodifiableList(bookableServices);
     return newBookableServices;

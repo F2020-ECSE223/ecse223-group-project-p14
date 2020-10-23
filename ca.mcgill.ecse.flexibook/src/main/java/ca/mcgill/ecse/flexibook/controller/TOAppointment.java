@@ -19,6 +19,7 @@ public class TOAppointment
   //TOAppointment Associations
   private TOTimeSlot timeSlot;
   private List<TOComboItem> chosenItems;
+  private List<TOTimeSlot> downTimeTimeSlot;
 
   //------------------------
   // CONSTRUCTOR
@@ -33,6 +34,7 @@ public class TOAppointment
       throw new RuntimeException("Unable to create TOAppointment due to aTimeSlot. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     chosenItems = new ArrayList<TOComboItem>();
+    downTimeTimeSlot = new ArrayList<TOTimeSlot>();
   }
 
   //------------------------
@@ -97,6 +99,36 @@ public class TOAppointment
   public int indexOfChosenItem(TOComboItem aChosenItem)
   {
     int index = chosenItems.indexOf(aChosenItem);
+    return index;
+  }
+  /* Code from template association_GetMany */
+  public TOTimeSlot getDownTimeTimeSlot(int index)
+  {
+    TOTimeSlot aDownTimeTimeSlot = downTimeTimeSlot.get(index);
+    return aDownTimeTimeSlot;
+  }
+
+  public List<TOTimeSlot> getDownTimeTimeSlot()
+  {
+    List<TOTimeSlot> newDownTimeTimeSlot = Collections.unmodifiableList(downTimeTimeSlot);
+    return newDownTimeTimeSlot;
+  }
+
+  public int numberOfDownTimeTimeSlot()
+  {
+    int number = downTimeTimeSlot.size();
+    return number;
+  }
+
+  public boolean hasDownTimeTimeSlot()
+  {
+    boolean has = downTimeTimeSlot.size() > 0;
+    return has;
+  }
+
+  public int indexOfDownTimeTimeSlot(TOTimeSlot aDownTimeTimeSlot)
+  {
+    int index = downTimeTimeSlot.indexOf(aDownTimeTimeSlot);
     return index;
   }
   /* Code from template association_SetUnidirectionalOne */
@@ -167,11 +199,69 @@ public class TOAppointment
     }
     return wasAdded;
   }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfDownTimeTimeSlot()
+  {
+    return 0;
+  }
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addDownTimeTimeSlot(TOTimeSlot aDownTimeTimeSlot)
+  {
+    boolean wasAdded = false;
+    if (downTimeTimeSlot.contains(aDownTimeTimeSlot)) { return false; }
+    downTimeTimeSlot.add(aDownTimeTimeSlot);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeDownTimeTimeSlot(TOTimeSlot aDownTimeTimeSlot)
+  {
+    boolean wasRemoved = false;
+    if (downTimeTimeSlot.contains(aDownTimeTimeSlot))
+    {
+      downTimeTimeSlot.remove(aDownTimeTimeSlot);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addDownTimeTimeSlotAt(TOTimeSlot aDownTimeTimeSlot, int index)
+  {  
+    boolean wasAdded = false;
+    if(addDownTimeTimeSlot(aDownTimeTimeSlot))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfDownTimeTimeSlot()) { index = numberOfDownTimeTimeSlot() - 1; }
+      downTimeTimeSlot.remove(aDownTimeTimeSlot);
+      downTimeTimeSlot.add(index, aDownTimeTimeSlot);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveDownTimeTimeSlotAt(TOTimeSlot aDownTimeTimeSlot, int index)
+  {
+    boolean wasAdded = false;
+    if(downTimeTimeSlot.contains(aDownTimeTimeSlot))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfDownTimeTimeSlot()) { index = numberOfDownTimeTimeSlot() - 1; }
+      downTimeTimeSlot.remove(aDownTimeTimeSlot);
+      downTimeTimeSlot.add(index, aDownTimeTimeSlot);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addDownTimeTimeSlotAt(aDownTimeTimeSlot, index);
+    }
+    return wasAdded;
+  }
 
   public void delete()
   {
     timeSlot = null;
     chosenItems.clear();
+    downTimeTimeSlot.clear();
   }
 
 
