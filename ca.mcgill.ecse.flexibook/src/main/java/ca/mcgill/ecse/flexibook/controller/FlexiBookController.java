@@ -577,7 +577,8 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author mikewang
 	 */
-	public static void logIn(String username, String password) throws InvalidInputException{
+	
+	public static void logIn(String username, String password) throws InvalidInputException {
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		Customer ThisCustomer = findCustomer(username);
 		Owner ThisOwner2 = findOwner(username);
@@ -585,6 +586,10 @@ public class FlexiBookController {
 		if (currentUser == null) {
 			if (ThisOwner2 != null && ThisOwner2.getPassword() == password) {
 				FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
+			}
+			else if(ThisOwner2 == null){
+				signUpOwner(username, password);
+				
 			}
 			else if (ThisCustomer != null && ThisCustomer.getPassword()==password) {
 				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
@@ -1519,6 +1524,45 @@ public class FlexiBookController {
 		java.util.Date date = cal.getTime();
 		return date;
 	}
+	
+	/**
+	 * This is an helper method which provides an opportunity for the owner to set up it's owner account
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws InvalidInputException
+	 * @author mikewang
+	 */
+	public static boolean signUpOwner(String username, String password) throws InvalidInputException {
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+		boolean signUpSuccessful = false;
+		if (FlexiBookApplication.getCurrentLoginUser() != null) {
+			if (FlexiBookApplication.getCurrentLoginUser().getUsername() == "owner" || FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+				throw new InvalidInputException("you are currently logedin as an owner");
+			}
+			else {
+				throw new InvalidInputException("you must log off of your customer account inorder to create an owner account");
+			}
+		}
+		else if (username == null || username.replaceAll("\\s+", "").length() == 0) {
+			throw new InvalidInputException("The user name cannot be empty");
+		}
+		else if (password == null || password.replaceAll("\\s+", "").length() == 0) {
+			throw new InvalidInputException("The password cannot be empty");
+		}
+		else if (flexiBook.getOwner()!= null) { //consider using helper method findCustomer
+			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
+			throw new InvalidInputException("There already exist an owner account");
+		}
+		else {
+			Owner aOwner = new Owner(username, password, flexiBook);
+			//assuming signing up also logs you in:
+			FlexiBookApplication.setCurrentLoginUser(aOwner); 
+			signUpSuccessful = true;
+		}
+		return signUpSuccessful;
+	}
+	
 
 	/**
 	 * This is a helper method to know if the current BusinessHour overlaps with other Business Hour
