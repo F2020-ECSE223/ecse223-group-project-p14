@@ -36,60 +36,60 @@ public class FlexiBookController {
 	 */
 
 	public static void addService(String name,int duration,int downtimeStart,int downtimeDuration) throws InvalidInputException{
-			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
-				throw new InvalidInputException("You are not authorized to perform this operation");
-			}
-				
-			else if (duration <= 0) {
-				throw new InvalidInputException("Duration must be positive");
-			}
-		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
+			throw new InvalidInputException("You are not authorized to perform this operation");
+		}
 
-			else if (downtimeStart > 0 && downtimeDuration <= 0) {
-				throw new InvalidInputException("Downtime duration must be positive");
-				
-			}
+		else if (duration <= 0) {
+			throw new InvalidInputException("Duration must be positive");
+		}
 
-			else if (downtimeStart == 0 && downtimeDuration < 0) {
 
-				throw new InvalidInputException("Downtime duration must be 0");
-				
-			}
-			else if (downtimeStart == 0 && downtimeDuration > 0) {
-				throw new InvalidInputException("Downtime must not start at the beginning of the service");
+		else if (downtimeStart > 0 && downtimeDuration <= 0) {
+			throw new InvalidInputException("Downtime duration must be positive");
 
-			}
-			else if (downtimeStart < 0) {
-				
-				throw new InvalidInputException("Downtime must not start before the beginning of the service");
+		}
 
-			}
-			else if (downtimeStart + downtimeDuration > duration && downtimeStart < duration) {
-				
-				throw new InvalidInputException("Downtime must not end after the service");
+		else if (downtimeStart == 0 && downtimeDuration < 0) {
 
-			}
-			else if (downtimeStart > duration) {
-				
-				throw new InvalidInputException("Downtime must not start after the end of the service");
+			throw new InvalidInputException("Downtime duration must be 0");
 
-			}
-			else {
-				try {
-					BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
-					flexiBook.addBookableService(service);
-				} catch (Exception e) {
-					if (e.getMessage().equals("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html")) {
-						throw new InvalidInputException("Service "+name+" already exists");
-						
-					}
+		}
+		else if (downtimeStart == 0 && downtimeDuration > 0) {
+			throw new InvalidInputException("Downtime must not start at the beginning of the service");
+
+		}
+		else if (downtimeStart < 0) {
+
+			throw new InvalidInputException("Downtime must not start before the beginning of the service");
+
+		}
+		else if (downtimeStart + downtimeDuration > duration && downtimeStart < duration) {
+
+			throw new InvalidInputException("Downtime must not end after the service");
+
+		}
+		else if (downtimeStart > duration) {
+
+			throw new InvalidInputException("Downtime must not start after the end of the service");
+
+		}
+		else {
+			try {
+				BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
+				flexiBook.addBookableService(service);
+			} catch (Exception e) {
+				if (e.getMessage().equals("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html")) {
+					throw new InvalidInputException("Service "+name+" already exists");
+
 				}
-				
-				 
 			}
-			
-		 
+
+
+		}
+
+
 
 	}
 
@@ -102,14 +102,61 @@ public class FlexiBookController {
 	 * @author chengchen
 	 */
 	public static void deleteService(String name) throws InvalidInputException{
+		
 		Service service = findSingleService(name);
-		if (service!= null) {
-			service.delete();
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		List<BookableService> bookableServices = flexiBook.getBookableServices();
+		List<String> serviceComboNamesToDelete = new ArrayList<String>();
+		List<ComboItem> comboItemsToDelete = new ArrayList<ComboItem>();
+		if (!FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner")) {
+			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
+		
+		for (Appointment appointment:service.getAppointments()) {
+			if (FlexiBookApplication.getCurrentDate(true).before(appointment.getTimeSlot().getStartDate())) {
+				throw new InvalidInputException("The service contains future appointments");
+			}
+		}
+
+		for (BookableService bookableService:bookableServices) {
+			if (bookableService instanceof ServiceCombo) {
+				if (((ServiceCombo) bookableService).getMainService().getService().getName().equals(name)) {
+					serviceComboNamesToDelete.add(bookableService.getName());
+				}
+
+				for (ComboItem aComboItem:((ServiceCombo) bookableService).getServices()) {
+					if (aComboItem.getService().getName().equals(name)) {
+						comboItemsToDelete.add(aComboItem);
+					}
+				}
+
+
+			}
+		}
+		if (!serviceComboNamesToDelete.isEmpty()) {
+			for (String comboName:serviceComboNamesToDelete) {
+				ServiceCombo bserCombo = findServiceCombo(comboName);
+				bserCombo.delete();
+			}
+
+		}
+
+		if (!comboItemsToDelete.isEmpty()) {
+			for (ComboItem comboItem:comboItemsToDelete) {
+				comboItem.delete();
+			}
+		}
+
+
+
+
+
+		
+			
+		service.delete();
 	}
 	
 	
-	public static void delete
 
 
 	/**
@@ -1328,7 +1375,7 @@ public class FlexiBookController {
 	 * @author chengchen
 	 */
 	public static List<Appointment> findAppointmentByServiceName(String serviceName) {
-		List<Appointment> appointments = new ArrayList<Appointment>();;
+		List<Appointment> appointments = new ArrayList<Appointment>();
 		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
 			if (app.getBookableService().getName().equals(serviceName)) {
 				appointments.add(app);

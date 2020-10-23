@@ -101,7 +101,8 @@ public class CucumberStepDefinitions {
 	
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
-		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
+		assertEquals(name, FlexiBookController.findSingleService(name).getName());
+//		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
 
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
@@ -130,7 +131,7 @@ public class CucumberStepDefinitions {
 	}
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
-		assertTrue(FlexiBookController.findBookableService(name)==null);
+		assertEquals(null, FlexiBookController.findBookableService(name));;
 	}
 
 	@Then("the number of services in the system shall be zero {string}")
@@ -196,7 +197,10 @@ public class CucumberStepDefinitions {
 	@Then("the service combos {string} shall not contain service {string}")
 	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
 		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
-		assertEquals(false, serviceCombo.getServices().contains(FlexiBookController.findSingleService(serviceName)));
+		for (ComboItem comboItem:serviceCombo.getServices()) {
+			assertEquals(false, comboItem.getService().getName().equals(serviceName));
+		}
+
 	}
 	@Then("the number of service combos in the system shall be {string}")
 	public void the_number_of_service_combos_in_the_system_shall_be(String string) {
