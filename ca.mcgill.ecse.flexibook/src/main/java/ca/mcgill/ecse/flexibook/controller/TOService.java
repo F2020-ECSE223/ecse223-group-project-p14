@@ -3,30 +3,30 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 28 "../../../../../FlexiBookTransferObjects.ump"
-public class TOBusiness
+// line 43 "../../../../../FlexiBookTransferObjects.ump"
+public class TOService
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //TOBusiness Attributes
+  //TOService Attributes
   private String name;
-  private String adress;
-  private String phoneNumber;
-  private String email;
+  private int duration;
+  private int downtimeDuration;
+  private int downtimeStart;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public TOBusiness(String aName, String aAdress, String aPhoneNumber, String aEmail)
+  public TOService(String aName, int aDuration, int aDowntimeDuration, int aDowntimeStart)
   {
     name = aName;
-    adress = aAdress;
-    phoneNumber = aPhoneNumber;
-    email = aEmail;
+    duration = aDuration;
+    downtimeDuration = aDowntimeDuration;
+    downtimeStart = aDowntimeStart;
   }
 
   //------------------------
@@ -41,26 +41,26 @@ public class TOBusiness
     return wasSet;
   }
 
-  public boolean setAdress(String aAdress)
+  public boolean setDuration(int aDuration)
   {
     boolean wasSet = false;
-    adress = aAdress;
+    duration = aDuration;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setPhoneNumber(String aPhoneNumber)
+  public boolean setDowntimeDuration(int aDowntimeDuration)
   {
     boolean wasSet = false;
-    phoneNumber = aPhoneNumber;
+    downtimeDuration = aDowntimeDuration;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setEmail(String aEmail)
+  public boolean setDowntimeStart(int aDowntimeStart)
   {
     boolean wasSet = false;
-    email = aEmail;
+    downtimeStart = aDowntimeStart;
     wasSet = true;
     return wasSet;
   }
@@ -70,19 +70,19 @@ public class TOBusiness
     return name;
   }
 
-  public String getAdress()
+  public int getDuration()
   {
-    return adress;
+    return duration;
   }
 
-  public String getPhoneNumber()
+  public int getDowntimeDuration()
   {
-    return phoneNumber;
+    return downtimeDuration;
   }
 
-  public String getEmail()
+  public int getDowntimeStart()
   {
-    return email;
+    return downtimeStart;
   }
 
   public void delete()
@@ -93,8 +93,8 @@ public class TOBusiness
   {
     return super.toString() + "["+
             "name" + ":" + getName()+ "," +
-            "adress" + ":" + getAdress()+ "," +
-            "phoneNumber" + ":" + getPhoneNumber()+ "," +
-            "email" + ":" + getEmail()+ "]";
+            "duration" + ":" + getDuration()+ "," +
+            "downtimeDuration" + ":" + getDowntimeDuration()+ "," +
+            "downtimeStart" + ":" + getDowntimeStart()+ "]";
   }
 }
