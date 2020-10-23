@@ -52,11 +52,10 @@ public class ControllerUtils {
 		}else if(bs instanceof ServiceCombo) {
 			Date startDate = app.getTimeSlot().getStartDate();
 			Date endDate = app.getTimeSlot().getEndDate();
-			
 			int totalTimeElapsed = 0;
+			
 			// ordered list of all service in the service combo
-			for(ComboItem ci: ((ServiceCombo)bs).getServices()) {
-				
+			for(ComboItem ci: app.getChosenItems()) {
 				Service s = ci.getService();
 				int dtStartAt = s.getDowntimeStart();
 				int dtDuration = s.getDowntimeDuration();
@@ -74,6 +73,8 @@ public class ControllerUtils {
 					
 					ret.add(new TOTimeSlot(startDate, downtimeStartAt, endDate, downtimeEndAt));	
 					
+					totalTimeElapsed = totalTimeElapsed + serviceDuration;
+				}if(dtDuration == 0) {
 					totalTimeElapsed = totalTimeElapsed + serviceDuration;
 				}
 				
@@ -97,18 +98,25 @@ public class ControllerUtils {
 		switch(dow) {
 			case SUNDAY:
 				ret = DayOfWeek.Sunday;
+				break;
 			case MONDAY:
 				ret = DayOfWeek.Monday;
+				break;
 			case TUESDAY:
 				ret = DayOfWeek.Tuesday;
+				break;
 			case WEDNESDAY:
 				ret = DayOfWeek.Wednesday;
+				break;
 			case THURSDAY:
 				ret = DayOfWeek.Tuesday;
+				break;
 			case FRIDAY:
 				ret = DayOfWeek.Friday;
+				break;
 			case SATURDAY:
 				ret = DayOfWeek.Saturday;
+				break;
 			
 		}
 		return ret;
@@ -125,15 +133,34 @@ public class ControllerUtils {
 	 * 
 	 * 
 	 */
-	public static List<String> parseString(String string){
+	public static List<String> parseString(String string ,String delim){
 		
 		List<String> tokens = new ArrayList<String>();
-	    StringTokenizer tokenizer = new StringTokenizer(string, ",");
+	    StringTokenizer tokenizer = new StringTokenizer(string, delim);
 	    while (tokenizer.hasMoreElements()) {
 	        tokens.add(tokenizer.nextToken());
 	    }
 	    return tokens;
 	}
 	
+	/**
+	 * 
+	 * @param sc
+	 * @param name
+	 * @return
+	 * @throws InvalidInputException
+	 * @author AntoineW
+	 */
+	public static ComboItem findComboItemByServiceName(ServiceCombo sc, String name) throws InvalidInputException {
+		
+		for (ComboItem ci: sc.getServices()) {
+			if(ci.getService().getName().equals(name)) {
+				return ci;
+			}
+		}
+		
+		throw new InvalidInputException("No Such Service in the given combo");
+		
+	}
 
 }

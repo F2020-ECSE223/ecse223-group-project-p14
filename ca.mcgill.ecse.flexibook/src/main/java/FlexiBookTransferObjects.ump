@@ -24,3 +24,12 @@ class TOComboItem{
 
 }
 
+
+class TOBusiness{
+	String name;
+	String adress;
+	String phoneNumber;
+	String email;
+
+}
+
