@@ -1194,7 +1194,7 @@ public class FlexiBookController {
 	 */
 	public static List<TOServiceCombo> getTOServiceCombos(){
 		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
-		List<TOServiceCombo> serviceCombos;
+		List<TOServiceCombo> serviceCombos = null;
 		List<ComboItem> comboItems;
 		for(BookableService s: bookableServices){
 			if(s instanceof ServiceCombo) {
@@ -1220,7 +1220,7 @@ public class FlexiBookController {
 	public static TOServiceCombo getTOServiceCombo(String name){
 		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
 		List<ComboItem> comboItems;
-		TOServiceCombo serviceCombo;
+		TOServiceCombo serviceCombo = null;
 		for(BookableService s: bookableServices){
 			if(s instanceof ServiceCombo && s.getName().equals(name)) {
 				serviceCombo = new TOServiceCombo(name);
