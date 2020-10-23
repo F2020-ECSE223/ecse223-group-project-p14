@@ -33,3 +33,16 @@ class TOBusiness{
 
 }
 
+class TOCustomer {
+	userName;
+	password;
+
+
+}
+
+class TOAppointmentCalender {
+	nameOfTheCustomer;
+	timeSlot;
+	serviceName;
+
+}
