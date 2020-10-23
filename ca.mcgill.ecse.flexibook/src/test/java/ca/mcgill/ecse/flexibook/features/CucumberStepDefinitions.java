@@ -69,6 +69,8 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * @author chengchen
+	 *  As a business owner, I wish to add services to my business 
+	 *  so that my customers can make appointments for them.
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
@@ -113,7 +115,13 @@ public class CucumberStepDefinitions {
 
 	@Then("the number of services in the system shall be {string}")
 	public void the_number_of_services_shall_be(String numService) {
-		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
+		List<Service> services = new ArrayList<Service>();
+		for (BookableService bookableService :flexiBook.getBookableServices()) {
+			if (bookableService instanceof Service) {
+				services.add((Service) bookableService);
+			}
+		}
+		assertEquals(Integer.parseInt(numService), services.size());
 	}
 
 	@Then("an error message with content {string} shall be raised")
@@ -130,19 +138,76 @@ public class CucumberStepDefinitions {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
 
-	 @Then("the service {string} shall still preserve the following properties:")
-	 public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
-		 for(Map<String, String> map : datatable) {
+	@Then("the service {string} shall still preserve the following properties:")
+	public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
+		for(Map<String, String> map : datatable) {
 			 assertEquals(Integer.parseInt(map.get("duration")),FlexiBookController.findSingleService(name).getDuration());
 			 assertEquals(Integer.parseInt(map.get("downtimeDuration")),FlexiBookController.findSingleService(name).getDowntimeDuration());
 			 assertEquals(Integer.parseInt(map.get("downtimeStart")),FlexiBookController.findSingleService(name).getDowntimeStart()); 
 		 }
 		 
-	 }
+	}
 	 @Then("the number of services in the system shall be {int}")
 	 public void the_number_of_services_in_the_system_shall_be(int number) {
 		 assertEquals(1, flexiBook.getBookableServices().size());
 	 }
+
+	 @Given("Customer with username {string} is logged in")
+	 public void customer_with_username_is_logged_in(String username) {
+		 Customer customer = FlexiBookController.findCustomer(username);
+		 FlexiBookApplication.setCurrentLoginUser(customer);
+	}
+	 
+
+
+/**
+ * @author chengchen
+ * As a business owner, I wish to delete a service 
+ * so that I can keep my customers up to date.
+ */
+/*---------------------------Test delete Service--------------------------*/
+
+	@When("{string} initiates the deletion of service {string}")
+	public void initiates_the_deletion_of_service(String username, String serviceName) throws Throwable {
+		try {
+			FlexiBookController.deleteService(serviceName);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	@Then("the number of appointments in the system with service {string} shall be {string}")
+	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
+		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
+		assertEquals(Integer.parseInt(numService), appointments.size());
+	}
+	@Then("the number of appointments in the system shall be {string}")
+	public void the_number_of_appointments_in_the_system_shall_be(String numAppointment) {
+		assertEquals(Integer.parseInt(numAppointment), flexiBook.getAppointments().size());
+	}
+
+
+	@Then("the service combos {string} shall not exist in the system")
+	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
+		assertTrue(FlexiBookController.findServiceCombo(comboName)==null);
+	}
+
+	@Then("the service combos {string} shall not contain service {string}")
+	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
+		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
+		assertEquals(false, serviceCombo.getServices().contains(FlexiBookController.findSingleService(serviceName)));
+	}
+	@Then("the number of service combos in the system shall be {string}")
+	public void the_number_of_service_combos_in_the_system_shall_be(String string) {
+		
+	}
+
+
+
+	
+
+
 
 	 
 

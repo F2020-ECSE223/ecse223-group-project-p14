@@ -26,10 +26,10 @@ public class FlexiBookController {
 	 * 
 	 * This method adds a service to the database
 	 * @param name - name of the service to be added
-	 * @param durantion - duration of the service to be added
+	 * @param duration - duration of the service to be added
 	 * @param downtimeDuration - duration of the downtime of the service to be added
-	 * @param downtimeStart - the start time
-	 * me of the downtime of the service to be added
+	 * @param downtimeStart - the start time of the downtime of the service to be added
+	 * 
 	 * 
 	 * @author chengchen
 	 *
@@ -38,7 +38,7 @@ public class FlexiBookController {
 	public static void addService(String name,int duration,int downtimeStart,int downtimeDuration) throws InvalidInputException{
 			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
-				throw new InvalidInputException("Only owner can add a service");
+				throw new InvalidInputException("You are not authorized to perform this operation");
 			}
 				
 			else if (duration <= 0) {
@@ -101,13 +101,15 @@ public class FlexiBookController {
 	 * 
 	 * @author chengchen
 	 */
-	public static void removeService(String name) throws InvalidInputException{
-		BookableService bookableService = findBookableService(name);
-		if (bookableService!= null) {
-			bookableService.delete();
+	public static void deleteService(String name) throws InvalidInputException{
+		Service service = findSingleService(name);
+		if (service!= null) {
+			service.delete();
 		}
-
 	}
+	
+	
+	public static void delete
 
 
 	/**
@@ -1179,6 +1181,23 @@ public class FlexiBookController {
 			}
 		}
 		return foundBookableService;
+	}
+	
+	/**
+	 * This method finds the appointments that has specified services
+	 * @param serviceName
+	 * @return a list of appointments 
+	 * 
+	 * @author chengchen
+	 */
+	public static List<Appointment> findAppointmentByServiceName(String serviceName) {
+		List<Appointment> appointments = new ArrayList<Appointment>();;
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getBookableService().getName().equals(serviceName)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
 	}
 
 	/** 
