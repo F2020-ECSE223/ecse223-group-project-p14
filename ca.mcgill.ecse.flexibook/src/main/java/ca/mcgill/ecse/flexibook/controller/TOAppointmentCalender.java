@@ -13,18 +13,23 @@ public class TOAppointmentCalender
 
   //TOAppointmentCalender Attributes
   private String nameOfTheCustomer;
-  private String timeSlot;
   private String serviceName;
+
+  //TOAppointmentCalender Associations
+  private TOTimeSlot timeSlot;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public TOAppointmentCalender(String aNameOfTheCustomer, String aTimeSlot, String aServiceName)
+  public TOAppointmentCalender(String aNameOfTheCustomer, TOTimeSlot aTimeSlot, String aServiceName)
   {
     nameOfTheCustomer = aNameOfTheCustomer;
-    timeSlot = aTimeSlot;
     serviceName = aServiceName;
+    if (!setTimeSlot(aTimeSlot))
+    {
+      throw new RuntimeException("Unable to create TOAppointmentCalender due to aTimeSlot. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
   }
 
   //------------------------
@@ -35,14 +40,6 @@ public class TOAppointmentCalender
   {
     boolean wasSet = false;
     nameOfTheCustomer = aNameOfTheCustomer;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setTimeSlot(String aTimeSlot)
-  {
-    boolean wasSet = false;
-    timeSlot = aTimeSlot;
     wasSet = true;
     return wasSet;
   }
@@ -60,25 +57,38 @@ public class TOAppointmentCalender
     return nameOfTheCustomer;
   }
 
-  public String getTimeSlot()
-  {
-    return timeSlot;
-  }
-
   public String getServiceName()
   {
     return serviceName;
   }
+  /* Code from template association_GetOne */
+  public TOTimeSlot getTimeSlot()
+  {
+    return timeSlot;
+  }
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setTimeSlot(TOTimeSlot aNewTimeSlot)
+  {
+    boolean wasSet = false;
+    if (aNewTimeSlot != null)
+    {
+      timeSlot = aNewTimeSlot;
+      wasSet = true;
+    }
+    return wasSet;
+  }
 
   public void delete()
-  {}
+  {
+    timeSlot = null;
+  }
 
 
   public String toString()
   {
     return super.toString() + "["+
             "nameOfTheCustomer" + ":" + getNameOfTheCustomer()+ "," +
-            "timeSlot" + ":" + getTimeSlot()+ "," +
-            "serviceName" + ":" + getServiceName()+ "]";
+            "serviceName" + ":" + getServiceName()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "timeSlot = "+(getTimeSlot()!=null?Integer.toHexString(System.identityHashCode(getTimeSlot())):"null");
   }
 }

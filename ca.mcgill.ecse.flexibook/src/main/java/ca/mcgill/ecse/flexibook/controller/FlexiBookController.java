@@ -1021,7 +1021,7 @@ public class FlexiBookController {
 
 
 	/**
-	 * This is a query method which returns a list of TOAppointmentCanlander with a chosen data and a chosen mode
+	 * This is a query method which returns a list of TOAppointmentCalendar with a chosen data and a chosen mode
 	 * 
 	 * @param date
 	 * @param ByDay
@@ -1030,34 +1030,34 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static List<TOAppointmentCanlander> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
+	public static List<TOAppointmentCalender> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
 		//@ TODO
-		ArrayList<TOAppointmentCanlander> appointmentCanlanders = new ArrayList<TOAppointmentCanlander>();
+		ArrayList<TOAppointmentCalender> appointmentCalendars = new ArrayList<TOAppointmentCalender>();
 		if (ByDay == true && ByMonth == false && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
 		else if(ByDay == false && ByMonth == true && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
 		else if(ByDay == false && ByMonth == false && ByYear == true) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
-		return appointmentCanlanders;
+		return appointmentCalendars;
 	}
 
 

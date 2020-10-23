@@ -42,7 +42,7 @@ class TOCustomer {
 
 class TOAppointmentCalender {
 	nameOfTheCustomer;
-	timeSlot;
+	0..1 -> 1 TOTimeSlot timeSlot;
 	serviceName;
 
 }
