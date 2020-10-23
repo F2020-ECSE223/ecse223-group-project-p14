@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 27 "../../../../../FlexiBookTransferObjects.ump"
+// line 28 "../../../../../FlexiBookTransferObjects.ump"
 public class TOBusiness
 {
 
@@ -12,10 +12,10 @@ public class TOBusiness
   //------------------------
 
   //TOBusiness Attributes
-  private String Name;
-  private String Adress;
-  private String PhoneNumber;
-  private String Email;
+  private String name;
+  private String adress;
+  private String phoneNumber;
+  private String email;
 
   //------------------------
   // CONSTRUCTOR
@@ -23,10 +23,10 @@ public class TOBusiness
 
   public TOBusiness(String aName, String aAdress, String aPhoneNumber, String aEmail)
   {
-    Name = aName;
-    Adress = aAdress;
-    PhoneNumber = aPhoneNumber;
-    Email = aEmail;
+    name = aName;
+    adress = aAdress;
+    phoneNumber = aPhoneNumber;
+    email = aEmail;
   }
 
   //------------------------
@@ -36,7 +36,7 @@ public class TOBusiness
   public boolean setName(String aName)
   {
     boolean wasSet = false;
-    Name = aName;
+    name = aName;
     wasSet = true;
     return wasSet;
   }
@@ -44,7 +44,7 @@ public class TOBusiness
   public boolean setAdress(String aAdress)
   {
     boolean wasSet = false;
-    Adress = aAdress;
+    adress = aAdress;
     wasSet = true;
     return wasSet;
   }
@@ -52,7 +52,7 @@ public class TOBusiness
   public boolean setPhoneNumber(String aPhoneNumber)
   {
     boolean wasSet = false;
-    PhoneNumber = aPhoneNumber;
+    phoneNumber = aPhoneNumber;
     wasSet = true;
     return wasSet;
   }
@@ -60,29 +60,29 @@ public class TOBusiness
   public boolean setEmail(String aEmail)
   {
     boolean wasSet = false;
-    Email = aEmail;
+    email = aEmail;
     wasSet = true;
     return wasSet;
   }
 
   public String getName()
   {
-    return Name;
+    return name;
   }
 
   public String getAdress()
   {
-    return Adress;
+    return adress;
   }
 
   public String getPhoneNumber()
   {
-    return PhoneNumber;
+    return phoneNumber;
   }
 
   public String getEmail()
   {
-    return Email;
+    return email;
   }
 
   public void delete()
@@ -92,9 +92,9 @@ public class TOBusiness
   public String toString()
   {
     return super.toString() + "["+
-            "Name" + ":" + getName()+ "," +
-            "Adress" + ":" + getAdress()+ "," +
-            "PhoneNumber" + ":" + getPhoneNumber()+ "," +
-            "Email" + ":" + getEmail()+ "]";
+            "name" + ":" + getName()+ "," +
+            "adress" + ":" + getAdress()+ "," +
+            "phoneNumber" + ":" + getPhoneNumber()+ "," +
+            "email" + ":" + getEmail()+ "]";
   }
 }
