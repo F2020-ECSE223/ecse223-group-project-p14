@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 36 "../../../../../FlexiBookTransferObjects.ump"
+// line 51 "../../../../../FlexiBookTransferObjects.ump"
 public class TOCustomer
 {
 

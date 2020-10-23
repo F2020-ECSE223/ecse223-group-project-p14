@@ -1073,7 +1073,7 @@ public class FlexiBookController {
 		if (ByDay == true && ByMonth == false && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(), toAppointments.getServiceName(), toAppointments.getTimeSlot());
 					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
@@ -1081,7 +1081,7 @@ public class FlexiBookController {
 		else if(ByDay == false && ByMonth == true && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
 					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
@@ -1089,7 +1089,7 @@ public class FlexiBookController {
 		else if(ByDay == false && ByMonth == false && ByYear == true) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
 					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
