@@ -701,6 +701,12 @@ public class CucumberStepDefinitions {
 		flexibook.setCurrentLoginUser(owner);
 	}
 
+	@Given("Customer with username {string} is logged in")
+	public void Customer_with_username_u_is_logged_in(String u){
+		Customer c = new Customer(c, "test", flexibook);
+		flexibook.setCurrentLoginUser(c);
+	}
+
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
 	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString){
 		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
@@ -725,6 +731,16 @@ public class CucumberStepDefinitions {
 	public void the_service_combo_name_shall_exist_in_the_system(String name){
 		try{
 			assertEquals(FlexiBookController.getTOServiceCombo(name).getName(), name);
+		} catch(InvalidInputException e){
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	@Then("the service combo {string} shall not exist in the system")
+	public void the_service_combo_name_shall_not_exist_in_the_system(String name){
+		try{
+			assertEquals(FlexiBookController.getTOServiceCombo(name), null);
 		} catch(InvalidInputException e){
 			error += e.getMessage();
 			errorCntr++;
@@ -777,6 +793,20 @@ public class CucumberStepDefinitions {
 	public void the_number_of_services_combos_in_the_system_shall_be_num(String num){
 		int n = Integer.parseInt(num);
 		assertEquals(FlexiBookController.getTOServiceCombos().size(), n);
+	}
+
+	@Then("the service combo {string} shall preserve the following properties")
+	public void the_service_combo_name_shall_preserve_the_following_properties(String name, Map<String, String> datatable){
+		TOServiceCombo serviceCombo = FlexiBookController.getTOServiceCombo(name);
+		List<String> services = Arrays.asList(datatable.get("services").split(","));
+		List<String> mandatory = Arrays.asList(datatable.get("mandatory").split(","));
+		assertEquals(serviceCombo.getName(), datatable.get("name"));
+		assertEquals(serviceCombo.getMainService().getServiceName(), datatable.get("mainService"));
+		List<TOComboItem> comboItems = serviceCombo.getServices();
+		for(int i = 0; i < comboItems.size(); i++){
+			assertEquals(comboItems.get(i).getServiceName(), services.get(i));
+			assertEquals(comboItems.get(i).getIsMandatory(), mandatory.get(i));
+		}
 	}
 
 	/*---------------------------private helper methods--------------------------*/

@@ -612,7 +612,7 @@ public class FlexiBookController {
 	public static boolean defineServiceCombo(String name, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
-			throw new InvalidInputException("Only Owner may define a Service Combo");
+			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
@@ -621,6 +621,14 @@ public class FlexiBookController {
 		//throws an exception if name is empty or null
 		if(name == null || name.equals("")){
 			throw new InvalidInputException("Name is invalid.");
+		}
+		//throws an exception if Service Combo already exists
+		if(findServiceCombo(name) != null){
+			throw new InvalidInputException("Service combo " + name + " already exists");
+		}
+		//throws an exception if number of services less then 2
+		if(orderedServices.size() < 2){
+			throw new InvalidInputException("A service Combo must contain at least 2 services");
 		}
 
 		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
@@ -642,17 +650,24 @@ public class FlexiBookController {
 		for(int i = 0; i < orderedServices.size(); i++){
 			mandatory = listOfMandatory.get(i);
 			service = findSingleService(orderedServices.get(i));
+			if(service == null) {
+				throw new InvalidInputException("Service " + orderedServices.get(i) + " does not exist");
+			}
 			comboItem = serviceCombo.addService(mandatory, service);
 			//sets appropirate main service
-			if(service.equals(mainService) && mandatory){
-				serviceCombo.setMainService(comboItem);
-				hasMainService = true;
+			if(service.equals(mainService)){
+				if(mandatory){
+					serviceCombo.setMainService(comboItem);
+					hasMainService = true;
+				} else {
+					throw new InvalidInputException("Main service must be mandatory");
+				}
 			}
 
 		}
 		//throws an exception if mainService not found in list
 		if(!hasMainService){
-			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
+			throw new InvalidInputException("Main service must be included in the services");
 		}
 		success = true;
 		return success;
@@ -1201,10 +1216,6 @@ public class FlexiBookController {
 				}
 			}
 			break;
-		}
-		//Exception if no serviceCombo is found
-		if(serviceCombo == null){
-			throw new InvalidInputException("Service does not exist");
 		}
 		return serviceCombo;
 	}
