@@ -127,7 +127,7 @@ public class CucumberStepDefinitions {
 
 	@Then("an error message with content {string} shall be raised")
 	public void an_error_message_with_content_shall_be_raised(String errorMsg) {
-		assertTrue(error.contains(errorMsg));
+		assertEquals(errorMsg, error);
 	}
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
@@ -206,6 +206,45 @@ public class CucumberStepDefinitions {
 	public void the_number_of_service_combos_in_the_system_shall_be(String string) {
 		
 	}
+
+
+/**
+ * @author chengchen
+ * As a business owner, I wish to update my existing services 
+ * in my business so that I can keep my customers up to date.
+ *
+ */
+/*------------------------------Test update Service--------------------------*/
+
+
+	@When("{string} initiates the update of the service {string} to name {string}, duration {string}, start of down time {string} and down time duration {string}")
+	public void initiates_the_update_of_the_service_to_name_duration_start_of_down_time_and_down_time_duration(String username, String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) throws InvalidInputException{
+		try {
+			FlexiBookController.updateService(serviceName,newServiceName, Integer.parseInt(newDuration), Integer.parseInt(newDowntimeDuration), Integer.parseInt(newDowntimeStart));
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+		
+	}
+		
+	@Then("the service {string} shall be updated to name {string}, duration {string}, start of down time {string} and down time duration {string}")
+	public void the_service_shall_be_updated_to_name_duration_start_of_down_time_and_down_time_duration(String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) {
+		   for (BookableService bookableService:flexiBook.getBookableServices()) {
+			   if (bookableService instanceof Service) {
+				   if (bookableService.getName().equals(serviceName)) {
+					   assertEquals(Integer.parseInt(newDowntimeDuration), ((Service) bookableService).getDowntimeDuration());
+					   assertEquals(Integer.parseInt(newDowntimeStart), ((Service) bookableService).getDowntimeStart());
+					   assertEquals(Integer.parseInt(newDuration), ((Service) bookableService).getDuration());
+				   }
+			   }
+		   }
+		  
+		  
+	}
+
+
+
 
 
 

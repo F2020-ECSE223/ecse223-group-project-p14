@@ -29,13 +29,14 @@ public class FlexiBookController {
 	 * @param duration - duration of the service to be added
 	 * @param downtimeDuration - duration of the downtime of the service to be added
 	 * @param downtimeStart - the start time of the downtime of the service to be added
-	 * 
+	 * @throws InvalidInputException
 	 * 
 	 * @author chengchen
 	 *
 	 */
 
-	public static void addService(String name,int duration,int downtimeStart,int downtimeDuration) throws InvalidInputException{
+	public static boolean addService(String name,int duration,int downtimeStart,int downtimeDuration) throws InvalidInputException{
+		Boolean isSuccess = false;
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
 			throw new InvalidInputException("You are not authorized to perform this operation");
@@ -61,7 +62,7 @@ public class FlexiBookController {
 
 		}
 		else if (downtimeStart < 0) {
-
+			
 			throw new InvalidInputException("Downtime must not start before the beginning of the service");
 
 		}
@@ -79,6 +80,7 @@ public class FlexiBookController {
 			try {
 				BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
 				flexiBook.addBookableService(service);
+				isSuccess = true;
 			} catch (Exception e) {
 				if (e.getMessage().equals("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html")) {
 					throw new InvalidInputException("Service "+name+" already exists");
@@ -90,7 +92,7 @@ public class FlexiBookController {
 		}
 
 
-
+		return isSuccess;
 	}
 
 
@@ -98,11 +100,11 @@ public class FlexiBookController {
 	 * 
 	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
-	 * 
+	 * @throws InvalidInputException 
 	 * @author chengchen
 	 */
-	public static void deleteService(String name) throws InvalidInputException{
-		
+	public static boolean deleteService(String name) throws InvalidInputException{
+		Boolean isSuccess = false;
 		Service service = findSingleService(name);
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		List<BookableService> bookableServices = flexiBook.getBookableServices();
@@ -137,6 +139,7 @@ public class FlexiBookController {
 			for (String comboName:serviceComboNamesToDelete) {
 				ServiceCombo bserCombo = findServiceCombo(comboName);
 				bserCombo.delete();
+				isSuccess = true;
 			}
 
 		}
@@ -144,16 +147,14 @@ public class FlexiBookController {
 		if (!comboItemsToDelete.isEmpty()) {
 			for (ComboItem comboItem:comboItemsToDelete) {
 				comboItem.delete();
+				isSuccess = true;
 			}
 		}
 
-
-
-
-
-		
 			
 		service.delete();
+		isSuccess = true;
+		return isSuccess;
 	}
 	
 	
@@ -166,19 +167,74 @@ public class FlexiBookController {
 	 * @param durantion - duration of the service to be updated
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
 	 * @param downtimeStart - the start time of the downtime of the service to be updated
-	 * 
+	 * @throws InvalidInputException 
 	 * @author chengchen
+	 * 
 	 */
-	public static void updateService(String name, int duration, int downtimeDuration, int downtimeStart) {
-		BookableService bookableService = findBookableService(name);
-		if (bookableService!= null) {
-			Service service = (Service) bookableService;
-			service.setDuration(duration);
-			service.setName(name);
-			service.setDowntimeStart(downtimeStart);
-			service.setDowntimeDuration(downtimeDuration);
+	public static boolean updateService(String serviceName,String newName, int newDuration, int newDowntimeDuration, int newDowntimeStart) throws InvalidInputException {
+		Boolean isSuccess = false;
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		BookableService bookableService = findBookableService(serviceName);
+		if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
+			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
 
+		else if (newDuration <= 0) {
+			throw new InvalidInputException("Duration must be positive");
+		}
+
+
+		else if (newDowntimeStart > 0 && newDowntimeDuration <= 0) {
+			throw new InvalidInputException("Downtime duration must be positive");
+
+		}
+
+		else if (newDowntimeStart == 0 && newDowntimeDuration < 0) {
+
+			throw new InvalidInputException("Downtime duration must be 0");
+
+		}
+		else if (newDowntimeStart == 0 && newDowntimeDuration > 0) {
+			throw new InvalidInputException("Downtime must not start at the beginning of the service");
+
+		}
+		else if (newDowntimeStart < 0) {
+
+			throw new InvalidInputException("Downtime must not start before the beginning of the service");
+
+		}
+		else if (newDowntimeStart + newDowntimeDuration > newDuration && newDowntimeStart < newDuration) {
+
+			throw new InvalidInputException("Downtime must not end after the service");
+
+		}
+		else if (newDowntimeStart > newDuration) {
+
+			throw new InvalidInputException("Downtime must not start after the end of the service");
+
+		}
+		
+		else {
+			List<String> serviceNames = new ArrayList<String>();
+			for (BookableService aBookableService:flexiBook.getBookableServices()) {
+				if (bookableService instanceof Service) {
+					serviceNames.add(aBookableService.getName());
+				}
+			}
+				if (serviceNames.contains(newName)&&!serviceName.equals(newName)) {
+					throw new InvalidInputException("Service "+newName+" already exists");
+				}
+			
+			((Service) bookableService).setDuration(newDuration);
+			if (!serviceName.equals(newName)) {
+				bookableService.setName(newName);
+			}
+			((Service) bookableService).setDowntimeStart(newDowntimeStart);
+			((Service) bookableService).setDowntimeDuration(newDowntimeDuration);
+			isSuccess = true;
+
+		}
+		return isSuccess;
 	}
 
 
@@ -1359,7 +1415,7 @@ public class FlexiBookController {
 	public static BookableService findBookableService(String name) {
 		BookableService foundBookableService = null;
 		for (BookableService service : FlexiBookApplication.getFlexiBook().getBookableServices()) {
-			if (service.getName() .equals( name)) {
+			if (service.getName().equals(name)) {
 				foundBookableService = service;
 				break;
 			}
