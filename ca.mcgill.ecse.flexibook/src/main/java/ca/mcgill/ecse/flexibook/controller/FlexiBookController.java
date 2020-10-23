@@ -761,7 +761,7 @@ public class FlexiBookController {
 
 		//throws an exception if main service cannot be found
 		if(mainService == null){
-			throw new InvalidInputException("Main service not found.");
+			throw new InvalidInputException("Service " + mainServiceName + " does not exist");
 		}
 		//goes through list of orderedServices and creates a ComboItem for every service
 		boolean hasMainService = false;
@@ -1537,6 +1537,19 @@ public class FlexiBookController {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @author gtjarvis
+	 */
+	public static List<ServiceCombo> getServiceCombos() {
+		List<ServiceCombo> scList = new ArrayList<ServiceCombo>();
+		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bservice instanceof ServiceCombo) {
+				scList.add((ServiceCombo)bservice);
+			}
+		}
+		return scList;
 	}
 
 	/**
