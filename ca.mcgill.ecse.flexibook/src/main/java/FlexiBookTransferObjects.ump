@@ -24,6 +24,7 @@ class TOComboItem{
 
 }
 
+
 class TOBusiness{
 	String name;
 	String adress;
@@ -32,6 +33,7 @@ class TOBusiness{
 
 }
 
+<<<<<<< HEAD
 class TOServiceCombo{
 	String name;
 	0..1 -> 2..* TOComboItem services;
@@ -45,3 +47,18 @@ class TOService{
 	int downtimeStart;
 }
 
+=======
+class TOCustomer {
+	userName;
+	password;
+
+
+}
+
+class TOAppointmentCalender {
+	nameOfTheCustomer;
+	0..1 -> 1 TOTimeSlot timeSlot;
+	serviceName;
+
+}
+>>>>>>> 28af3acd29093c2d0090d0fe25382234d71333be

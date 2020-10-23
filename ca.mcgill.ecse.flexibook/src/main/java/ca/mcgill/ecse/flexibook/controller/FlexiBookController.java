@@ -28,57 +28,68 @@ public class FlexiBookController {
 	 * @param name - name of the service to be added
 	 * @param durantion - duration of the service to be added
 	 * @param downtimeDuration - duration of the downtime of the service to be added
-	 * @param downtimeStart - the start ti
+	 * @param downtimeStart - the start time
 	 * me of the downtime of the service to be added
 	 * 
 	 * @author chengchen
 	 *
 	 */
-	public static void addService(Service aService) throws InvalidInputException{
-		try {
+
+	public static void addService(String name,int duration,int downtimeStart,int downtimeDuration) throws InvalidInputException{
+			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 			if (!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)) {
-				aService = null;
 				throw new InvalidInputException("Only owner can add a service");
 			}
-			if (aService.getDuration() <= 0) {
-				aService= null;
+				
+			else if (duration <= 0) {
 				throw new InvalidInputException("Duration must be positive");
 			}
-			else if (aService.getDowntimeDuration() < 0) {
-				aService= null;
-				throw new InvalidInputException("Downtime duration must be 0");
+		
 
-			}	
-			else if (aService.getDowntimeDuration() == 0) {
-				aService= null;
+			else if (downtimeStart > 0 && downtimeDuration <= 0) {
 				throw new InvalidInputException("Downtime duration must be positive");
+				
 			}
 
-			else if (aService.getDowntimeStart() == 0) {
-				aService= null;
+			else if (downtimeStart == 0 && downtimeDuration < 0) {
+
+				throw new InvalidInputException("Downtime duration must be 0");
+				
+			}
+			else if (downtimeStart == 0 && downtimeDuration > 0) {
 				throw new InvalidInputException("Downtime must not start at the beginning of the service");
 
 			}
-			else if (aService.getDowntimeStart() < 0) {
-				aService= null;
+			else if (downtimeStart < 0) {
+				
 				throw new InvalidInputException("Downtime must not start before the beginning of the service");
 
 			}
-			else if (aService.getDowntimeStart() < aService.getDuration()) {
-				aService= null;
+			else if (downtimeStart + downtimeDuration > duration && downtimeStart < duration) {
+				
 				throw new InvalidInputException("Downtime must not end after the service");
 
 			}
-			else if (aService.getDowntimeStart() > aService.getDuration()) {
-				aService= null;
+			else if (downtimeStart > duration) {
+				
 				throw new InvalidInputException("Downtime must not start after the end of the service");
 
 			}
-			FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
-			flexiBook.addBookableService(aService);
-		} catch (RuntimeException e) {
-			throw new InvalidInputException(e.getMessage());
-		}
+			else {
+				try {
+					BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
+					flexiBook.addBookableService(service);
+				} catch (Exception e) {
+					if (e.getMessage().equals("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html")) {
+						throw new InvalidInputException("Service "+name+" already exists");
+						
+					}
+				}
+				
+				 
+			}
+			
+		 
 
 	}
 
@@ -1047,7 +1058,7 @@ public class FlexiBookController {
 
 
 	/**
-	 * This is a query method which returns a list of TOAppointmentCanlander with a chosen data and a chosen mode
+	 * This is a query method which returns a list of TOAppointmentCalendar with a chosen data and a chosen mode
 	 * 
 	 * @param date
 	 * @param ByDay
@@ -1056,34 +1067,34 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static List<TOAppointmentCanlander> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
+	public static List<TOAppointmentCalender> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
 		//@ TODO
-		ArrayList<TOAppointmentCanlander> appointmentCanlanders = new ArrayList<TOAppointmentCanlander>();
+		ArrayList<TOAppointmentCalender> appointmentCalendars = new ArrayList<TOAppointmentCalender>();
 		if (ByDay == true && ByMonth == false && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
 		else if(ByDay == false && ByMonth == true && ByYear == false) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
 		else if(ByDay == false && ByMonth == false && ByYear == true) {
 			for (TOAppointment toAppointments: getTOAppointment()) {
 				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
-					TOAppointmentCanlander toAppointmentCanlander = new TOAppointmentCanlander(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
-					appointmentCanlanders.add(toAppointmentCanlander);
+					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getTimeSlot(),toAppointments.getServiceName());
+					appointmentCalendars.add(toAppointmentCalendar);
 				}
 			}
 		}
-		return appointmentCanlanders;
+		return appointmentCalendars;
 	}
 
 
@@ -1258,10 +1269,12 @@ public class FlexiBookController {
 		return foundBookableService;
 	}
 
-	/**
+	/** 
+	 * This method finds the service with specified name
+	 * @param name - the name of the service to found 
+	 * @return the service found 
+	 *
 	 * @author AntoineW
-	 * This method finds the single service with specified name
-	 * @return the single service found
 	 */
 	public static Service findSingleService(String name) {
 		Service s = null;
