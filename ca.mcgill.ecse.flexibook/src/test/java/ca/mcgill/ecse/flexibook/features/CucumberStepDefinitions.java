@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,11 @@ import ca.mcgill.ecse.flexibook.model.Service;
 import ca.mcgill.ecse.flexibook.model.ServiceCombo;
 import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+
+import ca.mcgill.ecse.flexibook.controller.TOComboItem;
+import ca.mcgill.ecse.flexibook.controller.TOServiceCombo;
+import ca.mcgill.ecse.flexibook.controller.TOService;
+
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -818,24 +824,17 @@ public class CucumberStepDefinitions {
 	 * @author gtjarvis
 	 */
 
-	@Given("the Owner with username {string} is logged in")
-	public void the_Owner_with_username_u_is_logged_in(String u){
-		Owner owner = new Owner(u, "test", flexibook);
-		flexibook.setCurrentLoginUser(owner);
-	}
-
 	@Given("Customer with username {string} is logged in")
 	public void Customer_with_username_u_is_logged_in(String u){
-		Customer c = new Customer(c, "test", flexibook);
-		flexibook.setCurrentLoginUser(c);
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(u));
 	}
 
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
-	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString){
+	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
 		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
 			List<String> services = Arrays.asList(servicesString.split(","));
 			List<String> mandatorySettingsStringList = Arrays.asList(mandatorySettingsString.split(","));
-			List<boolean> mandatorySettings;
+			List<Boolean> mandatorySettings = new ArrayList<Boolean>();
 			for(int i = 0; i < mandatorySettingsStringList.size(); i++){
 				mandatorySettings.add(Boolean.parseBoolean(mandatorySettingsStringList.get(i)));
 			}
@@ -852,63 +851,38 @@ public class CucumberStepDefinitions {
 
 	@Then("the service combo {string} shall exist in the system")
 	public void the_service_combo_name_shall_exist_in_the_system(String name){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name).getName(), name);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.getTOServiceCombo(name).getName(), name);
 	}
 
 	@Then("the service combo {string} shall not exist in the system")
 	public void the_service_combo_name_shall_not_exist_in_the_system(String name){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name), null);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.getTOServiceCombo(name), null);
 	}
 
 	@Then("the service combo {string} shall contain the services {string} with mandatory setting {string}")
 	public void the_service_combo_comboName_shall_contain_the_services_serviceName_with_mandatory_setting_mandatorySetting(String name, String servicesString, String mandatorySettingsString){
 		List<String> servicesList = Arrays.asList(servicesString.split(","));
 		List<String> mandatorySettingsList = Arrays.asList(mandatorySettingsString.split(","));
-		try{
-			TOServiceCombo serviceCombo = FlexiBookController.getTOServiceCombo(name);
-			List<TOComboItem> comboList= serviceCombo.getServices();
-			for(int i = 0; i < comboList.size(); i++){
-				assertEquals(comboList.get(i).getServiceName(), servicesList.get(i));
-				assertEquals(comboList.get(i).getIsMandatory(), mandatorySettingsList.get(i));
-			}
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
+		TOServiceCombo serviceCombo = FlexiBookController.getTOServiceCombo(name);
+		List<TOComboItem> comboList= serviceCombo.getServices();
+		for(int i = 0; i < comboList.size(); i++){
+			assertEquals(comboList.get(i).getServiceName(), servicesList.get(i));
+			assertEquals(comboList.get(i).getIsMandatory(), mandatorySettingsList.get(i));
 		}
 	}
 
 	@Then("the main service of the service combo {string} shall be {string}")
 	public void the_main_service_of_the_service_combo_name_shall_be_mainService(String name, String mainService){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name).getMainService().getName(), mainService);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.getTOServiceCombo(name).getMainService(), mainService);
 	}
 
 	@Then("the service {string} in service combo {string} shall be mandatory")
-	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name)){
-		try{
-			List<TOComboItem> comboItems = FlexiBookController.getTOServiceCombo(name).getServices();
-			for(TOComboItem c: comboItems){
-				if(c.getName().equals(mainService)){
-					assertTrue(c.getIsMandatory());
-				}
+	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name){
+		List<TOComboItem> comboItems = FlexiBookController.getTOServiceCombo(name).getServices();
+		for(TOComboItem c: comboItems){
+			if(c.getServiceName().equals(mainService)){
+				assertTrue(c.getIsMandatory());
 			}
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
 		}
 	}
 
