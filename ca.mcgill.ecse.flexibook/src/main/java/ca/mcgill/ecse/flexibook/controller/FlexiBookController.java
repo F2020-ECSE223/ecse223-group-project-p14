@@ -1407,8 +1407,12 @@ public class FlexiBookController {
 
 	/**
 	 * This method finds the service with specified name
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @param name - the name of the service to found 
 	 * @return the service found 
+	 * 	
 	 * 
 	 * @author chengchen
 	 */
@@ -1425,6 +1429,9 @@ public class FlexiBookController {
 	
 	/**
 	 * This method finds the appointments that has specified services
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @param serviceName
 	 * @return a list of appointments 
 	 * 
@@ -1442,6 +1449,9 @@ public class FlexiBookController {
 
 	/** 
 	 * This method finds the service with specified name
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @param name - the name of the service to found 
 	 * @return the service found 
 	 *
@@ -1459,6 +1469,9 @@ public class FlexiBookController {
 	}
 
 	/**
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @author AntoineW
 	 */
 	public static ServiceCombo findServiceCombo(String name) {
@@ -1607,7 +1620,8 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * wrapper method of isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot), isDuringDowntime(TimeSlot timeSlot), isDuringWorkTime(TimeSlot timeSlot) and isInTheFuture(TimeSlot timeSlot)
+	 * wrapper method of isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot), isDuringDowntime(TimeSlot timeSlot), 
+	 * isDuringWorkTime(TimeSlot timeSlot) and isInTheFuture(TimeSlot timeSlot)
 	 * The method will return true if the timeslot passes through all 4 tests in a specific order.
 	 * @return
 	 * 
@@ -1691,6 +1705,9 @@ public class FlexiBookController {
 
 	/**
 	 * This method is a helper method of finding a particular customer 
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @param userName
 	 * @return
 	 * @author mikewang
@@ -1725,6 +1742,9 @@ public class FlexiBookController {
 	/**
 	 * This method is a helper method for finding a particular user by username
 	 * User can be the owner or a customer 
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * @param username
 	 * @return 
 	 * @author Catherine
@@ -1783,6 +1803,7 @@ public class FlexiBookController {
 	
 	/**
 	 * This is an helper method which provides an opportunity for the owner to set up it's owner account
+	 * 
 	 * @param username
 	 * @param password
 	 * @return
