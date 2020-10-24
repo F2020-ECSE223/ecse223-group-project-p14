@@ -1122,7 +1122,59 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/*---------------------------Test Delete Service Combo--------------------------*/
 
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When("{string} initiates the deletion of service combo {string}")
+	public void user_initiates_the_deletion_of_service_combo(String user, String name){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			try {
+				FlexiBookController.deleteServiceCombo(name);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	/*---------------------------Test Update Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
+	public void user_initiates_the_update_of_service_combo_name(String user, String serviceCombo, String newName, String newMainService, String newServices, String newMandatory){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			List<String> services = Arrays.asList(newServices.split(","));
+			List<String> mandatoryList = Arrays.asList(newMandatory.split(","));
+			List<Boolean> mandatory = new ArrayList<Boolean>();
+			for(int i = 0; i < mandatoryList.size(); i++){
+				mandatory.add(Boolean.parseBoolean(mandatoryList.get(i)));
+			}
+			try {
+				FlexiBookController.updateServiceCombo(serviceCombo, newName, newMainService, services, mandatory);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	@Then("the service combo {string} shall be updated to name {string}")
+	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
+		if(!name.equals(newName)){
+			assertNull(FlexiBookController.findServiceCombo(name));
+		}
+		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+	}
+	
+	
 	/*---------------------------Test Set Up Business Information--------------------------*/
 
 	/**
@@ -1594,68 +1646,8 @@ public class CucumberStepDefinitions {
 		assertEquals(result, temporaryResult);
 
 	}
-
-
-
-
-
-
-	/*---------------------------Test Delete Service Combo--------------------------*/
-
-	/**
-	 * 
-	 * @author gtjarvis
-	 */
-	@When("{string} initiates the deletion of service combo {string}")
-	public void user_initiates_the_deletion_of_service_combo(String user, String name){
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
-			try {
-				FlexiBookController.deleteServiceCombo(name);
-			}
-			catch (InvalidInputException e) {
-				error += e.getMessage();
-				errorCntr++;
-			}
-		}
-	}
-
-	/*---------------------------Test Update Service Combo--------------------------*/
-
-	/**
-	 * 
-	 * @author gtjarvis
-	 */
-	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
-	public void user_initiates_the_update_of_service_combo_name(String user, String serviceCombo, String newName, String newMainService, String newServices, String newMandatory){
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
-			List<String> services = Arrays.asList(newServices.split(","));
-			List<String> mandatoryList = Arrays.asList(newMandatory.split(","));
-			List<Boolean> mandatory = new ArrayList<Boolean>();
-			for(int i = 0; i < mandatoryList.size(); i++){
-				mandatory.add(Boolean.parseBoolean(mandatoryList.get(i)));
-			}
-			try {
-				FlexiBookController.updateServiceCombo(serviceCombo, newName, newMainService, services, mandatory);
-			}
-			catch (InvalidInputException e) {
-				error += e.getMessage();
-				errorCntr++;
-			}
-		}
-	}
-
-	@Then("the service combo {string} shall be updated to name {string}")
-	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
-		if(!name.equals(newName)){
-			assertNull(FlexiBookController.findServiceCombo(name));
-		}
-		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
-	}
-
-
-
-
-
+	
+	
 	/*---------------------------private helper methods--------------------------*/
 
 	/**

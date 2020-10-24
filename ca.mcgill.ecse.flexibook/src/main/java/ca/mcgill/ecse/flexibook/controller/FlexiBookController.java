@@ -730,11 +730,16 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method creates a Service Combo given a name, a mainService, and a list of otherServices with a boolean list of
-	 	which otherServices are mandatory.
+	 * This method defines a new Service Combo.
+	 * @param name -name of new Service Combo
+	 * @param mainServiceName -name of Main Service associated with the new Service Combo
+	 * @param orderedServices -ordered list of services associated with the new Service Combo
+	 * @param listOfMandatory -determines whether each service in orderedServices is mandatory
+	 * @return boolean whether or not defining new Service Combo was successful
+	 * @throws InvalidInputException
 	 * @author gtjarvis
 	 */
-	public static void defineServiceCombo(String name, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
+	public static boolean defineServiceCombo(String name, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
@@ -795,13 +800,22 @@ public class FlexiBookController {
 			}
 
 		}
+
+		return true;
 	}
 
 	/**
-	 * This method updates a Service Combo
+	 * This method updates an existing Service Combo.
+	 * @param name -name of the existing Service Combo
+	 * @param newName -updated name of Service Combo
+	 * @param mainServiceName -updated main service
+	 * @param orderedServices -updated list of services
+	 * @param listOfMandatory -updated corresponding mandatory list
+	 * @return boolean whether or not updating existing Service Combo was successful
+	 * @throws InvalidInputException
 	 * @author gtjarvis
 	 */
-	public static void updateServiceCombo(String name, String newName, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
+	public static boolean updateServiceCombo(String name, String newName, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
@@ -872,13 +886,18 @@ public class FlexiBookController {
 		}
 		serviceCombo.getService(0).delete();
 		serviceCombo.getService(0).delete();
+
+		return true;
 	}
 
 	/**
-	 * This method deletes a Service Combo given a name
+	 * This method deletes an existing Service Combo.
+	 * @param name -name of the existing Service Combo
+	 * @return boolean whether or not deleting existing Service Combo was successful
+	 * @throws InvalidInputException
 	 * @author gtjarvis
 	 */
-	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
+	public static boolean deleteServiceCombo(String name) throws InvalidInputException{ 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
@@ -891,6 +910,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("Service combo " + comboService.getName() + " has future appointments");
 		}
 		comboService.delete();
+		return true;
 	}
 
 
@@ -1505,68 +1525,41 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This is a query method which returns all TOServiceCombo objects
-	 * @param
-	 * @return
+	 * This is a query method which returns all Service Combos as TOServiceCombo objects
+	 * @return list of TOServiceCombo objects
 	 * @author gtjarvis
 	 */
 	public static List<TOServiceCombo> getTOServiceCombos(){
-		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
-		List<TOServiceCombo> serviceCombos = null;
+		List<ServiceCombo> serviceCombos = getServiceCombos();
+		List<TOServiceCombo> serviceCombosTO = new ArrayList<TOServiceCombo>();
 		List<ComboItem> comboItems;
-		for(BookableService s: bookableServices){
-			if(s instanceof ServiceCombo) {
-				TOServiceCombo sc = new TOServiceCombo(s.getName());
-				ServiceCombo currentServiceCombo = (ServiceCombo) s;
-				comboItems = currentServiceCombo.getServices();
-				for(ComboItem c: comboItems){
-					TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
-					sc.addService(comboItemTO);
-				}
-				serviceCombos.add(sc);
+		for(ServiceCombo s: serviceCombos){
+			TOServiceCombo sc = new TOServiceCombo(s.getName());
+			comboItems = s.getServices();
+			for(ComboItem c: comboItems){
+				TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
+				sc.addService(comboItemTO);
 			}
+			serviceCombosTO.add(sc);
 		}
-		return serviceCombos;
+		return serviceCombosTO;
 	}
 
 	/**
-	 * This is a query method which returns a specific TOServiceCombo by name
-	 * @param
-	 * @return
+	 * This is a query method which returns a specific Service Combo by name as a TOServiceCombo object
+	 * @return corresponding TOServiceCombo object
 	 * @author gtjarvis
 	 */
 	public static TOServiceCombo getTOServiceCombo(String name){
-		List<BookableService> bookableServices = FlexiBookApplication.getFlexiBook().getBookableServices();
-		List<ComboItem> comboItems;
-		TOServiceCombo serviceCombo = null;
-		for(BookableService s: bookableServices){
-			if(s instanceof ServiceCombo && s.getName().equals(name)) {
-				serviceCombo = new TOServiceCombo(name);
-				ServiceCombo currentServiceCombo = (ServiceCombo) s;
-				comboItems = currentServiceCombo.getServices();
-				for(ComboItem c: comboItems){
-					TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
-					serviceCombo.addService(comboItemTO);
-				}
+		List<TOServiceCombo> scList = getTOServiceCombos();
+		for(TOServiceCombo s: scList){
+			if(s.getName().equals(name)){
+				return s;
 			}
-			break;
 		}
-		return serviceCombo;
+		return null;
 	}
 
-
-
-
-	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
-	//
-	//	public static List<TOServiceCombo> getTOServiceCombos(){
-	//		//@ TODO
-	//	}
-	//
-
-	//	
-	//	
-	//	
 
 
 	/*----------------------------------------------- private helper methods -----------------------------------------------------*/
@@ -1651,6 +1644,9 @@ public class FlexiBookController {
 	}
 
 	/**
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * Returns a list of all the existing Service Combos
+	 * @return List of all existing Service Combos
 	 * @author gtjarvis
 	 */
 	public static List<ServiceCombo> getServiceCombos() {
@@ -1800,10 +1796,9 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * Returns list of appointments in the future
-	 * @param appointments
-	 * @return
-	 * 
+	 * Returns list of appointments in the future for a specific service
+	 * @param b -specific bookable service
+	 * @return list of appointments for that service
 	 * @author gtjarvis
 	 */
 	private static List<Appointment> getAppointmentsInTheFuture(BookableService b) {
