@@ -70,7 +70,6 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.getFlexiBook().delete();
 	}
 
-	/*---------------------------Test Log in--------------------------*/
 	/**
 	 * As an owner, I want to log in so that I can access the space to manage my business. 
 	 * As a customer, I want to log in so that I can manage my appointments.
@@ -78,7 +77,15 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author mikewang
 	 */
+	
+	/*---------------------------Test Log in--------------------------*/
 
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @author mikewang
+	 */
 	@When("the user tries to log in with username {string} and password {string}")
 	public void the_user_tries_to_log_in_with_username_and_password(String username, String password) {
 		try {
@@ -89,27 +96,56 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @author mikewang
+	 */
 	@Then("the user should be successfully logged in")
 	public void the_user_should_be_successfully_logged_in() {
 		assertEquals(false, FlexiBookApplication.getCurrentLoginUser()==null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("the user should not be logged in")
 	public void the_user_should_not_be_logged_in() {
 		assertEquals(true, FlexiBookApplication.getCurrentLoginUser()==null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("a new account shall be created")
 	public void a_new_account_shall_be_created() {
 		assertEquals(true, flexiBook.getOwner()!=null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("the user shall be successfully logged in")
 	public void the_user_shall_be_successfully_logged_in() {
 		assertEquals(true, FlexiBookApplication.getCurrentLoginUser() instanceof Owner);	    
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * As a user, I want to view the appointment calendar so that I can select a time 
+	 * slot for my appointment and/or browse my scheduled appointments.
+	 * 
+	 * @author mikewang
+	 */
 	/*---------------------------Test view appointment calendar--------------------------*/
+	
+	
+	/**
+	 * 
+	 * @author mikewang
+	 */
 
 	@Given ("the business has the following opening hours:")
 	public void the_business_has_the_following_opening_hours_1(List<Map<String, String>> datatable) {
@@ -136,6 +172,11 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @author mikewang
+	 */
 	@Given ("the business has the following holidays:")
 	public void the_business_has_the_following_holidays_1(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -146,10 +187,17 @@ public class CucumberStepDefinitions {
 
 		}			 
 	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param date
+	 * @author mikewang
+	 */
 	@When("{string} requests the appointment calendar for the week starting on {string}")
 	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
 		try{
-			FlexiBookController.viewAppointmentCalendar(date, false, true);
+			FlexiBookController.viewAppointmentCalendar(date, false, true, true, true);
 		}catch(InvalidInputException e){
 			error += e.getMessage();
 			errorCntr++;
@@ -157,11 +205,18 @@ public class CucumberStepDefinitions {
 		
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @throws InvalidInputException
+	 * @author mikewang
+	 * 
+	 */
 	@Then("the following slots shall be unavailable:")
 	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isUnavailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.getUnavailbleTime(map.get("date"), true, false)) {
+			for (TOTimeSlot time:FlexiBookController.viewAppointmentCalendare(map.get("date"), true, false, true, false)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isUnavailable = true;
@@ -179,10 +234,19 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @param username
+	 * @param date
+	 * @author mikewang
+	 * 
+	 */
+	
 	@When("{string} requests the appointment calendar for the day of {string}")
 	public void requests_the_appointment_calendar_for_the_day_of(String username, String date){
 		try{
-			FlexiBookController.viewAppointmentCalendar(date, true, false);
+			FlexiBookController.viewAppointmentCalendar(date, true, false, true, true);
 		} catch(InvalidInputException e){
 			error += e.getMessage();
 			errorCntr++;
@@ -192,11 +256,18 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * 
+	 * @param datatable
+	 * @throws InvalidInputException
+	 * @author mikewang
+	 * 
+	 */
 	@Then("the following slots shall be available:")
 	public void the_following_slots_shall_be_available(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isAvailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.getAvailbleTime(map.get("date"), true, false)) {
+			for (TOTimeSlot time:FlexiBookController.viewAppointmentCalendar(map.get("date"), true, false, false, true)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isAvailable = true;
@@ -217,6 +288,12 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * As a user, I want to log out of the application so that the next user 
+	 * does not have access to my information
+	 * @author mikewang
+	 * 
+	 */
 	/*---------------------------Test Log out--------------------------*/
 	/**
 	 * As a user, I want to log out of the application so that the next user 
@@ -228,6 +305,10 @@ public class CucumberStepDefinitions {
 		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
 	}
 
+	/**
+	 * @author mikewang
+	 * 
+	 */
 	@When("the user tries to log out")
 	public void the_user_tries_to_log_out() {
 		try {

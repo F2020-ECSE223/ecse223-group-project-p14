@@ -1240,12 +1240,16 @@ public class FlexiBookController {
 	 * @param ByDay
 	 * @param ByMonth
 	 * @param ByYear
-	 * @return
+	 * @return it's sub component getUnavailbleTime() and getAvailnleTime() shall return ArrayList<TOTimeSlot>
 	 * @author mikewang
 	 */
-	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-		getUnavailbleTime(date1,ByDay,ByWeek);
-		getAvailbleTime(date1,ByDay,ByWeek);
+	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek, Boolean unavailble, Boolean availble) throws InvalidInputException{
+		if (unavailble) {
+			getUnavailbleTime(date1,ByDay,ByWeek);
+		}
+		if (availble) {
+			getAvailbleTime(date1,ByDay,ByWeek);
+		}
 	}
 
 
@@ -1341,7 +1345,7 @@ public class FlexiBookController {
 	 * @param ByDay
 	 * @param ByWeek
 	 * @author mikewang
-	 * @return
+	 * @return <TOTimeSlot> availble time  
 	 */
 	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
 		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
