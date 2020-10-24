@@ -1340,7 +1340,6 @@ public class FlexiBookController {
 	//implement next time
 
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
 	 * This is a query method which can return all availble time slot to an ArrayList
 	 * @param date
 	 * @param ByDay
@@ -1504,6 +1503,7 @@ public class FlexiBookController {
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
 	 * @param appointment
 	 * @return
+	 * @author mikewang
 	 */
 	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
 		//@ TODO
