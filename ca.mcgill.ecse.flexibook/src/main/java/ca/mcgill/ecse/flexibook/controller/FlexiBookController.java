@@ -1904,7 +1904,7 @@ public class FlexiBookController {
 	public static Customer findCustomer (String userName){
 		Customer foundCustomer = null;
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			if (user.getUsername() .equals( userName) ) {
+			if (user.getUsername().equals(userName) ) {
 				foundCustomer = user;
 				break;
 			}else {

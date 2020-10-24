@@ -1390,7 +1390,8 @@ String temporaryResult = "not be";
 	}
 	 
 	
-	 
+
+	
 	
 
 	/*---------------------------Test Delete Service Combo--------------------------*/
@@ -1445,8 +1446,10 @@ String temporaryResult = "not be";
 		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
 	}
 
-
-
+	
+	
+	
+	
 	/*---------------------------private helper methods--------------------------*/
 
 	/**
