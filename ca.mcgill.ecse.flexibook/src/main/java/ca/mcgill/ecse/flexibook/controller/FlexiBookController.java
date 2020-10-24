@@ -730,7 +730,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method defines a new Service Combo.
+	 * Define Service Combo: this method defines a new Service Combo.
 	 * @param name -name of new Service Combo
 	 * @param mainServiceName -name of Main Service associated with the new Service Combo
 	 * @param orderedServices -ordered list of services associated with the new Service Combo
@@ -805,7 +805,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method updates an existing Service Combo.
+	 * Update Service Combo: this method updates an existing Service Combo.
 	 * @param name -name of the existing Service Combo
 	 * @param newName -updated name of Service Combo
 	 * @param mainServiceName -updated main service
@@ -892,7 +892,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method deletes an existing Service Combo.
+	 * Delete Service Combo: this method deletes an existing Service Combo.
 	 * @param name -name of the existing Service Combo
 	 * @return boolean whether or not deleting existing Service Combo was successful
 	 * @throws InvalidInputException
