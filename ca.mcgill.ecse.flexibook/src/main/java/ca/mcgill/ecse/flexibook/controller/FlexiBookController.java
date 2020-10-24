@@ -583,6 +583,7 @@ public class FlexiBookController {
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
 	 * @param password
+	 * @return signUpSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
@@ -591,7 +592,7 @@ public class FlexiBookController {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		boolean signUpSuccessful = false;
 		if (FlexiBookApplication.getCurrentLoginUser() != null) {
-			if (FlexiBookApplication.getCurrentLoginUser().getUsername() == "owner" || FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner") ) { // alternative: FlexiBookApplication.getCurrentLoginUser() instanceof Owner
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
@@ -601,13 +602,12 @@ public class FlexiBookController {
 		else if (password == null || password.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
+		else if (findCustomer(username) != null) { 
 			throw new InvalidInputException("The username already exists");
 		}
 		else {
 			Customer aCustomer = new Customer(username, password, flexiBook);
-			flexiBook.addCustomer(aCustomer); //this seems unecessary
+			flexiBook.addCustomer(aCustomer); 
 			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 			signUpSuccessful = true;
@@ -622,15 +622,15 @@ public class FlexiBookController {
 	 * @param currentUsername
 	 * @param newUsername
 	 * @param newPassword
+	 * @return updateSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
 	 */
-	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException { 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean updateSuccessful = false;
-		if (user.getUsername() != currentUsername) {
+		if (!user.getUsername().equals(currentUsername)) {
 			throw new InvalidInputException("You do not have permission to update this account"); 
 		}
 		else if (newUsername == null || newUsername.replaceAll("\\s+", "").length() == 0) {
@@ -642,8 +642,7 @@ public class FlexiBookController {
 		else if (newPassword == null || newPassword.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { 
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
+		else if (findCustomer(newUsername) != null) { 
 			throw new InvalidInputException("Username not available");
 		}
 		else {
@@ -658,6 +657,7 @@ public class FlexiBookController {
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
 	 * @param username
+	 * @return deleteSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
@@ -665,7 +665,7 @@ public class FlexiBookController {
 	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean deleteSuccessful = false;
-		if (!user.getUsername().equals(username) || user.getUsername().equals("owner") || user instanceof Owner) { 
+		if (!user.getUsername().equals(username) || user.getUsername().equals("owner")) { //alternative: user instanceof Owner
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
 		else {
@@ -1913,29 +1913,22 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method is a helper method for finding a particular user by username
+	 * This method is a helper method for finding a particular user by username.
 	 * User can be the owner or a customer 
 	 * 
 	 * This is a private helper method but we put it public in this stage for testing.
 	 * 
 	 * @param username
-	 * @return 
+	 * @return User with username or null
 	 * @author Catherine
 	 */
 	public static User findUser(String username){
-		User foundUser = null;
+		User foundUser;
 		if (username.equals("owner")) {
 			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
 		}
 		else {
-			for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-				if (user.getUsername().equals(username) ) {
-					foundUser = user;
-					break;
-				}
-				else foundUser = null;
-			}
-
+			foundUser = findCustomer(username);
 		}
 		return foundUser;
 	}
