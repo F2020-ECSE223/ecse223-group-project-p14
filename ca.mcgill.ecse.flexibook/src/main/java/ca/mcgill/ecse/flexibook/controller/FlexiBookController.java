@@ -1206,10 +1206,8 @@ public class FlexiBookController {
 
 
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
-	 * This is a query method which returns a list of TOAppointmentCalendar with a chosen data and a chosen mode
-	 * TODO: missing features of showing availble times, also we don't need to show the service name and the name of the customer 
-	 * 			THE ONLY thing need to be shown is the time slots. Use getUnavailbleTime and getAvailbleTim
+	 * This is a method which returns a boolean if the time input is available
+	 * TODO: missing features of showing available times, also we don't need to show the service name and the name of the customer 
 	 * 
 	 * @param date
 	 * @param ByDay
@@ -1241,7 +1239,7 @@ public class FlexiBookController {
 
 	
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
+	 * 
 	 * This is a query method which can return all unavailble time slot to an ArrayList
 	 * @param date
 	 * @param ByDay
@@ -1359,12 +1357,12 @@ public class FlexiBookController {
 //	}
 	
 	
-	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
-		for (int i =0; i <= TimeSlots.; i++) {
-			
-		}
-	}
-	
+//	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+//		for (int i =0; i <= TimeSlots.; i++) {
+//			
+//		}
+//	}
+//	
 	
 	/**
 	 * this is an qurey method with returns the BusinessHour 
