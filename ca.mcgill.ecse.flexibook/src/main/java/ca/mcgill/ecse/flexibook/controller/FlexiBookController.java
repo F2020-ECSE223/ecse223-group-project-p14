@@ -1236,19 +1236,9 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static void viewAppointmentCalnader(String date1, Boolean ByDay, Boolean ByWeek){
-		try {
-			getUnavailbleTime(date1,ByDay,ByWeek);
-		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			getAvailbleTime(date1,ByDay,ByWeek);
-		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		getUnavailbleTime(date1,ByDay,ByWeek);
+		getAvailbleTime(date1,ByDay,ByWeek);
 	}
 
 

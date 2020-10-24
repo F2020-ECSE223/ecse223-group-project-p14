@@ -150,8 +150,15 @@ public class CucumberStepDefinitions {
 	}
 	@When("{string} requests the appointment calendar for the week starting on {string}")
 	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
-		FlexiBookController.viewAppointmentCalnader(date, false, true);
+		try{
+			FlexiBookController.viewAppointmentCalendar(date, false, true);
+		}catch(InvalidInputException e){
+			error += e.getMessage();
+			errorCntr++;
+		}
+		
 	}
+
 	@Then("the following slots shall be unavailable:")
 	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isUnavailable = false;
@@ -175,15 +182,21 @@ public class CucumberStepDefinitions {
 	}
 
 	@When("{string} requests the appointment calendar for the day of {string}")
-	public void requests_the_appointment_calendar_for_the_day_of(String username, String date) {
-		FlexiBookController.viewAppointmentCalnader(date, true, false);
+	public void requests_the_appointment_calendar_for_the_day_of(String username, String date){
+		try{
+			FlexiBookController.viewAppointmentCalendar(date, true, false);
+		} catch(InvalidInputException e){
+			error += e.getMessage();
+			errorCntr++;
+		}
+		
 	}
 
 
 
 	@Then("the following slots shall be available:")
 	public void the_following_slots_shall_be_available(io.cucumber.datatable.DataTable dataTable) {
-
+		
 	}
 
 
