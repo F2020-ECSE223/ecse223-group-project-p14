@@ -746,7 +746,7 @@ public class FlexiBookController {
 		}
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
-			throw new InvalidInputException("Error with additional services.");
+			throw new InvalidInputException("Error with services.");
 		}
 		//throws an exception if name is empty or null
 		if(name == null || name.equals("")){
@@ -884,9 +884,10 @@ public class FlexiBookController {
 				serviceCombo.setMainService(comboItem);
 			}
 		}
-		serviceCombo.getService(0).delete();
-		serviceCombo.getService(0).delete();
-
+		tmp1Combo.delete();
+		tmp2Combo.delete();
+		tmp1.delete();
+		tmp2.delete();
 		return true;
 	}
 
