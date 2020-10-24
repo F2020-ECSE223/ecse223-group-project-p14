@@ -1137,6 +1137,10 @@ public class CucumberStepDefinitions {
 			FlexiBookApplication.getFlexiBook().getBusiness().delete();
 		}
 	}
+	 
+	 /**
+	  * @author jedla
+	  */
 
 	@When("the user tries to set up the business information with new {string} and {string} and {string} and {string}")
 	public void the_user_tries_to_set_up_the_business_information_with_new_and_and_and(String name, String address,
@@ -1150,6 +1154,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	
+	/**
+	  * @author jedla
+	  */
 	@Then("a new business with new {string} and {string} and {string} and {string} shall {string} created")
 	public void a_new_business_with_new_and_and_and_shall_created(String name, String address, String phoneNumber,
 			String email, String string1) {
@@ -1170,6 +1178,9 @@ public class CucumberStepDefinitions {
 
 	}
 
+	/**
+	  * @author jedla
+	  */
 	@Then("an error message {string} shall {string} raised")
 	public void an_error_message_shall_raised(String error, String resultError) {
 		String shallError = "";
@@ -1199,6 +1210,10 @@ public class CucumberStepDefinitions {
 			FlexiBookApplication.getFlexiBook().setBusiness(business);
 		}
 	}
+	
+	/**
+	  * @author jedla
+	  */
 
 	@Given("the business has a business hour on {string} with start time {string} and end time {string}")
 	public void the_business_has_a_business_hour_on_with_start_time_and_end_time(String day, String startTime,
@@ -1209,6 +1224,11 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.getFlexiBook().getBusiness().addBusinessHour(bh);
 		FlexiBookApplication.getFlexiBook().addHour(bh);
 	}
+	
+	
+	/**
+	  * @author jedla
+	  */
 
 	@When("the user tries to add a new business hour on {string} with start time {string} and end time {string}")
 	public void the_user_tries_to_add_a_new_business_hour_on_with_start_time_and_end_time(String day, String startTime,
@@ -1224,6 +1244,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	
+	/**
+	  * @author jedla
+	  */
 	@Then("a new business hour shall {string} created")
 	public void a_new_business_hour_shall_created(String string3) {
 		String result_hours = " ";
@@ -1246,6 +1270,10 @@ public class CucumberStepDefinitions {
 	public void the_user_tries_to_access_the_business_information() {
 		FlexiBookController.getBusinessInfo();
 	}
+	
+	/**
+	  * @author jedla
+	  */
 
 	@Then("the {string} and {string} and {string} and {string} shall be provided to the user")
 	public void the_and_and_and_shall_be_provided_to_the_user(String name, String address, String phoneNumber,
@@ -1276,6 +1304,11 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	 
+	 /**
+	  * @author jedla
+	  */
+
 	@When("the user tries to add a new {string} with start date {string} at {string} and end date {string} at {string}")
 	public void the_user_tries_to_add_a_new_with_start_date_at_and_end_date_at(String type, String startDate,
 			String startTime, String endDate, String endTime) {
@@ -1289,6 +1322,11 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+
+	/**
+	  * @author jedla
+	  */
+	
 
 	@Then("a new {string} shall {string} be added with start date {string} at {string} and end date {string} at {string}")
 	public void a_new_shall_be_added_with_start_date_at_and_end_date_at(String type, String result, String startDate,
@@ -1342,6 +1380,10 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+	 
+	 /**
+	  * @author jedla
+	  */
 
 	@Then("the business information shall {string} updated with new {string} and {string} and {string} and {string}")
 	public void the_business_information_shall_updated_with_new_and_and_and(String result, String name, String address, String phoneNumber, String email) {
@@ -1379,6 +1421,10 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+	 
+	 /**
+	  * @author jedla
+	  */
 
 	@Then("the business hour shall {string} be updated")
 	public void the_business_hour_shall_be_updated(String resultUpdate) {
@@ -1409,6 +1455,10 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+	 
+	 /**
+	  * @author jedla
+	  */
 
 	@Then("the business hour starting {string} at {string} shall {string} exist")
 	public void the_business_hour_starting_at_shall_exist(String day, String time, String result) {
@@ -1425,6 +1475,11 @@ public class CucumberStepDefinitions {
 		}	
 		assertEquals(result, temp);
 	}
+
+	
+	/**
+	  * @author jedla
+	  */
 
 	@Then("an error message {string} shall {string} be raised")
 	public void an_error_message_shall_be_raised(String e, String result) {
@@ -1454,6 +1509,10 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+	 
+	 /**
+	  * @author jedla
+	  */
 
 	@Then("the {string} shall {string} be updated with start date {string} at {string} and end date {string} at {string}")
 	public void the_shall_be_updated_with_start_date_at_and_end_date_at(String type, String result, String startDate, String startTime, String endDate, String endTime) {
@@ -1502,6 +1561,10 @@ public class CucumberStepDefinitions {
 			isSetUp = false;
 		}
 	}
+	
+	/**
+	  * @author jedla
+	  */
 
 	@Then("the {string} with start date {string} at {string} shall {string} exist")
 	public void the_with_start_date_at_shall_exist(String type, String startDate, String startTime, String result) {
@@ -1647,7 +1710,7 @@ public class CucumberStepDefinitions {
 	/**
 	 * Helper method to get a day of the week from a string
 	 * @param day
-	 * @return dayOfWeek
+	 * @return 
 	 * @author jedla & AntoineW
 	 */
 	private static DayOfWeek stringToDay(String day) {
