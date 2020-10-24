@@ -72,7 +72,13 @@ public class CucumberStepDefinitions {
 	}
 
 /*---------------------------Test Log in--------------------------*/
-	
+	/**
+	 * As an owner, I want to log in so that I can access the space to manage my business. 
+  	 * As a customer, I want to log in so that I can manage my appointments.
+     * The owner account is created automatically if it does not exist.
+	 *
+	 * @author mikewang
+	 */
 
 	@When("the user tries to log in with username {string} and password {string}")
 	public void the_user_tries_to_log_in_with_username_and_password(String username, String password) {
@@ -108,7 +114,11 @@ public class CucumberStepDefinitions {
 
 
 /*---------------------------Test Log out--------------------------*/
-	
+	/**
+	 * As a user, I want to log out of the application so that the next user 
+	 * does not have access to my information
+	 * @author mikewang
+	 */
 	@Given("the user is logged out")
 	public void the_user_is_logged_out() {
 		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
