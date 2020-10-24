@@ -1889,13 +1889,11 @@ public class FlexiBookController {
 	/**
 	 * This method is a helper method of finding a particular customer 
 	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
-	 * 
 	 * @param userName
 	 * @return
 	 * @author mikewang
 	 */
-	public static Customer findCustomer (String userName){
+	private static Customer findCustomer (String userName){
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
 			if (user.getUsername().equals( userName) ) {
 				return user;
@@ -1928,28 +1926,6 @@ public class FlexiBookController {
 		Collections.sort(TimeSlots, new CustomComparator());
 		return TimeSlots;
 	}
-
-	/**
-	 * This method is a helper method for finding a particular user by username.
-	 * User can be the owner or a customer 
-	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
-	 * 
-	 * @param username
-	 * @return User with username or null
-	 * @author Catherine
-	 */
-	public static User findUser(String username){
-		User foundUser;
-		if (username.equals("owner")) {
-			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
-		}
-		else {
-			foundUser = findCustomer(username);
-		}
-		return foundUser;
-	}
-
 
 	/**
 	 * This method is a helper method of finding is the date we specifying is today. 
