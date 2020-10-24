@@ -1170,7 +1170,8 @@ public class FlexiBookController {
 	 * @param businessName
 	 * @param address
 	 * @param phoneNumber
-	 * @throws email
+	 * @param email
+	 * @throws InvalidInputException
 	 * @author jedla
 	 */
 	public static void updateBusinessInfo(String businessName, String address, String phoneNumber, String email) throws InvalidInputException{
@@ -2196,7 +2197,7 @@ public class FlexiBookController {
 
 
 	/**
-	 * This is a helper method to know if the current BusinessHour overlaps with other business hours
+	 * This helper method finds if the current BusinessHour overlaps with other business hours
 	 * @param day
 	 * @param startTime
 	 * @param endTime
@@ -2234,7 +2235,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds if the current TimeSlot is overlapping with a vacation
+	 * This helper method finds if the current TimeSlot is overlapping with a Vacation
 	 * @param startDate
 	 * @param startTime
 	 * @param endDate
@@ -2310,7 +2311,7 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
+	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
 		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour x: hoursList) {
@@ -2359,7 +2360,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds the corresponding Holiday
+	 * This finds if the start date and start time of a BusinessHour or of a TimeSlot is in the Future
 	 * @param start
 	 * @return
 	 * @author jedla inspired by AntoineW
