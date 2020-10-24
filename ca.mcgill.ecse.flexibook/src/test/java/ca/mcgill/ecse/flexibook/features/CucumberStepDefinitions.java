@@ -43,8 +43,6 @@ import io.cucumber.java.en.When;
 
 
 
-
-
 public class CucumberStepDefinitions {
 	private FlexiBook flexiBook;
 
@@ -289,7 +287,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
-		assertEquals(name, FlexiBookController.findSingleService(name).getName());
+		assertEquals(name, findSingleService(name).getName());
 	}
 	/**
 	 * @author chengchen
@@ -327,7 +325,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
-		assertEquals(null, FlexiBookController.findBookableService(name));;
+		assertEquals(null, findBookableService(name));;
 	}
 	/**
 	 * @author chengchen
@@ -342,9 +340,9 @@ public class CucumberStepDefinitions {
 	@Then("the service {string} shall still preserve the following properties:")
 	public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
-			assertEquals(Integer.parseInt(map.get("duration")),FlexiBookController.findSingleService(name).getDuration());
-			assertEquals(Integer.parseInt(map.get("downtimeDuration")),FlexiBookController.findSingleService(name).getDowntimeDuration());
-			assertEquals(Integer.parseInt(map.get("downtimeStart")),FlexiBookController.findSingleService(name).getDowntimeStart()); 
+			assertEquals(Integer.parseInt(map.get("duration")),findSingleService(name).getDuration());
+			assertEquals(Integer.parseInt(map.get("downtimeDuration")),findSingleService(name).getDowntimeDuration());
+			assertEquals(Integer.parseInt(map.get("downtimeStart")),findSingleService(name).getDowntimeStart()); 
 		}
 
 	}
@@ -405,14 +403,14 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the service combos {string} shall not exist in the system")
 	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
-		assertTrue(FlexiBookController.findServiceCombo(comboName)==null);
+		assertTrue(findServiceCombo(comboName)==null);
 	}
 	/**
 	 * @author chengchen
 	 */
 	@Then("the service combos {string} shall not contain service {string}")
 	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
-		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
+		ServiceCombo serviceCombo = findServiceCombo(comboName);
 		for (ComboItem comboItem:serviceCombo.getServices()) {
 			assertEquals(false, comboItem.getService().getName().equals(serviceName));
 		}
@@ -470,11 +468,13 @@ public class CucumberStepDefinitions {
 	 * @Feature: Make appointment
   		As a customer, I wish to be able to make an appointment so that I can schedule a service
 	 */
-	//----------------------------------------make app -----------------------------------------------------------------------------
+	//-------------------------------------------- make app -----------------------------------------------------------------------------
 
 
 	/**
-	 * @author Catherine & @ TODO Who else wrote this one?
+	 * @author Catherine 
+	 * @author AntoineW
+	 * @author chengchen
 	 */
 	@Given("a Flexibook system exists")
 	public void a_Flexibook_System_Exists() {
@@ -485,6 +485,11 @@ public class CucumberStepDefinitions {
 		appointmentCount = flexiBook.getAppointments().size();
 	}
 
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@Given("the system's time and date is {string}")
 	public void system_Time_And_Date_Is(String string) {
 
@@ -498,12 +503,20 @@ public class CucumberStepDefinitions {
 
 	}
 
+	/**
+	 * @author AntoineW
+	 */
 	@Given ("a business exists in the system")
 	public void a_Business_Exists_In_The_System() {
 		Business b = new Business("test", "test", "test", "test", flexiBook);
 		flexiBook.setBusiness(b);
 	}
-
+	
+	/**
+	 * 
+	 * @param datatable
+	 * @author AntoineW
+	 */
 	@Given ("the following customers exist in the system:")
 	public void the_Following_Customers_Exist(List<Map<String, String>> datatable){
 		for(Map<String, String> map : datatable) {
@@ -512,6 +525,11 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @author AntoineW
+	 */
 	@Given ("the following services exist in the system:")
 	public void the_Following_Services_Exist(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -524,13 +542,16 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @author AntoineW
+	 */
 	@Given ("the following service combos exist in the system:")
 	public void the_Following_ServiceCombos_Exist(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
 
 			ServiceCombo sc = new ServiceCombo(map.get("name"), flexiBook);
-
-
 
 			// adding a list of comboItems
 			List<String> namelist = ControllerUtils.parseString(map.get("services"), ",");
@@ -538,23 +559,21 @@ public class CucumberStepDefinitions {
 			for(String servicename: namelist) {
 				int index = namelist.indexOf(servicename);
 
-
-
 				if(mandatorylist.get(index).equals("true")) {
-					ComboItem optSer = new ComboItem(true, FlexiBookController.findSingleService(servicename), sc);
+					ComboItem optSer = new ComboItem(true, findSingleService(servicename), sc);
 					sc.addService(optSer);
 				}else if(mandatorylist.get(index).equals("false")) {
-					ComboItem optSer = new ComboItem(false, FlexiBookController.findSingleService(servicename), sc);
+					ComboItem optSer = new ComboItem(false, findSingleService(servicename), sc);
 					sc.addService(optSer);
 				}			 
 			}
 
-			// set main service
-			try {
-				ComboItem mSer = ControllerUtils.findComboItemByServiceName(sc, map.get("mainService"));
-				sc.setMainService(mSer);
-			} catch (InvalidInputException e) {
-				error = e.getMessage();
+			
+			for(ComboItem ci: sc.getServices()) {
+				if(ci.getService().getName().equals(map.get("mainService"))) {
+					sc.setMainService(ci);
+					break;
+				}
 			}
 
 			flexiBook.addBookableService(sc);
@@ -563,6 +582,10 @@ public class CucumberStepDefinitions {
 	}
 
 
+	/**
+	 * @author AntoineW
+	 * @param datatable
+	 */
 	@Given ("the business has the following opening hours")
 	public void the_business_has_the_following_opening_hours(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -588,6 +611,10 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author AntoineW
+	 * @param datatable
+	 */
 	@Given ("the business has the following holidays")
 	public void the_business_has_the_following_holidays(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -599,16 +626,20 @@ public class CucumberStepDefinitions {
 		}			 
 	}
 
-
+	/**
+	 * @author AntoineW
+	 * @param datatable
+	 * @throws InvalidInputException
+	 */
 	@Given ("the following appointments exist in the system:")
 	public void the_following_appointments_exist_in_the_system(List<Map<String, String>> datatable) throws InvalidInputException {
 		for(Map<String, String> map : datatable) {
 
 			String custname = map.get("customer");
 
-			Customer c = FlexiBookController.findCustomer(custname);
+			Customer c = findCustomer(custname);
 
-			BookableService bs = FlexiBookController.findBookableService(map.get("serviceName"));
+			BookableService bs = findBookableService(map.get("serviceName"));
 
 
 			TimeSlot ts = new TimeSlot(stringToDate(map.get("date")),stringToTime(map.get("startTime")), 
@@ -617,23 +648,23 @@ public class CucumberStepDefinitions {
 			Appointment app = new Appointment(c,bs, ts, flexiBook );
 
 			if(!map.containsKey("optServices")||map.get("optServices").equals("none")) {
-
+					
 			}else {
 
-				ServiceCombo sc = FlexiBookController.findServiceCombo(map.get("serviceName"));
+				ServiceCombo sc = findServiceCombo(map.get("serviceName"));
 
 				List<String> serviceNameList = ControllerUtils.parseString(map.get("optServices"), ",");
 
 				for (ComboItem item: sc.getServices() ) {
 					//add main service no matter what
 					if(item.getService().getName().equals(sc.getMainService().getService().getName())) {
-						app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, item.getService().getName()));
+						app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, item.getService().getName()));
 					}else {
 						//if not, we check all input option string component in certain order. If
 						// a component exist then we add
 						for(String name :serviceNameList ) {
 							if (item.getService().getName().equals(name)) {
-								app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+								app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, name));
 							}
 							// if the optional service name is not mentioned, we skip
 						}					 
@@ -641,7 +672,7 @@ public class CucumberStepDefinitions {
 				}
 				for(String name :serviceNameList ) {
 					//Service s =  FlexiBookController.findSingleService(name);
-					app.addChosenItem(ControllerUtils.findComboItemByServiceName((ServiceCombo)bs, name));
+					app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, name));
 				}
 				flexiBook.addAppointment(app);
 
@@ -654,17 +685,28 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * @author AntoineW
+	 * @param name
+	 */
 	@Given ("{string} is logged in to their account")
 	public void user_is_logged_in_to_their_account(String name){
 
-		if(FlexiBookController.findCustomer(name) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(name));	
+		if(findCustomer(name) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(findCustomer(name));	
 		}else if (name.equals("owner")) {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
 
 	}
 
+	/**
+	 * @author AntoineW
+	 * @param customer
+	 * @param date
+	 * @param Servicename
+	 * @param time
+	 */
 	@When ("{string} schedules an appointment on {string} for {string} at {string}")
 	public void customer_schedules_an_appointment_on_date_for_service_at_time(String customer, String date, String Servicename, String time) {
 
@@ -675,12 +717,20 @@ public class CucumberStepDefinitions {
 			error = error+ e.getMessage();
 		}		 
 	}
-
+	
+	/**
+	 * @author AntoineW
+	 * @param customer
+	 * @param Servicename
+	 * @param date
+	 * @param timeStart
+	 * @param timeEnd
+	 */
 	@Then ("{string} shall have a {string} appointment on {string} from {string} to {string}")
 	public void customer_shall_have_a_service_appointment_on_date_from_startTime_to_endTime(String customer, String Servicename, 
 			String date,  String timeStart, String timeEnd) {
 		boolean isTheCase = false;
-		for (Appointment app :FlexiBookController.findCustomer(customer).getAppointments()) {
+		for (Appointment app :findCustomer(customer).getAppointments()) {
 
 			if(app.getCustomer().getUsername() .equals (customer) &&
 					app.getBookableService().getName() .equals (Servicename) &&
@@ -695,6 +745,10 @@ public class CucumberStepDefinitions {
 		assertEquals(isTheCase, true);
 	}
 
+	/**
+	 * @author AntoineW
+	 * @param i
+	 */
 	@Then ("there shall be {int} more appointment in the system")
 	public void there_shall_be_some_more_appointment_in_the_system(int i) {
 		assertEquals(flexiBook.getAppointments().size() - appointmentCount, i);
@@ -702,12 +756,24 @@ public class CucumberStepDefinitions {
 	}
 
 
+	/**
+	 * @author AntoineW
+	 * @param str
+	 */
 	@Then("the system shall report {string}")
 	public void the_system_shall_report_error(String str) {
 		assertTrue(error.contains(str));
 	}
 
 
+	/**
+	 * @author AntoineW
+	 * @param customerName
+	 * @param date
+	 * @param serviceName
+	 * @param optService
+	 * @param time
+	 */
 	@When("{string} schedules an appointment on {string} for {string} with {string} at {string}")
 	public void schedules_an_appointment_on_for_with_at(String customerName, String date, String serviceName, 
 			String optService, String time) {
@@ -726,19 +792,31 @@ public class CucumberStepDefinitions {
 	 * As a customer, I wish to be able to update my appointment so that I can edit my optional combo items or change my appointment time
 	 */
 	//---------------------------------------- updating app -----------------------------------------------------------------------------
+	/**
+	 * @author AntoineW
+	 * @param customer
+	 * @param serviceName
+	 * @param oldDate
+	 * @param oldTime
+	 * @param newD
+	 * @param newT
+	 */
 	@When("{string} attempts to update their {string} appointment on {string} at {string} to {string} at {string}")
 	public void attempts_to_update_their_appointment_on_at_to_at(String customer, String serviceName, String oldDate, 
 			String oldTime, String newD, String newT) {
 
 		try {
-			statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), stringToDate(newD) ,stringToTime(newT));
+			statusOfAppointment = FlexiBookController.updateAppointmentTime(serviceName, stringToDate(oldDate),stringToTime( oldTime), stringToDate(newD) ,stringToTime(newT));
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
 		}
 
 	}
 
-
+	/**
+	 * @author AntoineW
+	 * @param string
+	 */
 	@Then("the system shall report that the update was {string}")
 	public void the_system_shall_report_that_the_update_was(String string) {
 		String statusStr = "";
@@ -754,7 +832,16 @@ public class CucumberStepDefinitions {
 
 
 
-
+	/**
+	 * At this moment the make-appointment feature has been tested thus 
+	 * the controller method can be reused to build the update-appointment test.
+	 * @param customer
+	 * @param serviceName
+	 * @param optService
+	 * @param date
+	 * @param time
+	 * @author AntoineW
+	 */
 	@Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
 	public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
 			String date, String time) {
@@ -768,11 +855,20 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * @author AntoineW
+	 * @param customer
+	 * @param action
+	 * @param comboItem
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 */
 	@When("{string} attempts to {string} {string} from their {string} appointment on {string} at {string}")
 	public void attempts_to_from_their_appointment_on_at(String customer, String action, String comboItem, String serviceName,
 			String date, String time) {
 		try {
-			statusOfAppointment = FlexiBookController.updateAppointmentForServiceCombo(serviceName, 
+			statusOfAppointment = FlexiBookController.updateAppointmentContent(serviceName, 
 					stringToDate(date), stringToTime(time), action, comboItem);
 
 			appointmentCount = flexiBook.getAppointments().size();
@@ -782,6 +878,16 @@ public class CucumberStepDefinitions {
 	}
 
 
+	/**
+	 * @author AntoineW
+	 * @param user
+	 * @param custmerName
+	 * @param serviceName
+	 * @param oldDate
+	 * @param oldTime
+	 * @param newD
+	 * @param newT
+	 */
 	@When("{string} attempts to update {string}'s {string} appointment on {string} at {string} to {string} at {string}")
 	public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
 			String oldDate, String  oldTime, String newD, String newT) {
@@ -792,7 +898,7 @@ public class CucumberStepDefinitions {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
 		try {
-			statusOfAppointment = FlexiBookController.updateAppointment(serviceName, stringToDate(oldDate),stringToTime( oldTime), 
+			statusOfAppointment = FlexiBookController.updateAppointmentTime(serviceName, stringToDate(oldDate),stringToTime( oldTime), 
 					stringToDate(newD) ,stringToTime(newT));
 		} catch (InvalidInputException e) {
 			error = error + e.getMessage();
@@ -807,7 +913,13 @@ public class CucumberStepDefinitions {
   		As a customer, I wish to be able to cancel an appointment so that my appointment time slot becomes available for other customers
 	 */
 	//--------------------------------------- cancel Appointment ------------------------------------------------
-
+	/**
+	 * @author AntoineW
+	 * @param user
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 */
 	@When("{string} attempts to cancel their {string} appointment on {string} at {string}")
 	public void attempts_to_cancel_their_appointment_on_at(String user, String serviceName, String date, String time) {
 
@@ -820,14 +932,25 @@ public class CucumberStepDefinitions {
 	}
 
 
+	/**
+	 * @author AntoineW
+	 * @param string
+	 * @param string2
+	 * @param string3
+	 * @param string4
+	 */
 	@Then("{string}'s {string} appointment on {string} at {string} shall be removed from the system")
 	public void s_appointment_on_at_shall_be_removed_from_the_system(String string, String string2, String string3, String string4) {
 
-		Appointment app = FlexiBookController.findAppointment(string2, stringToDate(string3), stringToTime(string4)); 
+		Appointment app = findAppointment(string2, stringToDate(string3), stringToTime(string4)); 
 		// should be removed thus no longer found in the system -> assert to be null
 		assertEquals(null, app);
 	}
 
+	/**
+	 * @author AntoineW
+	 * @param int1
+	 */
 	@Then("there shall be {int} less appointment in the system")
 	public void there_shall_be_less_appointment_in_the_system(Integer int1) {
 		// one less -> thus subtraction should be negative number
@@ -837,7 +960,14 @@ public class CucumberStepDefinitions {
 
 
 
-
+	/**
+	 * @author AntoineW
+	 * @param curUser
+	 * @param customer
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 */
 	@When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
 	public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
 		if(FlexiBookController.findCustomer(curUser) !=null) {
@@ -1096,19 +1226,19 @@ public class CucumberStepDefinitions {
 
 	@Then("the service combo {string} shall exist in the system")
 	public void the_service_combo_name_shall_exist_in_the_system(String name){
-		assertEquals(FlexiBookController.findServiceCombo(name).getName(), name);
+		assertEquals(findServiceCombo(name).getName(), name);
 	}
 
 	@Then("the service combo {string} shall not exist in the system")
 	public void the_service_combo_name_shall_not_exist_in_the_system(String name){
-		assertEquals(FlexiBookController.findServiceCombo(name), null);
+		assertEquals(findServiceCombo(name), null);
 	}
 
 	@Then("the service combo {string} shall contain the services {string} with mandatory setting {string}")
 	public void the_service_combo_comboName_shall_contain_the_services_serviceName_with_mandatory_setting_mandatorySetting(String name, String servicesString, String mandatorySettingsString){
 		List<String> servicesList = Arrays.asList(servicesString.split(","));
 		List<String> mandatorySettingsList = Arrays.asList(mandatorySettingsString.split(","));
-		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
+		ServiceCombo serviceCombo = findServiceCombo(name);
 		List<ComboItem> comboList= serviceCombo.getServices();
 		for(int i = 0; i < comboList.size(); i++){
 			assertEquals(comboList.get(i).getService().getName(), servicesList.get(i));
@@ -1118,12 +1248,12 @@ public class CucumberStepDefinitions {
 
 	@Then("the main service of the service combo {string} shall be {string}")
 	public void the_main_service_of_the_service_combo_name_shall_be_mainService(String name, String mainService){
-		assertEquals(FlexiBookController.findServiceCombo(name).getMainService().getService().getName(), mainService);
+		assertEquals(findServiceCombo(name).getMainService().getService().getName(), mainService);
 	}
 
 	@Then("the service {string} in service combo {string} shall be mandatory")
 	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name){
-		List<ComboItem> comboItems = FlexiBookController.findServiceCombo(name).getServices();
+		List<ComboItem> comboItems = findServiceCombo(name).getServices();
 		for(ComboItem c: comboItems){
 			if(c.getService().getName().equals(mainService)){
 				assertTrue(c.getMandatory());
@@ -1139,7 +1269,7 @@ public class CucumberStepDefinitions {
 
 	@Then("the service combo {string} shall preserve the following properties:")
 	public void the_service_combo_name_shall_preserve_the_following_properties(String name, List<Map<String, String>> datatable){
-		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
+		ServiceCombo serviceCombo = findServiceCombo(name);
 		Map<String, String> map = datatable.get(0);
 		List<String> services = Arrays.asList(map.get("services").split(","));
 		List<String> mandatory = Arrays.asList(map.get("mandatory").split(","));
@@ -1199,9 +1329,9 @@ public class CucumberStepDefinitions {
 	@Then("the service combo {string} shall be updated to name {string}")
 	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
 		if(!name.equals(newName)){
-			assertNull(FlexiBookController.findServiceCombo(name));
+			assertNull(findServiceCombo(name));
 		}
-		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+		assertTrue(findServiceCombo(newName) != null);
 	}
 	
 	
@@ -1727,6 +1857,107 @@ public class CucumberStepDefinitions {
 			}
 		}
 		return appointments;
+	}
+	
+	
+	/**
+	 * Helper method to find a single service using the service name string
+	 * @param name
+	 * @return Service
+	 * @author AntoineW
+	 */
+	public static Service findSingleService(String name) {
+		Service s = null;
+		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bservice.getName().equals(name) && bservice instanceof Service) {
+				s = (Service)bservice;
+				break;
+			}
+		}
+		return s;
+	}
+	
+	/**
+	 * Helper method to find a single serviceCombo using the service name string
+	 * @param name
+	 * @return
+	 * @author AntoineW
+	 */
+	public static ServiceCombo findServiceCombo(String name) {
+		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
+				return (ServiceCombo)bservice;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param sc
+	 * @param name
+	 * @return
+	 * @throws InvalidInputException
+	 * @author AntoineW
+	 */
+	public static ComboItem findComboItemByServiceName(ServiceCombo sc, String name) throws InvalidInputException {
+		
+		for (ComboItem ci: sc.getServices()) {
+			if(ci.getService().getName().equals(name)) {
+				return ci;
+			}
+		}
+		
+		throw new InvalidInputException("No Such Service in the given combo");
+		
+	}
+	
+	/**
+	 * @author AntoineW
+	 */
+	public static Appointment findAppointment(String serviceName, Date date, Time time) {
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			// check service name, date, time and customer
+			if (app.getBookableService().getName().compareTo(serviceName) == 0 &&
+					app.getTimeSlot().getStartDate().equals(date) &&
+					app.getTimeSlot().getStartTime().equals(time) ){
+
+				return app;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param userName
+	 * @return
+	 * @author MikeWang
+	 */
+	public static Customer findCustomer (String userName){
+		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			if (user.getUsername().equals( userName) ) {
+				return user;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 * @author chengchen
+	 */
+	public static BookableService findBookableService(String name) {
+		BookableService foundBookableService = null;
+		for (BookableService service : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (service.getName().equals(name)) {
+				foundBookableService = service;
+				break;
+			}
+		}
+		return foundBookableService;
 	}
 
 	/**
