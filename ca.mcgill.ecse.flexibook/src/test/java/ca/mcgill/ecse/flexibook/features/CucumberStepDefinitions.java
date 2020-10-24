@@ -108,7 +108,7 @@ public class CucumberStepDefinitions {
 
 
 /*---------------------------Test Log out--------------------------*/
-
+	
 	@Given("the user is logged out")
 	public void the_user_is_logged_out() {
 		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
@@ -124,14 +124,6 @@ public class CucumberStepDefinitions {
 		}   
 	}
 
-
-
-
-	
-	
-	
-	
-	
 	
 	
 	
