@@ -1549,7 +1549,7 @@ public class CucumberStepDefinitions {
 		try {
 			FlexiBookController.setUpBusinessHours(stringToTime(startTime), stringToTime(endTime),
 					stringToDay(day));
-			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(day), stringToTime(startTime));
+			newBusinessHour = isTheBusinessHour(stringToDay(day), stringToTime(startTime));
 			isSetUp =true;
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
@@ -1718,7 +1718,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Feature: Update existing business hours
-	 * As an owner i want to update existing business hours
+	 * As an owner I want to update existing business hours
 	 * @author jedla
 	 */
 
@@ -1727,7 +1727,7 @@ public class CucumberStepDefinitions {
 		try {
 			FlexiBookController.updateBusinessHour(stringToDay(oldDay), stringToTime(oldStartTime), stringToDay(newDay), stringToTime(newStartTime), stringToTime(newEndTime)); 
 			isSetUp = true;
-			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(newDay), stringToTime(newStartTime));
+			newBusinessHour = isTheBusinessHour(stringToDay(newDay), stringToTime(newStartTime));
 
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
@@ -1859,7 +1859,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Feature: Remove existing time slot
-	 * As an owner i want to remove an existing time slot (vacation or holiday)
+	 * As an owner I want to remove an existing time slot (vacation or holiday)
 	 * @author jedla
 	 */
 
@@ -2087,6 +2087,23 @@ public class CucumberStepDefinitions {
 		}
 		return dw;
 
+	}
+	
+	/**
+	 * This helper method finds the corresponding BusinessHour
+	 * @param day
+	 * @param startTime
+	 * @return
+	 * @author jedla
+	 */
+	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
+
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		for(BusinessHour x: hoursList) {
+			if(x.getDayOfWeek().equals(day) && x.getStartTime().equals(startTime)) {
+				return x;
+			}
+		} return null;
 	}
 
 
