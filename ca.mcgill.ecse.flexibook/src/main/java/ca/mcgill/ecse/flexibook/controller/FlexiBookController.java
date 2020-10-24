@@ -397,6 +397,12 @@ public class FlexiBookController {
 	 * 
 	 * @author AntoineW
 	 * @throws InvalidInputException 
+	 * @deprecated In the test since there are separated scenrio one for appointment of a single service and one for combo,
+	 * this wrapper is never tested. plz use addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
+	 * and addAppointmentForService(String serviceName, Date date, Time time) 
+	 * 
+	 * @see addAppointmentForComboService
+	 * @see addAppointmentForService
 	 */
 	public static Appointment makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
 		BookableService bs = findBookableService(serviceName);
@@ -420,7 +426,7 @@ public class FlexiBookController {
 	 * @throws InvalidInputException 
 	 * @author AntoineW
 	 */
-	public static boolean updateAppointment(String serviceName, Date date, Time time, Date newDate ,Time newStartTime) throws InvalidInputException {
+	public static boolean updateAppointmentTime(String serviceName, Date date, Time time, Date newDate ,Time newStartTime) throws InvalidInputException {
 
 		Appointment appInSystem = findAppointment(serviceName, date, time);
 
@@ -458,7 +464,7 @@ public class FlexiBookController {
 
 	/**
 	 * This method handles a customer wants to change appointment content.
-	 * can add multiple or remove multiple services once, as long as all the names are in optService
+	 * can add multiple or remove multiple services at once, as long as all the names are in optService
 	 * @param serviceName
 	 * @param date
 	 * @param time
@@ -468,7 +474,7 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author AntoineW
 	 */
-	public static boolean updateAppointmentForServiceCombo(String serviceName, Date date, Time time, String action, String optService) throws InvalidInputException {
+	public static boolean updateAppointmentContent(String serviceName, Date date, Time time, String action, String optService) throws InvalidInputException {
 
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
@@ -730,7 +736,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method defines a new Service Combo.
+	 * Define Service Combo: this method defines a new Service Combo.
 	 * @param name -name of new Service Combo
 	 * @param mainServiceName -name of Main Service associated with the new Service Combo
 	 * @param orderedServices -ordered list of services associated with the new Service Combo
@@ -746,7 +752,7 @@ public class FlexiBookController {
 		}
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
-			throw new InvalidInputException("Error with additional services.");
+			throw new InvalidInputException("Error with services.");
 		}
 		//throws an exception if name is empty or null
 		if(name == null || name.equals("")){
@@ -805,7 +811,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method updates an existing Service Combo.
+	 * Update Service Combo: this method updates an existing Service Combo.
 	 * @param name -name of the existing Service Combo
 	 * @param newName -updated name of Service Combo
 	 * @param mainServiceName -updated main service
@@ -884,14 +890,15 @@ public class FlexiBookController {
 				serviceCombo.setMainService(comboItem);
 			}
 		}
-		serviceCombo.getService(0).delete();
-		serviceCombo.getService(0).delete();
-
+		tmp1Combo.delete();
+		tmp2Combo.delete();
+		tmp1.delete();
+		tmp2.delete();
 		return true;
 	}
 
 	/**
-	 * This method deletes an existing Service Combo.
+	 * Delete Service Combo: this method deletes an existing Service Combo.
 	 * @param name -name of the existing Service Combo
 	 * @return boolean whether or not deleting existing Service Combo was successful
 	 * @throws InvalidInputException
@@ -1163,7 +1170,8 @@ public class FlexiBookController {
 	 * @param businessName
 	 * @param address
 	 * @param phoneNumber
-	 * @throws email
+	 * @param email
+	 * @throws InvalidInputException
 	 * @author jedla
 	 */
 	public static void updateBusinessInfo(String businessName, String address, String phoneNumber, String email) throws InvalidInputException{
@@ -1233,12 +1241,16 @@ public class FlexiBookController {
 	 * @param ByDay
 	 * @param ByMonth
 	 * @param ByYear
-	 * @return
+	 * @return it's sub component getUnavailbleTime() and getAvailnleTime() shall return ArrayList<TOTimeSlot>
 	 * @author mikewang
 	 */
-	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-		getUnavailbleTime(date1,ByDay,ByWeek);
-		getAvailbleTime(date1,ByDay,ByWeek);
+	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek, Boolean unavailble, Boolean availble) throws InvalidInputException{
+		if (unavailble) {
+			getUnavailbleTime(date1,ByDay,ByWeek);
+		}
+		if (availble) {
+			getAvailbleTime(date1,ByDay,ByWeek);
+		}
 	}
 
 
@@ -1328,13 +1340,12 @@ public class FlexiBookController {
 	//implement next time
 
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
 	 * This is a query method which can return all availble time slot to an ArrayList
 	 * @param date
 	 * @param ByDay
 	 * @param ByWeek
 	 * @author mikewang
-	 * @return
+	 * @return <TOTimeSlot> availble time  
 	 */
 	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
 		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
@@ -1492,6 +1503,7 @@ public class FlexiBookController {
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
 	 * @param appointment
 	 * @return
+	 * @author mikewang
 	 */
 	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
 		//@ TODO
@@ -1558,7 +1570,7 @@ public class FlexiBookController {
 	/**
 	 * This method finds the service with specified name
 	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * 
 	 * @param name - the name of the service to found 
 	 * @return the service found 
@@ -1566,7 +1578,7 @@ public class FlexiBookController {
 	 * 
 	 * @author chengchen
 	 */
-	public static BookableService findBookableService(String name) {
+	private static BookableService findBookableService(String name) {
 		BookableService foundBookableService = null;
 		for (BookableService service : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (service.getName().equals(name)) {
@@ -1600,14 +1612,14 @@ public class FlexiBookController {
 	/** 
 	 * This method finds the service with specified name
 	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * 
 	 * @param name - the name of the service to found 
 	 * @return the service found 
 	 *
 	 * @author AntoineW
 	 */
-	public static Service findSingleService(String name) {
+	private static Service findSingleService(String name) {
 		Service s = null;
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof Service) {
@@ -1620,11 +1632,11 @@ public class FlexiBookController {
 
 	/**
 	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
 	 * 
 	 * @author AntoineW
 	 */
-	public static ServiceCombo findServiceCombo(String name) {
+	private static ServiceCombo findServiceCombo(String name) {
 		for (BookableService bservice : FlexiBookApplication.getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
 				return (ServiceCombo)bservice;
@@ -1652,7 +1664,7 @@ public class FlexiBookController {
 	/**
 	 * @author AntoineW
 	 */
-	public static Appointment findAppointment(String serviceName, Date date, Time time) {
+	private static Appointment findAppointment(String serviceName, Date date, Time time) {
 		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
 			// check service name, date, time and customer
 			if (app.getBookableService().getName().compareTo(serviceName) == 0 &&
@@ -2161,7 +2173,7 @@ public class FlexiBookController {
 
 
 	/**
-	 * This is a helper method to know if the current BusinessHour overlaps with other business hours
+	 * This helper method finds if the current BusinessHour overlaps with other business hours
 	 * @param day
 	 * @param startTime
 	 * @param endTime
@@ -2199,7 +2211,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds if the current TimeSlot is overlapping with a vacation
+	 * This helper method finds if the current TimeSlot is overlapping with a Vacation
 	 * @param startDate
 	 * @param startTime
 	 * @param endDate
@@ -2275,7 +2287,7 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
+	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
 		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour x: hoursList) {
@@ -2324,7 +2336,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds the corresponding Holiday
+	 * This finds if the start date and start time of a BusinessHour or of a TimeSlot is in the Future
 	 * @param start
 	 * @return
 	 * @author jedla inspired by AntoineW
