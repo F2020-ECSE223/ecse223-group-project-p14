@@ -2043,7 +2043,7 @@ public class CucumberStepDefinitions {
 
 
 	/**
-	 * Helper method to find an appointment associated to an account
+	 * Helper method to find all appointments associated to an account
 	 * @param username
 	 * @return List of associated appointments
 	 * @author Catherine
