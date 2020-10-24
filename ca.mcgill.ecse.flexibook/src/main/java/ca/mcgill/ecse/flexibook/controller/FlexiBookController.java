@@ -31,7 +31,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be added
 	 * @param downtimeStart - the start time of the downtime of the service to be added
 	 * @throws InvalidInputException
-	 * 
+	 * @return true if added successfully
 	 * @author chengchen
 	 *
 	 */
@@ -102,6 +102,7 @@ public class FlexiBookController {
 	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
 	 * @throws InvalidInputException 
+	 * @return true if deleted successfully
 	 * @author chengchen
 	 */
 	public static boolean deleteService(String name) throws InvalidInputException{
@@ -169,6 +170,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
 	 * @param downtimeStart - the start time of the downtime of the service to be updated
 	 * @throws InvalidInputException 
+	 * @return true if updated successfully
 	 * @author chengchen
 	 * 
 	 */
