@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.*;
 
@@ -1216,24 +1217,19 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static boolean viewAppointmentCalnader(String date1,  Time startTime , Time endTime, Boolean ByDay, Boolean ByWeek){
-		boolean isAvalible = false; 
-		if (ByDay==true && ByWeek==false) {
-			try {
-				for (TOTimeSlot toTimeSlots: getUnavailbleTime(date1,true,false)) {
-					if((startTime.equals(toTimeSlots.getStartTime()) || startTime.after(toTimeSlots.getStartTime())) && (endTime.equals(toTimeSlots.getEndTime())||endTime.before(toTimeSlots.getEndTime()))) {
-						isAvalible = false; 
-					}
-					else{
-						isAvalible = true;
-					}
-				}
-			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	public static void viewAppointmentCalnader(String date1, Boolean ByDay, Boolean ByWeek){
+		try {
+			getUnavailbleTime(date1,ByDay,ByWeek);
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return isAvalible;
+		try {
+			getAvailbleTime(date1,ByDay,ByWeek);
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
@@ -1314,99 +1310,119 @@ public class FlexiBookController {
 	
 	
 
-// implement next time
+    //implement next time
 	
-//	/**
-//	 * DON'T TOUCH MIKE WILL FINISH THIS 
-//	 * This is a query method which can return all availble time slot to an ArrayList
-//	 * @param date
-//	 * @param ByDay
-//	 * @param ByWeek
-//	 * @author mikewang
-//	 * @return
-//	 */
-//	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-//		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
-//		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
-//		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
-//		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
-//		Date date = Date.valueOf(date1);
-//		
-//		if (ByDay == true && ByWeek == false) {
-//			//TODO
-//			if (!isValidDate(date1)) {
-//				throw new InvalidInputException(date1 + " is not a valid date");
-//			}
-//			else {
-//				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
-//				for(TOBusinessHour TBH: getTOBusinessHour()) {
-//					if (TBH.getDayOfWeek() == dayOfWeek) {
-//						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
-//						
-//						for (TOTimeSlot dayUnavailbleTimes: getUnavailbleTime(date1,true,false)) {
-//							
-//						}
-//					}
-//				}
-//				
-//			}
-//		}
-//		if (ByDay == false && ByWeek == true) {
-//			//TODO
-//		}
-//	}
+	/**
+	 * DON'T TOUCH MIKE WILL FINISH THIS 
+	 * This is a query method which can return all availble time slot to an ArrayList
+	 * @param date
+	 * @param ByDay
+	 * @param ByWeek
+	 * @author mikewang
+	 * @return
+	 */
+	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
+		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
+		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
+		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
+		Date date = Date.valueOf(date1);
+		
+		if (ByDay == true && ByWeek == false) {
+			//TODO
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			else {
+				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
+				for(TOBusinessHour TBH: getTOBusinessHour()) {
+					if (TBH.getDayOfWeek() == dayOfWeek) {
+						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
+						
+						for (TOTimeSlot dayUnavailbleTimes: sortTimeSlot(getUnavailbleTime(date1,true,false))) {
+							if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+								if (dayUnavailbleTimes.getStartTime().after(todayBusinessHours.getStartTime())) {
+									TOTimeSlot nowAvailableTimeSlot = new TOTimeSlot(date,todayBusinessHours.getStartTime(), date,dayUnavailbleTimes.getStartTime());
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+									DayAvailbleTimes.add(nowAvailableTimeSlot);
+								}else if (dayUnavailbleTimes.getStartTime().equals(todayBusinessHours.getStartTime())) {
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+								}
+							}
+							else {
+								break;
+							}
+							
+						}
+						if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+							DayAvailbleTimes.add(todayBusinessHours);
+						}
+						
+					}
+				}
+				
+			}
+		}
+		if (ByDay == false && ByWeek == true) {
+			//TODO
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			for(int i=0;i<7;i++) {
+				getAvailbleTime(date1, true, false);
+				date1 = NextDate(date1);
+			}
+
+		}
+		return DayAvailbleTimes;
+	}
+	
+
 	
 	
-//	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
-//		for (int i =0; i <= TimeSlots.; i++) {
-//			
-//		}
-//	}
-//	
-	
-//	/**
-//	 * this is an qurey method with returns the BusinessHour 
-//	 * @return
-//	 * @author mikewang
-//	 */
-//	public static List<TOBusinessHour> getTOBusinessHour(){
-//		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
-//		for (BusinessHour BH: Business.getBusinessHours()) {
-//			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
-//			businessHours.add(BusinessHour);
-//		}
-//		return businessHours;
-//	}
+	/**
+	 * this is an qurey method with returns the BusinessHour 
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOBusinessHour> getTOBusinessHour(){
+		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours()) {
+			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+			businessHours.add(BusinessHour);
+		}
+		return businessHours;
+	}
 
 
-//	/**
-//	 * This is a query method which can gives a list of all TOAppointment 
-//	 * Which includes all appointments combo items and time slot 
-//	 * @return
-//	 * @author mikewang
-//	 * @author AntoineW later made a change
-//	 */
-//	public static List<TOAppointment> getTOAppointment(){
-//		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
-//		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
-//			
-//			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
-//					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
-//			// Added feature TOAppointment can show all downtime
-//			// by mikewang
-//			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
-//				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
-//			}
-//			// ToAppointment need to show all the service item (comboitem)
-//			// by AnTW
-//			for (TOComboItem toc:getToTOComboItem(appointment)) {
-//				toAppointment.addChosenItem(toc);
-//			}
-//			appointments.add(toAppointment);
-//		}
-//		return appointments;
-//
-//	}	
+	/**
+	 * This is a query method which can gives a list of all TOAppointment 
+	 * Which includes all appointments combo items and time slot 
+	 * @return
+	 * @author mikewang
+	 * @author AntoineW later made a change
+	 */
+	public static List<TOAppointment> getTOAppointment(){
+		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
+			
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
+					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			// Added feature TOAppointment can show all downtime
+			// by mikewang
+			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
+				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
+			}
+			// ToAppointment need to show all the service item (comboitem)
+			// by AnTW
+			for (TOComboItem toc:getToTOComboItem(appointment)) {
+				toAppointment.addChosenItem(toc);
+			}
+			appointments.add(toAppointment);
+		}
+		return appointments;
+
+	}	
 
 	/**
 	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
@@ -1911,6 +1927,17 @@ public class FlexiBookController {
 		}
 		return foundOwner;
 	}
+	
+	/**
+	 * This is a helper method witch sorts the TOTimeSlots based on their start time
+	 * @param TimeSlots
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+		Collections.sort(TimeSlots, new CustomComparator());
+		return TimeSlots;
+	}
 
 	/**
 	 * This method is a helper method for finding a particular user by username.
@@ -2352,5 +2379,8 @@ public class FlexiBookController {
 
 
 }
+
+
+
 
 
