@@ -1261,6 +1261,7 @@ public class FlexiBookController {
 						unavailbleTimeSlots.add(toHolidayOrVacationTS);
 					}
 				}
+
 			} 
 			// if above cases both failed 
 			else {
