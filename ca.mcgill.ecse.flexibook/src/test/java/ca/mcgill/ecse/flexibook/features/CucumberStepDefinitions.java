@@ -71,6 +71,69 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.getFlexiBook().delete();
 	}
 
+/*---------------------------Test Log in--------------------------*/
+	
+
+	@When("the user tries to log in with username {string} and password {string}")
+	public void the_user_tries_to_log_in_with_username_and_password(String username, String password) {
+		try {
+			FlexiBookController.logIn(username, password);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	@Then("the user should be successfully logged in")
+	public void the_user_should_be_successfully_logged_in() {
+		assertEquals(false, FlexiBookApplication.getCurrentLoginUser()==null);
+	}
+	
+	@Then("the user should not be logged in")
+	public void the_user_should_not_be_logged_in() {
+		assertEquals(true, FlexiBookApplication.getCurrentLoginUser()==null);
+	}
+	
+	@Then("a new account shall be created")
+	public void a_new_account_shall_be_created() {
+		assertEquals(true, flexiBook.getOwner()!=null);
+	}
+
+	@Then("the user shall be successfully logged in")
+	public void the_user_shall_be_successfully_logged_in() {
+		assertEquals(true, FlexiBookApplication.getCurrentLoginUser() instanceof Owner);	    
+	}
+
+
+
+
+/*---------------------------Test Log out--------------------------*/
+
+	@Given("the user is logged out")
+	public void the_user_is_logged_out() {
+		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
+	}
+
+	@When("the user tries to log out")
+	public void the_user_tries_to_log_out() {
+		try {
+			FlexiBookController.logOut();
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}   
+	}
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * @author chengchen

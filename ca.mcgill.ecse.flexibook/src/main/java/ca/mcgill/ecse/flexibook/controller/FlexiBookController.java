@@ -692,18 +692,17 @@ public class FlexiBookController {
 		Owner ThisOwner2 = findOwner(username);
 
 		if (currentUser == null) {
-			if (ThisOwner2 != null && ThisOwner2.getPassword() == password) {
+			if (ThisOwner2 != null && ThisOwner2.getPassword().equals(password)) {
 				FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
 			}
-			else if(ThisOwner2 == null){
-				signUpOwner(username, password);
-				
-			}
-			else if (ThisCustomer != null && ThisCustomer.getPassword()==password) {
+			else if (ThisCustomer != null && ThisCustomer.getPassword().equals(password)) {
 				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
 			}
+			else if(ThisOwner2 == null && username.equals("owner")){
+				signUpOwner(username, password);
+			}
 			else {
-				throw new InvalidInputException("Password or Username is incorrect, please try again!");
+				throw new InvalidInputException("Username/password not found");
 			}
 		}
 		else {
@@ -722,7 +721,7 @@ public class FlexiBookController {
 	public static void logOut() throws InvalidInputException{ 
 		User currentLoginUser = FlexiBookApplication.getCurrentLoginUser();
 		if (currentLoginUser == null) {
-			throw new InvalidInputException("The User is already logged out!");
+			throw new InvalidInputException("The user is already logged out");
 		}
 		else {
 			FlexiBookApplication.clearCurrentLoginUser();
@@ -1848,16 +1847,12 @@ public class FlexiBookController {
 	 * @author mikewang
 	 */
 	public static Customer findCustomer (String userName){
-		Customer foundCustomer = null;
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			if (user.getUsername() .equals( userName) ) {
-				foundCustomer = user;
-				break;
-			}else {
-				foundCustomer = null;
+			if (user.getUsername().equals( userName) ) {
+				return user;
 			}
 		}
-		return foundCustomer;
+		return null;
 	}
 
 	/**
