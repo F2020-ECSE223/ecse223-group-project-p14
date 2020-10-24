@@ -31,7 +31,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be added
 	 * @param downtimeStart - the start time of the downtime of the service to be added
 	 * @throws InvalidInputException
-	 * 
+	 * @return true if added successfully
 	 * @author chengchen
 	 *
 	 */
@@ -102,6 +102,7 @@ public class FlexiBookController {
 	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
 	 * @throws InvalidInputException 
+	 * @return true if deleted successfully
 	 * @author chengchen
 	 */
 	public static boolean deleteService(String name) throws InvalidInputException{
@@ -169,6 +170,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
 	 * @param downtimeStart - the start time of the downtime of the service to be updated
 	 * @throws InvalidInputException 
+	 * @return true if updated successfully
 	 * @author chengchen
 	 * 
 	 */
@@ -732,7 +734,7 @@ public class FlexiBookController {
 	 	which otherServices are mandatory.
 	 * @author gtjarvis
 	 */
-	public static boolean defineServiceCombo(String name, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
+	public static void defineServiceCombo(String name, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException{ 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
@@ -753,75 +755,110 @@ public class FlexiBookController {
 		if(orderedServices.size() < 2){
 			throw new InvalidInputException("A service Combo must contain at least 2 services");
 		}
-
-		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
-		//creates new serviceCombo object
-		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
 		//finds mainService
 		Service mainService = findSingleService(mainServiceName);
-
 		//throws an exception if main service cannot be found
 		if(mainService == null){
 			throw new InvalidInputException("Service " + mainServiceName + " does not exist");
 		}
+		boolean containsMainService = false;
+		for(int i = 0; i < orderedServices.size(); i++){
+			if(orderedServices.get(i).equals(mainServiceName)){
+				containsMainService = true;
+				if(!listOfMandatory.get(i)){
+					throw new InvalidInputException("Main service must be mandatory");
+				}
+			}
+			Service service = findSingleService(orderedServices.get(i));
+			if(service == null){
+				throw new InvalidInputException("Service " + orderedServices.get(i) + " does not exist");
+			}
+		}
+		if(!containsMainService){
+			throw new InvalidInputException("Main service must be included in the services");
+		}
+
+		FlexiBook flexibook = FlexiBookApplication.getFlexiBook();
+		//creates new serviceCombo object
+		ServiceCombo serviceCombo = new ServiceCombo(name,flexibook);
 		//goes through list of orderedServices and creates a ComboItem for every service
-		boolean hasMainService = false;
-		boolean success = false;
 		boolean mandatory;
 		Service service;
 		ComboItem comboItem;
 		for(int i = 0; i < orderedServices.size(); i++){
 			mandatory = listOfMandatory.get(i);
 			service = findSingleService(orderedServices.get(i));
-			if(service == null) {
-				throw new InvalidInputException("Service " + orderedServices.get(i) + " does not exist");
-			}
 			comboItem = serviceCombo.addService(mandatory, service);
 			//sets appropirate main service
 			if(service.equals(mainService)){
-				if(mandatory){
-					serviceCombo.setMainService(comboItem);
-					hasMainService = true;
-				} else {
-					throw new InvalidInputException("Main service must be mandatory");
-				}
+				serviceCombo.setMainService(comboItem);
 			}
 
 		}
-		//throws an exception if mainService not found in list
-		if(!hasMainService){
-			throw new InvalidInputException("Main service must be included in the services");
-		}
-		success = true;
-		return success;
 	}
 
 	/**
 	 * This method updates a Service Combo
 	 * @author gtjarvis
 	 */
-	public static boolean updateServiceCombo(String name, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
+	public static void updateServiceCombo(String name, String newName, String mainServiceName, List<String> orderedServices, List<Boolean> listOfMandatory) throws InvalidInputException { 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
-			throw new InvalidInputException("Only Owner may define a Service Combo");
-		}
-		ServiceCombo serviceCombo = findServiceCombo(name);
-		//throws an exception if comboService does not exist
-		if(serviceCombo == null){
-			throw new InvalidInputException("Updating service that does not exist.");
+			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
 		//throws an exception if length of orderedServices does not match length of listOfMandatory
 		if(orderedServices.size() != listOfMandatory.size()){
 			throw new InvalidInputException("Error with additional services.");
 		}
-		//deletes current services
-		while(serviceCombo.getServices().size() > 0){
-			serviceCombo.removeService(serviceCombo.getServices().get(0));
+		//throws an exception if Service Combo does not exist
+		if(findServiceCombo(name) == null){
+			throw new InvalidInputException("Service combo " + name + " does not exist");
 		}
-		//resets additional services with new list of ordered services
-		boolean hasMainService = false;
+		//throws an exception if new Service Combo already exist
+		if(!name.equals(newName) && findServiceCombo(newName) != null){
+			throw new InvalidInputException("Service combo " + newName + " already exists");
+		}
+		//throws an exception if number of services less then 2
+		if(orderedServices.size() < 2){
+			throw new InvalidInputException("A service Combo must have at least 2 services");
+		}
+		//finds mainService
+		Service mainService = findSingleService(mainServiceName);
+		//throws an exception if main service cannot be found
+		if(mainService == null){
+			throw new InvalidInputException("Service " + mainServiceName + " does not exist");
+		}
+		boolean containsMainService = false;
+		for(int i = 0; i < orderedServices.size(); i++){
+			if(orderedServices.get(i).equals(mainServiceName)){
+				containsMainService = true;
+				if(!listOfMandatory.get(i)){
+					throw new InvalidInputException("Main service must be mandatory");
+				}
+			}
+			Service service = findSingleService(orderedServices.get(i));
+			if(service == null){
+				throw new InvalidInputException("Service " + orderedServices.get(i) + " does not exist");
+			}
+		}
+		if(!containsMainService){
+			throw new InvalidInputException("Main service must be included in the services");
+		}
+
+		//gets Service Combo
+		ServiceCombo serviceCombo = findServiceCombo(name);
+		//creates 2 temporary services to update Service Combo with
+		Service tmp1 = new Service("tmp1", FlexiBookApplication.getFlexiBook(), 10, 0, 0);
+		Service tmp2 = new Service("tmp2", FlexiBookApplication.getFlexiBook(), 10, 0, 0);
+		ComboItem tmp1Combo = new ComboItem(true, tmp1, serviceCombo);
+		ComboItem tmp2Combo = new ComboItem(true, tmp2, serviceCombo);
+		//update Service Combo
+		serviceCombo.setName(newName);
+		//resets services
+		while(serviceCombo.getServices().size() > 2){
+			serviceCombo.getService(0).delete();
+		}
 		boolean mandatory;
-		boolean success = false;
 		Service service;
 		ComboItem comboItem;
 		for(int i = 0; i < orderedServices.size(); i++){
@@ -829,37 +866,31 @@ public class FlexiBookController {
 			service = findSingleService(orderedServices.get(i));
 			comboItem = serviceCombo.addService(mandatory, service);
 			//sets appropirate main service
-			if(service.equals(service) && mandatory){
+			if(service.equals(mainService)){
 				serviceCombo.setMainService(comboItem);
-				hasMainService = true;
 			}
 		}
-		//throws an exception if mainService not found in list
-		if(!hasMainService){
-			throw new InvalidInputException("Main Service not in list of services or is not mandatory.");
-		}
-		success = true;
-		return success;
+		serviceCombo.getService(0).delete();
+		serviceCombo.getService(0).delete();
 	}
 
 	/**
 	 * This method deletes a Service Combo given a name
 	 * @author gtjarvis
 	 */
-	public static boolean deleteServiceCombo(String name) throws InvalidInputException{ 
+	public static void deleteServiceCombo(String name) throws InvalidInputException{ 
 		//make sure current user is owner
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
-			throw new InvalidInputException("Only Owner may define a Service Combo");
+			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
 		BookableService comboService = findBookableService(name);
-		boolean success = false;
 		if(comboService == null){
-			throw new InvalidInputException("Deleting service that does not exist.");
+			throw new InvalidInputException("Service " + name + " that does not exist.");
+		}
+		if(getAppointmentsInTheFuture(comboService).size() != 0){
+			throw new InvalidInputException("Service combo " + comboService.getName() + " has future appointments");
 		}
 		comboService.delete();
-
-		success = true;
-		return success;
 	}
 
 
@@ -1407,8 +1438,22 @@ public class FlexiBookController {
 		}
 		return timeSlots;
 	}
-
-
+	/**
+	 * This is a query method which can get list of all services in the system
+	 * @return a list of services
+	 * @author chengchen
+	 */
+	public static List<TOService> getTOServices(){
+		List<TOService> toServices = new ArrayList<TOService>();
+		for (BookableService bookableService:FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bookableService instanceof Service) {
+				TOService toService = new TOService(bookableService.getName(), ((Service) bookableService).getDuration(), ((Service) bookableService).getDowntimeDuration(), ((Service) bookableService).getDowntimeStart());
+				toServices.add(toService);
+			}
+		}
+		return toServices;
+			
+	}
 
 	/**
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
@@ -1495,9 +1540,7 @@ public class FlexiBookController {
 	//		//@ TODO
 	//	}
 	//
-	//	public static List<TOService> getTOServices(){
-	//		//@ TODO
-	//	}
+
 	//	
 	//	
 	//	
@@ -1731,6 +1774,24 @@ public class FlexiBookController {
 
 		return isInFuture;
 
+	}
+
+	/**
+	 * Returns list of appointments in the future
+	 * @param appointments
+	 * @return
+	 * 
+	 * @author gtjarvis
+	 */
+	private static List<Appointment> getAppointmentsInTheFuture(BookableService b) {
+		List<Appointment> appointments = b.getAppointments();
+		List<Appointment> futureAppointments = new ArrayList<Appointment>();
+		for(Appointment a: appointments){
+			if(isInTheFuture(a.getTimeSlot())){
+				futureAppointments.add(a);
+			}
+		}
+		return futureAppointments;
 	}
 
 	/**

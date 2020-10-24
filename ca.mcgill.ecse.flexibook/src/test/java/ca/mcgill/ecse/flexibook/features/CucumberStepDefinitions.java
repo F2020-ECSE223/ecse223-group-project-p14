@@ -74,23 +74,31 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * @author chengchen
+	 * 
 	 *  As a business owner, I wish to add services to my business 
 	 *  so that my customers can make appointments for them.
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
-
+	/**
+	 * @author chengchen
+	 */
 	@Given("an owner account exists in the system")
 	public void anOwnerAccountExists() {
 		owner = new Owner("owner", "owner", flexiBook);
 		flexiBook.setOwner(owner);
 
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Given("the Owner with username {string} is logged in")
 	public void theOwnerWithUsernameIsLoggedIn(String username) {
 		FlexiBookApplication.setCurrentLoginUser(owner);
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the addition of the service {string} with duration {string}, start of down time {string} and down time duration {string}")
 	public void initiates_the_addition_of_the_service_with_duration_start_of_down_time_and_down_time_duratrion(String username, String name, String duration, String downtimeStart, String downtimeDuration) throws Throwable{
 
@@ -103,13 +111,16 @@ public class CucumberStepDefinitions {
 			}
 	}
 		
-	
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
 		assertEquals(name, FlexiBookController.findSingleService(name).getName());
-//		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
 	public void the_service_shall_have_duration_start_of_down_time_and_down_time_duration(String name, String duration, String downtimeStart, String downtimeDuration) {
 		Service service = (Service)flexiBook.getBookableServices().get(0);
@@ -118,7 +129,9 @@ public class CucumberStepDefinitions {
 		assertEquals(Integer.parseInt(downtimeStart),service.getDowntimeStart());
 
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of services in the system shall be {string}")
 	public void the_number_of_services_shall_be(String numService) {
 		List<Service> services = new ArrayList<Service>();
@@ -129,21 +142,30 @@ public class CucumberStepDefinitions {
 		}
 		assertEquals(Integer.parseInt(numService), services.size());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("an error message with content {string} shall be raised")
 	public void an_error_message_with_content_shall_be_raised(String errorMsg) {
 		assertEquals(errorMsg, error);
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
 		assertEquals(null, FlexiBookController.findBookableService(name));;
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of services in the system shall be zero {string}")
 	public void the_number_of_services_shall_be_zero(String numService) {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall still preserve the following properties:")
 	public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -153,13 +175,18 @@ public class CucumberStepDefinitions {
 		 }
 		 
 	}
-	 @Then("the number of services in the system shall be {int}")
-	 public void the_number_of_services_in_the_system_shall_be(int number) {
+	/**
+	 * @author chengchen
+	 */
+	@Then("the number of services in the system shall be {int}")
+	public void the_number_of_services_in_the_system_shall_be(int number) {
 		 assertEquals(1, flexiBook.getBookableServices().size());
-	 }
-
-	 @Given("Customer with username {string} is logged in")
-	 public void customer_with_username_is_logged_in(String username) {
+	}
+	/**
+	 * @author chengchen
+	 */
+	@Given("Customer with username {string} is logged in")
+	public void customer_with_username_is_logged_in(String username) {
 		 Customer customer = FlexiBookController.findCustomer(username);
 		 FlexiBookApplication.setCurrentLoginUser(customer);
 	}
@@ -172,7 +199,9 @@ public class CucumberStepDefinitions {
  * so that I can keep my customers up to date.
  */
 /*---------------------------Test delete Service--------------------------*/
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the deletion of service {string}")
 	public void initiates_the_deletion_of_service(String username, String serviceName) throws Throwable {
 		try {
@@ -182,23 +211,32 @@ public class CucumberStepDefinitions {
 			errorCntr++;
 		}
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of appointments in the system with service {string} shall be {string}")
 	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
 		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
 		assertEquals(Integer.parseInt(numService), appointments.size());
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of appointments in the system shall be {string}")
 	public void the_number_of_appointments_in_the_system_shall_be(String numAppointment) {
 		assertEquals(Integer.parseInt(numAppointment), flexiBook.getAppointments().size());
 	}
 
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service combos {string} shall not exist in the system")
 	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
 		assertTrue(FlexiBookController.findServiceCombo(comboName)==null);
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service combos {string} shall not contain service {string}")
 	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
 		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
@@ -217,7 +255,9 @@ public class CucumberStepDefinitions {
  */
 /*------------------------------Test update Service--------------------------*/
 
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the update of the service {string} to name {string}, duration {string}, start of down time {string} and down time duration {string}")
 	public void initiates_the_update_of_the_service_to_name_duration_start_of_down_time_and_down_time_duration(String username, String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) throws InvalidInputException{
 		try {
@@ -228,7 +268,9 @@ public class CucumberStepDefinitions {
 		}
 		
 	}
-		
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall be updated to name {string}, duration {string}, start of down time {string} and down time duration {string}")
 	public void the_service_shall_be_updated_to_name_duration_start_of_down_time_and_down_time_duration(String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) {
 		   for (BookableService bookableService:flexiBook.getBookableServices()) {
@@ -243,17 +285,6 @@ public class CucumberStepDefinitions {
 		  
 		  
 	}
-
-
-
-
-
-
-	
-
-
-
-	 
 
 
 
@@ -812,7 +843,7 @@ public class CucumberStepDefinitions {
 		assertFalse(FlexiBookController.findUser(username) == null);
 	}
 
-	/*---------------------------Test Define ServiceCombo--------------------------*/
+	/*---------------------------Test Define Service Combo--------------------------*/
 
 	/**
 	 * 
@@ -820,8 +851,8 @@ public class CucumberStepDefinitions {
 	 */
 
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
-	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
+	public void user_initiates_the_definition_of_a_service_combo(String user, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
 			List<String> services = Arrays.asList(servicesString.split(","));
 			List<String> mandatorySettingsStringList = Arrays.asList(mandatorySettingsString.split(","));
 			List<Boolean> mandatorySettings = new ArrayList<Boolean>();
@@ -882,17 +913,18 @@ public class CucumberStepDefinitions {
 		assertEquals(FlexiBookController.getServiceCombos().size(), n);
 	}
 
-	@Then("the service combo {string} shall preserve the following properties")
-	public void the_service_combo_name_shall_preserve_the_following_properties(String name, Map<String, String> datatable){
+	@Then("the service combo {string} shall preserve the following properties:")
+	public void the_service_combo_name_shall_preserve_the_following_properties(String name, List<Map<String, String>> datatable){
 		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
-		List<String> services = Arrays.asList(datatable.get("services").split(","));
-		List<String> mandatory = Arrays.asList(datatable.get("mandatory").split(","));
-		assertEquals(serviceCombo.getName(), datatable.get("name"));
-		assertEquals(serviceCombo.getMainService().getService().getName(), datatable.get("mainService"));
+		Map<String, String> map = datatable.get(0);
+		List<String> services = Arrays.asList(map.get("services").split(","));
+		List<String> mandatory = Arrays.asList(map.get("mandatory").split(","));
+		assertEquals(serviceCombo.getName(), map.get("name"));
+		assertEquals(serviceCombo.getMainService().getService().getName(), map.get("mainService"));
 		List<ComboItem> comboItems = serviceCombo.getServices();
 		for(int i = 0; i < comboItems.size(); i++){
 			assertEquals(comboItems.get(i).getService().getName(), services.get(i));
-			assertEquals(comboItems.get(i).getMandatory(), mandatory.get(i));
+			assertEquals(comboItems.get(i).getMandatory(), Boolean.parseBoolean(mandatory.get(i)));
 		}
 	}
 	
@@ -1309,6 +1341,60 @@ String temporaryResult = "not be";
 	
 	 
 	
+
+	/*---------------------------Test Delete Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When("{string} initiates the deletion of service combo {string}")
+	public void user_initiates_the_deletion_of_service_combo(String user, String name){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			try {
+				FlexiBookController.deleteServiceCombo(name);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	/*---------------------------Test Update Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
+	public void user_initiates_the_update_of_service_combo_name(String user, String serviceCombo, String newName, String newMainService, String newServices, String newMandatory){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			List<String> services = Arrays.asList(newServices.split(","));
+			List<String> mandatoryList = Arrays.asList(newMandatory.split(","));
+			List<Boolean> mandatory = new ArrayList<Boolean>();
+			for(int i = 0; i < mandatoryList.size(); i++){
+				mandatory.add(Boolean.parseBoolean(mandatoryList.get(i)));
+			}
+			try {
+				FlexiBookController.updateServiceCombo(serviceCombo, newName, newMainService, services, mandatory);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	@Then("the service combo {string} shall be updated to name {string}")
+	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
+		if(!name.equals(newName)){
+			assertNull(FlexiBookController.findServiceCombo(name));
+		}
+		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+	}
+
+
 
 	/*---------------------------private helper methods--------------------------*/
 
