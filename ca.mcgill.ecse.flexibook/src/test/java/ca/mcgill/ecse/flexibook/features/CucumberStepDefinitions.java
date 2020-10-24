@@ -69,6 +69,7 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * @author chengchen
+	 * 
 	 *  As a business owner, I wish to add services to my business 
 	 *  so that my customers can make appointments for them.
 	 */
@@ -102,7 +103,6 @@ public class CucumberStepDefinitions {
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
 		assertEquals(name, FlexiBookController.findSingleService(name).getName());
-//		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
 
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
@@ -242,17 +242,6 @@ public class CucumberStepDefinitions {
 		  
 		  
 	}
-
-
-
-
-
-
-	
-
-
-
-	 
 
 
 

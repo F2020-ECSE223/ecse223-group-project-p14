@@ -1305,8 +1305,22 @@ public class FlexiBookController {
 		}
 		return timeSlots;
 	}
-
-
+	/**
+	 * This is a query method which can get list of all services in the system
+	 * @return a list of services
+	 * @author chengchen
+	 */
+	public static List<TOService> getTOServices(){
+		List<TOService> toServices = new ArrayList<TOService>();
+		for (BookableService bookableService:FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bookableService instanceof Service) {
+				TOService toService = new TOService(bookableService.getName(), ((Service) bookableService).getDuration(), ((Service) bookableService).getDowntimeDuration(), ((Service) bookableService).getDowntimeStart());
+				toServices.add(toService);
+			}
+		}
+		return toServices;
+			
+	}
 
 	/**
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
@@ -1394,9 +1408,7 @@ public class FlexiBookController {
 	//		//@ TODO
 	//	}
 	//
-	//	public static List<TOService> getTOServices(){
-	//		//@ TODO
-	//	}
+
 	//	
 	//	
 	//	
