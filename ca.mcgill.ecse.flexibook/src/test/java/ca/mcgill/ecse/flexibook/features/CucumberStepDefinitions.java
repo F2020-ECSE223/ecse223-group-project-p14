@@ -809,7 +809,7 @@ public class CucumberStepDefinitions {
 		assertFalse(FlexiBookController.findUser(username) == null);
 	}
 
-	/*---------------------------Test Define ServiceCombo--------------------------*/
+	/*---------------------------Test Define Service Combo--------------------------*/
 
 	/**
 	 * 
@@ -817,8 +817,8 @@ public class CucumberStepDefinitions {
 	 */
 
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
-	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
+	public void user_initiates_the_definition_of_a_service_combo(String user, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
 			List<String> services = Arrays.asList(servicesString.split(","));
 			List<String> mandatorySettingsStringList = Arrays.asList(mandatorySettingsString.split(","));
 			List<Boolean> mandatorySettings = new ArrayList<Boolean>();
@@ -879,19 +879,74 @@ public class CucumberStepDefinitions {
 		assertEquals(FlexiBookController.getServiceCombos().size(), n);
 	}
 
-	@Then("the service combo {string} shall preserve the following properties")
-	public void the_service_combo_name_shall_preserve_the_following_properties(String name, Map<String, String> datatable){
+	@Then("the service combo {string} shall preserve the following properties:")
+	public void the_service_combo_name_shall_preserve_the_following_properties(String name, List<Map<String, String>> datatable){
 		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
-		List<String> services = Arrays.asList(datatable.get("services").split(","));
-		List<String> mandatory = Arrays.asList(datatable.get("mandatory").split(","));
-		assertEquals(serviceCombo.getName(), datatable.get("name"));
-		assertEquals(serviceCombo.getMainService().getService().getName(), datatable.get("mainService"));
+		Map<String, String> map = datatable.get(0);
+		List<String> services = Arrays.asList(map.get("services").split(","));
+		List<String> mandatory = Arrays.asList(map.get("mandatory").split(","));
+		assertEquals(serviceCombo.getName(), map.get("name"));
+		assertEquals(serviceCombo.getMainService().getService().getName(), map.get("mainService"));
 		List<ComboItem> comboItems = serviceCombo.getServices();
 		for(int i = 0; i < comboItems.size(); i++){
 			assertEquals(comboItems.get(i).getService().getName(), services.get(i));
-			assertEquals(comboItems.get(i).getMandatory(), mandatory.get(i));
+			assertEquals(comboItems.get(i).getMandatory(), Boolean.parseBoolean(mandatory.get(i)));
 		}
 	}
+
+	/*---------------------------Test Delete Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When("{string} initiates the deletion of service combo {string}")
+	public void user_initiates_the_deletion_of_service_combo(String user, String name){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			try {
+				FlexiBookController.deleteServiceCombo(name);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	/*---------------------------Test Update Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
+	public void user_initiates_the_update_of_service_combo_name(String user, String serviceCombo, String newName, String newMainService, String newServices, String newMandatory){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			List<String> services = Arrays.asList(newServices.split(","));
+			List<String> mandatoryList = Arrays.asList(newMandatory.split(","));
+			List<Boolean> mandatory = new ArrayList<Boolean>();
+			for(int i = 0; i < mandatoryList.size(); i++){
+				mandatory.add(Boolean.parseBoolean(mandatoryList.get(i)));
+			}
+			try {
+				FlexiBookController.updateServiceCombo(serviceCombo, newName, newMainService, services, mandatory);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	@Then("the service combo {string} shall be updated to name {string}")
+	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
+		if(!name.equals(newName)){
+			assertNull(FlexiBookController.findServiceCombo(name));
+		}
+		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+	}
+
+
 
 	/*---------------------------private helper methods--------------------------*/
 
