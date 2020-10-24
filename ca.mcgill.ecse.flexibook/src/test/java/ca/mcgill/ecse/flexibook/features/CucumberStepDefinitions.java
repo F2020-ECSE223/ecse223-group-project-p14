@@ -1665,7 +1665,7 @@ String temporaryResult = "not be";
 	/**
 	 * Helper method to get a day of the week from a string
 	 * @param day
-	 * @return dayOfWeek
+	 * @return 
 	 * @author jedla & AntoineW
 	 */
 	private static DayOfWeek stringToDay(String day) {
