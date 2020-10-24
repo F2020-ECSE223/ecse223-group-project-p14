@@ -1187,35 +1187,24 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static List<TOAppointmentCalender> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
-		//@ TODO
-		ArrayList<TOAppointmentCalender> appointmentCalendars = new ArrayList<TOAppointmentCalender>();
-		if (ByDay == true && ByMonth == false && ByYear == false) {
-			if (isInHoliday)
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(), toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
+	public static boolean viewAppointmentCalnader(String date1,  Time startTime , Time endTime, Boolean ByDay, Boolean ByWeek){
+		boolean isAvalible = false; 
+		if (ByDay==true && ByWeek==false) {
+			try {
+				for (TOTimeSlot toTimeSlots: getUnavailbleTime(date1,true,false)) {
+					if((startTime.equals(toTimeSlots.getStartTime()) || startTime.after(toTimeSlots.getStartTime())) && (endTime.equals(toTimeSlots.getEndTime())||endTime.before(toTimeSlots.getEndTime()))) {
+						isAvalible = false; 
+					}
+					else{
+						isAvalible = true;
+					}
 				}
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		else if(ByDay == false && ByMonth == true && ByYear == false) {
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
-				}
-			}
-		}
-		else if(ByDay == false && ByMonth == false && ByYear == true) {
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
-				}
-			}
-		}
-		return appointmentCalendars;
+		return isAvalible;
 	}
 
 
@@ -1227,12 +1216,14 @@ public class FlexiBookController {
 	 * @param ByDay
 	 * @param ByWeek
 	 * @author mikewang
-	 * @return
+	 * @return <TOTimeSlot> getUnavailbleTime
 	 */
 	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		
 		Date date = Date.valueOf(date1);
 		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
 		if (ByDay == true && ByWeek == false) {
+			
 			//TODO
 			// first check if the input is valid
 			if (!isValidDate(date1)) {
@@ -1241,7 +1232,7 @@ public class FlexiBookController {
 			// second check if it is in Holiday or Vacation
 			else if (checkIsInHoliday(date)||checkIsInVacation(date)) {
 				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
-				for (BusinessHour BH: Business.getBusinessHours()) {
+				for (TOBusinessHour BH: getTOBusinessHour()) {
 					if ( BH.getDayOfWeek() == dayOfWeek) {
 						TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
 						unavailbleTimeSlots.add(toHolidayOrVacationTS);
@@ -1252,62 +1243,111 @@ public class FlexiBookController {
 			else {
 				for (TOAppointment toAppointments: getTOAppointment()) {
 					if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
-						
-							// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
-							// unavailbleTimeSlots.add(getUnavailbleTimes);
-						for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
-							if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
-								TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
-								TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
-								unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
-								unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+						if (toAppointments.getDownTimeTimeSlot() != null) {
+								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
+								// unavailbleTimeSlots.add(getUnavailbleTimes);
+							for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+								if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+									TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+									TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+									unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+									unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+								}
 							}
 						}
-						unavailbleTimeSlots.add(toAppointments.getTimeSlot());
-						
+						else {
+							unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+						}
 					}
 				}
 			}
-			return unavailbleTimeSlots;
+			
 		}
 		else if (ByDay == false && ByWeek == true) {
 			//TODO
 			// i need to get some sleep, i will resume my part after i get up
 			// first check if the input is valid
 			
+			
 			if (!isValidDate(date1)) {
 				throw new InvalidInputException(date1 + " is not a valid date");
 			}
 			else {
-				for (i=0;i<7;i++) {
-					
+				for(int i=0;i<7;i++) {
+					getUnavailbleTime(date1, true, false);
+					date1 = NextDate(date1);
 				}
 			}
-			return unavailbleTimeSlots;
 		}
-		
+		return unavailbleTimeSlots;
+	}
+	
+	
+	
+
+// implement next time
+	
+//	/**
+//	 * DON'T TOUCH MIKE WILL FINISH THIS 
+//	 * This is a query method which can return all availble time slot to an ArrayList
+//	 * @param date
+//	 * @param ByDay
+//	 * @param ByWeek
+//	 * @author mikewang
+//	 * @return
+//	 */
+//	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+//		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
+//		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
+//		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
+//		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
+//		Date date = Date.valueOf(date1);
+//		
+//		if (ByDay == true && ByWeek == false) {
+//			//TODO
+//			if (!isValidDate(date1)) {
+//				throw new InvalidInputException(date1 + " is not a valid date");
+//			}
+//			else {
+//				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
+//				for(TOBusinessHour TBH: getTOBusinessHour()) {
+//					if (TBH.getDayOfWeek() == dayOfWeek) {
+//						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
+//						
+//						for (TOTimeSlot dayUnavailbleTimes: getUnavailbleTime(date1,true,false)) {
+//							
+//						}
+//					}
+//				}
+//				
+//			}
+//		}
+//		if (ByDay == false && ByWeek == true) {
+//			//TODO
+//		}
+//	}
+	
+	
+	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+		for (int i =0; i <= TimeSlots.; i++) {
+			
+		}
 	}
 	
 	
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
-	 * This is a query method which can return all availble time slot to an ArrayList
-	 * @param date
-	 * @param ByDay
-	 * @param ByWeek
-	 * @author mikewang
+	 * this is an qurey method with returns the BusinessHour 
 	 * @return
+	 * @author mikewang
 	 */
-	public static List<TOTimeSlot> getAvailbleTime(Date date, Boolean ByDay, Boolean ByWeek){
-		if (ByDay == true && ByWeek == false) {
-			//TODO
+	public static List<TOBusinessHour> getTOBusinessHour(){
+		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+		for (BusinessHour BH: Business.getBusinessHours()) {
+			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+			businessHours.add(BusinessHour);
 		}
-		if (ByDay == false && ByWeek == true) {
-			//TODO
-		}
+		return businessHours;
 	}
-	
-	
 
 
 	/**
