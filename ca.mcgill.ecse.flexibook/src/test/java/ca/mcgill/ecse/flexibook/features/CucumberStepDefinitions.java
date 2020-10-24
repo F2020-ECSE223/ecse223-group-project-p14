@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import ca.mcgill.ecse.flexibook.model.Service;
 import ca.mcgill.ecse.flexibook.model.ServiceCombo;
 import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
@@ -58,6 +60,9 @@ public class CucumberStepDefinitions {
 	private int errorCount = 0;
 	private int customerCount = 0;
 	private boolean statusOfAppointment = false;
+	
+	private boolean isSetUp = false;
+	private BusinessHour newBusinessHour;
 	
 	private boolean statusOfAccount = false;
 	@Before
@@ -201,10 +206,6 @@ public class CucumberStepDefinitions {
 			assertEquals(false, comboItem.getService().getName().equals(serviceName));
 		}
 
-	}
-	@Then("the number of service combos in the system shall be {string}")
-	public void the_number_of_service_combos_in_the_system_shall_be(String string) {
-		
 	}
 
 
@@ -800,31 +801,19 @@ public class CucumberStepDefinitions {
 		assertFalse(FlexiBookController.findUser(username) == null);
 	}
 
-	/*---------------------------Test Define ServiceCombo--------------------------*/
+	/*---------------------------Test Define Service Combo--------------------------*/
 
 	/**
 	 * 
 	 * @author gtjarvis
 	 */
 
-	@Given("the Owner with username {string} is logged in")
-	public void the_Owner_with_username_u_is_logged_in(String u){
-		Owner owner = new Owner(u, "test", flexibook);
-		flexibook.setCurrentLoginUser(owner);
-	}
-
-	@Given("Customer with username {string} is logged in")
-	public void Customer_with_username_u_is_logged_in(String u){
-		Customer c = new Customer(c, "test", flexibook);
-		flexibook.setCurrentLoginUser(c);
-	}
-
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
-	public void owner_initiates_the_definition_of_a_service_combo(String ownerName, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString){
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(ownerName)){
+	public void user_initiates_the_definition_of_a_service_combo(String user, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
 			List<String> services = Arrays.asList(servicesString.split(","));
 			List<String> mandatorySettingsStringList = Arrays.asList(mandatorySettingsString.split(","));
-			List<boolean> mandatorySettings;
+			List<Boolean> mandatorySettings = new ArrayList<Boolean>();
 			for(int i = 0; i < mandatorySettingsStringList.size(); i++){
 				mandatorySettings.add(Boolean.parseBoolean(mandatorySettingsStringList.get(i)));
 			}
@@ -841,85 +830,529 @@ public class CucumberStepDefinitions {
 
 	@Then("the service combo {string} shall exist in the system")
 	public void the_service_combo_name_shall_exist_in_the_system(String name){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name).getName(), name);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.findServiceCombo(name).getName(), name);
 	}
 
 	@Then("the service combo {string} shall not exist in the system")
 	public void the_service_combo_name_shall_not_exist_in_the_system(String name){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name), null);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.findServiceCombo(name), null);
 	}
 
 	@Then("the service combo {string} shall contain the services {string} with mandatory setting {string}")
 	public void the_service_combo_comboName_shall_contain_the_services_serviceName_with_mandatory_setting_mandatorySetting(String name, String servicesString, String mandatorySettingsString){
 		List<String> servicesList = Arrays.asList(servicesString.split(","));
 		List<String> mandatorySettingsList = Arrays.asList(mandatorySettingsString.split(","));
-		try{
-			TOServiceCombo serviceCombo = FlexiBookController.getTOServiceCombo(name);
-			List<TOComboItem> comboList= serviceCombo.getServices();
-			for(int i = 0; i < comboList.size(); i++){
-				assertEquals(comboList.get(i).getServiceName(), servicesList.get(i));
-				assertEquals(comboList.get(i).getIsMandatory(), mandatorySettingsList.get(i));
-			}
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
+		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
+		List<ComboItem> comboList= serviceCombo.getServices();
+		for(int i = 0; i < comboList.size(); i++){
+			assertEquals(comboList.get(i).getService().getName(), servicesList.get(i));
+			assertEquals(comboList.get(i).getMandatory(), Boolean.parseBoolean(mandatorySettingsList.get(i)));
 		}
 	}
 
 	@Then("the main service of the service combo {string} shall be {string}")
 	public void the_main_service_of_the_service_combo_name_shall_be_mainService(String name, String mainService){
-		try{
-			assertEquals(FlexiBookController.getTOServiceCombo(name).getMainService().getName(), mainService);
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
-		}
+		assertEquals(FlexiBookController.findServiceCombo(name).getMainService().getService().getName(), mainService);
 	}
 
 	@Then("the service {string} in service combo {string} shall be mandatory")
-	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name)){
-		try{
-			List<TOComboItem> comboItems = FlexiBookController.getTOServiceCombo(name).getServices();
-			for(TOComboItem c: comboItems){
-				if(c.getName().equals(mainService)){
-					assertTrue(c.getIsMandatory());
-				}
+	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name){
+		List<ComboItem> comboItems = FlexiBookController.findServiceCombo(name).getServices();
+		for(ComboItem c: comboItems){
+			if(c.getService().getName().equals(mainService)){
+				assertTrue(c.getMandatory());
 			}
-		} catch(InvalidInputException e){
-			error += e.getMessage();
-			errorCntr++;
 		}
 	}
 
 	@Then("the number of service combos in the system shall be {string}")
 	public void the_number_of_services_combos_in_the_system_shall_be_num(String num){
 		int n = Integer.parseInt(num);
-		assertEquals(FlexiBookController.getTOServiceCombos().size(), n);
+		assertEquals(FlexiBookController.getServiceCombos().size(), n);
 	}
 
-	@Then("the service combo {string} shall preserve the following properties")
-	public void the_service_combo_name_shall_preserve_the_following_properties(String name, Map<String, String> datatable){
-		TOServiceCombo serviceCombo = FlexiBookController.getTOServiceCombo(name);
-		List<String> services = Arrays.asList(datatable.get("services").split(","));
-		List<String> mandatory = Arrays.asList(datatable.get("mandatory").split(","));
-		assertEquals(serviceCombo.getName(), datatable.get("name"));
-		assertEquals(serviceCombo.getMainService().getServiceName(), datatable.get("mainService"));
-		List<TOComboItem> comboItems = serviceCombo.getServices();
+	@Then("the service combo {string} shall preserve the following properties:")
+	public void the_service_combo_name_shall_preserve_the_following_properties(String name, List<Map<String, String>> datatable){
+		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
+		Map<String, String> map = datatable.get(0);
+		List<String> services = Arrays.asList(map.get("services").split(","));
+		List<String> mandatory = Arrays.asList(map.get("mandatory").split(","));
+		assertEquals(serviceCombo.getName(), map.get("name"));
+		assertEquals(serviceCombo.getMainService().getService().getName(), map.get("mainService"));
+		List<ComboItem> comboItems = serviceCombo.getServices();
 		for(int i = 0; i < comboItems.size(); i++){
-			assertEquals(comboItems.get(i).getServiceName(), services.get(i));
-			assertEquals(comboItems.get(i).getIsMandatory(), mandatory.get(i));
+			assertEquals(comboItems.get(i).getService().getName(), services.get(i));
+			assertEquals(comboItems.get(i).getMandatory(), Boolean.parseBoolean(mandatory.get(i)));
 		}
 	}
+	
+	
+	/*---------------------------Test Set Up Business Information--------------------------*/
+
+	/**
+	 * Feature: Set up basic business information 
+	 * As an owner I whish to create a Business with information 
+	 * @author jedla
+	 */
+	 
+	 @Given("no business exists")
+	public void no_business_exists() {
+		if (FlexiBookApplication.getFlexiBook().hasBusiness() == true) {
+			FlexiBookApplication.getFlexiBook().getBusiness().delete();
+		}
+	}
+
+	@When("the user tries to set up the business information with new {string} and {string} and {string} and {string}")
+	public void the_user_tries_to_set_up_the_business_information_with_new_and_and_and(String name, String address,
+			String phoneNumber, String email) {
+		try {
+			 FlexiBookController.setUpBusinessInfo(name, address, phoneNumber, email);
+			isSetUp = true;
+			} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+	
+	@Then("a new business with new {string} and {string} and {string} and {string} shall {string} created")
+	public void a_new_business_with_new_and_and_and_shall_created(String name, String address, String phoneNumber,
+			String email, String string1) {
+		String result1 = "";
+
+		if (isSetUp == false) {
+			result1 = "not be";
+		}
+
+		else {
+			assertEquals(name, FlexiBookApplication.getFlexiBook().getBusiness().getName());
+			assertEquals(address, FlexiBookApplication.getFlexiBook().getBusiness().getAddress());
+			assertEquals(phoneNumber, FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber());
+			assertEquals(email, FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
+			result1 = "be";
+		}
+		assertEquals(string1, result1);
+
+	}
+	
+	@Then("an error message {string} shall {string} raised")
+	public void an_error_message_shall_raised(String error, String resultError) {
+		String shallError = "";
+
+		if (isSetUp == false) {
+			assertTrue(error.contains(error));
+			shallError = "be";
+
+		} else {
+			shallError = "not be";
+		}
+		 assertEquals(shallError, resultError);
+	}
+	
+	/**
+	 * Feature: Add new business hours 
+	 *As an owner I want to add new business hours
+	 * 
+	 * @author jedla
+	 */
+	 
+	@Given("a business exists with the following information:")
+	public void a_business_exists_with_the_following_information(List<Map<String, String>> datatable) {
+		for (Map<String, String> instance : datatable) {
+			Business business = new Business(instance.get("name"), instance.get("address"),
+					instance.get("phone number"), instance.get("email"), FlexiBookApplication.getFlexiBook());
+			FlexiBookApplication.getFlexiBook().setBusiness(business);
+		}
+	}
+
+	@Given("the business has a business hour on {string} with start time {string} and end time {string}")
+	public void the_business_has_a_business_hour_on_with_start_time_and_end_time(String day, String startTime,
+			String endTime) {
+
+		BusinessHour bh = new BusinessHour(stringToDay(day), stringToTime(startTime), stringToTime(endTime),
+				FlexiBookApplication.getFlexiBook());
+		FlexiBookApplication.getFlexiBook().getBusiness().addBusinessHour(bh);
+		FlexiBookApplication.getFlexiBook().addHour(bh);
+	}
+
+	@When("the user tries to add a new business hour on {string} with start time {string} and end time {string}")
+	public void the_user_tries_to_add_a_new_business_hour_on_with_start_time_and_end_time(String day, String startTime,
+			String endTime) {
+		try {
+			FlexiBookController.setUpBusinessHours(stringToTime(startTime), stringToTime(endTime),
+					stringToDay(day));
+			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(day), stringToTime(startTime));
+			isSetUp =true;
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp =false;
+		}
+	}
+	
+	@Then("a new business hour shall {string} created")
+	public void a_new_business_hour_shall_created(String string3) {
+		String result_hours = " ";
+		if (FlexiBookApplication.getFlexiBook().getHours().contains(newBusinessHour)) {
+			result_hours = "be";
+		} else {
+			result_hours = "not be";
+		}
+		assertEquals(result_hours, string3);
+	}
+	
+	/**
+	 * Feature: View basic business information 
+	 *As a user I want to view basic business information
+	 * 
+	 * @author jedla
+	 */
+	 
+	@When("the user tries to access the business information")
+	public void the_user_tries_to_access_the_business_information() {
+		FlexiBookController.getBusinessInfo();
+	}
+
+	@Then("the {string} and {string} and {string} and {string} shall be provided to the user")
+	public void the_and_and_and_shall_be_provided_to_the_user(String name, String address, String phoneNumber,
+			String email) {
+		assertEquals(FlexiBookApplication.getFlexiBook().getBusiness().getName(), name);
+		assertEquals(FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), address);
+		assertEquals(FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), phoneNumber);
+		assertEquals(FlexiBookApplication.getFlexiBook().getBusiness().getEmail(), email);
+
+	}
+	/**
+	 * Feature: Add new time slot 
+	 *As an owner I want to add a holiday or a vacation as TimeSlot
+	 * 
+	 * @author jedla
+	 */
+	 
+	 @Given("a {string} time slot exists with start time {string} at {string} and end time {string} at {string}")
+	public void a_time_slot_exists_with_start_time_at_and_end_time_at(String type, String startDate, String startTime,
+			String endDate, String endTime) {
+		TimeSlot VacationOrHoliday = new TimeSlot(stringToDate(startDate), stringToTime(startTime),
+				stringToDate(endDate), stringToTime(endTime), FlexiBookApplication.getFlexiBook());
+
+		if (type.equals("vacation")) {
+			FlexiBookApplication.getFlexiBook().getBusiness().addVacation(VacationOrHoliday);
+		} else if (type.equals("holiday")) {
+			FlexiBookApplication.getFlexiBook().getBusiness().addHoliday(VacationOrHoliday);
+		}
+	}
+	
+	@When("the user tries to add a new {string} with start date {string} at {string} and end date {string} at {string}")
+	public void the_user_tries_to_add_a_new_with_start_date_at_and_end_date_at(String type, String startDate,
+			String startTime, String endDate, String endTime) {
+		try {
+			FlexiBookController.setUpHolidayVacation(type, stringToDate(startDate),
+					stringToTime(startTime), stringToDate(endDate), stringToTime(endTime));
+			isSetUp =true;
+			
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+	
+	@Then("a new {string} shall {string} be added with start date {string} at {string} and end date {string} at {string}")
+	public void a_new_shall_be_added_with_start_date_at_and_end_date_at(String type, String result, String startDate,
+			String startTime, String endDate, String endTime) {
+		
+		String temporaryResult = "not be";
+		
+		List<TimeSlot> holiday = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		List<TimeSlot> vacation = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		
+		if (type.equals("vacation")){
+			
+			for (TimeSlot instance : vacation) {
+				if(instance.getEndDate().equals(stringToDate(endDate))&& instance.getStartDate().equals(stringToDate(startDate))
+						&& instance.getStartTime().equals(stringToTime(startTime))&& instance.getEndTime().equals(stringToTime(endTime))) {
+					temporaryResult	= "be";
+					break;
+				}
+			}
+				
+	}
+		else if (type.equals("holiday")){
+			for (TimeSlot instance : holiday) {
+				if(instance.getEndDate().equals(stringToDate(endDate))&& instance.getStartDate().equals(stringToDate(startDate))
+						&& instance.getStartTime().equals(stringToTime(startTime))&& instance.getEndTime().equals(stringToTime(endTime))) {
+					temporaryResult	= "be";
+					break;
+				}
+			}
+		}
+		assertEquals(result, temporaryResult);
+
+	}
+	
+	/*---------------------------Test Updating Business Information --------------------------*/
+	
+	/**
+	 * Feature: Update basic business information
+	 * As an owner I want to update the basic business information
+	 * @author jedla
+	 */
+	 
+	 @When("the user tries to update the business information with new {string} and {string} and {string} and {string}")
+	public void the_user_tries_to_update_the_business_information_with_new_and_and_and(String name, String address, String phoneNumber, String email) {
+		try {
+			FlexiBookController.updateBusinessInfo(name, address, phoneNumber, email); 
+			isSetUp = true;
+																								
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+
+	@Then("the business information shall {string} updated with new {string} and {string} and {string} and {string}")
+	public void the_business_information_shall_updated_with_new_and_and_and(String result, String name, String address, String phoneNumber, String email) {
+		String temp = "";
+
+		if (isSetUp == false) {
+			temp= "not be";
+		}
+
+		else {
+			assertEquals(name, FlexiBookApplication.getFlexiBook().getBusiness().getName());
+			assertEquals(address, FlexiBookApplication.getFlexiBook().getBusiness().getAddress());
+			assertEquals(phoneNumber, FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber());
+			assertEquals(email, FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
+			temp = "be";
+		}
+		assertEquals(temp, result);
+	}
+	
+	/**
+	 * Feature: Update existing business hours
+	 * As an owner i want to update existing business hours
+	 * @author jedla
+	 */
+	 
+	 @When("the user tries to change the business hour {string} at {string} to be on {string} starting at {string} and ending at {string}")
+	public void the_user_tries_to_change_the_business_hour_at_to_be_on_starting_at_and_ending_at(String oldDay, String oldStartTime, String newDay, String newStartTime, String newEndTime) {
+		try {
+			FlexiBookController.updateBusinessHour(stringToDay(oldDay), stringToTime(oldStartTime), stringToDay(newDay), stringToTime(newStartTime), stringToTime(newEndTime)); 
+			isSetUp = true;
+			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(newDay), stringToTime(newStartTime));
+																								
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+
+	@Then("the business hour shall {string} be updated")
+	public void the_business_hour_shall_be_updated(String resultUpdate) {
+		String result = "";
+		
+		if (FlexiBookApplication.getFlexiBook().getHours().contains(newBusinessHour)) {
+			result = "be";
+	
+		} else{
+			result = "not be";
+		}
+		assertEquals(resultUpdate, result);
+	}
+	/**
+	 * Feature: Removing existing business hours
+	 * As an owner I want to remove an existing business hour
+	 * @author jedla
+	 */
+	 
+	 @When("the user tries to remove the business hour starting {string} at {string}")
+	public void the_user_tries_to_remove_the_business_hour_starting_at(String day, String time) {
+		try {
+			FlexiBookController.removeBusinessHour(stringToDay(day), stringToTime(time));
+			isSetUp = true;
+																								
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+
+	@Then("the business hour starting {string} at {string} shall {string} exist")
+	public void the_business_hour_starting_at_shall_exist(String day, String time, String result) {
+		String temp = "not";
+		List<BusinessHour> ListBH = FlexiBookApplication.getFlexiBook().getHours();
+		
+		for (BusinessHour instance : ListBH ) {
+			if (instance.getDayOfWeek().equals(stringToDay(day))&&instance.getStartTime().equals(stringToTime(time))){
+				temp = "";
+			}
+			else if (!isSetUp) {
+				temp = "";
+			}	
+		}	
+		assertEquals(result, temp);
+	}
+	    
+	@Then("an error message {string} shall {string} be raised")
+	public void an_error_message_shall_be_raised(String e, String result) {
+		String temp = "";
+		if (isSetUp) {
+			temp = "not";
+		} else if (!isSetUp) {
+			assertTrue(error.contains(e));
+			temp = "";
+		}
+		assertEquals(temp, result);
+	}
+	/**
+	 * Feature: Update vacation and holiday
+	 * As an owner I want to update my vacations and holidays
+	 * @author jedla
+	 */
+	 
+	 @When("the user tries to change the {string} on {string} at {string} to be with start date {string} at {string} and end date {string} at {string}")
+	public void the_user_tries_to_change_the_on_at_to_be_with_start_date_at_and_end_date_at(String type, String oldStartDate, String oldStartTime, String startDate, String startTime, String endDate, String endTime) {
+		try {
+			FlexiBookController.updateHolidayVacation(type, stringToDate(oldStartDate), stringToTime(oldStartTime), stringToDate(startDate), stringToTime(startTime),stringToDate(endDate), stringToTime(endTime));
+			isSetUp = true;
+																								
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+
+	@Then("the {string} shall {string} be updated with start date {string} at {string} and end date {string} at {string}")
+	public void the_shall_be_updated_with_start_date_at_and_end_date_at(String type, String result, String startDate, String startTime, String endDate, String endTime) {
+String temporaryResult = "not be";
+		
+		List<TimeSlot> holiday = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		List<TimeSlot> vacation = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		
+		if (type.equals("vacation")){
+			
+			for (TimeSlot instance : vacation) {
+				if(instance.getEndDate().equals(stringToDate(endDate))&& instance.getStartDate().equals(stringToDate(startDate))
+						&& instance.getStartTime().equals(stringToTime(startTime))&& instance.getEndTime().equals(stringToTime(endTime))) {
+					temporaryResult	= "be";
+					break;
+				}
+			}
+				
+	}
+		else if (type.equals("holiday")){
+			for (TimeSlot instance : holiday) {
+				if(instance.getEndDate().equals(stringToDate(endDate))&& instance.getStartDate().equals(stringToDate(startDate))
+						&& instance.getStartTime().equals(stringToTime(startTime))&& instance.getEndTime().equals(stringToTime(endTime))) {
+					temporaryResult	= "be";
+					break;
+				}
+			}
+		}
+		assertEquals(result, temporaryResult);
+	}
+	
+	/**
+	 * Feature: Remove existing time slot
+	 * As an owner i want to remove an existing time slot (vacation or holiday)
+	 * @author jedla
+	 */
+	
+	@When("the user tries to remove an existing {string} with start date {string} at {string} and end date {string} at {string}")
+	public void the_user_tries_to_remove_an_existing_with_start_date_at_and_end_date_at(String type, String startDate, String startTime, String endDate, String endTime) {
+		try {
+			FlexiBookController.removeHolidayVacation(type, stringToDate(startDate), stringToTime(startTime),stringToDate(endDate), stringToTime(endTime));
+			isSetUp = true;
+																								
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			isSetUp = false;
+		}
+	}
+
+	@Then("the {string} with start date {string} at {string} shall {string} exist")
+	public void the_with_start_date_at_shall_exist(String type, String startDate, String startTime, String result) {
+		String temporaryResult = "not";
+		
+		List<TimeSlot> holiday = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		List<TimeSlot> vacation = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		
+		if (type.equals("vacation")){
+			
+			for (TimeSlot instance : vacation) {
+				if(instance.getStartDate().equals(stringToDate(startDate)) && instance.getStartTime().equals(stringToTime(startTime))) {
+					temporaryResult	= "";
+					break;
+				}
+			}
+				
+	}
+		else if (type.equals("holiday")){
+			for (TimeSlot instance : holiday) {
+				if(instance.getStartDate().equals(stringToDate(startDate))&& instance.getStartTime().equals(stringToTime(startTime))) {
+					temporaryResult	= "";
+					break;
+				}
+			}
+		}
+		assertEquals(result, temporaryResult);
+		
+	}
+	 
+	
+	 
+	
+
+	/*---------------------------Test Delete Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When("{string} initiates the deletion of service combo {string}")
+	public void user_initiates_the_deletion_of_service_combo(String user, String name){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			try {
+				FlexiBookController.deleteServiceCombo(name);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	/*---------------------------Test Update Service Combo--------------------------*/
+
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
+	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
+	public void user_initiates_the_update_of_service_combo_name(String user, String serviceCombo, String newName, String newMainService, String newServices, String newMandatory){
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
+			List<String> services = Arrays.asList(newServices.split(","));
+			List<String> mandatoryList = Arrays.asList(newMandatory.split(","));
+			List<Boolean> mandatory = new ArrayList<Boolean>();
+			for(int i = 0; i < mandatoryList.size(); i++){
+				mandatory.add(Boolean.parseBoolean(mandatoryList.get(i)));
+			}
+			try {
+				FlexiBookController.updateServiceCombo(serviceCombo, newName, newMainService, services, mandatory);
+			}
+			catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}
+		}
+	}
+
+	@Then("the service combo {string} shall be updated to name {string}")
+	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
+		if(!name.equals(newName)){
+			assertNull(FlexiBookController.findServiceCombo(name));
+		}
+		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+	}
+
+
 
 	/*---------------------------private helper methods--------------------------*/
 
@@ -971,6 +1404,36 @@ public class CucumberStepDefinitions {
 		}
 		return appointments;
 	}
+	
+	/**
+	 * Helper method to get a day of the week from a string
+	 * @param day
+	 * @return dayOfWeek
+	 * @author jedla & AntoineW
+	 */
+	private static DayOfWeek stringToDay(String day) {
+		DayOfWeek dw = null;
+		if (day.equals("Monday")) {
+			return DayOfWeek.Monday;
+		} else if (day.equals("Tuesday")) {
+			return DayOfWeek.Tuesday;
+
+		} else if (day.equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (day.equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (day.equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (day.equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (day.equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		return dw;
+
+	}
+	
+	
 
 
 }
