@@ -89,7 +89,7 @@ Feature: Update business information
   Scenario Outline: Update vacation
     Given the user is logged in to an account with username "<username>"
     When the user tries to change the "vacation" on "2020-07-30" at "09:00" to be with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
-    Then the "vacation" shall "<result>" be updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
+    Then the "vacation" shall "<result>" updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
     Then an error message "<error>" shall "<resultError>" raised
 
     Examples: 
@@ -103,7 +103,7 @@ Feature: Update business information
   Scenario Outline: Update holiday
     Given the user is logged in to an account with username "<username>"
     When the user tries to change the "holiday" on "2020-08-15" at "16:00" to be with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
-    Then the "holiday" shall "<result>" be updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
+    Then the "holiday" shall "<result>" updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
     Then an error message "<error>" shall "<resultError>" raised
 
     Examples: 
