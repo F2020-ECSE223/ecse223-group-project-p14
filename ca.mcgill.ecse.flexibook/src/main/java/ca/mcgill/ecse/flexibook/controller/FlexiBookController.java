@@ -64,7 +64,7 @@ public class FlexiBookController {
 
 		}
 		else if (downtimeStart < 0) {
-			
+
 			throw new InvalidInputException("Downtime must not start before the beginning of the service");
 
 		}
@@ -116,7 +116,7 @@ public class FlexiBookController {
 		if (!FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner")) {
 			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
-		
+
 		for (Appointment appointment:service.getAppointments()) {
 			if (FlexiBookApplication.getCurrentDate(true).before(appointment.getTimeSlot().getStartDate())) {
 				throw new InvalidInputException("The service contains future appointments");
@@ -154,13 +154,13 @@ public class FlexiBookController {
 			}
 		}
 
-			
+
 		service.delete();
 		isSuccess = true;
 		return isSuccess;
 	}
-	
-	
+
+
 
 
 	/**
@@ -217,7 +217,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("Downtime must not start after the end of the service");
 
 		}
-		
+
 		else {
 			List<String> serviceNames = new ArrayList<String>();
 			for (BookableService aBookableService:flexiBook.getBookableServices()) {
@@ -225,10 +225,10 @@ public class FlexiBookController {
 					serviceNames.add(aBookableService.getName());
 				}
 			}
-				if (serviceNames.contains(newName)&&!serviceName.equals(newName)) {
-					throw new InvalidInputException("Service "+newName+" already exists");
-				}
-			
+			if (serviceNames.contains(newName)&&!serviceName.equals(newName)) {
+				throw new InvalidInputException("Service "+newName+" already exists");
+			}
+
 			((Service) bookableService).setDuration(newDuration);
 			if (!serviceName.equals(newName)) {
 				bookableService.setName(newName);
@@ -269,7 +269,7 @@ public class FlexiBookController {
 		if(s == null) {
 			throw new InvalidInputException("No such single service exist!");
 		}
-		
+
 		LocalTime aEndtime = time.toLocalTime().plusMinutes(s.getDuration());
 		Time endTime = Time.valueOf(aEndtime);
 
@@ -686,7 +686,7 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author mikewang
 	 */
-	
+
 	public static void logIn(String username, String password) throws InvalidInputException {
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		Customer ThisCustomer = findCustomer(username);
@@ -728,7 +728,7 @@ public class FlexiBookController {
 			FlexiBookApplication.clearCurrentLoginUser();
 		}
 	}
-	
+
 	/**
 	 * This method defines a new Service Combo.
 	 * @param name -name of new Service Combo
@@ -927,15 +927,15 @@ public class FlexiBookController {
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		String regex = "^(.+)@(.+\\.)(.+)$";
-		
+
 
 		if (currentUser instanceof Customer) { 
 			throw new InvalidInputException("No permission to set up business information");
 		}
 		else if (email.matches(regex) == false) {
 			throw new InvalidInputException("Invalid email"); 
-			} 
-		
+		} 
+
 		else {
 			Business business = new Business(businessName, address, phoneNumber, email, flexiBook);
 			flexiBook.setBusiness(business);
@@ -985,13 +985,13 @@ public class FlexiBookController {
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(startDate, startTime);
 		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(endDate, endTime);
-		 //delete this as it it not useful and might just confuse the whole thing
-		
+		//delete this as it it not useful and might just confuse the whole thing
+
 		if (currentUser instanceof Customer) { 
 			throw new InvalidInputException("No permission to set up Holidays or Vacation");
 		}
 		else if (timeSlotStart.isAfter(timeSlotEnd)){
-			
+
 			throw new InvalidInputException("Start time must be before end time ");
 		}
 		else {
@@ -1048,8 +1048,8 @@ public class FlexiBookController {
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(startDate, startTime);
 		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(endDate, endTime);
-		
-		
+
+
 		if (currentUser instanceof Customer) {
 			throw new InvalidInputException("No permission to set up business information");
 		}
@@ -1059,7 +1059,7 @@ public class FlexiBookController {
 		else {
 			if (type.equals("vacation")) {
 				TimeSlot vacation = isTheVacation(oldStartDate, oldStartTime);//Need to change the method call for isTheVacation
-				
+
 				if(isOverlappingWithVacation(startDate, startTime, endDate, endTime, vacation)) {//Need to change this so that vacation is part of it and so it doesn't overlap
 					throw new InvalidInputException("Vacation times cannot overlap");
 				}
@@ -1136,7 +1136,7 @@ public class FlexiBookController {
 	 * @author jedla
 	 */
 	public static void updateBusinessHour(DayOfWeek oldDay, Time oldStart, DayOfWeek day, Time newStart, Time newEnd)throws InvalidInputException {
-		 
+
 		User currentUser = FlexiBookApplication.getCurrentLoginUser();
 
 		BusinessHour temp = isTheBusinessHour(oldDay, oldStart);
@@ -1176,7 +1176,7 @@ public class FlexiBookController {
 		}
 		else if (email.matches(regex) == false) {
 			throw new InvalidInputException("Invalid email"); 
-			} 
+		} 
 		else {
 			if (currentBusiness != null) {
 				currentBusiness.setAddress(address);
@@ -1252,7 +1252,7 @@ public class FlexiBookController {
 	}
 
 
-	
+
 	/**
 	 * 
 	 * This is a query method which can return all unavailble time slot to an ArrayList
@@ -1263,55 +1263,62 @@ public class FlexiBookController {
 	 * @return <TOTimeSlot> getUnavailbleTime
 	 */
 	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-		
-		Date date = Date.valueOf(date1);
+		Date date;
+
+
 		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
+
 		if (ByDay == true && ByWeek == false) {
-			
-			// first check if the input is valid
-			if (!isValidDate(date1)) {
-				throw new InvalidInputException(date1 + " is not a valid date");
-			}
-			// second check if it is in Holiday or Vacation
-			else if (checkIsInHoliday(date)||checkIsInVacation(date)) {
-				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
-				for (TOBusinessHour BH: getTOBusinessHour()) {
-					if ( BH.getDayOfWeek() == dayOfWeek) {
-						TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
-						unavailbleTimeSlots.add(toHolidayOrVacationTS);
+			if (isValidDate(date1)) {
+				// first check if the input is valid
+				date = Date.valueOf(date1);
+				// second check if it is in Holiday or Vacation
+
+				if (checkIsInHoliday(date)||checkIsInVacation(date)) {
+					DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
+					for (TOBusinessHour BH: getTOBusinessHour()) {
+						if ( BH.getDayOfWeek() == dayOfWeek) {
+							TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
+							unavailbleTimeSlots.add(toHolidayOrVacationTS);
+						}
 					}
-				}
-			} 
-			// if above cases both failed 
-			else {
-				for (TOAppointment toAppointments: getTOAppointment()) {
-					if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
-						if (toAppointments.getDownTimeTimeSlot() != null) {
+				} 
+				// if above cases both failed 
+				else {
+					for (TOAppointment toAppointments: getTOAppointment()) {
+						if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
+							if (toAppointments.getDownTimeTimeSlot() != null) {
 								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
 								// unavailbleTimeSlots.add(getUnavailbleTimes);
-							for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
-								if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
-									TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
-									TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
-									unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
-									unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+								for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+									if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+										TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+										TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+										unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+										unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+									}
 								}
 							}
-						}
-						else {
-							unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+							else {
+								unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+							}
 						}
 					}
 				}
+
 			}
-			
+			else if(!isValidDate(date1)){
+
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
 		}
 		else if (ByDay == false && ByWeek == true) {
 			//TODO
 			// i need to get some sleep, i will resume my part after i get up
 			// first check if the input is valid
-			
-			
+
+
 			if (!isValidDate(date1)) {
 				throw new InvalidInputException(date1 + " is not a valid date");
 			}
@@ -1324,12 +1331,12 @@ public class FlexiBookController {
 		}
 		return unavailbleTimeSlots;
 	}
-	
-	
-	
 
-    //implement next time
-	
+
+
+
+	//implement next time
+
 	/**
 	 * DON'T TOUCH MIKE WILL FINISH THIS 
 	 * This is a query method which can return all availble time slot to an ArrayList
@@ -1344,19 +1351,16 @@ public class FlexiBookController {
 		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
 		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
 		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
-		Date date = Date.valueOf(date1);
-		
+		Date date;
+
 		if (ByDay == true && ByWeek == false) {
-			//TODO
-			if (!isValidDate(date1)) {
-				throw new InvalidInputException(date1 + " is not a valid date");
-			}
-			else {
+			if (isValidDate(date1)) {
+				date = Date.valueOf(date1);
 				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
 				for(TOBusinessHour TBH: getTOBusinessHour()) {
 					if (TBH.getDayOfWeek() == dayOfWeek) {
 						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
-						
+
 						for (TOTimeSlot dayUnavailbleTimes: sortTimeSlot(getUnavailbleTime(date1,true,false))) {
 							if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
 								if (dayUnavailbleTimes.getStartTime().after(todayBusinessHours.getStartTime())) {
@@ -1370,17 +1374,24 @@ public class FlexiBookController {
 							else {
 								break;
 							}
-							
+
 						}
 						if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
 							DayAvailbleTimes.add(todayBusinessHours);
 						}
-						
+
 					}
 				}
-				
+
+
 			}
+			else {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
+
 		}
+
 		if (ByDay == false && ByWeek == true) {
 			//TODO
 			if (!isValidDate(date1)) {
@@ -1394,10 +1405,10 @@ public class FlexiBookController {
 		}
 		return DayAvailbleTimes;
 	}
-	
 
-	
-	
+
+
+
 	/**
 	 * this is an qurey method with returns the BusinessHour 
 	 * @return
@@ -1423,7 +1434,7 @@ public class FlexiBookController {
 	public static List<TOAppointment> getTOAppointment(){
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
-			
+
 			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
 					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
 			// Added feature TOAppointment can show all downtime
@@ -1484,7 +1495,7 @@ public class FlexiBookController {
 			}
 		}
 		return toServices;
-			
+
 	}
 
 	/**
@@ -1575,7 +1586,7 @@ public class FlexiBookController {
 		}
 		return foundBookableService;
 	}
-	
+
 	/**
 	 * This method finds the appointments that has specified services
 	 * 
@@ -1916,7 +1927,7 @@ public class FlexiBookController {
 		}
 		return foundOwner;
 	}
-	
+
 	/**
 	 * This is a helper method witch sorts the TOTimeSlots based on their start time
 	 * @param TimeSlots
@@ -1982,7 +1993,7 @@ public class FlexiBookController {
 		java.util.Date date = cal.getTime();
 		return date;
 	}
-	
+
 	/**
 	 * This is an helper method which provides an opportunity for the owner to set up it's owner account
 	 * 
@@ -2021,8 +2032,8 @@ public class FlexiBookController {
 		}
 		return signUpSuccessful;
 	}
-	
-	
+
+
 	/**
 	 * This is a helper method which checks if a specific date in within a holiday
 	 * @param date
@@ -2039,8 +2050,8 @@ public class FlexiBookController {
 		}
 		return isInHoliday; 
 	}
-	
-	
+
+
 	/**
 	 * This is a helper method which checks if a specific date in within a vacation
 	 * @param date
@@ -2057,8 +2068,8 @@ public class FlexiBookController {
 		}
 		return isInVacation; 
 	}
-	
-	
+
+
 	/**
 	 * This is a helper method which could detect if certain string writen date is valid
 	 * @param s
@@ -2070,38 +2081,38 @@ public class FlexiBookController {
 		if (s == null) {
 			isValid = false; 
 		}
-        final int YEAR_LENGTH = 4;
-        final int MONTH_LENGTH = 2;
-        final int DAY_LENGTH = 2;
-        final int MAX_MONTH = 12;
-        final int MAX_DAY = 31;
-        final int MAX_YEAR = 8099;
-        final int MIN_YEAR = 1970;
-        int firstDash = s.indexOf('-');
-        int secondDash = s.indexOf('-', firstDash + 1);
-        int len = s.length();
-        
-        if ((firstDash <= 0) || (secondDash <= 0) || (secondDash >= len - 1)) {
-        	isValid = false; 
-        }
-        
-        else if (firstDash != YEAR_LENGTH ||
-                (secondDash - firstDash <= 1 || secondDash - firstDash > MONTH_LENGTH + 1) ||
-                (len - secondDash <= 1 && len - secondDash > DAY_LENGTH + 1)) {
-        	isValid = false; 
-        }
-        
-        int year = Integer.parseInt(s, 0, firstDash, 10);
-        int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
-        int day = Integer.parseInt(s, secondDash + 1, len, 10);
-        
-        if ((month < 1 || month > MAX_MONTH) || (day < 1 || day > MAX_DAY) || (year < MIN_YEAR || year > MAX_YEAR)) {
-            isValid = false; 
-        }
-        
-        return isValid;
+		final int YEAR_LENGTH = 4;
+		final int MONTH_LENGTH = 2;
+		final int DAY_LENGTH = 2;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		final int MIN_YEAR = 1970;
+		int firstDash = s.indexOf('-');
+		int secondDash = s.indexOf('-', firstDash + 1);
+		int len = s.length();
+
+		if ((firstDash <= 0) || (secondDash <= 0) || (secondDash >= len - 1)) {
+			isValid = false; 
+		}
+
+		else if (firstDash != YEAR_LENGTH ||
+				(secondDash - firstDash <= 1 || secondDash - firstDash > MONTH_LENGTH + 1) ||
+				(len - secondDash <= 1 && len - secondDash > DAY_LENGTH + 1)) {
+			isValid = false; 
+		}
+
+		int year = Integer.parseInt(s, 0, firstDash, 10);
+		int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(s, secondDash + 1, len, 10);
+
+		if ((month < 1 || month > MAX_MONTH) || (day < 1 || day > MAX_DAY) || (year < MIN_YEAR || year > MAX_YEAR)) {
+			isValid = false; 
+		}
+
+		return isValid;
 	}
-	
+
 	/**
 	 * This is a helper method which would return the string version of the date of the next day 
 	 * @param date1
@@ -2110,80 +2121,80 @@ public class FlexiBookController {
 	 */
 	public static String NextDate(String date1) {
 		String resultDate;
-        final int MAX_MONTH = 12;
-        final int MAX_DAY = 31;
-        final int MAX_YEAR = 8099;
-        Date d = null;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		Date d = null;
 
-        int firstDash = date1.indexOf('-');
-        int secondDash = date1.indexOf('-', firstDash + 1);
-        int len = date1.length();
-        
-        int year = Integer.parseInt(date1, 0, firstDash, 10);
-        int month = Integer.parseInt(date1, firstDash + 1, secondDash, 10);
-        int day = Integer.parseInt(date1, secondDash + 1, len, 10);
-        
-        if (day <= MAX_DAY - 1) {
-            day = day+1;
-        }
-        else if(month <= MAX_MONTH -1) {
-        	day = 1;
-        	month = month + 1;
-        }
-        else if (year <= MAX_YEAR - 1) {
-        	day = 1; 
-        	month = 1;
-        	year = year + 1;
-        }
-        resultDate = year+"-"+month+"-"+day;
-        return resultDate;
-        
+		int firstDash = date1.indexOf('-');
+		int secondDash = date1.indexOf('-', firstDash + 1);
+		int len = date1.length();
+
+		int year = Integer.parseInt(date1, 0, firstDash, 10);
+		int month = Integer.parseInt(date1, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(date1, secondDash + 1, len, 10);
+
+		if (day <= MAX_DAY - 1) {
+			day = day+1;
+		}
+		else if(month <= MAX_MONTH -1) {
+			day = 1;
+			month = month + 1;
+		}
+		else if (year <= MAX_YEAR - 1) {
+			day = 1; 
+			month = 1;
+			year = year + 1;
+		}
+		resultDate = year+"-"+month+"-"+day;
+		return resultDate;
+
 	}
-	
-	
-	
-	
-    public static Date valueOf(String s) {
-        if (s == null) {
-            throw new java.lang.IllegalArgumentException();
-        }
-        final int YEAR_LENGTH = 4;
-        final int MONTH_LENGTH = 2;
-        final int DAY_LENGTH = 2;
-        final int MAX_MONTH = 12;
-        final int MAX_DAY = 31;
-        Date d = null;
 
-        int firstDash = s.indexOf('-');
-        int secondDash = s.indexOf('-', firstDash + 1);
-        int len = s.length();
 
-        if ((firstDash > 0) && (secondDash > 0) && (secondDash < len - 1)) {
-            if (firstDash == YEAR_LENGTH &&
-                    (secondDash - firstDash > 1 && secondDash - firstDash <= MONTH_LENGTH + 1) &&
-                    (len - secondDash > 1 && len - secondDash <= DAY_LENGTH + 1)) {
-                int year = Integer.parseInt(s, 0, firstDash, 10);
-                int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
-                int day = Integer.parseInt(s, secondDash + 1, len, 10);
 
-                if ((month >= 1 && month <= MAX_MONTH) && (day >= 1 && day <= MAX_DAY)) {
-                    d = new Date(year - 1900, month - 1, day);
-                }
-            }
-        }
-        if (d == null) {
-            throw new java.lang.IllegalArgumentException();
-        }
 
-        return d;
+	public static Date valueOf(String s) {
+		if (s == null) {
+			throw new java.lang.IllegalArgumentException();
+		}
+		final int YEAR_LENGTH = 4;
+		final int MONTH_LENGTH = 2;
+		final int DAY_LENGTH = 2;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		Date d = null;
 
-    }
-	
-	
-	
+		int firstDash = s.indexOf('-');
+		int secondDash = s.indexOf('-', firstDash + 1);
+		int len = s.length();
 
-	
-    /**
+		if ((firstDash > 0) && (secondDash > 0) && (secondDash < len - 1)) {
+			if (firstDash == YEAR_LENGTH &&
+					(secondDash - firstDash > 1 && secondDash - firstDash <= MONTH_LENGTH + 1) &&
+					(len - secondDash > 1 && len - secondDash <= DAY_LENGTH + 1)) {
+				int year = Integer.parseInt(s, 0, firstDash, 10);
+				int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+				int day = Integer.parseInt(s, secondDash + 1, len, 10);
+
+				if ((month >= 1 && month <= MAX_MONTH) && (day >= 1 && day <= MAX_DAY)) {
+					d = new Date(year - 1900, month - 1, day);
+				}
+			}
+		}
+		if (d == null) {
+			throw new java.lang.IllegalArgumentException();
+		}
+
+		return d;
+
+	}
+
+
+
+
+
+	/**
 	 * This is a helper method to know if the current BusinessHour overlaps with other business hours
 	 * @param day
 	 * @param startTime
@@ -2199,8 +2210,8 @@ public class FlexiBookController {
 		List<BusinessHour> hoursList = business.getBusinessHours();
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
-		
-		
+
+
 		for(BusinessHour x: hoursList) {
 			// check weekday
 			if(x.getDayOfWeek() == day && business.indexOfBusinessHour(notToInclude) != business.indexOfBusinessHour(x)) {
@@ -2220,7 +2231,7 @@ public class FlexiBookController {
 			}
 		}return isOverlapping;
 	}
-	
+
 	/**
 	 * This helper method finds if the current TimeSlot is overlapping with a vacation
 	 * @param startDate
@@ -2254,7 +2265,7 @@ public class FlexiBookController {
 			else isOverlapping = false;
 		} return isOverlapping;
 	}
-	
+
 	/**
 	 * This helper method finds if the current TimeSlot is overlapping with a Holiday
 	 * @param startDate
@@ -2290,7 +2301,7 @@ public class FlexiBookController {
 		} return isOverlapping;
 
 	}
-	
+
 	/**
 	 * This helper method finds the corresponding BusinessHour
 	 * @param day
@@ -2306,8 +2317,8 @@ public class FlexiBookController {
 				return x;
 			}
 		} return null;
-		}
-	
+	}
+
 	/**
 	 * This helper method finds the corresponding Vacation
 	 * @param startDate
@@ -2345,7 +2356,7 @@ public class FlexiBookController {
 		} 
 		return null;
 	}
-	
+
 	/**
 	 * This helper method finds the corresponding Holiday
 	 * @param start
@@ -2364,7 +2375,7 @@ public class FlexiBookController {
 		return isFuture;
 
 	}
-	
+
 
 
 }
