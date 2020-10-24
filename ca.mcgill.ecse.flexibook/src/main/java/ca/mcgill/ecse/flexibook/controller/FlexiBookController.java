@@ -1248,7 +1248,6 @@ public class FlexiBookController {
 		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
 		if (ByDay == true && ByWeek == false) {
 			
-			//TODO
 			// first check if the input is valid
 			if (!isValidDate(date1)) {
 				throw new InvalidInputException(date1 + " is not a valid date");

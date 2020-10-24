@@ -20,6 +20,7 @@ import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.BookableService;
 import ca.mcgill.ecse.flexibook.model.Business;
@@ -110,6 +111,39 @@ public class CucumberStepDefinitions {
 		assertEquals(true, FlexiBookApplication.getCurrentLoginUser() instanceof Owner);	    
 	}
 
+/*---------------------------Test view appointment calendar--------------------------*/
+	
+
+	@When("{string} requests the appointment calendar for the week starting on {string}")
+	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
+			FlexiBookController.viewAppointmentCalnader(date, false, true);
+	}
+	@Then("the following slots shall be unavailable:")
+	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
+		Boolean isUnavailable = false;
+		for(Map<String, String> map : datatable) {
+			for (TOTimeSlot time:FlexiBookController.getUnavailbleTime(map.get("date"), true, false)) {
+				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
+					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
+						isUnavailable = true;
+						assertEquals(true, isUnavailable);
+					}
+					
+				}
+				else if (stringToTime(map.get("startTime")).before(time.getStartTime())) {
+					if (stringToTime(map.get("endTime")).after(time.getStartTime())){
+						isUnavailable = true;
+						assertEquals(true, isUnavailable);
+					}
+				}
+			}
+		}
+	}
+	@Then("the following slots shall be available:")
+	public void the_following_slots_shall_be_available(io.cucumber.datatable.DataTable dataTable) {
+		    
+	}
+
 
 
 
@@ -138,10 +172,12 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 * @author chengchen
+	 * 
 	 * 
 	 *  As a business owner, I wish to add services to my business 
 	 *  so that my customers can make appointments for them.
+	 *  
+	 *  @author chengchen
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
