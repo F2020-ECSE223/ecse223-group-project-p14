@@ -29,6 +29,9 @@ public class ControllerUtils {
 
 	/**
 	 * returns the downtime time slots for a given appointment as List<TOTimeSlot>
+	 * The reason why it returns TO is because
+	 * we dont want to use the actual model since it will add timeslot in the system which 
+	 * messes up other check
 	 * @author AntoineW
 	 */
 	public static List<TOTimeSlot> getDowntimesByAppointment(Appointment app) {
