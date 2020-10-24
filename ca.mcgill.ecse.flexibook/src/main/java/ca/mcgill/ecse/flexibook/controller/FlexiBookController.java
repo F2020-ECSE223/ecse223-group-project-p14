@@ -31,7 +31,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be added
 	 * @param downtimeStart - the start time of the downtime of the service to be added
 	 * @throws InvalidInputException
-	 * 
+	 * @return true if added successfully
 	 * @author chengchen
 	 *
 	 */
@@ -102,6 +102,7 @@ public class FlexiBookController {
 	 * This method removes the service with specified name from the database
 	 * @param name - name of the service to be removed
 	 * @throws InvalidInputException 
+	 * @return true if deleted successfully
 	 * @author chengchen
 	 */
 	public static boolean deleteService(String name) throws InvalidInputException{
@@ -169,6 +170,7 @@ public class FlexiBookController {
 	 * @param downtimeDuration - duration of the downtime of the service to be updated
 	 * @param downtimeStart - the start time of the downtime of the service to be updated
 	 * @throws InvalidInputException 
+	 * @return true if updated successfully
 	 * @author chengchen
 	 * 
 	 */
@@ -581,6 +583,7 @@ public class FlexiBookController {
 	 * This method creates a new customer account when a customer signs up
 	 * @param username
 	 * @param password
+	 * @return signUpSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
@@ -589,7 +592,7 @@ public class FlexiBookController {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
 		boolean signUpSuccessful = false;
 		if (FlexiBookApplication.getCurrentLoginUser() != null) {
-			if (FlexiBookApplication.getCurrentLoginUser().getUsername() == "owner" || FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
+			if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner") ) { // alternative: FlexiBookApplication.getCurrentLoginUser() instanceof Owner
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
@@ -599,13 +602,12 @@ public class FlexiBookController {
 		else if (password == null || password.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(username))) { //consider using helper method findCustomer
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
+		else if (findCustomer(username) != null) { 
 			throw new InvalidInputException("The username already exists");
 		}
 		else {
 			Customer aCustomer = new Customer(username, password, flexiBook);
-			flexiBook.addCustomer(aCustomer); //this seems unecessary
+			flexiBook.addCustomer(aCustomer); 
 			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 			signUpSuccessful = true;
@@ -620,15 +622,15 @@ public class FlexiBookController {
 	 * @param currentUsername
 	 * @param newUsername
 	 * @param newPassword
+	 * @return updateSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
 	 */
-	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException {
-		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook(); 
+	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException { 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean updateSuccessful = false;
-		if (user.getUsername() != currentUsername) {
+		if (!user.getUsername().equals(currentUsername)) {
 			throw new InvalidInputException("You do not have permission to update this account"); 
 		}
 		else if (newUsername == null || newUsername.replaceAll("\\s+", "").length() == 0) {
@@ -640,8 +642,7 @@ public class FlexiBookController {
 		else if (newPassword == null || newPassword.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (flexiBook.getCustomers().stream().anyMatch(p -> p.getUsername().equals(newUsername))) { 
-			//if (user.hasWithUsername(newUsername)){ //can maybe use this instead? it's simpler!
+		else if (findCustomer(newUsername) != null) { 
 			throw new InvalidInputException("Username not available");
 		}
 		else {
@@ -656,6 +657,7 @@ public class FlexiBookController {
 	/**
 	 * This method deletes the current customer's account so their personal information is deleted
 	 * @param username
+	 * @return deleteSuccessful boolean
 	 * @throws InvalidInputException
 	 * 
 	 * @author Catherine
@@ -663,7 +665,7 @@ public class FlexiBookController {
 	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean deleteSuccessful = false;
-		if (!user.getUsername().equals(username) || user.getUsername().equals("owner") || user instanceof Owner) { 
+		if (!user.getUsername().equals(username) || user.getUsername().equals("owner")) { //alternative: user instanceof Owner
 			throw new InvalidInputException("You do not have permission to delete this account");
 		}
 		else {
@@ -1204,10 +1206,8 @@ public class FlexiBookController {
 
 
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
-	 * This is a query method which returns a list of TOAppointmentCalendar with a chosen data and a chosen mode
-	 * TODO: missing features of showing availble times, also we don't need to show the service name and the name of the customer 
-	 * 			THE ONLY thing need to be shown is the time slots. Use getUnavailbleTime and getAvailbleTim
+	 * This is a method which returns a boolean if the time input is available
+	 * TODO: missing features of showing available times, also we don't need to show the service name and the name of the customer 
 	 * 
 	 * @param date
 	 * @param ByDay
@@ -1216,52 +1216,43 @@ public class FlexiBookController {
 	 * @return
 	 * @author mikewang
 	 */
-	public static List<TOAppointmentCalender> viewAppointmentCalnader(Date date, Boolean ByDay, Boolean ByMonth, Boolean ByYear){
-		//@ TODO
-		ArrayList<TOAppointmentCalender> appointmentCalendars = new ArrayList<TOAppointmentCalender>();
-		if (ByDay == true && ByMonth == false && ByYear == false) {
-			if (isInHoliday)
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getDate() <= date.getDate() &&  date.getDate() <= toAppointments.getTimeSlot().getEndDate().getDate()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(), toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
+	public static boolean viewAppointmentCalnader(String date1,  Time startTime , Time endTime, Boolean ByDay, Boolean ByWeek){
+		boolean isAvalible = false; 
+		if (ByDay==true && ByWeek==false) {
+			try {
+				for (TOTimeSlot toTimeSlots: getUnavailbleTime(date1,true,false)) {
+					if((startTime.equals(toTimeSlots.getStartTime()) || startTime.after(toTimeSlots.getStartTime())) && (endTime.equals(toTimeSlots.getEndTime())||endTime.before(toTimeSlots.getEndTime()))) {
+						isAvalible = false; 
+					}
+					else{
+						isAvalible = true;
+					}
 				}
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		else if(ByDay == false && ByMonth == true && ByYear == false) {
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getMonth() <= date.getMonth() &&  date.getMonth() <= toAppointments.getTimeSlot().getEndDate().getMonth()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
-				}
-			}
-		}
-		else if(ByDay == false && ByMonth == false && ByYear == true) {
-			for (TOAppointment toAppointments: getTOAppointment()) {
-				if (toAppointments.getTimeSlot().getStartDate().getYear() <= date.getYear() &&  date.getYear() <= toAppointments.getTimeSlot().getEndDate().getYear()) {
-					TOAppointmentCalender toAppointmentCalendar = new TOAppointmentCalender(toAppointments.getCustomerName(),toAppointments.getServiceName(), toAppointments.getTimeSlot());
-					appointmentCalendars.add(toAppointmentCalendar);
-				}
-			}
-		}
-		return appointmentCalendars;
+		return isAvalible;
 	}
 
 
 	
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
+	 * 
 	 * This is a query method which can return all unavailble time slot to an ArrayList
 	 * @param date
 	 * @param ByDay
 	 * @param ByWeek
 	 * @author mikewang
-	 * @return
+	 * @return <TOTimeSlot> getUnavailbleTime
 	 */
 	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		
 		Date date = Date.valueOf(date1);
 		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
 		if (ByDay == true && ByWeek == false) {
+			
 			//TODO
 			// first check if the input is valid
 			if (!isValidDate(date1)) {
@@ -1270,7 +1261,7 @@ public class FlexiBookController {
 			// second check if it is in Holiday or Vacation
 			else if (checkIsInHoliday(date)||checkIsInVacation(date)) {
 				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
-				for (BusinessHour BH: Business.getBusinessHours()) {
+				for (TOBusinessHour BH: getTOBusinessHour()) {
 					if ( BH.getDayOfWeek() == dayOfWeek) {
 						TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
 						unavailbleTimeSlots.add(toHolidayOrVacationTS);
@@ -1281,62 +1272,111 @@ public class FlexiBookController {
 			else {
 				for (TOAppointment toAppointments: getTOAppointment()) {
 					if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
-						
-							// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
-							// unavailbleTimeSlots.add(getUnavailbleTimes);
-						for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
-							if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
-								TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
-								TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
-								unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
-								unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+						if (toAppointments.getDownTimeTimeSlot() != null) {
+								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
+								// unavailbleTimeSlots.add(getUnavailbleTimes);
+							for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+								if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+									TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+									TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+									unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+									unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+								}
 							}
 						}
-						unavailbleTimeSlots.add(toAppointments.getTimeSlot());
-						
+						else {
+							unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+						}
 					}
 				}
 			}
-			return unavailbleTimeSlots;
+			
 		}
 		else if (ByDay == false && ByWeek == true) {
 			//TODO
 			// i need to get some sleep, i will resume my part after i get up
 			// first check if the input is valid
 			
+			
 			if (!isValidDate(date1)) {
 				throw new InvalidInputException(date1 + " is not a valid date");
 			}
 			else {
-				for (i=0;i<7;i++) {
-					
+				for(int i=0;i<7;i++) {
+					getUnavailbleTime(date1, true, false);
+					date1 = NextDate(date1);
 				}
 			}
-			return unavailbleTimeSlots;
 		}
-		
+		return unavailbleTimeSlots;
 	}
 	
+	
+	
+
+// implement next time
+	
+//	/**
+//	 * DON'T TOUCH MIKE WILL FINISH THIS 
+//	 * This is a query method which can return all availble time slot to an ArrayList
+//	 * @param date
+//	 * @param ByDay
+//	 * @param ByWeek
+//	 * @author mikewang
+//	 * @return
+//	 */
+//	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+//		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
+//		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
+//		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
+//		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
+//		Date date = Date.valueOf(date1);
+//		
+//		if (ByDay == true && ByWeek == false) {
+//			//TODO
+//			if (!isValidDate(date1)) {
+//				throw new InvalidInputException(date1 + " is not a valid date");
+//			}
+//			else {
+//				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
+//				for(TOBusinessHour TBH: getTOBusinessHour()) {
+//					if (TBH.getDayOfWeek() == dayOfWeek) {
+//						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
+//						
+//						for (TOTimeSlot dayUnavailbleTimes: getUnavailbleTime(date1,true,false)) {
+//							
+//						}
+//					}
+//				}
+//				
+//			}
+//		}
+//		if (ByDay == false && ByWeek == true) {
+//			//TODO
+//		}
+//	}
+	
+	
+//	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+//		for (int i =0; i <= TimeSlots.; i++) {
+//			
+//		}
+//	}
+//	
 	
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
-	 * This is a query method which can return all availble time slot to an ArrayList
-	 * @param date
-	 * @param ByDay
-	 * @param ByWeek
-	 * @author mikewang
+	 * this is an qurey method with returns the BusinessHour 
 	 * @return
+	 * @author mikewang
 	 */
-	public static List<TOTimeSlot> getAvailbleTime(Date date, Boolean ByDay, Boolean ByWeek){
-		if (ByDay == true && ByWeek == false) {
-			//TODO
+	public static List<TOBusinessHour> getTOBusinessHour(){
+		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+		for (BusinessHour BH: Business.getBusinessHours()) {
+			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+			businessHours.add(BusinessHour);
 		}
-		if (ByDay == false && ByWeek == true) {
-			//TODO
-		}
+		return businessHours;
 	}
-	
-	
 
 
 	/**
@@ -1396,8 +1436,22 @@ public class FlexiBookController {
 		}
 		return timeSlots;
 	}
-
-
+	/**
+	 * This is a query method which can get list of all services in the system
+	 * @return a list of services
+	 * @author chengchen
+	 */
+	public static List<TOService> getTOServices(){
+		List<TOService> toServices = new ArrayList<TOService>();
+		for (BookableService bookableService:FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bookableService instanceof Service) {
+				TOService toService = new TOService(bookableService.getName(), ((Service) bookableService).getDuration(), ((Service) bookableService).getDowntimeDuration(), ((Service) bookableService).getDowntimeStart());
+				toServices.add(toService);
+			}
+		}
+		return toServices;
+			
+	}
 
 	/**
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
@@ -1484,9 +1538,7 @@ public class FlexiBookController {
 	//		//@ TODO
 	//	}
 	//
-	//	public static List<TOService> getTOServices(){
-	//		//@ TODO
-	//	}
+
 	//	
 	//	
 	//	
@@ -1861,29 +1913,22 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This method is a helper method for finding a particular user by username
+	 * This method is a helper method for finding a particular user by username.
 	 * User can be the owner or a customer 
 	 * 
 	 * This is a private helper method but we put it public in this stage for testing.
 	 * 
 	 * @param username
-	 * @return 
+	 * @return User with username or null
 	 * @author Catherine
 	 */
 	public static User findUser(String username){
-		User foundUser = null;
+		User foundUser;
 		if (username.equals("owner")) {
 			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
 		}
 		else {
-			for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-				if (user.getUsername().equals(username) ) {
-					foundUser = user;
-					break;
-				}
-				else foundUser = null;
-			}
-
+			foundUser = findCustomer(username);
 		}
 		return foundUser;
 	}

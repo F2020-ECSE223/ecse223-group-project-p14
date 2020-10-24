@@ -74,23 +74,31 @@ public class CucumberStepDefinitions {
 	
 	/**
 	 * @author chengchen
+	 * 
 	 *  As a business owner, I wish to add services to my business 
 	 *  so that my customers can make appointments for them.
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
-
+	/**
+	 * @author chengchen
+	 */
 	@Given("an owner account exists in the system")
 	public void anOwnerAccountExists() {
 		owner = new Owner("owner", "owner", flexiBook);
 		flexiBook.setOwner(owner);
 
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Given("the Owner with username {string} is logged in")
 	public void theOwnerWithUsernameIsLoggedIn(String username) {
 		FlexiBookApplication.setCurrentLoginUser(owner);
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the addition of the service {string} with duration {string}, start of down time {string} and down time duration {string}")
 	public void initiates_the_addition_of_the_service_with_duration_start_of_down_time_and_down_time_duratrion(String username, String name, String duration, String downtimeStart, String downtimeDuration) throws Throwable{
 
@@ -103,13 +111,16 @@ public class CucumberStepDefinitions {
 			}
 	}
 		
-	
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall exist in the system")
 	public void the_service_shall_exist_in_the_system(String name) {
 		assertEquals(name, FlexiBookController.findSingleService(name).getName());
-//		assertEquals(name,flexiBook.getBookableServices().get(0).getName());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall have duration {string}, start of down time {string} and down time duration {string}")
 	public void the_service_shall_have_duration_start_of_down_time_and_down_time_duration(String name, String duration, String downtimeStart, String downtimeDuration) {
 		Service service = (Service)flexiBook.getBookableServices().get(0);
@@ -118,7 +129,9 @@ public class CucumberStepDefinitions {
 		assertEquals(Integer.parseInt(downtimeStart),service.getDowntimeStart());
 
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of services in the system shall be {string}")
 	public void the_number_of_services_shall_be(String numService) {
 		List<Service> services = new ArrayList<Service>();
@@ -129,21 +142,30 @@ public class CucumberStepDefinitions {
 		}
 		assertEquals(Integer.parseInt(numService), services.size());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("an error message with content {string} shall be raised")
 	public void an_error_message_with_content_shall_be_raised(String errorMsg) {
 		assertEquals(errorMsg, error);
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall not exist in the system")
 	public void the_service_shall_not_exist(String name) {
 		assertEquals(null, FlexiBookController.findBookableService(name));;
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of services in the system shall be zero {string}")
 	public void the_number_of_services_shall_be_zero(String numService) {
 		assertEquals(Integer.parseInt(numService), flexiBook.numberOfBookableServices());
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall still preserve the following properties:")
 	public void the_service_shall_still_preserve_the_following_properties(String name, List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -153,13 +175,18 @@ public class CucumberStepDefinitions {
 		 }
 		 
 	}
-	 @Then("the number of services in the system shall be {int}")
-	 public void the_number_of_services_in_the_system_shall_be(int number) {
+	/**
+	 * @author chengchen
+	 */
+	@Then("the number of services in the system shall be {int}")
+	public void the_number_of_services_in_the_system_shall_be(int number) {
 		 assertEquals(1, flexiBook.getBookableServices().size());
-	 }
-
-	 @Given("Customer with username {string} is logged in")
-	 public void customer_with_username_is_logged_in(String username) {
+	}
+	/**
+	 * @author chengchen
+	 */
+	@Given("Customer with username {string} is logged in")
+	public void customer_with_username_is_logged_in(String username) {
 		 Customer customer = FlexiBookController.findCustomer(username);
 		 FlexiBookApplication.setCurrentLoginUser(customer);
 	}
@@ -172,7 +199,9 @@ public class CucumberStepDefinitions {
  * so that I can keep my customers up to date.
  */
 /*---------------------------Test delete Service--------------------------*/
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the deletion of service {string}")
 	public void initiates_the_deletion_of_service(String username, String serviceName) throws Throwable {
 		try {
@@ -182,23 +211,32 @@ public class CucumberStepDefinitions {
 			errorCntr++;
 		}
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of appointments in the system with service {string} shall be {string}")
 	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
 		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
 		assertEquals(Integer.parseInt(numService), appointments.size());
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Then("the number of appointments in the system shall be {string}")
 	public void the_number_of_appointments_in_the_system_shall_be(String numAppointment) {
 		assertEquals(Integer.parseInt(numAppointment), flexiBook.getAppointments().size());
 	}
 
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service combos {string} shall not exist in the system")
 	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
 		assertTrue(FlexiBookController.findServiceCombo(comboName)==null);
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service combos {string} shall not contain service {string}")
 	public void the_service_combos_shall_not_contain_service(String comboName,String serviceName) {
 		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(comboName);
@@ -217,7 +255,9 @@ public class CucumberStepDefinitions {
  */
 /*------------------------------Test update Service--------------------------*/
 
-
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} initiates the update of the service {string} to name {string}, duration {string}, start of down time {string} and down time duration {string}")
 	public void initiates_the_update_of_the_service_to_name_duration_start_of_down_time_and_down_time_duration(String username, String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) throws InvalidInputException{
 		try {
@@ -228,7 +268,9 @@ public class CucumberStepDefinitions {
 		}
 		
 	}
-		
+	/**
+	 * @author chengchen
+	 */
 	@Then("the service {string} shall be updated to name {string}, duration {string}, start of down time {string} and down time duration {string}")
 	public void the_service_shall_be_updated_to_name_duration_start_of_down_time_and_down_time_duration(String serviceName, String newServiceName, String newDuration, String newDowntimeStart, String newDowntimeDuration) {
 		   for (BookableService bookableService:flexiBook.getBookableServices()) {
@@ -248,17 +290,6 @@ public class CucumberStepDefinitions {
 
 
 
-
-	
-
-
-
-	 
-
-
-
-
-
 	/**
 	 * 
 	 * @author AntoineW
@@ -269,6 +300,9 @@ public class CucumberStepDefinitions {
 	//----------------------------------------make app -----------------------------------------------------------------------------
 
 
+	/**
+	 * @author Catherine & @ TODO Who else wrote this one?
+	 */
 	@Given("a Flexibook system exists")
 	public void a_Flexibook_System_Exists() {
 		flexiBook = FlexiBookApplication.getFlexiBook();
@@ -657,6 +691,9 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 
+	/**
+	 * @author Catherine
+	 */
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
 		customerCount = flexiBook.getCustomers().size();
@@ -667,6 +704,9 @@ public class CucumberStepDefinitions {
 
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@When("the user provides a new username {string} and a password {string}")
 	public void the_user_provides_a_new_username_and_a_password(String username, String password) {
 		try {
@@ -677,11 +717,17 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("a new customer account shall be created")
 	public void a_new_customer_account_shall_be_created() {
 		assertEquals(1, flexiBook.getCustomers().size() - customerCount);
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("the account shall have username {string} and password {string}")
 	public void the_account_shall_have_username_and_password(String username, String password) {
 		if(FlexiBookController.findUser(username) instanceof Owner) {
@@ -694,17 +740,25 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("no new account shall be created")
 	public void no_new_account_shall_be_created() {
 		assertEquals(0, flexiBook.getCustomers().size() - customerCount);
 	}
 
-
+	/**
+	 * @author Catherine
+	 */
 	@Then("an error message {string} shall be raised")
 	public void an_error_message_shall_be_raised(String errorMsg) {
 		assertTrue(error.contains(errorMsg));
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Given("there is an existing username {string}")
 	public void there_is_an_existing_username(String username) {
 		customerCount = flexiBook.getCustomers().size();
@@ -720,6 +774,9 @@ public class CucumberStepDefinitions {
 		}	
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Given("the user is logged in to an account with username {string}")
 	public void the_user_is_logged_in_to_an_account_with_username(String username) {
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));
@@ -736,13 +793,18 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 
-
+	/**
+	 * @author Catherine
+	 */
 	@Given("an owner account exists in the system with username {string} and password {string}")
 	public void an_owner_account_exists_in_the_system_with_username_and_password(String username, String password) {
 		owner = new Owner(username, password, flexiBook);
 		flexiBook.setOwner(owner);
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@When("the user tries to update account with a new username {string} and password {string}")
 	public void the_user_tries_to_update_account_with_a_new_username_and_password(String newUsername, String newPassword) {
 		try {
@@ -753,6 +815,9 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("the account shall not be updated")
 	public void the_account_shall_not_be_updated() {
 		assertEquals(FlexiBookApplication.getCurrentLoginUser().getUsername(), "User1");
@@ -769,7 +834,9 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 
-
+	/**
+	 * @author Catherine
+	 */
 	@Given("the account with username {string} has pending appointments")
 	public void the_account_with_username_has_pending_appointments(String username) {
 		Date date = new Date(1634814000); //Thursday, October 21, 2021 11:00:00 AM 
@@ -782,6 +849,9 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@When("the user tries to delete account with the username {string}")
 	public void the_user_tries_to_delete_account_with_the_username(String username) {
 		try {
@@ -792,21 +862,33 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("the account with the username {string} does not exist")
 	public void the_account_with_the_username_does_not_exist(String username) {
 		assertNull(FlexiBookController.findUser(username));
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("all associated appointments of the account with the username {string} shall not exist")
 	public void all_associated_appointments_of_the_account_with_the_username_shall_not_exist(String username) {
 		assertTrue(findAppointmentsForCustomer(username).isEmpty());
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("the user shall be logged out")
 	public void the_user_shall_be_logged_out() {
 		assertNull(FlexiBookApplication.getCurrentLoginUser());
 	}
 
+	/**
+	 * @author Catherine
+	 */
 	@Then("the account with the username {string} exists")
 	public void the_account_with_the_username_exists(String username) {
 		assertFalse(FlexiBookController.findUser(username) == null);
