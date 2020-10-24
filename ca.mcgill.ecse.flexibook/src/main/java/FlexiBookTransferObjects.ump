@@ -63,3 +63,9 @@ class TOAppointmentCalender {
 
 }
 
+class TOBusinessHour {
+	DayOfWeek dayOfWeek;
+  	Time startTime;
+  	Time endTime;
+}
+
