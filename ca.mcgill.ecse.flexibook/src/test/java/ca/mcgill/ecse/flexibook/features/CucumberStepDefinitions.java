@@ -195,8 +195,25 @@ public class CucumberStepDefinitions {
 
 
 	@Then("the following slots shall be available:")
-	public void the_following_slots_shall_be_available(io.cucumber.datatable.DataTable dataTable) {
-		
+	public void the_following_slots_shall_be_available(List<Map<String, String>> datatable) throws InvalidInputException {
+		Boolean isAvailable = false;
+		for(Map<String, String> map : datatable) {
+			for (TOTimeSlot time:FlexiBookController.getAvailbleTime(map.get("date"), true, false)) {
+				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
+					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
+						isAvailable = true;
+						assertEquals(true, isAvailable);
+					}
+
+				}
+				else if (stringToTime(map.get("startTime")).before(time.getStartTime())) {
+					if (stringToTime(map.get("endTime")).after(time.getStartTime())){
+						isAvailable = true;
+						assertEquals(true, isAvailable);
+					}
+				}
+			}
+		}
 	}
 
 
