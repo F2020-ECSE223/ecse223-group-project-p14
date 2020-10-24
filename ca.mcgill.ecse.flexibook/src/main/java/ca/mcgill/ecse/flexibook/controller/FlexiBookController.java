@@ -1364,49 +1364,49 @@ public class FlexiBookController {
 //	}
 //	
 	
-	/**
-	 * this is an qurey method with returns the BusinessHour 
-	 * @return
-	 * @author mikewang
-	 */
-	public static List<TOBusinessHour> getTOBusinessHour(){
-		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
-		for (BusinessHour BH: Business.getBusinessHours()) {
-			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
-			businessHours.add(BusinessHour);
-		}
-		return businessHours;
-	}
+//	/**
+//	 * this is an qurey method with returns the BusinessHour 
+//	 * @return
+//	 * @author mikewang
+//	 */
+//	public static List<TOBusinessHour> getTOBusinessHour(){
+//		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+//		for (BusinessHour BH: Business.getBusinessHours()) {
+//			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+//			businessHours.add(BusinessHour);
+//		}
+//		return businessHours;
+//	}
 
 
-	/**
-	 * This is a query method which can gives a list of all TOAppointment 
-	 * Which includes all appointments combo items and time slot 
-	 * @return
-	 * @author mikewang
-	 * @author AntoineW later made a change
-	 */
-	public static List<TOAppointment> getTOAppointment(){
-		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
-		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
-			
-			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
-					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
-			// Added feature TOAppointment can show all downtime
-			// by mikewang
-			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
-				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
-			}
-			// ToAppointment need to show all the service item (comboitem)
-			// by AnTW
-			for (TOComboItem toc:getToTOComboItem(appointment)) {
-				toAppointment.addChosenItem(toc);
-			}
-			appointments.add(toAppointment);
-		}
-		return appointments;
-
-	}	
+//	/**
+//	 * This is a query method which can gives a list of all TOAppointment 
+//	 * Which includes all appointments combo items and time slot 
+//	 * @return
+//	 * @author mikewang
+//	 * @author AntoineW later made a change
+//	 */
+//	public static List<TOAppointment> getTOAppointment(){
+//		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+//		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
+//			
+//			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
+//					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+//			// Added feature TOAppointment can show all downtime
+//			// by mikewang
+//			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
+//				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
+//			}
+//			// ToAppointment need to show all the service item (comboitem)
+//			// by AnTW
+//			for (TOComboItem toc:getToTOComboItem(appointment)) {
+//				toAppointment.addChosenItem(toc);
+//			}
+//			appointments.add(toAppointment);
+//		}
+//		return appointments;
+//
+//	}	
 
 	/**
 	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
