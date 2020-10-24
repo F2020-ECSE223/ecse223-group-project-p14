@@ -1070,10 +1070,14 @@ public class CucumberStepDefinitions {
 	/*---------------------------Test Define Service Combo--------------------------*/
 
 	/**
-	 * 
+	 * Test method for initiating a creation of a service combo
+	 * @param user -user who initiates the service combo creation
+	 * @param serviceComboName -name of service combo
+	 * @param mainServiceName -main service of service combo
+	 * @param servicesString -ordered list of services for the service combo
+	 * @param mandatorySettingsString -determines which services are mandatory
 	 * @author gtjarvis
 	 */
-
 	@When("{string} initiates the definition of a service combo {string} with main service {string}, services {string} and mandatory setting {string}")
 	public void user_initiates_the_definition_of_a_service_combo(String user, String serviceComboName, String mainServiceName, String servicesString, String mandatorySettingsString) throws InvalidInputException{
 		if (FlexiBookApplication.getCurrentLoginUser().getUsername().equals(user)){
@@ -1091,55 +1095,129 @@ public class CucumberStepDefinitions {
 				errorCntr++;
 			}
 		}
-
 	}
 
+	/**
+	 * Check for if the given service combo exists in the system
+	 * @param name -name of given service combo
+	 * @author gtjarvis
+	 */
 	@Then("the service combo {string} shall exist in the system")
 	public void the_service_combo_name_shall_exist_in_the_system(String name){
-		assertEquals(FlexiBookController.findServiceCombo(name).getName(), name);
+		String nameFound = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				nameFound = b.getName();
+			}
+		}
+		assertEquals(nameFound, name);
 	}
 
+	/**
+	 * Check for if the given service combo does not exist in the system
+	 * @param name -name of given service combo
+	 * @author gtjarvis
+	 */
 	@Then("the service combo {string} shall not exist in the system")
 	public void the_service_combo_name_shall_not_exist_in_the_system(String name){
-		assertEquals(FlexiBookController.findServiceCombo(name), null);
+		String nameFound = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				nameFound = b.getName();
+			}
+		}
+		assertNull(nameFound);
 	}
 
+	/**
+	 * Check for if the given service combo conatins the given services and whether or not they are mandatory
+	 * @param name -name of given service combo
+	 * @param servicesString -ordered list of services
+	 * @param mandatorySettingsString -determines which services are mandatory
+	 * @author gtjarvis
+	 */
 	@Then("the service combo {string} shall contain the services {string} with mandatory setting {string}")
 	public void the_service_combo_comboName_shall_contain_the_services_serviceName_with_mandatory_setting_mandatorySetting(String name, String servicesString, String mandatorySettingsString){
 		List<String> servicesList = Arrays.asList(servicesString.split(","));
 		List<String> mandatorySettingsList = Arrays.asList(mandatorySettingsString.split(","));
-		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
-		List<ComboItem> comboList= serviceCombo.getServices();
+		ServiceCombo serviceCombo = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				serviceCombo = (ServiceCombo) b;
+			}
+		}
+		List<ComboItem> comboList = serviceCombo.getServices();
 		for(int i = 0; i < comboList.size(); i++){
 			assertEquals(comboList.get(i).getService().getName(), servicesList.get(i));
 			assertEquals(comboList.get(i).getMandatory(), Boolean.parseBoolean(mandatorySettingsList.get(i)));
 		}
 	}
 
+	/**
+	 * Check for if the given service combo has the given main service
+	 * @param name -name of given service combo
+	 * @param mainService -main service name
+	 * @author gtjarvis
+	 */
 	@Then("the main service of the service combo {string} shall be {string}")
 	public void the_main_service_of_the_service_combo_name_shall_be_mainService(String name, String mainService){
-		assertEquals(FlexiBookController.findServiceCombo(name).getMainService().getService().getName(), mainService);
-	}
-
-	@Then("the service {string} in service combo {string} shall be mandatory")
-	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainService, String name){
-		List<ComboItem> comboItems = FlexiBookController.findServiceCombo(name).getServices();
-		for(ComboItem c: comboItems){
-			if(c.getService().getName().equals(mainService)){
-				assertTrue(c.getMandatory());
+		String nameFound = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				nameFound = ((ServiceCombo)b).getMainService().getService().getName();
 			}
 		}
+		assertEquals(nameFound, mainService);
 	}
 
+	/**
+	 * Check for if the main service in a given service combo is mandatory
+	 * @param mainService -main service name
+	 * @param name -name of given service combo
+	 * @author gtjarvis
+	 */
+	@Then("the service {string} in service combo {string} shall be mandatory")
+	public void the_service_mainService_in_service_combo_name_shall_be_mandatory(String mainServiceName, String name){
+		ComboItem mainService = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo && ((ServiceCombo)b).getMainService().getService().getName().equals(mainServiceName)) {
+				mainService = ((ServiceCombo)b).getMainService();
+			}
+		}
+		assertTrue(mainService.getMandatory());
+	}
+
+	/**
+	 * Check for the number of service combos
+	 * @param num -number of service combos
+	 * @author gtjarvis
+	 */
 	@Then("the number of service combos in the system shall be {string}")
 	public void the_number_of_services_combos_in_the_system_shall_be_num(String num){
 		int n = Integer.parseInt(num);
-		assertEquals(FlexiBookController.getServiceCombos().size(), n);
+		int count = 0;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b instanceof ServiceCombo) {
+				count++;
+			}
+		}
+		assertEquals(count, n);
 	}
 
+	/**
+	 * Check for if a given service combo preserves a number of properties
+	 * @param name -name of given service combo
+	 * @param datatable -datatable of properties
+	 * @author gtjarvis
+	 */
 	@Then("the service combo {string} shall preserve the following properties:")
 	public void the_service_combo_name_shall_preserve_the_following_properties(String name, List<Map<String, String>> datatable){
-		ServiceCombo serviceCombo = FlexiBookController.findServiceCombo(name);
+		ServiceCombo serviceCombo = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				serviceCombo = (ServiceCombo) b;
+			}
+		}
 		Map<String, String> map = datatable.get(0);
 		List<String> services = Arrays.asList(map.get("services").split(","));
 		List<String> mandatory = Arrays.asList(map.get("mandatory").split(","));
@@ -1155,7 +1233,9 @@ public class CucumberStepDefinitions {
 	/*---------------------------Test Delete Service Combo--------------------------*/
 
 	/**
-	 * 
+	 * Test method for deleting a given service combo
+	 * @param user -user who initiated the deletion
+	 * @param name -name of given service combo
 	 * @author gtjarvis
 	 */
 	@When("{string} initiates the deletion of service combo {string}")
@@ -1174,7 +1254,13 @@ public class CucumberStepDefinitions {
 	/*---------------------------Test Update Service Combo--------------------------*/
 
 	/**
-	 * 
+	 * Test method for updating a given service combo
+	 * @param user -user who initiated the deletion
+	 * @param serviceCombo -name of given service combo
+	 * @param newName -new name of the service combo
+	 * @param newMainService -new main service of the service combo
+	 * @param newServices -new ordered list of services of the service combo
+	 * @param newMandatory -determines which services are mandatory for the new services in the service combo
 	 * @author gtjarvis
 	 */
 	@When ("{string} initiates the update of service combo {string} to name {string}, main service {string} and services {string} and mandatory setting {string}")
@@ -1196,12 +1282,28 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * Check for whether Service Combo name has been updated
+	 * @param name -old name of service combo
+	 * @param newName -new name of service combo
+	 * @author gtjarvis
+	 */
 	@Then("the service combo {string} shall be updated to name {string}")
 	public void the_service_combo_shall_be_updated_to_name(String name, String newName) {
-		if(!name.equals(newName)){
-			assertNull(FlexiBookController.findServiceCombo(name));
+		ServiceCombo serviceCombo = null;
+		ServiceCombo newServiceCombo = null;
+		for (BookableService b : FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (b.getName().equals(name) && b instanceof ServiceCombo) {
+				serviceCombo = (ServiceCombo) b;
+			}
+			if(b.getName().equals(newName) && b instanceof ServiceCombo){
+				newServiceCombo = (ServiceCombo) b;
+			}
 		}
-		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
+		if(!name.equals(newName)){
+			assertNull(serviceCombo);
+		}
+		assertTrue(newServiceCombo != null);
 	}
 	
 	
