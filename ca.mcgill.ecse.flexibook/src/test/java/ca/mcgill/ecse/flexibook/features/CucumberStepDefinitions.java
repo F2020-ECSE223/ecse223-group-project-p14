@@ -20,6 +20,7 @@ import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.BookableService;
 import ca.mcgill.ecse.flexibook.model.Business;
@@ -71,12 +72,112 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.getFlexiBook().delete();
 	}
 
+/*---------------------------Test Log in--------------------------*/
+	/**
+	 * As an owner, I want to log in so that I can access the space to manage my business. 
+  	 * As a customer, I want to log in so that I can manage my appointments.
+     * The owner account is created automatically if it does not exist.
+	 *
+	 * @author mikewang
+	 */
+
+	@When("the user tries to log in with username {string} and password {string}")
+	public void the_user_tries_to_log_in_with_username_and_password(String username, String password) {
+		try {
+			FlexiBookController.logIn(username, password);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	@Then("the user should be successfully logged in")
+	public void the_user_should_be_successfully_logged_in() {
+		assertEquals(false, FlexiBookApplication.getCurrentLoginUser()==null);
+	}
+	
+	@Then("the user should not be logged in")
+	public void the_user_should_not_be_logged_in() {
+		assertEquals(true, FlexiBookApplication.getCurrentLoginUser()==null);
+	}
+	
+	@Then("a new account shall be created")
+	public void a_new_account_shall_be_created() {
+		assertEquals(true, flexiBook.getOwner()!=null);
+	}
+
+	@Then("the user shall be successfully logged in")
+	public void the_user_shall_be_successfully_logged_in() {
+		assertEquals(true, FlexiBookApplication.getCurrentLoginUser() instanceof Owner);	    
+	}
+
+/*---------------------------Test view appointment calendar--------------------------*/
+	
+
+	@When("{string} requests the appointment calendar for the week starting on {string}")
+	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
+			FlexiBookController.viewAppointmentCalnader(date, false, true);
+	}
+	@Then("the following slots shall be unavailable:")
+	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
+		Boolean isUnavailable = false;
+		for(Map<String, String> map : datatable) {
+			for (TOTimeSlot time:FlexiBookController.getUnavailbleTime(map.get("date"), true, false)) {
+				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
+					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
+						isUnavailable = true;
+						assertEquals(true, isUnavailable);
+					}
+					
+				}
+				else if (stringToTime(map.get("startTime")).before(time.getStartTime())) {
+					if (stringToTime(map.get("endTime")).after(time.getStartTime())){
+						isUnavailable = true;
+						assertEquals(true, isUnavailable);
+					}
+				}
+			}
+		}
+	}
+	@Then("the following slots shall be available:")
+	public void the_following_slots_shall_be_available(io.cucumber.datatable.DataTable dataTable) {
+		    
+	}
+
+
+
+
+/*---------------------------Test Log out--------------------------*/
+	/**
+	 * As a user, I want to log out of the application so that the next user 
+	 * does not have access to my information
+	 * @author mikewang
+	 */
+	@Given("the user is logged out")
+	public void the_user_is_logged_out() {
+		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
+	}
+
+	@When("the user tries to log out")
+	public void the_user_tries_to_log_out() {
+		try {
+			FlexiBookController.logOut();
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}   
+	}
+
+	
+	
 	
 	/**
-	 * @author chengchen
+	 * 
 	 * 
 	 *  As a business owner, I wish to add services to my business 
 	 *  so that my customers can make appointments for them.
+	 *  
+	 *  @author chengchen
 	 */
 	
 /*---------------------------Test Add Service--------------------------*/
@@ -1390,7 +1491,8 @@ String temporaryResult = "not be";
 	}
 	 
 	
-	 
+
+	
 	
 
 	/*---------------------------Test Delete Service Combo--------------------------*/
@@ -1445,8 +1547,10 @@ String temporaryResult = "not be";
 		assertTrue(FlexiBookController.findServiceCombo(newName) != null);
 	}
 
-
-
+	
+	
+	
+	
 	/*---------------------------private helper methods--------------------------*/
 
 	/**
