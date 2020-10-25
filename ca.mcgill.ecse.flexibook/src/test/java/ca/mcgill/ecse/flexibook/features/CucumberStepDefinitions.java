@@ -973,8 +973,8 @@ public class CucumberStepDefinitions {
 				try {
 					appointment.addChosenItem(findComboItemByServiceName(sCombo, item.getService().getName()));
 				} catch (InvalidInputException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					error = error+e.getMessage();
+					errorCount++;
 				}
 			}else{
 				for(String name : ControllerUtils.parseString(optService, ",")) {
