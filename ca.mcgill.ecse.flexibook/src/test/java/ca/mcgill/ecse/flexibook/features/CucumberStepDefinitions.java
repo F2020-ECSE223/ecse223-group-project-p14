@@ -20,6 +20,8 @@ import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOAppointment;
+import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.BookableService;
@@ -216,7 +218,7 @@ public class CucumberStepDefinitions {
 	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isUnavailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.viewAppointmentCalendare(map.get("date"), true, false, true, false)) {
+			for (TOTimeSlot time:getUnavailbleTime(map.get("date"), true, false)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isUnavailable = true;
@@ -246,7 +248,7 @@ public class CucumberStepDefinitions {
 	@When("{string} requests the appointment calendar for the day of {string}")
 	public void requests_the_appointment_calendar_for_the_day_of(String username, String date){
 		try{
-			FlexiBookController.viewAppointmentCalendar(date, true, false, true, true);
+			FlexiBookController.viewAppointmentCalendar(date, true, false);
 		} catch(InvalidInputException e){
 			error += e.getMessage();
 			errorCntr++;
@@ -267,7 +269,7 @@ public class CucumberStepDefinitions {
 	public void the_following_slots_shall_be_available(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isAvailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.viewAppointmentCalendar(map.get("date"), true, false, false, true)) {
+			for (TOTimeSlot time:getAvailbleTime(map.get("date"), true, false)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isAvailable = true;
@@ -464,6 +466,8 @@ public class CucumberStepDefinitions {
 		}
 	}
 	/**
+	 * 
+	 * helper method bing used 
 	 * @author chengchen
 	 */
 	@Then("the number of appointments in the system with service {string} shall be {string}")
@@ -480,13 +484,18 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
+	 * helper method being used
+	 * 
 	 * @author chengchen
 	 */
 	@Then("the service combos {string} shall not exist in the system")
 	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
 		assertTrue(findServiceCombo(comboName)==null);
 	}
+	
+	
 	/**
+	 * helper methos being used
 	 * @author chengchen
 	 */
 	@Then("the service combos {string} shall not contain service {string}")
@@ -2186,8 +2195,153 @@ public class CucumberStepDefinitions {
 			}
 		} return null;
 	}
+	
+	/**
+	 * 
+	 * This is a query method which can return all unavailble time slot to an ArrayList
+	 * @param date
+	 * @param ByDay
+	 * @param ByWeek
+	 * @author mikewang
+	 * @return <TOTimeSlot> getUnavailbleTime
+	 */
+	
+	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		Date date;
+		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
+
+		if (ByDay == true && ByWeek == false) {
+			if (isValidDate(date1)) {
+				// first check if the input is valid
+				date = Date.valueOf(date1);
+				// second check if it is in Holiday or Vacation
+
+				if (checkIsInHoliday(date)||checkIsInVacation(date)) {
+					DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
+					for (TOBusinessHour BH: getTOBusinessHour()) {
+						if ( BH.getDayOfWeek() == dayOfWeek) {
+							TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
+							unavailbleTimeSlots.add(toHolidayOrVacationTS);
+						}
+					}
+				} 
+				// if above cases both failed 
+				else {
+					for (TOAppointment toAppointments: getTOAppointment()) {
+						if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
+							if (toAppointments.getDownTimeTimeSlot() != null) {
+								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
+								// unavailbleTimeSlots.add(getUnavailbleTimes);
+								for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+									if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+										TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+										TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+										unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+										unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+									}
+								}
+							}
+							else {
+								unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+							}
+						}
+					}
+				}
+
+			}
+			else if(!isValidDate(date1)){
+
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
+		}
+		else if (ByDay == false && ByWeek == true) {
+			//TODO
+			// i need to get some sleep, i will resume my part after i get up
+			// first check if the input is valid
 
 
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			else {
+				for(int i=0;i<7;i++) {
+					getUnavailbleTime(date1, true, false);
+					date1 = NextDate(date1);
+				}
+			}
+		}
+		return unavailbleTimeSlots;
+	}
+
+	
+	/**
+	 * This is a query method which can return all availble time slot to an ArrayList
+	 * @param date
+	 * @param ByDay
+	 * @param ByWeek
+	 * @author mikewang
+	 * @return <TOTimeSlot> availble time  
+	 */
+	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
+		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
+		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
+		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
+		Date date;
+
+		if (ByDay == true && ByWeek == false) {
+			if (isValidDate(date1)) {
+				date = Date.valueOf(date1);
+				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
+				for(TOBusinessHour TBH: getTOBusinessHour()) {
+					if (TBH.getDayOfWeek() == dayOfWeek) {
+						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
+
+						for (TOTimeSlot dayUnavailbleTimes: sortTimeSlot(getUnavailbleTime(date1,true,false))) {
+							if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+								if (dayUnavailbleTimes.getStartTime().after(todayBusinessHours.getStartTime())) {
+									TOTimeSlot nowAvailableTimeSlot = new TOTimeSlot(date,todayBusinessHours.getStartTime(), date,dayUnavailbleTimes.getStartTime());
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+									DayAvailbleTimes.add(nowAvailableTimeSlot);
+								}else if (dayUnavailbleTimes.getStartTime().equals(todayBusinessHours.getStartTime())) {
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+								}
+							}
+							else {
+								break;
+							}
+
+						}
+						if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+							DayAvailbleTimes.add(todayBusinessHours);
+						}
+
+					}
+				}
+
+
+			}
+			else {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
+
+		}
+
+		if (ByDay == false && ByWeek == true) {
+			//TODO
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			for(int i=0;i<7;i++) {
+				getAvailbleTime(date1, true, false);
+				date1 = NextDate(date1);
+			}
+
+		}
+		return DayAvailbleTimes;
+	}
 
 
 }
