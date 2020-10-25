@@ -24,6 +24,7 @@ import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.BookableService;
@@ -2517,6 +2518,70 @@ public class CucumberStepDefinitions {
 		return resultDate;
 
 	}
+	/**
+	 * This is a helper method which checks if a specific date in within a holiday
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInHoliday(Date date) {
+		Boolean isInHoliday = false; 
+		List<TimeSlot> holidayList = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		for(TimeSlot x: holidayList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInHoliday = true; 
+			}
+		}
+		return isInHoliday; 
+	}
+
+
+	/**
+	 * This is a helper method which checks if a specific date in within a vacation
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInVacation(Date date) {
+		Boolean isInVacation = false; 
+		List<TimeSlot> VacationList = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		for(TimeSlot x: VacationList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInVacation = true; 
+			}
+		}
+		return isInVacation; 
+	}
+	
+	/**
+	 * This is a query method which can gives a list of all TOAppointment 
+	 * Which includes all appointments combo items and time slot 
+	 * @return
+	 * @author mikewang
+	 * @author AntoineW later made a change
+	 */
+	public static List<TOAppointment> getTOAppointment(){
+		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
+
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
+					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			// Added feature TOAppointment can show all downtime
+			// by mikewang
+			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
+				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
+			}
+			// ToAppointment need to show all the service item (comboitem)
+			// by AnTW
+			for (TOComboItem toc:getToTOComboItem(appointment)) {
+				toAppointment.addChosenItem(toc);
+			}
+			appointments.add(toAppointment);
+		}
+		return appointments;
+
+	}	
+
 
 
 
