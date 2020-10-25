@@ -208,7 +208,7 @@ public class CucumberStepDefinitions {
 	@When("{string} requests the appointment calendar for the week starting on {string}")
 	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
 		try{
-			FlexiBookController.viewAppointmentCalendar(date, false, true, true, true);
+			FlexiBookController.viewAppointmentCalendar(date, false, true);
 		}catch(InvalidInputException e){
 			error += e.getMessage();
 			errorCntr++;
