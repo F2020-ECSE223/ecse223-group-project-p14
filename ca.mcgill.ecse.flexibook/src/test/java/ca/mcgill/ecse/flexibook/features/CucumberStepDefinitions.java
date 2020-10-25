@@ -66,10 +66,16 @@ public class CucumberStepDefinitions {
 	private BusinessHour newBusinessHour;
 
 	private boolean statusOfAccount = false;
+	
 	@Before
 	public static void setUp() {
 		// clear all data
 		FlexiBookApplication.getFlexiBook().delete();
+	}
+	
+	@After
+	public void tearDown() {
+		flexiBook.delete();
 	}
 
 	/**
@@ -441,7 +447,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("Customer with username {string} is logged in")
 	public void customer_with_username_is_logged_in(String username) {
-		Customer customer = FlexiBookController.findCustomer(username);
+		Customer customer = findCustomer(username);
 		FlexiBookApplication.setCurrentLoginUser(customer);
 	}
 
@@ -821,7 +827,6 @@ public class CucumberStepDefinitions {
 			String date,  String timeStart, String timeEnd) {
 		boolean isTheCase = false;
 		for (Appointment app :findCustomer(customer).getAppointments()) {
-
 			if(app.getCustomer().getUsername() .equals (customer) &&
 					app.getBookableService().getName() .equals (Servicename) &&
 					app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
@@ -923,8 +928,6 @@ public class CucumberStepDefinitions {
 
 
 	/**
-	 * At this moment the make-appointment feature has been tested thus 
-	 * the controller method can be reused to build the update-appointment test.
 	 * @param customer
 	 * @param serviceName
 	 * @param optService
@@ -935,12 +938,65 @@ public class CucumberStepDefinitions {
 	@Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
 	public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
 			String date, String time) {
+		
+		// user and combo
+		Customer c = findCustomer(customer);
+		ServiceCombo sCombo = findServiceCombo(serviceName);
+		
+		//setting up the timeslot
+		List<ComboItem> itemList = sCombo.getServices();
+		int actualTime = 0;
+		List<String> itemNameList = ControllerUtils.parseString(optService,",");
 
-		try {
-			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
-		} catch (InvalidInputException e) {
-			error = error+ e.getMessage();
+		for (ComboItem ci : itemList) {
+
+			if(ci.getMandatory()) {
+				actualTime = actualTime + ci.getService().getDuration();
+			}else {
+				// check the chosen list if a NON-mandatory service is chosen
+				// if yes then we add time
+				for (String name : itemNameList ) {
+					// loop through all chosen name, see if equals to the current item
+					if (name.compareTo(ci.getService().getName()) == 0) {
+						actualTime = actualTime + ci.getService().getDuration();
+					}
+				}
+
+			}
 		}
+		LocalTime aEndtime = stringToTime(time).toLocalTime().plusMinutes(actualTime);
+		Time endTime = Time.valueOf(aEndtime);
+
+		// Here handle constraints: start and end date of an appointment have to be the same
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time), stringToDate(date), endTime, 
+				flexiBook);
+		
+		Appointment appointment = new Appointment(c, sCombo, timeSlot,flexiBook);
+
+
+		// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
+		// add all mandatory and chosen optional combo item to appointment
+		for (ComboItem item: sCombo.getServices()) {
+
+			if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
+				try {
+					appointment.addChosenItem(findComboItemByServiceName(sCombo, item.getService().getName()));
+				} catch (InvalidInputException e) {
+					error = error+e.getMessage();
+					errorCount++;
+				}
+			}else{
+				for(String name : ControllerUtils.parseString(optService, ",")) {
+					if (item.getService().getName().equals(name)) {
+						appointment.addChosenItem(item);
+					}
+				}
+			}
+		}	
+
+
+		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+		
 	}
 
 
@@ -982,8 +1038,8 @@ public class CucumberStepDefinitions {
 	public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
 			String oldDate, String  oldTime, String newD, String newT) {
 
-		if(FlexiBookController.findCustomer(user) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(user));	
+		if(findCustomer(user) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(findCustomer(user));	
 		}else if (user.equals("owner")) {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
@@ -1060,8 +1116,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
 	public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
-		if(FlexiBookController.findCustomer(curUser) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(curUser));	
+		if(findCustomer(curUser) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(findCustomer(curUser));	
 		}else if (curUser.equals("owner")) {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
@@ -1090,9 +1146,9 @@ public class CucumberStepDefinitions {
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
 		customerCount = flexiBook.getCustomers().size();
-		if(FlexiBookController.findUser(username) != null) {
+		if(findUser(username) != null) {
 			if(username != "owner") customerCount--;
-			FlexiBookController.findUser(username).delete();
+			findUser(username).delete();
 		}
 
 	}
@@ -1123,7 +1179,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account shall have username {string} and password {string}")
 	public void the_account_shall_have_username_and_password(String username, String password) {
-		if(FlexiBookController.findUser(username) instanceof Owner) {
+		if(findUser(username) instanceof Owner) {
 			assertEquals(username, flexiBook.getOwner().getUsername());
 			assertEquals(password, flexiBook.getOwner().getPassword());
 		}
@@ -1155,7 +1211,7 @@ public class CucumberStepDefinitions {
 	@Given("there is an existing username {string}")
 	public void there_is_an_existing_username(String username) {
 		customerCount = flexiBook.getCustomers().size();
-		if(FlexiBookController.findUser(username) == null) {
+		if(findUser(username) == null) {
 			if(username.equals("owner")) { 
 				owner = new Owner("owner", "owner", flexiBook);
 				flexiBook.setOwner(owner);
@@ -1172,7 +1228,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("the user is logged in to an account with username {string}")
 	public void the_user_is_logged_in_to_an_account_with_username(String username) {
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));
+		FlexiBookApplication.setCurrentLoginUser(findUser(username));
 	}
 
 
@@ -1238,7 +1294,7 @@ public class CucumberStepDefinitions {
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, FlexiBookApplication.getFlexiBook());
 		Service service = new Service("service", FlexiBookApplication.getFlexiBook(), 2, 0, 0);
 		FlexiBookApplication.getFlexiBook().addBookableService(service);
-		Appointment appointment = new Appointment((FlexiBookController.findCustomer(username)), service , timeSlot, FlexiBookApplication.getFlexiBook());
+		Appointment appointment = new Appointment((findCustomer(username)), service , timeSlot, FlexiBookApplication.getFlexiBook());
 		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 	}
 
@@ -1260,7 +1316,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account with the username {string} does not exist")
 	public void the_account_with_the_username_does_not_exist(String username) {
-		assertNull(FlexiBookController.findUser(username));
+		assertNull(findUser(username));
 	}
 
 	/**
@@ -1284,7 +1340,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account with the username {string} exists")
 	public void the_account_with_the_username_exists(String username) {
-		assertFalse(FlexiBookController.findUser(username) == null);
+		assertFalse(findUser(username) == null);
 	}
 
 	/*---------------------------Test Define Service Combo--------------------------*/
@@ -2026,16 +2082,28 @@ public class CucumberStepDefinitions {
 	}
 
 
-
-
-	@After
-	public void tearDown() {
-		flexiBook.delete();
+	/**
+	 * This method is a helper method for finding a particular user by username.
+	 * User can be the owner or a customer 
+	 * 
+	 * @param username
+	 * @return User with username or null
+	 * @author Catherine
+	 */
+	private static User findUser(String username){
+		User foundUser;
+		if (username.equals("owner")) {
+			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
+		}
+		else {
+			foundUser = findCustomer(username);
+		}
+		return foundUser;
 	}
 
 
 	/**
-	 * Helper method to find an appointment associated to an account
+	 * Helper method to find all appointments associated to an account
 	 * @param username
 	 * @return List of associated appointments
 	 * @author Catherine
@@ -2120,12 +2188,13 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
+	 * Helper method to find customer given username
 	 * 
 	 * @param userName
 	 * @return
 	 * @author MikeWang
 	 */
-	public static Customer findCustomer (String userName){
+	public static Customer findCustomer(String userName){
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
 			if (user.getUsername().equals( userName) ) {
 				return user;
