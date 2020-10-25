@@ -2581,6 +2581,35 @@ public class CucumberStepDefinitions {
 		return appointments;
 
 	}	
+	/**
+	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
+	 * @param timeSlot
+	 * @return
+	 * @author mikewang
+	 */
+	public static TOTimeSlot CovertToTOTimeSlot(TimeSlot timeSlot) {
+		TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(),timeSlot.getEndDate(),timeSlot.getEndTime());
+		return toTimeSlot;
+	}
+	
+	/**
+	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
+	 * @param appointment
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
+		//@ TODO
+		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
+		for (ComboItem comboitems: appointment.getChosenItems()) {
+			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
+			comboItems.add(toComboItem);
+		}
+		return comboItems;
+	}
+
+
+	
 
 
 
