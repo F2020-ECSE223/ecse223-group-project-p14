@@ -919,8 +919,6 @@ public class CucumberStepDefinitions {
 
 
 	/**
-	 * At this moment the make-appointment feature has been tested thus 
-	 * the controller method can be reused to build the update-appointment test.
 	 * @param customer
 	 * @param serviceName
 	 * @param optService
@@ -931,12 +929,65 @@ public class CucumberStepDefinitions {
 	@Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
 	public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
 			String date, String time) {
+		
+		// user and combo
+		Customer c = findCustomer(customer);
+		ServiceCombo sCombo = findServiceCombo(serviceName);
+		
+		//setting up the timeslot
+		List<ComboItem> itemList = sCombo.getServices();
+		int actualTime = 0;
+		List<String> itemNameList = ControllerUtils.parseString(optService,",");
 
-		try {
-			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
-		} catch (InvalidInputException e) {
-			error = error+ e.getMessage();
+		for (ComboItem ci : itemList) {
+
+			if(ci.getMandatory()) {
+				actualTime = actualTime + ci.getService().getDuration();
+			}else {
+				// check the chosen list if a NON-mandatory service is chosen
+				// if yes then we add time
+				for (String name : itemNameList ) {
+					// loop through all chosen name, see if equals to the current item
+					if (name.compareTo(ci.getService().getName()) == 0) {
+						actualTime = actualTime + ci.getService().getDuration();
+					}
+				}
+
+			}
 		}
+		LocalTime aEndtime = stringToTime(time).toLocalTime().plusMinutes(actualTime);
+		Time endTime = Time.valueOf(aEndtime);
+
+		// Here handle constraints: start and end date of an appointment have to be the same
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time), stringToDate(date), endTime, 
+				flexiBook);
+		
+		Appointment appointment = new Appointment(c, sCombo, timeSlot,flexiBook);
+
+
+		// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
+		// add all mandatory and chosen optional combo item to appointment
+		for (ComboItem item: sCombo.getServices()) {
+
+			if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
+				try {
+					appointment.addChosenItem(findComboItemByServiceName(sCombo, item.getService().getName()));
+				} catch (InvalidInputException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+				for(String name : ControllerUtils.parseString(optService, ",")) {
+					if (item.getService().getName().equals(name)) {
+						appointment.addChosenItem(item);
+					}
+				}
+			}
+		}	
+
+
+		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+		
 	}
 
 
