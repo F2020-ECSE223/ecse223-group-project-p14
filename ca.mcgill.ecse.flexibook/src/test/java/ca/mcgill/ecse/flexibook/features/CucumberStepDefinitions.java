@@ -12,12 +12,14 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
+import ca.mcgill.ecse.flexibook.controller.CustomComparator;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
@@ -2411,6 +2413,112 @@ public class CucumberStepDefinitions {
 		}
 		return DayAvailbleTimes;
 	}
+	/**
+	 * This is a helper method which could detect if certain string writen date is valid
+	 * @param s
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean isValidDate(String s){
+		Boolean isValid = true; 
+		if (s == null) {
+			isValid = false; 
+		}
+		final int YEAR_LENGTH = 4;
+		final int MONTH_LENGTH = 2;
+		final int DAY_LENGTH = 2;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		final int MIN_YEAR = 1970;
+		int firstDash = s.indexOf('-');
+		int secondDash = s.indexOf('-', firstDash + 1);
+		int len = s.length();
+
+		if ((firstDash <= 0) || (secondDash <= 0) || (secondDash >= len - 1)) {
+			isValid = false; 
+		}
+
+		else if (firstDash != YEAR_LENGTH ||
+				(secondDash - firstDash <= 1 || secondDash - firstDash > MONTH_LENGTH + 1) ||
+				(len - secondDash <= 1 && len - secondDash > DAY_LENGTH + 1)) {
+			isValid = false; 
+		}
+
+		int year = Integer.parseInt(s, 0, firstDash, 10);
+		int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(s, secondDash + 1, len, 10);
+
+		if ((month < 1 || month > MAX_MONTH) || (day < 1 || day > MAX_DAY) || (year < MIN_YEAR || year > MAX_YEAR)) {
+			isValid = false; 
+		}
+
+		return isValid;
+	}
+	/**
+	 * this is an qurey method with returns the BusinessHour 
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOBusinessHour> getTOBusinessHour(){
+		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours()) {
+			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+			businessHours.add(BusinessHour);
+		}
+		return businessHours;
+	}
+	
+	/**
+	 * This is a helper method witch sorts the TOTimeSlots based on their start time
+	 * @param TimeSlots
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+		Collections.sort(TimeSlots, new CustomComparator());
+		return TimeSlots;
+	}
+
+	/**
+	 * This is a helper method which would return the string version of the date of the next day 
+	 * @param date1
+	 * @return
+	 * @author mikewang
+	 */
+	public static String NextDate(String date1) {
+		String resultDate;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		Date d = null;
+
+		int firstDash = date1.indexOf('-');
+		int secondDash = date1.indexOf('-', firstDash + 1);
+		int len = date1.length();
+
+		int year = Integer.parseInt(date1, 0, firstDash, 10);
+		int month = Integer.parseInt(date1, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(date1, secondDash + 1, len, 10);
+
+		if (day <= MAX_DAY - 1) {
+			day = day+1;
+		}
+		else if(month <= MAX_MONTH -1) {
+			day = 1;
+			month = month + 1;
+		}
+		else if (year <= MAX_YEAR - 1) {
+			day = 1; 
+			month = 1;
+			year = year + 1;
+		}
+		resultDate = year+"-"+month+"-"+day;
+		return resultDate;
+
+	}
+
+
 
 
 }
