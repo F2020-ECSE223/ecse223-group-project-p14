@@ -1170,7 +1170,8 @@ public class FlexiBookController {
 	 * @param businessName
 	 * @param address
 	 * @param phoneNumber
-	 * @throws email
+	 * @param email
+	 * @throws InvalidInputException
 	 * @author jedla
 	 */
 	public static void updateBusinessInfo(String businessName, String address, String phoneNumber, String email) throws InvalidInputException{
@@ -1240,13 +1241,14 @@ public class FlexiBookController {
 	 * @param ByDay
 	 * @param ByMonth
 	 * @param ByYear
-	 * @return
+	 * @return it's sub component getUnavailbleTime() and getAvailnleTime() shall return ArrayList<TOTimeSlot>
 	 * @author mikewang
 	 */
 	public static void viewAppointmentCalendar(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-		getUnavailbleTime(date1,ByDay,ByWeek);
-		getAvailbleTime(date1,ByDay,ByWeek);
-	}
+			getUnavailbleTime(date1,ByDay,ByWeek);
+			getAvailbleTime(date1,ByDay,ByWeek);
+		}
+	
 
 
 
@@ -1335,13 +1337,12 @@ public class FlexiBookController {
 	//implement next time
 
 	/**
-	 * DON'T TOUCH MIKE WILL FINISH THIS 
 	 * This is a query method which can return all availble time slot to an ArrayList
 	 * @param date
 	 * @param ByDay
 	 * @param ByWeek
 	 * @author mikewang
-	 * @return
+	 * @return <TOTimeSlot> availble time  
 	 */
 	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
 		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
@@ -1499,6 +1500,7 @@ public class FlexiBookController {
 	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
 	 * @param appointment
 	 * @return
+	 * @author mikewang
 	 */
 	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
 		//@ TODO
@@ -1896,13 +1898,11 @@ public class FlexiBookController {
 	/**
 	 * This method is a helper method of finding a particular customer 
 	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
-	 * 
 	 * @param userName
 	 * @return
 	 * @author mikewang
 	 */
-	public static Customer findCustomer (String userName){
+	private static Customer findCustomer (String userName){
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
 			if (user.getUsername().equals( userName) ) {
 				return user;
@@ -1935,28 +1935,6 @@ public class FlexiBookController {
 		Collections.sort(TimeSlots, new CustomComparator());
 		return TimeSlots;
 	}
-
-	/**
-	 * This method is a helper method for finding a particular user by username.
-	 * User can be the owner or a customer 
-	 * 
-	 * This is a private helper method but we put it public in this stage for testing.
-	 * 
-	 * @param username
-	 * @return User with username or null
-	 * @author Catherine
-	 */
-	public static User findUser(String username){
-		User foundUser;
-		if (username.equals("owner")) {
-			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
-		}
-		else {
-			foundUser = findCustomer(username);
-		}
-		return foundUser;
-	}
-
 
 	/**
 	 * This method is a helper method of finding is the date we specifying is today. 
@@ -2192,7 +2170,7 @@ public class FlexiBookController {
 
 
 	/**
-	 * This is a helper method to know if the current BusinessHour overlaps with other business hours
+	 * This helper method finds if the current BusinessHour overlaps with other business hours
 	 * @param day
 	 * @param startTime
 	 * @param endTime
@@ -2230,7 +2208,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds if the current TimeSlot is overlapping with a vacation
+	 * This helper method finds if the current TimeSlot is overlapping with a Vacation
 	 * @param startDate
 	 * @param startTime
 	 * @param endDate
@@ -2306,7 +2284,7 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
+	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
 		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour x: hoursList) {
@@ -2355,7 +2333,7 @@ public class FlexiBookController {
 	}
 
 	/**
-	 * This helper method finds the corresponding Holiday
+	 * This finds if the start date and start time of a BusinessHour or of a TimeSlot is in the Future
 	 * @param start
 	 * @return
 	 * @author jedla inspired by AntoineW

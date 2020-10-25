@@ -12,14 +12,19 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
+import ca.mcgill.ecse.flexibook.controller.CustomComparator;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOAppointment;
+import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.BookableService;
@@ -64,13 +69,18 @@ public class CucumberStepDefinitions {
 	private BusinessHour newBusinessHour;
 
 	private boolean statusOfAccount = false;
+	
 	@Before
 	public static void setUp() {
 		// clear all data
 		FlexiBookApplication.getFlexiBook().delete();
 	}
+	
+	@After
+	public void tearDown() {
+		flexiBook.delete();
+	}
 
-	/*---------------------------Test Log in--------------------------*/
 	/**
 	 * As an owner, I want to log in so that I can access the space to manage my business. 
 	 * As a customer, I want to log in so that I can manage my appointments.
@@ -78,7 +88,15 @@ public class CucumberStepDefinitions {
 	 *
 	 * @author mikewang
 	 */
+	
+	/*---------------------------Test Log in--------------------------*/
 
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @author mikewang
+	 */
 	@When("the user tries to log in with username {string} and password {string}")
 	public void the_user_tries_to_log_in_with_username_and_password(String username, String password) {
 		try {
@@ -89,27 +107,56 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @author mikewang
+	 */
 	@Then("the user should be successfully logged in")
 	public void the_user_should_be_successfully_logged_in() {
 		assertEquals(false, FlexiBookApplication.getCurrentLoginUser()==null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("the user should not be logged in")
 	public void the_user_should_not_be_logged_in() {
 		assertEquals(true, FlexiBookApplication.getCurrentLoginUser()==null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("a new account shall be created")
 	public void a_new_account_shall_be_created() {
 		assertEquals(true, flexiBook.getOwner()!=null);
 	}
 
+	/**
+	 * @author mikewang
+	 */
 	@Then("the user shall be successfully logged in")
 	public void the_user_shall_be_successfully_logged_in() {
 		assertEquals(true, FlexiBookApplication.getCurrentLoginUser() instanceof Owner);	    
 	}
 
+	
+	
+	
+	/**
+	 * 
+	 * As a user, I want to view the appointment calendar so that I can select a time 
+	 * slot for my appointment and/or browse my scheduled appointments.
+	 * 
+	 * @author mikewang
+	 */
 	/*---------------------------Test view appointment calendar--------------------------*/
+	
+	
+	/**
+	 * 
+	 * @author mikewang
+	 */
 
 	@Given ("the business has the following opening hours:")
 	public void the_business_has_the_following_opening_hours_1(List<Map<String, String>> datatable) {
@@ -136,6 +183,11 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @author mikewang
+	 */
 	@Given ("the business has the following holidays:")
 	public void the_business_has_the_following_holidays_1(List<Map<String, String>> datatable) {
 		for(Map<String, String> map : datatable) {
@@ -146,6 +198,13 @@ public class CucumberStepDefinitions {
 
 		}			 
 	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param date
+	 * @author mikewang
+	 */
 	@When("{string} requests the appointment calendar for the week starting on {string}")
 	public void requests_the_appointment_calendar_for_the_week_starting_on(String user, String date) {
 		try{
@@ -157,11 +216,18 @@ public class CucumberStepDefinitions {
 		
 	}
 
+	/**
+	 * 
+	 * @param datatable
+	 * @throws InvalidInputException
+	 * @author mikewang
+	 * 
+	 */
 	@Then("the following slots shall be unavailable:")
 	public void the_following_slots_shall_be_unavailable(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isUnavailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.getUnavailbleTime(map.get("date"), true, false)) {
+			for (TOTimeSlot time:getUnavailbleTime(map.get("date"), true, false)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isUnavailable = true;
@@ -179,6 +245,15 @@ public class CucumberStepDefinitions {
 		}
 	}
 
+	
+	/**
+	 * 
+	 * @param username
+	 * @param date
+	 * @author mikewang
+	 * 
+	 */
+	
 	@When("{string} requests the appointment calendar for the day of {string}")
 	public void requests_the_appointment_calendar_for_the_day_of(String username, String date){
 		try{
@@ -192,11 +267,18 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * 
+	 * @param datatable
+	 * @throws InvalidInputException
+	 * @author mikewang
+	 * 
+	 */
 	@Then("the following slots shall be available:")
 	public void the_following_slots_shall_be_available(List<Map<String, String>> datatable) throws InvalidInputException {
 		Boolean isAvailable = false;
 		for(Map<String, String> map : datatable) {
-			for (TOTimeSlot time:FlexiBookController.getAvailbleTime(map.get("date"), true, false)) {
+			for (TOTimeSlot time:getAvailbleTime(map.get("date"), true, false)) {
 				if (stringToTime(map.get("startTime")).after(time.getStartTime())) {
 					if (stringToTime(map.get("startTime")).before(time.getEndTime())) {
 						isAvailable = true;
@@ -217,6 +299,12 @@ public class CucumberStepDefinitions {
 
 
 
+	/**
+	 * As a user, I want to log out of the application so that the next user 
+	 * does not have access to my information
+	 * @author mikewang
+	 * 
+	 */
 	/*---------------------------Test Log out--------------------------*/
 	/**
 	 * As a user, I want to log out of the application so that the next user 
@@ -228,6 +316,10 @@ public class CucumberStepDefinitions {
 		assertEquals(null, FlexiBookApplication.getCurrentLoginUser());
 	}
 
+	/**
+	 * @author mikewang
+	 * 
+	 */
 	@When("the user tries to log out")
 	public void the_user_tries_to_log_out() {
 		try {
@@ -358,7 +450,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("Customer with username {string} is logged in")
 	public void customer_with_username_is_logged_in(String username) {
-		Customer customer = FlexiBookController.findCustomer(username);
+		Customer customer = findCustomer(username);
 		FlexiBookApplication.setCurrentLoginUser(customer);
 	}
 
@@ -383,11 +475,13 @@ public class CucumberStepDefinitions {
 		}
 	}
 	/**
+	 * 
+	 * helper method bing used 
 	 * @author chengchen
 	 */
 	@Then("the number of appointments in the system with service {string} shall be {string}")
 	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
-		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
+		List<Appointment> appointments= findAppointmentByServiceName(serviceName);
 		assertEquals(Integer.parseInt(numService), appointments.size());
 	}
 	/**
@@ -399,12 +493,15 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
+	 * 
 	 * @author chengchen
 	 */
 	@Then("the service combos {string} shall not exist in the system")
 	public void the_service_combos_shall_not_exist_in_the_system(String comboName) {
 		assertTrue(findServiceCombo(comboName)==null);
 	}
+	
+	
 	/**
 	 * @author chengchen
 	 */
@@ -731,7 +828,6 @@ public class CucumberStepDefinitions {
 			String date,  String timeStart, String timeEnd) {
 		boolean isTheCase = false;
 		for (Appointment app :findCustomer(customer).getAppointments()) {
-
 			if(app.getCustomer().getUsername() .equals (customer) &&
 					app.getBookableService().getName() .equals (Servicename) &&
 					app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
@@ -833,8 +929,6 @@ public class CucumberStepDefinitions {
 
 
 	/**
-	 * At this moment the make-appointment feature has been tested thus 
-	 * the controller method can be reused to build the update-appointment test.
 	 * @param customer
 	 * @param serviceName
 	 * @param optService
@@ -845,12 +939,65 @@ public class CucumberStepDefinitions {
 	@Given("{string} has a {string} appointment with optional sevices {string} on {string} at {string}")
 	public void has_a_appointment_with_optional_sevices_on_at(String customer, String serviceName, String optService, 
 			String date, String time) {
+		
+		// user and combo
+		Customer c = findCustomer(customer);
+		ServiceCombo sCombo = findServiceCombo(serviceName);
+		
+		//setting up the timeslot
+		List<ComboItem> itemList = sCombo.getServices();
+		int actualTime = 0;
+		List<String> itemNameList = ControllerUtils.parseString(optService,",");
 
-		try {
-			FlexiBookController.addAppointmentForComboService(serviceName, optService, stringToDate(date), stringToTime(time));
-		} catch (InvalidInputException e) {
-			error = error+ e.getMessage();
+		for (ComboItem ci : itemList) {
+
+			if(ci.getMandatory()) {
+				actualTime = actualTime + ci.getService().getDuration();
+			}else {
+				// check the chosen list if a NON-mandatory service is chosen
+				// if yes then we add time
+				for (String name : itemNameList ) {
+					// loop through all chosen name, see if equals to the current item
+					if (name.compareTo(ci.getService().getName()) == 0) {
+						actualTime = actualTime + ci.getService().getDuration();
+					}
+				}
+
+			}
 		}
+		LocalTime aEndtime = stringToTime(time).toLocalTime().plusMinutes(actualTime);
+		Time endTime = Time.valueOf(aEndtime);
+
+		// Here handle constraints: start and end date of an appointment have to be the same
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time), stringToDate(date), endTime, 
+				flexiBook);
+		
+		Appointment appointment = new Appointment(c, sCombo, timeSlot,flexiBook);
+
+
+		// very much similar to calcActualTimeOfAppointment(List<ComboItem> comboItemList, String chosenItemNames)
+		// add all mandatory and chosen optional combo item to appointment
+		for (ComboItem item: sCombo.getServices()) {
+
+			if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
+				try {
+					appointment.addChosenItem(findComboItemByServiceName(sCombo, item.getService().getName()));
+				} catch (InvalidInputException e) {
+					error = error+e.getMessage();
+					errorCount++;
+				}
+			}else{
+				for(String name : ControllerUtils.parseString(optService, ",")) {
+					if (item.getService().getName().equals(name)) {
+						appointment.addChosenItem(item);
+					}
+				}
+			}
+		}	
+
+
+		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+		
 	}
 
 
@@ -892,8 +1039,8 @@ public class CucumberStepDefinitions {
 	public void attempts_to_update_s_appointment_on_at_to_at(String user, String custmerName, String serviceName, 
 			String oldDate, String  oldTime, String newD, String newT) {
 
-		if(FlexiBookController.findCustomer(user) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(user));	
+		if(findCustomer(user) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(findCustomer(user));	
 		}else if (user.equals("owner")) {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
@@ -970,8 +1117,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to cancel {string}'s {string} appointment on {string} at {string}")
 	public void attempts_to_cancel_s_appointment_on_at(String curUser, String customer, String serviceName, String date, String time) {
-		if(FlexiBookController.findCustomer(curUser) !=null) {
-			FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findCustomer(curUser));	
+		if(findCustomer(curUser) !=null) {
+			FlexiBookApplication.setCurrentLoginUser(findCustomer(curUser));	
 		}else if (curUser.equals("owner")) {
 			FlexiBookApplication.setCurrentLoginUser(flexiBook.getOwner());	
 		}
@@ -1000,9 +1147,9 @@ public class CucumberStepDefinitions {
 	@Given("there is no existing username {string}") 
 	public void there_is_no_existing_username(String username){
 		customerCount = flexiBook.getCustomers().size();
-		if(FlexiBookController.findUser(username) != null) {
+		if(findUser(username) != null) {
 			if(username != "owner") customerCount--;
-			FlexiBookController.findUser(username).delete();
+			findUser(username).delete();
 		}
 
 	}
@@ -1033,7 +1180,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account shall have username {string} and password {string}")
 	public void the_account_shall_have_username_and_password(String username, String password) {
-		if(FlexiBookController.findUser(username) instanceof Owner) {
+		if(findUser(username) instanceof Owner) {
 			assertEquals(username, flexiBook.getOwner().getUsername());
 			assertEquals(password, flexiBook.getOwner().getPassword());
 		}
@@ -1065,7 +1212,7 @@ public class CucumberStepDefinitions {
 	@Given("there is an existing username {string}")
 	public void there_is_an_existing_username(String username) {
 		customerCount = flexiBook.getCustomers().size();
-		if(FlexiBookController.findUser(username) == null) {
+		if(findUser(username) == null) {
 			if(username.equals("owner")) { 
 				owner = new Owner("owner", "owner", flexiBook);
 				flexiBook.setOwner(owner);
@@ -1082,7 +1229,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("the user is logged in to an account with username {string}")
 	public void the_user_is_logged_in_to_an_account_with_username(String username) {
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookController.findUser(username));
+		FlexiBookApplication.setCurrentLoginUser(findUser(username));
 	}
 
 
@@ -1148,7 +1295,7 @@ public class CucumberStepDefinitions {
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, FlexiBookApplication.getFlexiBook());
 		Service service = new Service("service", FlexiBookApplication.getFlexiBook(), 2, 0, 0);
 		FlexiBookApplication.getFlexiBook().addBookableService(service);
-		Appointment appointment = new Appointment((FlexiBookController.findCustomer(username)), service , timeSlot, FlexiBookApplication.getFlexiBook());
+		Appointment appointment = new Appointment((findCustomer(username)), service , timeSlot, FlexiBookApplication.getFlexiBook());
 		FlexiBookApplication.getFlexiBook().addAppointment(appointment);
 	}
 
@@ -1170,7 +1317,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account with the username {string} does not exist")
 	public void the_account_with_the_username_does_not_exist(String username) {
-		assertNull(FlexiBookController.findUser(username));
+		assertNull(findUser(username));
 	}
 
 	/**
@@ -1194,7 +1341,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the account with the username {string} exists")
 	public void the_account_with_the_username_exists(String username) {
-		assertFalse(FlexiBookController.findUser(username) == null);
+		assertFalse(findUser(username) == null);
 	}
 
 	/*---------------------------Test Define Service Combo--------------------------*/
@@ -1549,7 +1696,7 @@ public class CucumberStepDefinitions {
 		try {
 			FlexiBookController.setUpBusinessHours(stringToTime(startTime), stringToTime(endTime),
 					stringToDay(day));
-			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(day), stringToTime(startTime));
+			newBusinessHour = isTheBusinessHour(stringToDay(day), stringToTime(startTime));
 			isSetUp =true;
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
@@ -1718,7 +1865,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Feature: Update existing business hours
-	 * As an owner i want to update existing business hours
+	 * As an owner I want to update existing business hours
 	 * @author jedla
 	 */
 
@@ -1727,7 +1874,7 @@ public class CucumberStepDefinitions {
 		try {
 			FlexiBookController.updateBusinessHour(stringToDay(oldDay), stringToTime(oldStartTime), stringToDay(newDay), stringToTime(newStartTime), stringToTime(newEndTime)); 
 			isSetUp = true;
-			newBusinessHour = FlexiBookController.isTheBusinessHour(stringToDay(newDay), stringToTime(newStartTime));
+			newBusinessHour = isTheBusinessHour(stringToDay(newDay), stringToTime(newStartTime));
 
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
@@ -1859,7 +2006,7 @@ public class CucumberStepDefinitions {
 
 	/**
 	 * Feature: Remove existing time slot
-	 * As an owner i want to remove an existing time slot (vacation or holiday)
+	 * As an owner I want to remove an existing time slot (vacation or holiday)
 	 * @author jedla
 	 */
 
@@ -1936,16 +2083,28 @@ public class CucumberStepDefinitions {
 	}
 
 
-
-
-	@After
-	public void tearDown() {
-		flexiBook.delete();
+	/**
+	 * This method is a helper method for finding a particular user by username.
+	 * User can be the owner or a customer 
+	 * 
+	 * @param username
+	 * @return User with username or null
+	 * @author Catherine
+	 */
+	private static User findUser(String username){
+		User foundUser;
+		if (username.equals("owner")) {
+			foundUser = FlexiBookApplication.getFlexiBook().getOwner();	
+		}
+		else {
+			foundUser = findCustomer(username);
+		}
+		return foundUser;
 	}
 
 
 	/**
-	 * Helper method to find an appointment associated to an account
+	 * Helper method to find all appointments associated to an account
 	 * @param username
 	 * @return List of associated appointments
 	 * @author Catherine
@@ -2030,12 +2189,13 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
+	 * Helper method to find customer given username
 	 * 
 	 * @param userName
 	 * @return
 	 * @author MikeWang
 	 */
-	public static Customer findCustomer (String userName){
+	public static Customer findCustomer(String userName){
 		for (Customer user : FlexiBookApplication.getFlexiBook().getCustomers()) {
 			if (user.getUsername().equals( userName) ) {
 				return user;
@@ -2088,6 +2248,391 @@ public class CucumberStepDefinitions {
 		return dw;
 
 	}
+	
+	/**
+	 * This helper method finds the corresponding BusinessHour
+	 * @param day
+	 * @param startTime
+	 * @return
+	 * @author jedla
+	 */
+	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
+
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		for(BusinessHour x: hoursList) {
+			if(x.getDayOfWeek().equals(day) && x.getStartTime().equals(startTime)) {
+				return x;
+			}
+		} return null;
+	}
+	
+	/**
+	 * 
+	 * This is a query method which can return all unavailble time slot to an ArrayList
+	 * @param date
+	 * @param ByDay
+	 * @param ByWeek
+	 * @author mikewang
+	 * @return <TOTimeSlot> getUnavailbleTime
+	 */
+	
+	public static List<TOTimeSlot> getUnavailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		Date date;
+		ArrayList<TOTimeSlot> unavailbleTimeSlots = new ArrayList<TOTimeSlot>();
+
+		if (ByDay == true && ByWeek == false) {
+			if (isValidDate(date1)) {
+				// first check if the input is valid
+				date = Date.valueOf(date1);
+				// second check if it is in Holiday or Vacation
+
+				if (checkIsInHoliday(date)||checkIsInVacation(date)) {
+					DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
+					for (TOBusinessHour BH: getTOBusinessHour()) {
+						if ( BH.getDayOfWeek() == dayOfWeek) {
+							TOTimeSlot toHolidayOrVacationTS = new TOTimeSlot(date,BH.getStartTime(),date,BH.getEndTime());
+							unavailbleTimeSlots.add(toHolidayOrVacationTS);
+						}
+					}
+				} 
+				// if above cases both failed 
+				else {
+					for (TOAppointment toAppointments: getTOAppointment()) {
+						if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
+							if (toAppointments.getDownTimeTimeSlot() != null) {
+								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
+								// unavailbleTimeSlots.add(getUnavailbleTimes);
+								for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
+									if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
+										TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
+										TOTimeSlot unavailbleTimeAfterDownTime = new TOTimeSlot(date, downTimeTimeSlot.getEndTime(), date, toAppointments.getTimeSlot().getEndTime());
+										unavailbleTimeSlots.add(unavailbleTimeBeforeDownTime);
+										unavailbleTimeSlots.add( unavailbleTimeAfterDownTime);
+									}
+								}
+							}
+							else {
+								unavailbleTimeSlots.add(toAppointments.getTimeSlot());
+							}
+						}
+					}
+				}
+
+			}
+			else if(!isValidDate(date1)){
+
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
+		}
+		else if (ByDay == false && ByWeek == true) {
+			//TODO
+			// i need to get some sleep, i will resume my part after i get up
+			// first check if the input is valid
+
+
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			else {
+				for(int i=0;i<7;i++) {
+					getUnavailbleTime(date1, true, false);
+					date1 = NextDate(date1);
+				}
+			}
+		}
+		return unavailbleTimeSlots;
+	}
+
+	
+	/**
+	 * This is a query method which can return all availble time slot to an ArrayList
+	 * @param date
+	 * @param ByDay
+	 * @param ByWeek
+	 * @author mikewang
+	 * @return <TOTimeSlot> availble time  
+	 */
+	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
+		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
+		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
+		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
+		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
+		Date date;
+
+		if (ByDay == true && ByWeek == false) {
+			if (isValidDate(date1)) {
+				date = Date.valueOf(date1);
+				DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date);
+				for(TOBusinessHour TBH: getTOBusinessHour()) {
+					if (TBH.getDayOfWeek() == dayOfWeek) {
+						TOTimeSlot todayBusinessHours = new TOTimeSlot(date, TBH.getStartTime(),date,TBH.getEndTime());
+
+						for (TOTimeSlot dayUnavailbleTimes: sortTimeSlot(getUnavailbleTime(date1,true,false))) {
+							if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+								if (dayUnavailbleTimes.getStartTime().after(todayBusinessHours.getStartTime())) {
+									TOTimeSlot nowAvailableTimeSlot = new TOTimeSlot(date,todayBusinessHours.getStartTime(), date,dayUnavailbleTimes.getStartTime());
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+									DayAvailbleTimes.add(nowAvailableTimeSlot);
+								}else if (dayUnavailbleTimes.getStartTime().equals(todayBusinessHours.getStartTime())) {
+									todayBusinessHours.setStartTime(dayUnavailbleTimes.getEndTime());
+								}
+							}
+							else {
+								break;
+							}
+
+						}
+						if (!todayBusinessHours.getStartTime().equals(todayBusinessHours.getEndTime())){
+							DayAvailbleTimes.add(todayBusinessHours);
+						}
+
+					}
+				}
+
+
+			}
+			else {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+
+
+		}
+
+		if (ByDay == false && ByWeek == true) {
+			//TODO
+			if (!isValidDate(date1)) {
+				throw new InvalidInputException(date1 + " is not a valid date");
+			}
+			for(int i=0;i<7;i++) {
+				getAvailbleTime(date1, true, false);
+				date1 = NextDate(date1);
+			}
+
+		}
+		return DayAvailbleTimes;
+	}
+	/**
+	 * This is a helper method which could detect if certain string writen date is valid
+	 * @param s
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean isValidDate(String s){
+		Boolean isValid = true; 
+		if (s == null) {
+			isValid = false; 
+		}
+		final int YEAR_LENGTH = 4;
+		final int MONTH_LENGTH = 2;
+		final int DAY_LENGTH = 2;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		final int MIN_YEAR = 1970;
+		int firstDash = s.indexOf('-');
+		int secondDash = s.indexOf('-', firstDash + 1);
+		int len = s.length();
+
+		if ((firstDash <= 0) || (secondDash <= 0) || (secondDash >= len - 1)) {
+			isValid = false; 
+		}
+
+		else if (firstDash != YEAR_LENGTH ||
+				(secondDash - firstDash <= 1 || secondDash - firstDash > MONTH_LENGTH + 1) ||
+				(len - secondDash <= 1 && len - secondDash > DAY_LENGTH + 1)) {
+			isValid = false; 
+		}
+
+		int year = Integer.parseInt(s, 0, firstDash, 10);
+		int month = Integer.parseInt(s, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(s, secondDash + 1, len, 10);
+
+		if ((month < 1 || month > MAX_MONTH) || (day < 1 || day > MAX_DAY) || (year < MIN_YEAR || year > MAX_YEAR)) {
+			isValid = false; 
+		}
+
+		return isValid;
+	}
+	/**
+	 * this is an qurey method with returns the BusinessHour 
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOBusinessHour> getTOBusinessHour(){
+		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
+		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours()) {
+			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
+			businessHours.add(BusinessHour);
+		}
+		return businessHours;
+	}
+	
+	/**
+	 * This is a helper method witch sorts the TOTimeSlots based on their start time
+	 * @param TimeSlots
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOTimeSlot> sortTimeSlot(List<TOTimeSlot> TimeSlots){
+		Collections.sort(TimeSlots, new CustomComparator());
+		return TimeSlots;
+	}
+
+	/**
+	 * This is a helper method which would return the string version of the date of the next day 
+	 * @param date1
+	 * @return
+	 * @author mikewang
+	 */
+	public static String NextDate(String date1) {
+		String resultDate;
+		final int MAX_MONTH = 12;
+		final int MAX_DAY = 31;
+		final int MAX_YEAR = 8099;
+		Date d = null;
+
+		int firstDash = date1.indexOf('-');
+		int secondDash = date1.indexOf('-', firstDash + 1);
+		int len = date1.length();
+
+		int year = Integer.parseInt(date1, 0, firstDash, 10);
+		int month = Integer.parseInt(date1, firstDash + 1, secondDash, 10);
+		int day = Integer.parseInt(date1, secondDash + 1, len, 10);
+
+		if (day <= MAX_DAY - 1) {
+			day = day+1;
+		}
+		else if(month <= MAX_MONTH -1) {
+			day = 1;
+			month = month + 1;
+		}
+		else if (year <= MAX_YEAR - 1) {
+			day = 1; 
+			month = 1;
+			year = year + 1;
+		}
+		resultDate = year+"-"+month+"-"+day;
+		return resultDate;
+
+	}
+	/**
+	 * This is a helper method which checks if a specific date in within a holiday
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInHoliday(Date date) {
+		Boolean isInHoliday = false; 
+		List<TimeSlot> holidayList = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+		for(TimeSlot x: holidayList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInHoliday = true; 
+			}
+		}
+		return isInHoliday; 
+	}
+
+
+	/**
+	 * This is a helper method which checks if a specific date in within a vacation
+	 * @param date
+	 * @return
+	 * @author mikewang
+	 */
+	private static boolean checkIsInVacation(Date date) {
+		Boolean isInVacation = false; 
+		List<TimeSlot> VacationList = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+		for(TimeSlot x: VacationList) {
+			if ((date.after(x.getStartDate()) && date.before(x.getEndDate())) || date.equals(x.getStartDate()) || date.equals(x.getEndDate())) {
+				isInVacation = true; 
+			}
+		}
+		return isInVacation; 
+	}
+	
+	/**
+	 * This is a query method which can gives a list of all TOAppointment 
+	 * Which includes all appointments combo items and time slot 
+	 * @return
+	 * @author mikewang
+	 * @author AntoineW later made a change
+	 */
+	public static List<TOAppointment> getTOAppointment(){
+		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
+
+			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
+					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+			// Added feature TOAppointment can show all downtime
+			// by mikewang
+			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
+				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
+			}
+			// ToAppointment need to show all the service item (comboitem)
+			// by AnTW
+			for (TOComboItem toc:getToTOComboItem(appointment)) {
+				toAppointment.addChosenItem(toc);
+			}
+			appointments.add(toAppointment);
+		}
+		return appointments;
+
+	}	
+	/**
+	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
+	 * @param timeSlot
+	 * @return
+	 * @author mikewang
+	 */
+	public static TOTimeSlot CovertToTOTimeSlot(TimeSlot timeSlot) {
+		TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(),timeSlot.getEndDate(),timeSlot.getEndTime());
+		return toTimeSlot;
+	}
+	
+	/**
+	 * This is a query method which can get all ComboItems from a specific appointment into a list of TOComboItem
+	 * @param appointment
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
+		//@ TODO
+		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
+		for (ComboItem comboitems: appointment.getChosenItems()) {
+			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
+			comboItems.add(toComboItem);
+		}
+		return comboItems;
+	}
+	
+	/**
+	 * This method finds the appointments that has specified services
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
+	 * @param serviceName
+	 * @return a list of appointments 
+	 * 
+	 * @author chengchen
+	 */
+	public static List<Appointment> findAppointmentByServiceName(String serviceName) {
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getBookableService().getName().equals(serviceName)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
+	
+
+
+
+
+
+	
+
 
 
 
