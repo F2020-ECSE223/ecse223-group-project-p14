@@ -481,7 +481,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the number of appointments in the system with service {string} shall be {string}")
 	public void the_number_of_appointments_in_the_system_with_service_shall_be(String serviceName, String numService) {
-		List<Appointment> appointments= FlexiBookController.findAppointmentByServiceName(serviceName);
+		List<Appointment> appointments= findAppointmentByServiceName(serviceName);
 		assertEquals(Integer.parseInt(numService), appointments.size());
 	}
 	/**
@@ -493,7 +493,6 @@ public class CucumberStepDefinitions {
 	}
 
 	/**
-	 * helper method being used
 	 * 
 	 * @author chengchen
 	 */
@@ -504,7 +503,6 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 * helper methos being used
 	 * @author chengchen
 	 */
 	@Then("the service combos {string} shall not contain service {string}")
@@ -2607,6 +2605,30 @@ public class CucumberStepDefinitions {
 		}
 		return comboItems;
 	}
+	
+	/**
+	 * This method finds the appointments that has specified services
+	 * 
+	 * This is a private helper method but we put it public in this stage for testing.
+	 * 
+	 * @param serviceName
+	 * @return a list of appointments 
+	 * 
+	 * @author chengchen
+	 */
+	public static List<Appointment> findAppointmentByServiceName(String serviceName) {
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getBookableService().getName().equals(serviceName)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
+	
+
+
+
 
 
 	
