@@ -59,6 +59,7 @@ Feature: Update business information
 
   Scenario Outline: Remove existing business hours
     Given the user is logged in to an account with username "<username>"
+    Given the business has a business hour on "Thursday" with start time "09:00" and end time "15:00"
     When the user tries to remove the business hour starting "Thursday" at "09:00"
     Then the business hour starting "Thursday" at "09:00" shall "<result>" exist
     Then an error message "No permission to update business information" shall "<result>" be raised
