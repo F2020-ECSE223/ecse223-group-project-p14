@@ -1,0 +1,123 @@
+
+
+
+class Appointment{
+  
+  AppointmentStatus{
+    
+    Pending{
+    
+      //Question 1
+      [!isAheadAtLeastOneDay()] -> WithinOneDay;
+      
+      cancelAppointment() -> final;
+      
+      updateAppointmentTime()[isInGoodTimeSlot()]->Pending;
+      
+      updateAppointmentContent()[isInGoodTimeSlot()]->Pending;
+      
+    }
+    
+    WithinOneDay{
+     //Question 2
+      ownerStart()[isStartTime()] -> InProgress;
+    }
+    
+
+    
+    InProgress{
+      
+      updateAppointmentContent()[isInGoodTimeSlot()&& isCustomerArrived()]-> InProgress;
+      
+      [isEndTimeReached() && isCustomerArrived()] -> final;
+      [isEndTimeReached() && !isCustomerArrived()]/
+      {incrementNoShow();}-> final;
+      
+      
+      
+    }
+    
+    
+    
+    final{
+    
+      entry/{this.delete();}
+    
+    }
+    
+    
+    
+    
+  }
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Customer{
+  CustomerStatus{
+    
+    Waiting{
+      arrives()/ {setArrivalTime(Time time);} -> Arrived;
+      
+      noShow()[isAlmostMaximumNoShows()]/ {incrementNoShow();} -> Suspended;
+      
+       noShow()[!isAlmostMaximumNoShows()]/ {incrementNoShow();} -> Waiting;
+    }
+    
+    Arrived{
+      
+      checkCurrentAppointment()[isEndTimeReached()] ->Waiting;
+      checkCurrentAppointment()[!isEndTimeReached()] -> Arrived;
+      
+    }
+    
+    Suspended{
+      
+    }
+    
+    
+    
+  }
+  
+  
+  
+}
