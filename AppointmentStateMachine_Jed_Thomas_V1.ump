@@ -1,0 +1,30 @@
+class  Appointment{
+  appointmentStatus{
+    
+    Unbooked{
+      makeAppointment(Date date,   List<Service> services) -> Booked;
+    }
+    
+    Booked{
+      
+      MoreThan1Day{
+      [Time < 1] -> LessThan1Day;
+      changeAppointment(Date date,   List<Service> services) -> MoreThan1Day;
+      cancel() -> Final;
+    }
+    
+    LessThan1Day{
+      [CustomerArrvied] -> Arrived;
+      OwnerEnd() -> Final;
+    }
+    
+    Arrived{
+      changeOptionalServices(List<Boolean> optional) -> Arrived;
+      AppointmentDone -> Final;
+    }
+    
+    }
+     
+  }
+  
+}
