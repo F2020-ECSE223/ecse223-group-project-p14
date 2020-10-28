@@ -59,6 +59,7 @@ Feature: Update business information
 
   Scenario Outline: Remove existing business hours
     Given the user is logged in to an account with username "<username>"
+    Given the business has a business hour on "Thursday" with start time "09:00" and end time "15:00"
     When the user tries to remove the business hour starting "Thursday" at "09:00"
     Then the business hour starting "Thursday" at "09:00" shall "<result>" exist
     Then an error message "No permission to update business information" shall "<result>" be raised
@@ -89,7 +90,7 @@ Feature: Update business information
   Scenario Outline: Update vacation
     Given the user is logged in to an account with username "<username>"
     When the user tries to change the "vacation" on "2020-07-30" at "09:00" to be with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
-    Then the "vacation" shall "<result>" be updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
+    Then the "vacation" shall "<result>" updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
     Then an error message "<error>" shall "<resultError>" raised
 
     Examples: 
@@ -103,7 +104,7 @@ Feature: Update business information
   Scenario Outline: Update holiday
     Given the user is logged in to an account with username "<username>"
     When the user tries to change the "holiday" on "2020-08-15" at "16:00" to be with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
-    Then the "holiday" shall "<result>" be updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
+    Then the "holiday" shall "<result>" updated with start date "<startDate>" at "<startTime>" and end date "<endDate>" at "<endTime>"
     Then an error message "<error>" shall "<resultError>" raised
 
     Examples: 
