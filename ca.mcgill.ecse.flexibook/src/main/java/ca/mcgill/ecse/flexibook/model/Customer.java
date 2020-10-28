@@ -4,13 +4,16 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
-// line 23 "../../../../../FlexiBook.ump"
+// line 25 "../../../../../FlexiBook.ump"
 public class Customer extends User
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
+
+  //Customer Attributes
+  private int noShowCount;
 
   //Customer Associations
   private FlexiBook flexiBook;
@@ -20,9 +23,10 @@ public class Customer extends User
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(String aUsername, String aPassword, FlexiBook aFlexiBook)
+  public Customer(String aUsername, String aPassword, int aNoShowCount, FlexiBook aFlexiBook)
   {
     super(aUsername, aPassword);
+    noShowCount = aNoShowCount;
     boolean didAddFlexiBook = setFlexiBook(aFlexiBook);
     if (!didAddFlexiBook)
     {
@@ -34,6 +38,19 @@ public class Customer extends User
   //------------------------
   // INTERFACE
   //------------------------
+
+  public boolean setNoShowCount(int aNoShowCount)
+  {
+    boolean wasSet = false;
+    noShowCount = aNoShowCount;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public int getNoShowCount()
+  {
+    return noShowCount;
+  }
   /* Code from template association_GetOne */
   public FlexiBook getFlexiBook()
   {
@@ -177,4 +194,11 @@ public class Customer extends User
     super.delete();
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "noShowCount" + ":" + getNoShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
+  }
 }
