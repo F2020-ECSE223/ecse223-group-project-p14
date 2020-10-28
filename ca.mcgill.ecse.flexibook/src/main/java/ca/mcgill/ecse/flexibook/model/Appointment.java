@@ -4,13 +4,18 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
-// line 84 "../../../../../FlexiBook.ump"
+// line 1 "../../../../../FlexiBookStateMachine.ump"
+// line 86 "../../../../../FlexiBook.ump"
 public class Appointment
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
+
+  //Appointment State Machines
+  public enum AppointmentStatus { Booked, InProgress, FinalState }
+  private AppointmentStatus appointmentStatus;
 
   //Appointment Associations
   private Customer customer;
@@ -45,11 +50,167 @@ public class Appointment
     {
       throw new RuntimeException("Unable to create appointment due to flexiBook. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
+    setAppointmentStatus(AppointmentStatus.Booked);
   }
 
   //------------------------
   // INTERFACE
   //------------------------
+
+  public String getAppointmentStatusFullName()
+  {
+    String answer = appointmentStatus.toString();
+    return answer;
+  }
+
+  public AppointmentStatus getAppointmentStatus()
+  {
+    return appointmentStatus;
+  }
+
+  public boolean cancelAppointment()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case Booked:
+        setAppointmentStatus(AppointmentStatus.FinalState);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean updateAppointmentTime()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case Booked:
+        if (isInGoodTimeSlot()&&!(SameDay()))
+        {
+          setAppointmentStatus(AppointmentStatus.Booked);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean updateAppointmentContent()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case Booked:
+        if (isInGoodTimeSlot()&&!(SameDay()))
+        {
+          setAppointmentStatus(AppointmentStatus.Booked);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      case InProgress:
+        if (isInGoodTimeSlot())
+        {
+          setAppointmentStatus(AppointmentStatus.InProgress);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean startAppointment()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case Booked:
+        if (goodStartTime())
+        {
+          setAppointmentStatus(AppointmentStatus.InProgress);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean registeredNoShow()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case InProgress:
+        // line 21 "../../../../../FlexiBookStateMachine.ump"
+        incrementNoShow();
+        setAppointmentStatus(AppointmentStatus.FinalState);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean finishedAppointment()
+  {
+    boolean wasEventProcessed = false;
+    
+    AppointmentStatus aAppointmentStatus = appointmentStatus;
+    switch (aAppointmentStatus)
+    {
+      case InProgress:
+        setAppointmentStatus(AppointmentStatus.FinalState);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  private void setAppointmentStatus(AppointmentStatus aAppointmentStatus)
+  {
+    appointmentStatus = aAppointmentStatus;
+
+    // entry actions and do activities
+    switch(appointmentStatus)
+    {
+      case FinalState:
+        // line 29 "../../../../../FlexiBookStateMachine.ump"
+        this.delete();
+        break;
+    }
+  }
   /* Code from template association_GetOne */
   public Customer getCustomer()
   {

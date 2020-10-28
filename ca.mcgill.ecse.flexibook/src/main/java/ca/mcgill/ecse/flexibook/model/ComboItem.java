@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse.flexibook.model;
 
-// line 79 "../../../../../FlexiBook.ump"
+// line 81 "../../../../../FlexiBook.ump"
 public class ComboItem
 {
 

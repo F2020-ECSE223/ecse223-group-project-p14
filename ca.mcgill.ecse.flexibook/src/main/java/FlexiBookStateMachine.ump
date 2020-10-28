@@ -1,0 +1,33 @@
+class Appointment{
+
+	AppointmentStatus{
+
+	Booked{
+  
+  	cancelAppointment() -> FinalState;
+ 
+  	updateAppointmentTime()[isInGoodTimeSlot() && !SameDay()]->Booked;
+  
+  	updateAppointmentContent()[isInGoodTimeSlot() && !SameDay() ]->Booked;
+  
+  	startAppointment()[goodStartTime()] -> InProgress;
+ 
+	}
+
+	InProgress{
+  
+  	updateAppointmentContent()[isInGoodTimeSlot()]-> InProgress;
+  
+  	registeredNoShow()/{incrementNoShow();} -> FinalState; 
+  
+  	finishedAppointment() -> FinalState ;
+  
+	}
+
+	FinalState{
+
+  	entry/{this.delete();}
+
+		}    
+	} 
+}
