@@ -180,7 +180,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean finishedAppointment()
+public boolean finishedAppointment()
   {
     boolean wasEventProcessed = false;
     
@@ -410,5 +410,15 @@ public class Appointment
       placeholderFlexiBook.removeAppointment(this);
     }
   }
+  
+  /**
+   * This method increments the noShowCount of the associated customer
+   * 
+   */
+  public void incrementNoShow() {
+	int noShowCount = this.getCustomer().getNoShowCount();
+	noShowCount++;
+	this.getCustomer().setNoShowCount(noShowCount);
+}
 
 }

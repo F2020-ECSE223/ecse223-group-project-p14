@@ -30,4 +30,14 @@ class Appointment{
 
 		}    
 	} 
+
+/**
+   * This method increments the noShowCount of the associated customer
+   * @author Catherine
+   */
+  public void incrementNoShow() {
+	  int noShowCount = this.getCustomer().getNoShowCount();
+	  noShowCount++;
+	  this.getCustomer().setNoShowCount(noShowCount);
+  }
 }
