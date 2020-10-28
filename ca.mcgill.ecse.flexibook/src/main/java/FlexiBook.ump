@@ -24,6 +24,7 @@ class Owner {
 
 class Customer {
   isA User;
+  int noShowCount;
 }
 
 class Business {
