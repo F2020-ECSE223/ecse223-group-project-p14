@@ -271,9 +271,9 @@ public class FlexiBook
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Customer addCustomer(String aUsername, String aPassword)
+  public Customer addCustomer(String aUsername, String aPassword, int aNoShowCount)
   {
-    return new Customer(aUsername, aPassword, this);
+    return new Customer(aUsername, aPassword, aNoShowCount, this);
   }
 
   public boolean addCustomer(Customer aCustomer)

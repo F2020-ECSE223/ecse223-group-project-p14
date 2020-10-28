@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
 // line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 86 "../../../../../FlexiBook.ump"
+// line 87 "../../../../../FlexiBook.ump"
 public class Appointment
 {
 
