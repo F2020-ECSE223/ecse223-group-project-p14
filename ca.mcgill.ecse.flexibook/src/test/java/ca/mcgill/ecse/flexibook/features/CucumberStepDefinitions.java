@@ -2136,7 +2136,18 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner starts the appointment at {string}")
 	public void the_owner_starts_the_appointment_at(String dateString) {
-		FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
 		try{
 			FlexiBookController.startAppointment(previousAppointment);
 		} catch (InvalidInputException e) {
@@ -2152,7 +2163,17 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner ends the appointment at {string}")
 	public void the_owner_ends_the_appointment_at(String dateString) {
-    	FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		
+    	//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
     	try{
     		FlexiBookController.endAppointment(previousAppointment);
     	} catch (InvalidInputException e) {
@@ -2304,6 +2325,12 @@ public class CucumberStepDefinitions {
 	    throw new io.cucumber.java.PendingException();
 	}
 
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
 	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
 	    // Write code here that turns the phrase above into concrete actions
@@ -2320,6 +2347,11 @@ public class CucumberStepDefinitions {
 	}
 	
 	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@Then("the service combo shall have {string} selected services")
 	public void the_service_combo_shall_have_selected_services(String string) {
 	    // Write code here that turns the phrase above into concrete actions
