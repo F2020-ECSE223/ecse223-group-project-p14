@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.core.StringContains;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
@@ -69,6 +70,7 @@ public class CucumberStepDefinitions {
 	private BusinessHour newBusinessHour;
 
 	private boolean statusOfAccount = false;
+	
 	
 	@Before
 	public static void setUp() {
@@ -2058,6 +2060,10 @@ public class CucumberStepDefinitions {
 	/*-----------------------Appointment Management Process----------------------*/
 	
 	/**
+	 * Scenario: Change the appointment for a service at least one day ahead
+	 */
+	
+	/**
 	 * @author Catherine
 	 */
 	@Given("{string} has {int} no-show records")
@@ -2069,37 +2075,110 @@ public class CucumberStepDefinitions {
 		}
 		
 	}
-	
+	/**
+	 * @author chengchen
+	 */
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
-	public void makes_a_appointment_for_the_date_and_time_at(String string, String string2, String string3, String string4, String string5) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void makes_a_appointment_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
+//		String[] arrOfDateTime = currentDateTime.split("\\+");
+//		String currentDate = "";
+//		String currentTime = ""; 
+//		currentDate = arrOfDateTime[0];
+//		currentTime = arrOfDateTime[1];
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes(((Service) findBookableService(serviceName)).getDuration())), flexiBook);
+		if (findSingleService(serviceName)!= null) {
+	    		Appointment appointment = new Appointment(findCustomer(username), findBookableService(serviceName), timeSlot, flexiBook);
+				flexiBook.addAppointment(appointment);
+	    }
+		else if (findServiceCombo(serviceName) != null) {
+			try {
+				FlexiBookController.addAppointmentForComboService(serviceName, null, stringToDate(date), stringToTime(time));
+			} catch (InvalidInputException e) {
+				error += e.getMessage();
+				errorCntr++;
+			}		
+		}
 	}
+	
+	
+	/**
+	 * 
+	 * @param username
+	 * @param serviceName
+	 * @param currentDateTime
+	 * 
+	 * @author chengchen
+	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
-	public void attempts_to_change_the_service_in_the_appointment_to_at(String string, String string2, String string3) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) {
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		
+		flexiBook.getAppointment(1).updateContent("", serviceName);
+		
+		
+//		List<Appointment> appointments = findAppointmentByUserName(username);
+//		for (Appointment appointment:appointments) {
+//			if (appointment.getCustomer().getUsername().equals(username)) {
+//				appointment.updateContent("", serviceName);
+//			}
+//		}
 	}
+	/**
+	 * @author chengchen
+	 */
 	@Then("the appointment shall be booked")
 	public void the_appointment_shall_be_booked() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    assertEquals(false, flexiBook.getAppointments().size()==0);
 	}
+	/**
+	 * Here I'm assuming that this is the case where the customer makes appointment with only one
+	 * service and changed only one service.
+	 * 
+	 * @param string
+	 * @author mikewang
+	 */
 	@Then("the service in the appointment shall be {string}")
-	public void the_service_in_the_appointment_shall_be(String string) {
+	public void the_service_in_the_appointment_shall_be(String serviceName) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		for( Appointment appointment : flexiBook.getAppointments()) {
+			for (ComboItem comboItem: appointment.getChosenItems()) {
+				assertEquals(serviceName, comboItem.getService().getName());
+			}
+		}
+		
 	}
+	
+	/**
+	 * 
+	 * @author mikewang
+	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
-	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String string, String string2, String string3) {
+	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartDate(), stringToDate(date));
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartTime(), stringToTime(startTime));
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getEndTime(), stringToTime(endTime));
 	}
+	
+	
+	/**
+	 * 
+	 * @param string
+	 * @author mikewang
+	 */
+	
 	@Then("the username associated with the appointment shall be {string}")
 	public void the_username_associated_with_the_appointment_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getCustomer().getUsername(), string);
 	}
+	
+	
 	/**
 	 * @author Catherine
 	 */
@@ -2108,11 +2187,25 @@ public class CucumberStepDefinitions {
 		assertEquals(noShowCount, findCustomer(username).getNoShowCount());
 	}
 	
+	
+	/**
+	 * 
+	 * @param int1
+	 * @author mikewang
+	 */
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
 	}
+	
+	
+	/**
+	 * Scenario: Change the appointment for a service on its day
+	 */
+	
+	
+	
 	
 	/*---------------------------private helper methods--------------------------*/
 
@@ -2140,7 +2233,23 @@ public class CucumberStepDefinitions {
 		return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	}
 
-
+	/**
+	 * This is a helper method which would return the time and date when the customer made an appointment
+	 * @param DateTime
+	 * @return TOTimeSlot timeSlotOfRegister
+	 * @author mikewang
+	 */
+	private TOTimeSlot currentRegisterTime(String DateTime) {
+		String[] sepDateTime = DateTime.split("\\+");
+		String DateString = "";
+		String TimeString = ""; 
+		DateString = sepDateTime[0];
+		TimeString = sepDateTime[1];
+		Date dateOfRegister = stringToDate(DateString);
+		Time timeOfRegister = stringToTime(TimeString);
+		TOTimeSlot timeSlotOfRegister = new TOTimeSlot(dateOfRegister, timeOfRegister, dateOfRegister, timeOfRegister);
+		return timeSlotOfRegister;
+	}
 	/**
 	 * This method is a helper method for finding a particular user by username.
 	 * User can be the owner or a customer 
@@ -2684,6 +2793,38 @@ public class CucumberStepDefinitions {
 		return appointments;
 	}
 	
+	/**
+	 * This method finds the appointments that starts in specific time 
+	 * it will return appointments starting at some time even if they are not in the same day
+	 * @param startTime
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<Appointment> findAppointmentByStartTime(Time startTime){
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getTimeSlot().getStartTime().equals(startTime)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
+	
+	/**
+	 * This method finds the appointments which belong to a specific customer
+	 * @param username
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<Appointment> findAppointmentByUserName(String username){
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getCustomer().getUsername().equals(username)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
 
 
 

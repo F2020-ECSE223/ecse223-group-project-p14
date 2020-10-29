@@ -476,6 +476,8 @@ public class Appointment
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
+   
+   
 
   // line 195 "../../../../../../model.ump"
    public boolean isInGoodTimeSlot(){
