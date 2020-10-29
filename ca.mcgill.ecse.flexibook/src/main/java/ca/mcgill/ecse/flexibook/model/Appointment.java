@@ -469,4 +469,11 @@ public class Appointment
 	  }
   }
 
+  // line 97 "../../../../../FlexiBookStateMachine.ump"
+   public void incrementNoShow(){
+    int noShowCount = this.getCustomer().getNoShowCount();
+		noShowCount++;
+		this.getCustomer().setNoShowCount(noShowCount);
+  }
+
 }

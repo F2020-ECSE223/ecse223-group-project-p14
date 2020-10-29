@@ -91,15 +91,11 @@ class Appointment{
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
+    }
 	  
-  }
-	
-	
-	
-	
-	
-	
-
-	 
-	
-}
+	  public void incrementNoShow() {
+		int noShowCount = this.getCustomer().getNoShowCount();
+		noShowCount++;
+		this.getCustomer().setNoShowCount(noShowCount);
+	}
+ }
