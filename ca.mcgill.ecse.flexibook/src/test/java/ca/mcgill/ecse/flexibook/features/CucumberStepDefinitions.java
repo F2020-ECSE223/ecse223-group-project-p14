@@ -2061,9 +2061,13 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 	@Given("{string} has {int} no-show records")
-	public void has_no_show_records(String string, Integer int1) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void has_no_show_records(String username, Integer noShowCount) {
+		if(findCustomer(username) !=null) {
+			findCustomer(username).setNoShowCount(noShowCount);	
+		}else{
+			new Customer(username, "password", noShowCount, FlexiBookApplication.getFlexiBook());
+		}
+		
 	}
 	
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
