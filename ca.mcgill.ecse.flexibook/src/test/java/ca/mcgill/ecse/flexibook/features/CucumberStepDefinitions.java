@@ -2117,9 +2117,10 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		
-		flexiBook.getAppointment(1).updateContent("", serviceName);
-		
+		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
+			flexiBook.getAppointment(1).updateContent("", serviceName);
+		}
+
 		
 //		List<Appointment> appointments = findAppointmentByUserName(username);
 //		for (Appointment appointment:appointments) {
@@ -2128,6 +2129,8 @@ public class CucumberStepDefinitions {
 //			}
 //		}
 	}
+	
+	
 	/**
 	 * @author chengchen
 	 */
@@ -2163,6 +2166,7 @@ public class CucumberStepDefinitions {
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartDate(), stringToDate(date));
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartTime(), stringToTime(startTime));
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getEndTime(), stringToTime(endTime));
+		
 	}
 	
 	

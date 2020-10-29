@@ -121,7 +121,7 @@ class Appointment{
 	public boolean SameDay(Date date) {
 		Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
-		if (date == tempToday) {
+		if (date.euqals(tempToday)) {
 			check = true;
 		}
 		return check; 

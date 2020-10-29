@@ -504,7 +504,7 @@ public class Appointment
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
-		if (date == tempToday) {
+		if (date.equals(tempToday)) {
 			check = true;
 		}
 		return check;
