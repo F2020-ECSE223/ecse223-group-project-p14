@@ -2067,7 +2067,6 @@ public class CucumberStepDefinitions {
 		}else{
 			new Customer(username, "password", noShowCount, FlexiBookApplication.getFlexiBook());
 		}
-		
 	}
 	
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
