@@ -9,8 +9,9 @@ import java.time.LocalTime;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import java.util.*;
 
-// line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 87 "../../../../../FlexiBook.ump"
+// line 86 "../../../../../../model.ump"
+// line 93 "../../../../../../model.ump"
+// line 227 "../../../../../../model.ump"
 public class Appointment
 {
 
@@ -91,7 +92,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean updateAppointmentTime(Date newDate,Time newStartTime)
+  public boolean updateAppointmentTime(Date newDate,Time newStartTime,Date currentDate)
   {
     boolean wasEventProcessed = false;
     
@@ -99,9 +100,9 @@ public class Appointment
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlot()&&!(SameDay()))
+        if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 15 "../../../../../FlexiBookStateMachine.ump"
+        // line 107 "../../../../../../model.ump"
           updateTime(newDate , newStartTime);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -115,7 +116,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean updateAppointmentContent(String action,String optService)
+  public boolean updateAppointmentContent(String action,String optService,Date currentDate,Time currentTime)
   {
     boolean wasEventProcessed = false;
     
@@ -123,9 +124,9 @@ public class Appointment
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlot()&&!(SameDay()))
+        if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 18 "../../../../../FlexiBookStateMachine.ump"
+        // line 110 "../../../../../../model.ump"
           updateContent(action, optService);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -147,7 +148,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean startAppointment()
+  public boolean startAppointment(Time currentTime)
   {
     boolean wasEventProcessed = false;
     
@@ -155,7 +156,7 @@ public class Appointment
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (goodStartTime())
+        if (goodStartTime(currentTime))
         {
           setAppointmentStatus(AppointmentStatus.InProgress);
           wasEventProcessed = true;
@@ -177,7 +178,7 @@ public class Appointment
     switch (aAppointmentStatus)
     {
       case InProgress:
-        // line 29 "../../../../../FlexiBookStateMachine.ump"
+        // line 121 "../../../../../../model.ump"
         incrementNoShow();
         setAppointmentStatus(AppointmentStatus.FinalState);
         wasEventProcessed = true;
@@ -215,7 +216,7 @@ public class Appointment
     switch(appointmentStatus)
     {
       case FinalState:
-        // line 37 "../../../../../FlexiBookStateMachine.ump"
+        // line 129 "../../../../../../model.ump"
         this.delete();
         break;
     }
@@ -420,7 +421,7 @@ public class Appointment
     }
   }
 
-  // line 47 "../../../../../FlexiBookStateMachine.ump"
+  // line 139 "../../../../../../model.ump"
    public void updateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -432,7 +433,7 @@ public class Appointment
 		setTimeSlot(timeSlot);
   }
 
-  // line 61 "../../../../../FlexiBookStateMachine.ump"
+  // line 153 "../../../../../../model.ump"
    public void updateContent(String action, String optService){
     if(getBookableService() instanceof ServiceCombo) {
 		  
@@ -469,11 +470,44 @@ public class Appointment
 	  }
   }
 
-  // line 97 "../../../../../FlexiBookStateMachine.ump"
+  // line 189 "../../../../../../model.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
+  }
+   
+   
+
+  // line 195 "../../../../../../model.ump"
+   public boolean isInGoodTimeSlot(){
+    boolean check = true;
+		for(Appointment a : getFlexiBook().getAppointments()){
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) && getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  && getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())){
+				check = false;
+			}
+		}
+		return check;
+  }
+
+  // line 205 "../../../../../../model.ump"
+   public boolean goodStartTime(Time time){
+    Time tempTime = getTimeSlot().getStartTime();
+		boolean check = false;
+		if (time.after(tempTime)) {
+			check = true;
+		}
+		return check;
+  }
+
+  // line 214 "../../../../../../model.ump"
+   public boolean SameDay(Date date){
+    Date tempToday = getTimeSlot().getStartDate();
+		boolean check = false; 
+		if (date == tempToday) {
+			check = true;
+		}
+		return check;
   }
 
 }

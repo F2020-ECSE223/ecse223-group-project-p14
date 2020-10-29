@@ -4,7 +4,8 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
-// line 25 "../../../../../FlexiBook.ump"
+// line 24 "../../../../../../model.ump"
+// line 248 "../../../../../../model.ump"
 public class Customer extends User
 {
 
