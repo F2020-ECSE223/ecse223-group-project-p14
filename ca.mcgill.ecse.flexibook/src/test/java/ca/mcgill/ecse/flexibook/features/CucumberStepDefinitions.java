@@ -2057,6 +2057,9 @@ public class CucumberStepDefinitions {
 	
 	/*-----------------------Appointment Management Process----------------------*/
 	
+	/**
+	 * @author Catherine
+	 */
 	@Given("{string} has {int} no-show records")
 	public void has_no_show_records(String string, Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
@@ -2093,11 +2096,14 @@ public class CucumberStepDefinitions {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new io.cucumber.java.PendingException();
 	}
+	/**
+	 * @author Catherine
+	 */
 	@Then("the user {string} shall have {int} no-show records")
-	public void the_user_shall_have_no_show_records(String string, Integer int1) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void the_user_shall_have_no_show_records(String username, Integer noShowCount) {
+		assertEquals(noShowCount, findCustomer(username).getNoShowCount());
 	}
+	
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
