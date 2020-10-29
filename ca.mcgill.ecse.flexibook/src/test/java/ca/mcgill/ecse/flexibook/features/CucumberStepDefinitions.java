@@ -2058,6 +2058,10 @@ public class CucumberStepDefinitions {
 	/*-----------------------Appointment Management Process----------------------*/
 	
 	/**
+	 * Scenario: Change the appointment for a service at least one day ahead
+	 */
+	
+	/**
 	 * @author Catherine
 	 */
 	@Given("{string} has {int} no-show records")
@@ -2084,22 +2088,53 @@ public class CucumberStepDefinitions {
 	public void the_appointment_shall_be_booked() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new io.cucumber.java.PendingException();
-	}
+
+	/**
+	 * Here I'm assuming that this is the case where the customer makes appointment with only one
+	 * service and changed only one service.
+	 * 
+	 * @param string
+	 * @author mikewang
+	 */
 	@Then("the service in the appointment shall be {string}")
 	public void the_service_in_the_appointment_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		for( Appointment Appointments : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if(Appointments.getCustomer().getUsername().equals("customer1") && Appointments.getTimeSlot().getStartDate().equals(stringToDate("2020-12-10")) && Appointments.getTimeSlot().getStartTime().equals(stringToTime("10:00"))) {
+				assertEquals(Appointments.getChosenItem(0).getService().getName(), string);
+			}
+		}
 	}
+	
+	/**
+	 * 
+	 * @param string
+	 * @param string2
+	 * @param string3
+	 * @author mikewang
+	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
 	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String string, String string2, String string3) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getStartDate(), stringToDate(string));
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getStartTime(), stringToTime(string2));
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getEndTime(), stringToTime(string3));
 	}
+	
+	
+	/**
+	 * 
+	 * @param string
+	 * @author mikewang
+	 */
+	
 	@Then("the username associated with the appointment shall be {string}")
 	public void the_username_associated_with_the_appointment_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getCustomer().getUsername(), string);
 	}
+	
+	
 	/**
 	 * @author Catherine
 	 */
@@ -2108,11 +2143,23 @@ public class CucumberStepDefinitions {
 		assertEquals(noShowCount, findCustomer(username).getNoShowCount());
 	}
 	
+	
+	/**
+	 * 
+	 * @param int1
+	 * @author mikewang
+	 */
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
 	}
+	
+	
+	
+	
+	
+	
 	
 	/*---------------------------private helper methods--------------------------*/
 
