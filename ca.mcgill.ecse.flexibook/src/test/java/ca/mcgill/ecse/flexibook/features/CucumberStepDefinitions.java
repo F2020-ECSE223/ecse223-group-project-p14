@@ -2151,6 +2151,7 @@ public class CucumberStepDefinitions {
 		for( Appointment appointment : flexiBook.getAppointments()) {
 			for (ComboItem comboItem: appointment.getChosenItems()) {
 				assertEquals(serviceName, comboItem.getService().getName());
+				
 			}
 		}
 		
@@ -2166,8 +2167,9 @@ public class CucumberStepDefinitions {
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartDate(), stringToDate(date));
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartTime(), stringToTime(startTime));
 		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getEndTime(), stringToTime(endTime));
-		
 	}
+	
+	
 	
 	
 	/**
