@@ -2088,7 +2088,7 @@ public class CucumberStepDefinitions {
 	public void the_appointment_shall_be_booked() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new io.cucumber.java.PendingException();
-
+	}
 	/**
 	 * Here I'm assuming that this is the case where the customer makes appointment with only one
 	 * service and changed only one service.
