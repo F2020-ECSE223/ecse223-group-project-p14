@@ -57,8 +57,7 @@ public class CucumberStepDefinitions {
 	private String error;
 	private int errorCntr; 
 	private Service aService;
-
-
+	private Appointment previousAppointment;
 
 
 	private int appointmentCount = 0;
@@ -2073,7 +2072,6 @@ public class CucumberStepDefinitions {
 		}else{
 			new Customer(username, "password", noShowCount, FlexiBookApplication.getFlexiBook());
 		}
-		
 	}
 	/**
 	 * @author chengchen
@@ -2130,8 +2128,61 @@ public class CucumberStepDefinitions {
 		}
 
 	}
-	
 
+	/**
+	 * 
+	 * @param String date
+	 * @author gtjarvis
+	 */
+	@When("the owner starts the appointment at {string}")
+	public void the_owner_starts_the_appointment_at(String dateString) {
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+		try{
+			FlexiBookController.startAppointment(previousAppointment);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}	
+	}
+
+	/**
+	 * 
+	 * @param String date
+	 * @author gtjarvis
+	 */
+	@When("the owner ends the appointment at {string}")
+	public void the_owner_ends_the_appointment_at(String dateString) {
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		
+    	//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+    	try{
+    		FlexiBookController.endAppointment(previousAppointment);
+    	} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
+	}
+
+	
 	/**
 	 * @author chengchen
 	 */
@@ -2281,6 +2332,49 @@ public class CucumberStepDefinitions {
 	public void the_system_shall_have_appointment_1(Integer int1) {
 		assertEquals(flexiBook.getAppointments().size(), int1);
 	}
+	
+	/**
+	 * **Will fix this
+	 * @author jedla
+	 */
+	@When("{string} makes a {string} appointment without choosing optional services for the date {string} and time {string} at {string}")
+	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String string, String string2, String string3, String string4, String string5) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
+	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+	
+	/**
+	 * @author Catherine
+	 */
+	@Then("the service combo in the appointment shall be {string}")
+	public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
+	}
+	
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
+	@Then("the service combo shall have {string} selected services")
+	public void the_service_combo_shall_have_selected_services(String string) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
 	
 	
 	
