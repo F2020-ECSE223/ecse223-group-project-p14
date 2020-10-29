@@ -2062,7 +2062,12 @@ public class CucumberStepDefinitions {
 	 */
 	@Given("{string} has {int} no-show records")
 	public void has_no_show_records(String username, Integer noShowCount) {
-		findCustomer(username).setNoShowCount(noShowCount);
+		if(findCustomer(username) !=null) {
+			findCustomer(username).setNoShowCount(noShowCount);	
+		}else{
+			new Customer(username, "password", noShowCount, FlexiBookApplication.getFlexiBook());
+		}
+		
 	}
 	
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
