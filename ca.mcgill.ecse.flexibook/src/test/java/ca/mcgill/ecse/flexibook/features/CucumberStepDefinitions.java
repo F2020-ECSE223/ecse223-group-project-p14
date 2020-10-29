@@ -2089,18 +2089,20 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes(((Service) findBookableService(serviceName)).getDuration())), flexiBook);
+		
 		if (findSingleService(serviceName)!= null) {
 	    		Appointment appointment = new Appointment(findCustomer(username), findBookableService(serviceName), timeSlot, flexiBook);
 				flexiBook.addAppointment(appointment);
 	    }
-		else if (findServiceCombo(serviceName) != null) {
-			try {
-				FlexiBookController.addAppointmentForComboService(serviceName, null, stringToDate(date), stringToTime(time));
-			} catch (InvalidInputException e) {
-				error += e.getMessage();
-				errorCntr++;
-			}		
-		}
+		
+//		else if (findServiceCombo(serviceName) != null) {
+//			try {
+//				FlexiBookController.addAppointmentForComboService(serviceName, null, stringToDate(date), stringToTime(time));
+//			} catch (InvalidInputException e) {
+//				error += e.getMessage();
+//				errorCntr++;
+//			}		
+//		}
 	}
 	
 	
@@ -2111,26 +2113,25 @@ public class CucumberStepDefinitions {
 	 * @param currentDateTime
 	 * 
 	 * @author chengchen
+	 * @throws InvalidInputException 
 	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
-	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) {
+	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) throws InvalidInputException {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
-			flexiBook.getAppointment(1).updateContent("", serviceName);
+		for (Appointment appointment:findAppointmentByUserName(username)) {
+			if (appointment.getBookableService() instanceof Service) {
+				if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.updateContent("", serviceName);
+				}
+			}
+			
 		}
 
-		
-//		List<Appointment> appointments = findAppointmentByUserName(username);
-//		for (Appointment appointment:appointments) {
-//			if (appointment.getCustomer().getUsername().equals(username)) {
-//				appointment.updateContent("", serviceName);
-//			}
-//		}
 	}
 	
-	
+
 	/**
 	 * @author chengchen
 	 */
@@ -2151,7 +2152,6 @@ public class CucumberStepDefinitions {
 		for( Appointment appointment : flexiBook.getAppointments()) {
 			for (ComboItem comboItem: appointment.getChosenItems()) {
 				assertEquals(serviceName, comboItem.getService().getName());
-				
 			}
 		}
 		
@@ -2163,10 +2163,14 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
 	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
-	    // Write code here that turns the phrase above into concrete actions
-		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartDate(), stringToDate(date));
-		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartTime(), stringToTime(startTime));
-		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getEndTime(), stringToTime(endTime));
+
+		for (Appointment appointment:findAppointmentByStartDate(stringToDate(date))) {
+			assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
+			assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+		}
+//		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
+//		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
+//		assertEquals(stringToTime(endTime),flexiBook.getAppointment(1).getTimeSlot().getEndTime());
 	}
 	
 	
@@ -2832,9 +2836,21 @@ public class CucumberStepDefinitions {
 		return appointments;
 	}
 
-
-
-
+	/**
+	 * This method find the appointments which start at the specified date
+	 * @param date
+	 * @return
+	 * @author chengchen
+	 */
+	public static List<Appointment> findAppointmentByStartDate(Date date){
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getTimeSlot().getStartDate().equals(date)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
 
 	
 
