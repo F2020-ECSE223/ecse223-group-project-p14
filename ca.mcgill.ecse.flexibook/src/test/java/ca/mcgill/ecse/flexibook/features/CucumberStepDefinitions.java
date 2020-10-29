@@ -2197,7 +2197,9 @@ public class CucumberStepDefinitions {
 	}
 	
 	
-	
+	/**
+	 * Scenario: Change the appointment for a service on its day
+	 */
 	
 	
 	
@@ -2228,7 +2230,20 @@ public class CucumberStepDefinitions {
 		return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	}
 
-
+	/**
+	 * This is a helper method which would return the time and date when the customer made an appointment
+	 * @param DateTime
+	 * @return TOTimeSlot timeSlotOfRegister
+	 * @author mikewang
+	 */
+	private TOTimeSlot currentRegisterTime(String DateTime) {
+		String DateString = DateTime.substring(0, 9);
+		String TimeString = DateTime.substring(11,15);
+		Date dateOfRegister = stringToDate(DateString);
+		Time timeOfRegister = stringToTime(TimeString);
+		TOTimeSlot timeSlotOfRegister = new TOTimeSlot(dateOfRegister, timeOfRegister, dateOfRegister, timeOfRegister);
+		return timeSlotOfRegister;
+	}
 	/**
 	 * This method is a helper method for finding a particular user by username.
 	 * User can be the owner or a customer 
