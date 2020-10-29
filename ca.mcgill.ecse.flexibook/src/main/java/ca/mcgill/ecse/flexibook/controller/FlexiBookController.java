@@ -613,7 +613,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("The username already exists");
 		}
 		else {
-			Customer aCustomer = new Customer(username, password, flexiBook);
+			Customer aCustomer = new Customer(username, password, 0, flexiBook);
 			flexiBook.addCustomer(aCustomer); 
 			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
