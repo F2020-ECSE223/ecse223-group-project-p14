@@ -189,7 +189,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-public boolean finishedAppointment()
+  public boolean finishedAppointment()
   {
     boolean wasEventProcessed = false;
     
@@ -419,16 +419,6 @@ public boolean finishedAppointment()
       placeholderFlexiBook.removeAppointment(this);
     }
   }
-  
-  /**
-   * This method increments the noShowCount of the associated customer
-   * 
-   */
-  public void incrementNoShow() {
-	int noShowCount = this.getCustomer().getNoShowCount();
-	noShowCount++;
-	this.getCustomer().setNoShowCount(noShowCount);
-}
 
   // line 47 "../../../../../FlexiBookStateMachine.ump"
    public void updateTime(Date newDate, Time newStartTime){
@@ -477,6 +467,13 @@ public boolean finishedAppointment()
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
+  }
+
+  // line 97 "../../../../../FlexiBookStateMachine.ump"
+   public void incrementNoShow(){
+    int noShowCount = this.getCustomer().getNoShowCount();
+		noShowCount++;
+		this.getCustomer().setNoShowCount(noShowCount);
   }
 
 }
