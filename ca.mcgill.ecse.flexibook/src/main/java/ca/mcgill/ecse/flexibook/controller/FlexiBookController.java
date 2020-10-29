@@ -932,7 +932,7 @@ public class FlexiBookController {
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
-		currentTime = FlexiBookApplication.getCurrentTime(true);
+		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		a.startAppointment(currentTime);
 		return true;
 	}
@@ -949,8 +949,7 @@ public class FlexiBookController {
 		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
 			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
-		currentTime = FlexiBookApplication.getCurrentTime(true);
-		a.finishedAppointment(currentTime);
+		a.finishedAppointment();
 		return true;
 	}
 

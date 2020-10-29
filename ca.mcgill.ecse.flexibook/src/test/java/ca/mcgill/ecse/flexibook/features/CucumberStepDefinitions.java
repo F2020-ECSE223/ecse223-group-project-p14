@@ -2206,7 +2206,12 @@ public class CucumberStepDefinitions {
 	@When("the owner starts the appointment at {string}")
 	public void the_owner_starts_the_appointment_at(String dateString) {
 		FlexiBookApplication.setCurrentTime(stringToTime(dateString));
-    	FlexiBook.Controller.startAppointment(previousAppointment);
+		try{
+			FlexiBookController.startAppointment(previousAppointment);
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}	
 	}
 
 	/**
@@ -2217,7 +2222,12 @@ public class CucumberStepDefinitions {
 	@When("the owner ends the appointment at {string}")
 	public void the_owner_ends_the_appointment_at(String dateString) {
     	FlexiBookApplication.setCurrentTime(stringToTime(dateString));
-    	FlexiBook.Controller.endAppointment(previousAppointment);
+    	try{
+    		FlexiBookController.endAppointment(previousAppointment);
+    	} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}
 	}
 	
 	
