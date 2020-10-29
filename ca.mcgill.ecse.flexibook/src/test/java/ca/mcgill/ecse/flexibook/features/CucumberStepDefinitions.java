@@ -2205,8 +2205,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner starts the appointment at {string}")
 	public void the_owner_starts_the_appointment_at(String dateString) {
-    	Time time = stringToTime(dateString);
-    	FlexiBook.Controller.startAppointment(previousAppointment, time);
+		FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+    	FlexiBook.Controller.startAppointment(previousAppointment);
 	}
 
 	/**
@@ -2216,8 +2216,8 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner ends the appointment at {string}")
 	public void the_owner_ends_the_appointment_at(String dateString) {
-    	Time time = stringToTime(dateString);
-    	FlexiBook.Controller.endAppointment(previousAppointment, time);
+    	FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+    	FlexiBook.Controller.endAppointment(previousAppointment);
 	}
 	
 	
