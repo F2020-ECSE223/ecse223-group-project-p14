@@ -2264,6 +2264,33 @@ public class CucumberStepDefinitions {
 		assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
 	}
 	
+	/**
+	 * **Will fix this
+	 * @author jedla
+	 */
+	@When("{string} makes a {string} appointment without choosing optional services for the date {string} and time {string} at {string}")
+	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String string, String string2, String string3, String string4, String string5) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+	@Then("the service combo in the appointment shall be {string}")
+	public void the_service_combo_in_the_appointment_shall_be(String string) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+	@Then("the service combo shall have {string} selected services")
+	public void the_service_combo_shall_have_selected_services(String string) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new io.cucumber.java.PendingException();
+	}
+
+	
 	
 	
 	/*---------------------------private helper methods--------------------------*/
