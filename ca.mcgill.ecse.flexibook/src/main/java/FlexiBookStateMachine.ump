@@ -1,14 +1,22 @@
 class Appointment{
 
+	depend java.sql.Date;
+	depend java.sql.Time;
+	depend java.time.Duration;
+	depend java.time.LocalTime;
+	depend ca.mcgill.ecse.flexibook.controller.FlexiBookController;
+
 	AppointmentStatus{
 
 	Booked{
   
   	cancelAppointment() -> FinalState;
  
-  	updateAppointmentTime()[isInGoodTimeSlot() && !SameDay()]->Booked;
+  	updateAppointmentTime(Date newDate ,Time newStartTime)[isInGoodTimeSlot() && !SameDay()]/
+  	{updateTime(newDate , newStartTime);}->Booked;
   
-  	updateAppointmentContent()[isInGoodTimeSlot() && !SameDay() ]->Booked;
+  	updateAppointmentContent(String action, String optService)[isInGoodTimeSlot() && !SameDay() ]/
+  	{updateContent(action, optService);}->Booked;
   
   	startAppointment()[goodStartTime()] -> InProgress;
  
@@ -29,5 +37,69 @@ class Appointment{
   	entry/{this.delete();}
 
 		}    
-	} 
+		
+		
+	}
+	
+	
+	public void updateTime(Date newDate, Time newStartTime){
+
+		// get duration of the original service
+		TimeSlot oldTimeSlot = getTimeSlot();
+		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
+		// get the duration to set new end time. Since there is no change in combo item, the time is same
+		int durationMinutes = (int) d.toMinutes();
+		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
+		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, getFlexiBook());
+		setTimeSlot(timeSlot);
+	}
+	
+	public void updateContent(String action, String optService) {
+	  
+	  
+	  
+	  if(getBookableService() instanceof ServiceCombo) {
+		  
+		  try {
+			FlexiBookController.updateAppointmentContent(this.getBookableService().getName(), 
+					  this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime(), action, optService);
+		} catch (Exception e) {
+			// should be exception here since there are already checking condition
+			e.printStackTrace();
+		}
+		  
+		  
+	  }else if(getBookableService() instanceof Service) {
+		  Service s = null;
+		  for (BookableService bservice : getFlexiBook().getBookableServices()) {
+				if (bservice.getName().equals(optService) && bservice instanceof Service) {
+					s = (Service)bservice;
+					break;
+				}
+			}
+		  if(s != null) {
+			  
+			  setBookableService(s);
+			  
+			  // Shouldnt need this step since the original service is a single service already
+			  if(chosenItems.size() !=0) {
+				  chosenItems.clear();
+			  }
+			  Time startTime = getTimeSlot().getStartTime();
+			  LocalTime aEndtime = startTime.toLocalTime().plusMinutes(s.getDuration());
+			  Time endTime = Time.valueOf(aEndtime);
+			  this.getTimeSlot().setEndTime(endTime);
+		  }
+	  }
+	  
+  }
+	
+	
+	
+	
+	
+	
+
+	 
+	
 }
