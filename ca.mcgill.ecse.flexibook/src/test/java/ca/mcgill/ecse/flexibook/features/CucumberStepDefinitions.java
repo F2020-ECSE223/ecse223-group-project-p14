@@ -2121,8 +2121,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment:findAppointmentByUserName(username)) {
-			if (appointment.getBookableService() instanceof Service) {
-				if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true))) {
+			if (appointment.getChosenItems().size() == 0) {
+				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
 					appointment.updateContent("", serviceName);
 				}
 			}
@@ -2151,9 +2151,12 @@ public class CucumberStepDefinitions {
 	public void the_service_in_the_appointment_shall_be(String serviceName) {
 	    // Write code here that turns the phrase above into concrete actions
 		for( Appointment appointment : flexiBook.getAppointments()) {
-			for (ComboItem comboItem: appointment.getChosenItems()) {
-				assertEquals(serviceName, comboItem.getService().getName());
+			if (appointment.getChosenItems().size() ==0) {
+				for (ComboItem comboItem: appointment.getChosenItems()) {
+					assertEquals(serviceName, comboItem.getService().getName());
+				}
 			}
+
 		}
 		
 	}
@@ -2166,8 +2169,10 @@ public class CucumberStepDefinitions {
 	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
 
 		for (Appointment appointment:findAppointmentByStartDate(stringToDate(date))) {
-			assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
-			assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+			if(appointment.getChosenItems().size() ==0) {
+				assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
+				assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+			}
 		}
 //		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
 //		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
@@ -2186,7 +2191,12 @@ public class CucumberStepDefinitions {
 	@Then("the username associated with the appointment shall be {string}")
 	public void the_username_associated_with_the_appointment_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getCustomer().getUsername(), string);
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if (appointment.getChosenItems().size() ==0) {
+				assertEquals(appointment.getCustomer().getUsername(), string);
+		
+			}
+		}
 	}
 	
 	
@@ -2207,7 +2217,7 @@ public class CucumberStepDefinitions {
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
-	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
+	    assertEquals(flexiBook.getAppointments().size(), int1);
 	}
 	
 	
@@ -2228,8 +2238,12 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
-			flexiBook.getAppointment(1).updateTime(stringToDate(newDate),stringToTime(newTime));
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if(appointment.getChosenItems().size() == 0) {
+				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.updateTime(stringToDate(newDate),stringToTime(newTime));
+				}
+			}
 		}
 	}
 	
@@ -2248,11 +2262,15 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
-			flexiBook.getAppointment(1).cancelAppointment();
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if(appointment.getChosenItems().size() == 0) {
+				if (appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.cancelAppointment();
+				}
+			}
 		}
 	}
-	
+
 	
 	/**
 	 * PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
@@ -2261,7 +2279,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the system shall have {int} appointment")
 	public void the_system_shall_have_appointment_1(Integer int1) {
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
+		assertEquals(flexiBook.getAppointments().size(), int1);
 	}
 	
 	
