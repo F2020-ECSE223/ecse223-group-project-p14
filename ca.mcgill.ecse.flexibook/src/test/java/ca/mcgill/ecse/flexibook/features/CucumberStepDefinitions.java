@@ -2126,7 +2126,7 @@ public class CucumberStepDefinitions {
 					appointment.updateContent("", serviceName);
 				}
 			}
-			
+		
 		}
 
 	}
@@ -2140,6 +2140,7 @@ public class CucumberStepDefinitions {
 	    assertEquals(false, flexiBook.getAppointments().size()==0);
 	}
 	/**
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * Here I'm assuming that this is the case where the customer makes appointment with only one
 	 * service and changed only one service.
 	 * 
@@ -2158,7 +2159,7 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
-	 * 
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @author mikewang
 	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
@@ -2177,7 +2178,7 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 * 
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @param string
 	 * @author mikewang
 	 */
@@ -2199,7 +2200,7 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 * 
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @param int1
 	 * @author mikewang
 	 */
@@ -2211,9 +2212,57 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 * Scenario: Change the appointment for a service on its day
+	 * Scenario: Change the date and time of appointment for a service on its day
 	 */
+	/**
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * @param customer
+	 * @param newDate
+	 * @param newTime
+	 * @param currentDateTime
+	 * @author mikewang
+	 */
+	@When("{string} attempts to update the date to {string} and time to {string} at {string}")
+	public void attempts_to_update_the_date_to_and_time_to_at(String customer, String newDate, String newTime, String currentDateTime) {
+	    // Write code here that turns the phrase above into concrete actions
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
+			flexiBook.getAppointment(1).updateTime(stringToDate(newDate),stringToTime(newTime));
+		}
+	}
 	
+	/**
+	 * Scenario: Cancel the appointment for a service at least one day ahead
+	 */
+	/**
+	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * @param customer
+	 * @param currentDateTime
+	 * @author mikewang
+	 */
+	@When("{string} attempts to cancel the appointment at {string}")
+	public void attempts_to_cancel_the_appointment_at(String customer, String currentDateTime) {
+	    // Write code here that turns the phrase above into concrete actions
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
+			flexiBook.getAppointment(1).cancelAppointment();
+		}
+	}
+	
+	
+	/**
+	 * PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * @param int1
+	 * @author mikewang
+	 */
+	@Then("the system shall have {int} appointment")
+	public void the_system_shall_have_appointment_1(Integer int1) {
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
+	}
 	
 	
 	
