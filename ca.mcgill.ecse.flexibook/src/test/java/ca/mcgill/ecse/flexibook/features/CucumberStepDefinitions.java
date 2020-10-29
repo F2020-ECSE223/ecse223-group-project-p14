@@ -2080,13 +2080,14 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
 	public void makes_a_appointment_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
-		String[] arrOfDateTime = currentDateTime.split("\\+");
-		String currentDate = "";
-		String currentTime = ""; 
-		currentDate = arrOfDateTime[0];
-		currentTime = arrOfDateTime[1];
-		FlexiBookApplication.setCurrentDate(stringToDate(currentDate));
-		FlexiBookApplication.setCurrentTime(stringToTime(currentTime));
+//		String[] arrOfDateTime = currentDateTime.split("\\+");
+//		String currentDate = "";
+//		String currentTime = ""; 
+//		currentDate = arrOfDateTime[0];
+//		currentTime = arrOfDateTime[1];
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes(((Service) findBookableService(serviceName)).getDuration())), flexiBook);
 		if (findSingleService(serviceName)!= null) {
 	    		Appointment appointment = new Appointment(findCustomer(username), findBookableService(serviceName), timeSlot, flexiBook);
@@ -2101,6 +2102,8 @@ public class CucumberStepDefinitions {
 			}		
 		}
 	}
+	
+	
 	/**
 	 * 
 	 * @param username
@@ -2111,19 +2114,19 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
 	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) {
-		String[] arrOfDateTime = currentDateTime.split("\\+");
-		String currentDate = "";
-		String currentTime = ""; 
-		currentDate = arrOfDateTime[0];
-		currentTime = arrOfDateTime[1];
-		FlexiBookApplication.setCurrentDate(stringToDate(currentDate));
-		FlexiBookApplication.setCurrentTime(stringToTime(currentTime));
-		List<Appointment> appointments = findAppointmentByServiceName(serviceName);
-		for (Appointment appointment:appointments) {
-			if (appointment.getCustomer().getUsername().equals(username)) {
-				appointment.updateContent("", serviceName);
-			}
-		}
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		
+		flexiBook.getAppointment(1).updateContent("", serviceName);
+		
+		
+//		List<Appointment> appointments = findAppointmentByUserName(username);
+//		for (Appointment appointment:appointments) {
+//			if (appointment.getCustomer().getUsername().equals(username)) {
+//				appointment.updateContent("", serviceName);
+//			}
+//		}
 	}
 	/**
 	 * @author chengchen
@@ -2237,8 +2240,11 @@ public class CucumberStepDefinitions {
 	 * @author mikewang
 	 */
 	private TOTimeSlot currentRegisterTime(String DateTime) {
-		String DateString = DateTime.substring(0, 9);
-		String TimeString = DateTime.substring(11,15);
+		String[] sepDateTime = DateTime.split("\\+");
+		String DateString = "";
+		String TimeString = ""; 
+		DateString = sepDateTime[0];
+		TimeString = sepDateTime[1];
 		Date dateOfRegister = stringToDate(DateString);
 		Time timeOfRegister = stringToTime(TimeString);
 		TOTimeSlot timeSlotOfRegister = new TOTimeSlot(dateOfRegister, timeOfRegister, dateOfRegister, timeOfRegister);
@@ -2787,6 +2793,38 @@ public class CucumberStepDefinitions {
 		return appointments;
 	}
 	
+	/**
+	 * This method finds the appointments that starts in specific time 
+	 * it will return appointments starting at some time even if they are not in the same day
+	 * @param startTime
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<Appointment> findAppointmentByStartTime(Time startTime){
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getTimeSlot().getStartTime().equals(startTime)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
+	
+	/**
+	 * This method finds the appointments which belong to a specific customer
+	 * @param username
+	 * @return
+	 * @author mikewang
+	 */
+	public static List<Appointment> findAppointmentByUserName(String username){
+		List<Appointment> appointments = new ArrayList<Appointment>();
+		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
+			if (app.getCustomer().getUsername().equals(username)) {
+				appointments.add(app);
+			}
+		}
+		return appointments;
+	}
 
 
 
