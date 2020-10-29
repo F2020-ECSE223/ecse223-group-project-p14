@@ -12,13 +12,13 @@ class Appointment{
   
   	cancelAppointment() -> FinalState;
  
-  	updateAppointmentTime(Date newDate ,Time newStartTime)[isInGoodTimeSlot() && !SameDay()]/
+  	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && !SameDay(currentDate)]/
   	{updateTime(newDate , newStartTime);}->Booked;
   
-  	updateAppointmentContent(String action, String optService)[isInGoodTimeSlot() && !SameDay() ]/
+  	updateAppointmentContent(String action, String optService, Date currentDate, Time currentTime)[isInGoodTimeSlot() && !SameDay(currentDate) ]/
   	{updateContent(action, optService);}->Booked;
   
-  	startAppointment()[goodStartTime()] -> InProgress;
+  	startAppointment()[goodStartTime(currentTime)] -> InProgress;
  
 	}
 
@@ -98,7 +98,32 @@ class Appointment{
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
 	}
-	
-	
-	
+
+	public boolean isInGoodTimeSlot(){
+		boolean check = true;
+		for(Appointment a : getFlexiBook().getAppointments()){
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) && getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  && getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())){
+				check = false;
+			}
+		}
+		return check;
+	}
+
+	public boolean goodStartTime(Time time){
+		Time tempTime = getTimeSlot().getStartTime();
+		boolean check = false;
+		if (time.after(tempTime)) {
+			check = true;
+		}
+		return check;
+	}
+
+	public boolean SameDay(Date date) {
+		Date tempToday = getTimeSlot().getStartDate();
+		boolean check = false; 
+		if (date == tempToday) {
+			check = true;
+		}
+		return check; 
+	}
  }
