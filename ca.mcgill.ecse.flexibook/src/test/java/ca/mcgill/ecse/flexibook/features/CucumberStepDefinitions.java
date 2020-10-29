@@ -2087,13 +2087,10 @@ public class CucumberStepDefinitions {
 		currentTime = arrOfDateTime[1];
 		FlexiBookApplication.setCurrentDate(stringToDate(currentDate));
 		FlexiBookApplication.setCurrentTime(stringToTime(currentTime));
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes(((Service) findBookableService(serviceName)).getDuration())), flexiBook);
 		if (findSingleService(serviceName)!= null) {
-	    	try {
-				FlexiBookController.addAppointmentForService(serviceName, stringToDate(date), stringToTime(time));
-			} catch (InvalidInputException e) {
-				error += e.getMessage();
-				errorCntr++;
-			}
+	    		Appointment appointment = new Appointment(findCustomer(username), findBookableService(serviceName), timeSlot, flexiBook);
+				flexiBook.addAppointment(appointment);
 	    }
 		else if (findServiceCombo(serviceName) != null) {
 			try {
@@ -2143,28 +2140,26 @@ public class CucumberStepDefinitions {
 	 * @author mikewang
 	 */
 	@Then("the service in the appointment shall be {string}")
-	public void the_service_in_the_appointment_shall_be(String string) {
+	public void the_service_in_the_appointment_shall_be(String serviceName) {
 	    // Write code here that turns the phrase above into concrete actions
-		for( Appointment Appointments : FlexiBookApplication.getFlexiBook().getAppointments()) {
-			if(Appointments.getCustomer().getUsername().equals("customer1") && Appointments.getTimeSlot().getStartDate().equals(stringToDate("2020-12-10")) && Appointments.getTimeSlot().getStartTime().equals(stringToTime("10:00"))) {
-				assertEquals(Appointments.getChosenItem(0).getService().getName(), string);
+		for( Appointment appointment : flexiBook.getAppointments()) {
+			for (ComboItem comboItem: appointment.getChosenItems()) {
+				assertEquals(serviceName, comboItem.getService().getName());
 			}
 		}
+		
 	}
 	
 	/**
 	 * 
-	 * @param string
-	 * @param string2
-	 * @param string3
 	 * @author mikewang
 	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
-	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String string, String string2, String string3) {
+	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
 	    // Write code here that turns the phrase above into concrete actions
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getStartDate(), stringToDate(string));
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getStartTime(), stringToTime(string2));
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getTimeSlot().getEndTime(), stringToTime(string3));
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartDate(), stringToDate(date));
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getStartTime(), stringToTime(startTime));
+		assertEquals(flexiBook.getAppointment(1).getTimeSlot().getEndTime(), stringToTime(endTime));
 	}
 	
 	
