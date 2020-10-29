@@ -920,6 +920,40 @@ public class FlexiBookController {
 		return true;
 	}
 
+	/**
+	 * Allows the owner to start an appointment
+	 * @param a -appointment
+	 * @param currentTime -current time
+	 * @return boolean whether or not starting appointment was successfull
+	 * @throws InvalidInputException
+	 * @author gtjarvis
+	 */
+	public static boolean startAppointment(Appointment a, Time currentTime) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("You are not authorized to perform this operation");
+		}
+		a.startAppointment(currentTime);
+		return true;
+	}
+
+	/**
+	 * Allows the owner to end an appointment
+	 * @param a -appointment
+	 * @param currentTime -current time
+	 * @return boolean whether or not starting appointment was successfull
+	 * @throws InvalidInputException
+	 * @author gtjarvis
+	 */
+	public static boolean endAppointment(Appointment a, Time currentTime) throws InvalidInputException{ 
+		//make sure current user is owner
+		if(!(FlexiBookApplication.getCurrentLoginUser() instanceof Owner)){
+			throw new InvalidInputException("You are not authorized to perform this operation");
+		}
+		a.finishedAppointment(currentTime);
+		return true;
+	}
+
 
 	/**
 	 * This method is used to setup the business with all the information

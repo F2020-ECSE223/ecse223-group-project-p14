@@ -57,8 +57,7 @@ public class CucumberStepDefinitions {
 	private String error;
 	private int errorCntr; 
 	private Service aService;
-
-
+	private Appointment previousAppointment;
 
 
 	private int appointmentCount = 0;
@@ -2199,10 +2198,27 @@ public class CucumberStepDefinitions {
 	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
 	}
 	
-	
 	/**
-	 * Scenario: Change the appointment for a service on its day
+	 * 
+	 * @param String date
+	 * @author gtjarvis
 	 */
+	@When("the owner starts the appointment at {string}")
+	public void the_owner_starts_the_appointment_at(String dateString) {
+    	Time time = stringToTime(dateString);
+    	FlexiBook.Controller.startAppointment(previousAppointment, time);
+	}
+
+	/**
+	 * 
+	 * @param String date
+	 * @author gtjarvis
+	 */
+	@When("the owner ends the appointment at {string}")
+	public void the_owner_ends_the_appointment_at(String dateString) {
+    	Time time = stringToTime(dateString);
+    	FlexiBook.Controller.endAppointment(previousAppointment, time);
+	}
 	
 	
 	
