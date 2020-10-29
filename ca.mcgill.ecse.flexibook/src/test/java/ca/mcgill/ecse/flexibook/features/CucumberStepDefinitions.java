@@ -2341,9 +2341,8 @@ public class CucumberStepDefinitions {
 	 * @author Catherine
 	 */
 	@Then("the service combo in the appointment shall be {string}")
-	public void the_service_combo_in_the_appointment_shall_be(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
+		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
 	}
 	
 	
