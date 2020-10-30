@@ -2451,7 +2451,6 @@ public class CucumberStepDefinitions {
 
 	
 	
-	
 	/**
 	 * 
 	 * @author AntoineW
