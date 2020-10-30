@@ -2358,43 +2358,44 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
 
-	//public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
-		//TOTimeSlot RegisterTime = currentRegisterTime(time);
-		//FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
-		//FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		//for (Appointment appointment:findAppointmentByUserName(username)) {
-			//if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
-			//	{
-				//	appointment.updateContent("add", optionalService);
-				//}
-			//}
-	//	}
-
-	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
-	    
-		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
-		
-		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
-
-		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
-		
-		Appointment app = null;
-		
-		for (Appointment a: flexiBook.getAppointments()) {
-			if(a.getTimeSlot().getStartDate().equals(Date.valueOf(d)) && a.getTimeSlot().getStartTime().equals(Time.valueOf(t))) {
-				app = a;
-				break;
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
+		TOTimeSlot RegisterTime = currentRegisterTime(time);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		for (Appointment appointment:findAppointmentByUserName(username)) {
+			if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
+			{
+					appointment.updateContent("add", optionalService);
+				}
 			}
 		}
-		
-		if (app == null) {
-			// just an error indicator
-			throw new io.cucumber.java.PendingException();
-		}else {
-			app.updateContent("add",  optserviceName);
-		}
-	    
 	}
+
+//	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
+//	    
+//		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
+//		
+//		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+//
+//		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+//		
+//		Appointment app = null;
+//		
+//		for (Appointment a: flexiBook.getAppointments()) {
+//			if(a.getTimeSlot().getStartDate().equals(Date.valueOf(d)) && a.getTimeSlot().getStartTime().equals(Time.valueOf(t))) {
+//				app = a;
+//				break;
+//			}
+//		}
+//		
+//		if (app == null) {
+//			// just an error indicator
+//			throw new io.cucumber.java.PendingException();
+//		}else {
+//			app.updateContent("add",  optserviceName);
+//		}
+//	    
+//	}
 		
 		/**
 		 * @author jedla
@@ -2421,8 +2422,15 @@ public class CucumberStepDefinitions {
 	public void the_service_combo_shall_have_selected_services(String itemList) {
 		for (Appointment instanceOfAppointment :flexiBook.getAppointments()) {
 			String result = "";
+			int counter = 1;
 			for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
+				if (counter == instanceOfAppointment.getChosenItems().size()-2){
 				result = result + aItem.getService().getName();
+				}
+				else {
+					result = result + aItem.getService().getName()+",";
+					counter=+1;
+				}
 			}
 			assertEquals(result, itemList);
 		}}
