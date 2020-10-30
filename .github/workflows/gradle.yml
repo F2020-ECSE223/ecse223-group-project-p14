@@ -23,17 +23,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
-      
-  test:
-    runs-on: ubuntu-latest
-    name: Generate Test Reports
-    steps:
-    - name: XUnit Viewer
-      id: xunit-viewer
-      uses: AutoModality/action-xunit-viewer@v1.0.1
-    - name: Attach Report
-      uses: actions/uplaod-artifact@v1
-      with: 
-        name: ${{ steps.xunit-viewer.outputs.report-name }}
-        path: ${{ steps.xunit-viewer.outputs.report-dir }}
+      run: ca.mcgill.ecse.flexibook/gradlew compileJava
+   # - uses: actions/upload-artifact@v2
+   #   with:
+   #     name: Package
+   #     path: build/libs
+
