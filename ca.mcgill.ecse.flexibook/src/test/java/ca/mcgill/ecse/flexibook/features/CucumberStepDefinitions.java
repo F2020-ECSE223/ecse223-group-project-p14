@@ -2363,7 +2363,7 @@ public class CucumberStepDefinitions {
 	    }
 	}
 	/**
-	 * @author jedla or Antoine
+	 * @author jedla
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
 
@@ -2418,7 +2418,6 @@ public class CucumberStepDefinitions {
 	public void the_service_combo_in_the_appointment_shall_be(String mainService) {
 		for (Appointment instanceOfAppointment : flexiBook.getAppointments()) {
 			assertEquals(instanceOfAppointment.getBookableService().getName(), (mainService));
-				//assertEquals(mainService, service.getMainService())
 			}
 			
 		}
@@ -2426,6 +2425,7 @@ public class CucumberStepDefinitions {
 	//@Then("the service combo in the appointment shall be {string}")
 	//public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
 	//	assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
+	
 	/**
 	 * 
 	 * @param itemList
@@ -2437,12 +2437,12 @@ public class CucumberStepDefinitions {
 			String result = "";
 			int counter = 1;
 			for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
-				if (counter == instanceOfAppointment.getChosenItems().size()-2){
-				result = result + aItem.getService().getName();
+				if (counter != 1){
+				result = result + "," + aItem.getService().getName();
 				}
 				else {
-					result = result + aItem.getService().getName()+",";
-					counter=+1;
+					result = result+ aItem.getService().getName();
+					counter= 0;		
 				}
 			}
 			assertEquals(result, itemList);
