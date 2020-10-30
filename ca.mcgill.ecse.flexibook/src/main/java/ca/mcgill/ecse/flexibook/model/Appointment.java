@@ -147,7 +147,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean startAppointment()
+  public boolean startAppointment(Time currentTime)
   {
     boolean wasEventProcessed = false;
     
