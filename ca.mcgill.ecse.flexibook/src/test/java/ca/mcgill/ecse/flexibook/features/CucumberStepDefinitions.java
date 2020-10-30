@@ -2265,29 +2265,61 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
-	 * **Will fix this
 	 * @author jedla
 	 */
 	@When("{string} makes a {string} appointment without choosing optional services for the date {string} and time {string} at {string}")
-	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String string, String string2, String string3, String string4, String string5) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
+		
+		if (findServiceCombo(serviceName)!= null) {
+			
+	    		Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
+	    		for (ComboItem c: findServiceCombo(serviceName).getServices()) {
+	    			appointment.addChosenItem(c);
+	    		}
+				flexiBook.addAppointment(appointment);
+	    }
 	}
-
+	/**
+	 * @author jedla
+	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
-	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
+		TOTimeSlot RegisterTime = currentRegisterTime(time);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		for (Appointment appointment:findAppointmentByUserName(username)) {
+			if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
+				{
+					appointment.updateContent("add", optionalService);
+				}
+			}
+		}
 	}
+	
 	@Then("the service combo in the appointment shall be {string}")
-	public void the_service_combo_in_the_appointment_shall_be(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
-	}
+	public void the_service_combo_in_the_appointment_shall_be(String mainService) {
+		for (Appointment instanceOfAppointment : flexiBook.getAppointments()) {
+			assertEquals(instanceOfAppointment.getBookableService().getName(), (mainService));
+				//assertEquals(mainService, service.getMainService())
+			}
+			
+		}
+		
 	@Then("the service combo shall have {string} selected services")
-	public void the_service_combo_shall_have_selected_services(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void the_service_combo_shall_have_selected_services(String itemList) {
+		for (Appointment instanceOfAppointment :flexiBook.getAppointments()) {
+			String result = "";
+			for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
+				result = result + aItem.getService().getName();
+			}
+			assertEquals(result, itemList);
+		}
+		
+	    
 	}
 
 	
@@ -2926,6 +2958,39 @@ public class CucumberStepDefinitions {
 			}
 		}
 		return appointments;
+	}
+	
+	/**
+	 * This method finds the duration of a serviceCombo
+	 * @param name
+	 * @return
+	 * @author jedla
+	 * 
+	 */
+	public static int getDurationOfServiceCombo(String name) {
+		ServiceCombo comboName = findServiceCombo(name);
+		int result = 0;
+		for (ComboItem combo: comboName.getServices()) {
+			result =+ combo.getService().getDuration();
+		}
+		return result;
+	}
+	
+	/**
+	 * This method gets a String representing the List of ComboItem
+	 * @param listComboItem
+	 * @return
+	 * @author jedla
+	 */
+	
+	public static String getStringOfComboItem(List<ComboItem> list) {
+		
+		String result = "";
+		
+		for (ComboItem aComboItem : list) {
+			result = aComboItem.getService().getName();
+		}
+		return result;
 	}
 
 	
