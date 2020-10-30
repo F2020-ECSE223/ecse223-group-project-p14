@@ -772,6 +772,7 @@ public class CucumberStepDefinitions {
 					//Service s =  FlexiBookController.findSingleService(name);
 					app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, name));
 				}
+				
 				flexiBook.addAppointment(app);
 
 			}
@@ -2119,8 +2120,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment:findAppointmentByUserName(username)) {
-			if (appointment.getBookableService() instanceof Service) {
-				if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true))) {
+			if (appointment.getChosenItems().size() == 0) {
+				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
 					appointment.updateContent("", serviceName);
 				}
 			}
@@ -2136,7 +2137,18 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner starts the appointment at {string}")
 	public void the_owner_starts_the_appointment_at(String dateString) {
-		FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
 		try{
 			FlexiBookController.startAppointment(previousAppointment);
 		} catch (InvalidInputException e) {
@@ -2152,7 +2164,17 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner ends the appointment at {string}")
 	public void the_owner_ends_the_appointment_at(String dateString) {
-    	FlexiBookApplication.setCurrentTime(stringToTime(dateString));
+		
+		// AntoineW did this start------
+		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
+		// AntoineW did this end------
+		
+		
+    	//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
     	try{
     		FlexiBookController.endAppointment(previousAppointment);
     	} catch (InvalidInputException e) {
@@ -2181,9 +2203,12 @@ public class CucumberStepDefinitions {
 	public void the_service_in_the_appointment_shall_be(String serviceName) {
 	    // Write code here that turns the phrase above into concrete actions
 		for( Appointment appointment : flexiBook.getAppointments()) {
-			for (ComboItem comboItem: appointment.getChosenItems()) {
-				assertEquals(serviceName, comboItem.getService().getName());
+			if (appointment.getChosenItems().size() ==0) {
+				for (ComboItem comboItem: appointment.getChosenItems()) {
+					assertEquals(serviceName, comboItem.getService().getName());
+				}
 			}
+
 		}
 		
 	}
@@ -2196,8 +2221,10 @@ public class CucumberStepDefinitions {
 	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
 
 		for (Appointment appointment:findAppointmentByStartDate(stringToDate(date))) {
-			assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
-			assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+			if(appointment.getChosenItems().size() ==0) {
+				assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
+				assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+			}
 		}
 //		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
 //		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
@@ -2216,7 +2243,12 @@ public class CucumberStepDefinitions {
 	@Then("the username associated with the appointment shall be {string}")
 	public void the_username_associated_with_the_appointment_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
-	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(1).getCustomer().getUsername(), string);
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if (appointment.getChosenItems().size() ==0) {
+				assertEquals(appointment.getCustomer().getUsername(), string);
+		
+			}
+		}
 	}
 	
 	
@@ -2237,7 +2269,7 @@ public class CucumberStepDefinitions {
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
-	    assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
+	    assertEquals(flexiBook.getAppointments().size(), int1);
 	}
 	
 	
@@ -2258,8 +2290,12 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
-			flexiBook.getAppointment(1).updateTime(stringToDate(newDate),stringToTime(newTime));
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if(appointment.getChosenItems().size() == 0) {
+				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.updateTime(stringToDate(newDate),stringToTime(newTime));
+				}
+			}
 		}
 	}
 	
@@ -2278,11 +2314,15 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		if (!flexiBook.getAppointment(1).SameDay(FlexiBookApplication.getCurrentDate())) {
-			flexiBook.getAppointment(1).cancelAppointment();
+		for (Appointment appointment: flexiBook.getAppointments()) {
+			if(appointment.getChosenItems().size() == 0) {
+				if (appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.cancelAppointment();
+				}
+			}
 		}
 	}
-	
+
 	
 	/**
 	 * PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
@@ -2291,7 +2331,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the system shall have {int} appointment")
 	public void the_system_shall_have_appointment_1(Integer int1) {
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointments().size(), int1);
+		assertEquals(flexiBook.getAppointments().size(), int1);
 	}
 	
 	/**
@@ -2304,10 +2344,37 @@ public class CucumberStepDefinitions {
 	    throw new io.cucumber.java.PendingException();
 	}
 
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
-	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
+	    
+		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		
+		Appointment app = null;
+		
+		for (Appointment a: flexiBook.getAppointments()) {
+			if(a.getTimeSlot().getStartDate().equals(Date.valueOf(d)) && a.getTimeSlot().getStartTime().equals(Time.valueOf(t))) {
+				app = a;
+				break;
+			}
+		}
+		
+		if (app == null) {
+			// just an error indicator
+			throw new io.cucumber.java.PendingException();
+		}else {
+			app.updateContent("add",  optserviceName);
+		}
+	    
 	}
 	
 	/**
@@ -2319,14 +2386,57 @@ public class CucumberStepDefinitions {
 	}
 	
 	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@Then("the service combo shall have {string} selected services")
 	public void the_service_combo_shall_have_selected_services(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	    List<String> servicesShouldBeExistingAsComboItems = ControllerUtils.parseString(string, ",");
+	    
+	    
 	}
 
 	
 	
+	
+	/**
+	 * 
+	 * @author AntoineW
+	 */
+	@Then("the appointment shall be in progress")
+	public void the_appointment_shall_be_in_progress() {
+		// Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
+	@When("the owner attempts to register a no-show for the appointment at {string}")
+	public void the_owner_attempts_to_register_a_no_show_for_the_appointment_at(String string) {
+		   // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+	
+	@When("the owner attempts to end the appointment at {string}")
+	public void the_owner_attempts_to_end_the_appointment_at(String string) {
+		  // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+
+
+
+
+
+
+
+
+
 	
 	/*---------------------------private helper methods--------------------------*/
 
