@@ -6,7 +6,7 @@ import java.sql.Date;
 import java.sql.Time;
 
 // line 53 "../../../../../../model.ump"
-// line 263 "../../../../../../model.ump"
+// line 331 "../../../../../../model.ump"
 public class TimeSlot
 {
 

@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
 // line 14 "../../../../../../model.ump"
-// line 238 "../../../../../../model.ump"
+// line 306 "../../../../../../model.ump"
 public abstract class User
 {
 

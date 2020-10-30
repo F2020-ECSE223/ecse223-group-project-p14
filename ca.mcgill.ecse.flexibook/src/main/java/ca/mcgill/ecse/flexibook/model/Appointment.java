@@ -6,12 +6,12 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalTime;
-import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
+import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import java.util.*;
 
 // line 86 "../../../../../../model.ump"
-// line 93 "../../../../../../model.ump"
-// line 227 "../../../../../../model.ump"
+// line 94 "../../../../../../model.ump"
+// line 296 "../../../../../../model.ump"
 public class Appointment
 {
 
@@ -102,7 +102,7 @@ public class Appointment
       case Booked:
         if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 107 "../../../../../../model.ump"
+        // line 108 "../../../../../../model.ump"
           updateTime(newDate , newStartTime);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -126,7 +126,7 @@ public class Appointment
       case Booked:
         if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 110 "../../../../../../model.ump"
+        // line 111 "../../../../../../model.ump"
           updateContent(action, optService);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -177,8 +177,8 @@ public class Appointment
     AppointmentStatus aAppointmentStatus = appointmentStatus;
     switch (aAppointmentStatus)
     {
-      case InProgress:
-        // line 121 "../../../../../../model.ump"
+      case Booked:
+        // line 116 "../../../../../../model.ump"
         incrementNoShow();
         setAppointmentStatus(AppointmentStatus.FinalState);
         wasEventProcessed = true;
@@ -216,7 +216,7 @@ public class Appointment
     switch(appointmentStatus)
     {
       case FinalState:
-        // line 129 "../../../../../../model.ump"
+        // line 130 "../../../../../../model.ump"
         this.delete();
         break;
     }
@@ -421,7 +421,7 @@ public class Appointment
     }
   }
 
-  // line 139 "../../../../../../model.ump"
+  // line 140 "../../../../../../model.ump"
    public void updateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -433,18 +433,75 @@ public class Appointment
 		setTimeSlot(timeSlot);
   }
 
-  // line 153 "../../../../../../model.ump"
+  // line 151 "../../../../../../model.ump"
    public void updateContent(String action, String optService){
     if(getBookableService() instanceof ServiceCombo) {
-		  
-		  try {
-			FlexiBookController.updateAppointmentContent(this.getBookableService().getName(), 
-					  this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime(), action, optService);
-		} catch (Exception e) {
-			// should be exception here since there are already checking condition
-			e.printStackTrace();
+    	
+    	TimeSlot oldTimeSlot = getTimeSlot();
+    	ServiceCombo sc = (ServiceCombo)getBookableService();
+    	List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
+		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
+		
+		if (action.equals("remove")) {
+
+			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
+			List<ComboItem> copy= new ArrayList<ComboItem>();
+			for(ComboItem item: getChosenItems()) {
+				copy.add(item);
+			}
+			for(ComboItem item: copy) {
+				for (String name: serviceNameList) {
+					// When we search that there is a name mentioned in the request
+					// we check if it is mandatory or main service.
+					// we can only removed it if the above two conditions are both wrong.
+					if(item.getService().getName().equals(name)) {
+						if(!item.getMandatory() && !name.equals(sc.getMainService().getService().getName())) {
+							removeChosenItem(item);
+						}
+					}	
+				}
+			}
+		}else if(action.equals("add")) {
+				List<ComboItem> newListComboItem = new ArrayList<ComboItem>();
+			
+			for(ComboItem item: sc.getServices()) {
+				// iterate through the combo as a template
+				// iN THIS MANNER the combo item in the appointment will also follow certain order!
+				// 1. ADD MANDATORY
+				if(item.getMandatory() == true) {
+					newListComboItem.add(item);
+				}else {
+					// 2. keeps the ones already exist
+					if (getChosenItems().contains(item)) {
+						newListComboItem.add(item);
+					}else {
+						// 3. add the chosen one
+						for(String name: serviceNameList) {
+							if(name.equals(item.getService().getName())) {
+								newListComboItem.add(item);
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+			}
+			
+			this.chosenItems = newListComboItem;
+
+			
+			int newDuration = calcActualTimeOfAppointment(getChosenItems());
+			Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
+			TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
+					newEndTime, getFlexiBook());
+			
+			setTimeSlot(timeSlot);
+			
+
+			
 		}
-		  
 		  
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
@@ -470,16 +527,14 @@ public class Appointment
 	  }
   }
 
-  // line 189 "../../../../../../model.ump"
+  // line 246 "../../../../../../model.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
-   
-   
 
-  // line 195 "../../../../../../model.ump"
+  // line 252 "../../../../../../model.ump"
    public boolean isInGoodTimeSlot(){
     boolean check = true;
 		for(Appointment a : getFlexiBook().getAppointments()){
@@ -490,7 +545,7 @@ public class Appointment
 		return check;
   }
 
-  // line 205 "../../../../../../model.ump"
+  // line 262 "../../../../../../model.ump"
    public boolean goodStartTime(Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -500,7 +555,7 @@ public class Appointment
 		return check;
   }
 
-  // line 214 "../../../../../../model.ump"
+  // line 271 "../../../../../../model.ump"
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -508,6 +563,17 @@ public class Appointment
 			check = true;
 		}
 		return check;
+  }
+
+  // line 281 "../../../../../../model.ump"
+   private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
+    int actualTime = 0;
+
+		for (ComboItem ci : comboItemList) {
+			actualTime = actualTime + ci.getService().getDuration();
+		}
+
+		return actualTime;
   }
 
 }

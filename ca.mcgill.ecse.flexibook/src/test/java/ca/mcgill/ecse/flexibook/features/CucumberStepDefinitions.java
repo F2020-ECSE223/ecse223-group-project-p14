@@ -772,6 +772,7 @@ public class CucumberStepDefinitions {
 					//Service s =  FlexiBookController.findSingleService(name);
 					app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, name));
 				}
+				
 				flexiBook.addAppointment(app);
 
 			}
@@ -2334,49 +2335,142 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
-	 * **Will fix this
 	 * @author jedla
 	 */
 	@When("{string} makes a {string} appointment without choosing optional services for the date {string} and time {string} at {string}")
-	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String string, String string2, String string3, String string4, String string5) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	public void makes_a_appointment_without_choosing_optional_services_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
+		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
+		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
+		
+		if (findServiceCombo(serviceName)!= null) {
+			
+	    		Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
+	    		for (ComboItem c: findServiceCombo(serviceName).getServices()) {
+	    			appointment.addChosenItem(c);
+	    		}
+				flexiBook.addAppointment(appointment);
+	    }
 	}
-
-	
 	/**
-	 * 
-	 * @param string
-	 * @author AntoineW
+	 * @author jedla or Antoine
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
-	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String string, String string2, String string3) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+
+	//public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
+		//TOTimeSlot RegisterTime = currentRegisterTime(time);
+		//FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		//FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		//for (Appointment appointment:findAppointmentByUserName(username)) {
+			//if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
+			//	{
+				//	appointment.updateContent("add", optionalService);
+				//}
+			//}
+	//	}
+
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
+	    
+		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		
+		Appointment app = null;
+		
+		for (Appointment a: flexiBook.getAppointments()) {
+			if(a.getTimeSlot().getStartDate().equals(Date.valueOf(d)) && a.getTimeSlot().getStartTime().equals(Time.valueOf(t))) {
+				app = a;
+				break;
+			}
+		}
+		
+		if (app == null) {
+			// just an error indicator
+			throw new io.cucumber.java.PendingException();
+		}else {
+			app.updateContent("add",  optserviceName);
+		}
+	    
 	}
+		
+		/**
+		 * @author jedla
+		 */
+		
+	@Then("the service combo in the appointment shall be {string}")
+	public void the_service_combo_in_the_appointment_shall_be(String mainService) {
+		for (Appointment instanceOfAppointment : flexiBook.getAppointments()) {
+			assertEquals(instanceOfAppointment.getBookableService().getName(), (mainService));
+				//assertEquals(mainService, service.getMainService())
+			}
+			
+		}
+		
+	//@Then("the service combo in the appointment shall be {string}")
+	//public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
+	//	assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
+	/**
+	 * 
+	 * @param itemList
+	 * @author jedla
+	 */
+	@Then("the service combo shall have {string} selected services")
+	public void the_service_combo_shall_have_selected_services(String itemList) {
+		for (Appointment instanceOfAppointment :flexiBook.getAppointments()) {
+			String result = "";
+			for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
+				result = result + aItem.getService().getName();
+			}
+			assertEquals(result, itemList);
+		}}
+		
+
+	//Antoine's Code
+		//public void the_service_combo_shall_have_selected_services(String string) {
+	//    List<String> servicesShouldBeExistingAsComboItems = ControllerUtils.parseString(string, ","); }
+
+	
+	
 	
 	/**
-	 * @author Catherine
+	 * 
+	 * @author AntoineW
 	 */
-	@Then("the service combo in the appointment shall be {string}")
-	public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
-		assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
+	@Then("the appointment shall be in progress")
+	public void the_appointment_shall_be_in_progress() {
+		// Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
 	}
-	
+
 	
 	/**
 	 * 
 	 * @param string
 	 * @author AntoineW
 	 */
-	@Then("the service combo shall have {string} selected services")
-	public void the_service_combo_shall_have_selected_services(String string) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new io.cucumber.java.PendingException();
+	@When("the owner attempts to register a no-show for the appointment at {string}")
+	public void the_owner_attempts_to_register_a_no_show_for_the_appointment_at(String string) {
+		   // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+	
+	@When("the owner attempts to end the appointment at {string}")
+	public void the_owner_attempts_to_end_the_appointment_at(String string) {
+		  // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
 	}
 
-	
-	
+
+
+
+
+
+
+
+
 	
 	/*---------------------------private helper methods--------------------------*/
 
@@ -3011,6 +3105,39 @@ public class CucumberStepDefinitions {
 			}
 		}
 		return appointments;
+	}
+	
+	/**
+	 * This method finds the duration of a serviceCombo
+	 * @param name
+	 * @return
+	 * @author jedla
+	 * 
+	 */
+	public static int getDurationOfServiceCombo(String name) {
+		ServiceCombo comboName = findServiceCombo(name);
+		int result = 0;
+		for (ComboItem combo: comboName.getServices()) {
+			result =+ combo.getService().getDuration();
+		}
+		return result;
+	}
+	
+	/**
+	 * This method gets a String representing the List of ComboItem
+	 * @param listComboItem
+	 * @return
+	 * @author jedla
+	 */
+	
+	public static String getStringOfComboItem(List<ComboItem> list) {
+		
+		String result = "";
+		
+		for (ComboItem aComboItem : list) {
+			result = aComboItem.getService().getName();
+		}
+		return result;
 	}
 
 	
