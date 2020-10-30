@@ -107,7 +107,7 @@ Feature: Appointment management process
 
   Scenario: Change the appointment for a service combo on its day
     When "customer1" makes a "color-deluxe" appointment without choosing optional services for the date "2020-12-10" and time "10:00" at "2020-12-04+09:00"
-    When "customer1" attempts to add the optional service "cut" to the service combo in the appointment at "2020-12-09+09:00"
+    When "customer1" attempts to add the optional service "cut" to the service combo in the appointment at "2020-12-10+09:00"
     Then the appointment shall be booked
     Then the service combo in the appointment shall be "color-deluxe"
     Then the service combo shall have "color,dry" selected services
@@ -176,7 +176,7 @@ Feature: Appointment management process
     Then the appointment shall be in progress
     Then the service combo in the appointment shall be "color-deluxe"
     Then the service combo shall have "wash,color,dry" selected services
-    Then the appointment shall be for the date "2020-12-10" with start time "10:00" and end time "11:45"
+    Then the appointment shall be for the date "2020-12-10" with start time "10:00" and end time "11:35"
     Then the username associated with the appointment shall be "customer1"
     Then the user "customer1" shall have 0 no-show records
     Then the system shall have 2 appointments
