@@ -18,15 +18,15 @@ class Appointment{
   	updateAppointmentContent(String action, String optService, Date currentDate, Time currentTime)[isInGoodTimeSlot() && !SameDay(currentDate) ]/
   	{updateContent(action, optService);}->Booked;
   
-  	startAppointment()[goodStartTime(currentTime)] -> InProgress;
+  	startAppointment(Time currentTime)[goodStartTime(currentTime)] -> InProgress;
+
+  	registeredNoShow()/{incrementNoShow();} -> FinalState; 
  
 	}
 
 	InProgress{
   
   	updateAppointmentContent()[isInGoodTimeSlot()]-> InProgress;
-  
-  	registeredNoShow()/{incrementNoShow();} -> FinalState; 
   
   	finishedAppointment() -> FinalState ;
   

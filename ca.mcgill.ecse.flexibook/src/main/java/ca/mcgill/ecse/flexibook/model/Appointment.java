@@ -9,8 +9,9 @@ import java.time.LocalTime;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import java.util.*;
 
-// line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 87 "../../../../../FlexiBook.ump"
+// line 86 "../../../../../../model.ump"
+// line 94 "../../../../../../model.ump"
+// line 296 "../../../../../../model.ump"
 public class Appointment
 {
 
@@ -101,7 +102,7 @@ public class Appointment
       case Booked:
         if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 15 "../../../../../FlexiBookStateMachine.ump"
+        // line 108 "../../../../../../model.ump"
           updateTime(newDate , newStartTime);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -125,7 +126,7 @@ public class Appointment
       case Booked:
         if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
-        // line 18 "../../../../../FlexiBookStateMachine.ump"
+        // line 111 "../../../../../../model.ump"
           updateContent(action, optService);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
@@ -147,7 +148,7 @@ public class Appointment
     return wasEventProcessed;
   }
 
-  public boolean startAppointment()
+  public boolean startAppointment(Time currentTime)
   {
     boolean wasEventProcessed = false;
     
@@ -176,8 +177,8 @@ public class Appointment
     AppointmentStatus aAppointmentStatus = appointmentStatus;
     switch (aAppointmentStatus)
     {
-      case InProgress:
-        // line 29 "../../../../../FlexiBookStateMachine.ump"
+      case Booked:
+        // line 116 "../../../../../../model.ump"
         incrementNoShow();
         setAppointmentStatus(AppointmentStatus.FinalState);
         wasEventProcessed = true;
@@ -215,7 +216,7 @@ public class Appointment
     switch(appointmentStatus)
     {
       case FinalState:
-        // line 37 "../../../../../FlexiBookStateMachine.ump"
+        // line 130 "../../../../../../model.ump"
         this.delete();
         break;
     }
@@ -420,7 +421,7 @@ public class Appointment
     }
   }
 
-  // line 47 "../../../../../FlexiBookStateMachine.ump"
+  // line 140 "../../../../../../model.ump"
    public void updateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -432,7 +433,7 @@ public class Appointment
 		setTimeSlot(timeSlot);
   }
 
-  // line 58 "../../../../../FlexiBookStateMachine.ump"
+  // line 151 "../../../../../../model.ump"
    public void updateContent(String action, String optService){
     if(getBookableService() instanceof ServiceCombo) {
     	
@@ -526,14 +527,14 @@ public class Appointment
 	  }
   }
 
-  // line 153 "../../../../../FlexiBookStateMachine.ump"
+  // line 246 "../../../../../../model.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
 
-  // line 159 "../../../../../FlexiBookStateMachine.ump"
+  // line 252 "../../../../../../model.ump"
    public boolean isInGoodTimeSlot(){
     boolean check = true;
 		for(Appointment a : getFlexiBook().getAppointments()){
@@ -544,7 +545,7 @@ public class Appointment
 		return check;
   }
 
-  // line 169 "../../../../../FlexiBookStateMachine.ump"
+  // line 262 "../../../../../../model.ump"
    public boolean goodStartTime(Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -554,7 +555,7 @@ public class Appointment
 		return check;
   }
 
-  // line 178 "../../../../../FlexiBookStateMachine.ump"
+  // line 271 "../../../../../../model.ump"
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -564,7 +565,7 @@ public class Appointment
 		return check;
   }
 
-  // line 188 "../../../../../FlexiBookStateMachine.ump"
+  // line 281 "../../../../../../model.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
