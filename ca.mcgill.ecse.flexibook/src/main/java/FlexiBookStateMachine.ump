@@ -4,7 +4,7 @@ class Appointment{
 	depend java.sql.Time;
 	depend java.time.Duration;
 	depend java.time.LocalTime;
-	depend ca.mcgill.ecse.flexibook.controller.FlexiBookController;
+	depend ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 
 	AppointmentStatus{
 
@@ -54,20 +54,74 @@ class Appointment{
 		setTimeSlot(timeSlot);
 	}
 	
-	public void updateContent(String action, String optService) {
-	  
-	  
-	  
-	  if(getBookableService() instanceof ServiceCombo) {
-		  
-		  try {
-			FlexiBookController.updateAppointmentContent(this.getBookableService().getName(), 
-					  this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime(), action, optService);
-		} catch (Exception e) {
-			// should be exception here since there are already checking condition
-			e.printStackTrace();
+   public void updateContent(String action, String optService){
+    if(getBookableService() instanceof ServiceCombo) {
+    	
+    	TimeSlot oldTimeSlot = getTimeSlot();
+    	ServiceCombo sc = (ServiceCombo)getBookableService();
+    	List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
+		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
+		
+		if (action.equals("remove")) {
+
+			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
+			List<ComboItem> copy= new ArrayList<ComboItem>();
+			for(ComboItem item: getChosenItems()) {
+				copy.add(item);
+			}
+			for(ComboItem item: copy) {
+				for (String name: serviceNameList) {
+					// When we search that there is a name mentioned in the request
+					// we check if it is mandatory or main service.
+					// we can only removed it if the above two conditions are both wrong.
+					if(item.getService().getName().equals(name)) {
+						if(!item.getMandatory() && !name.equals(sc.getMainService().getService().getName())) {
+							removeChosenItem(item);
+						}
+					}	
+				}
+			}
+		}else if(action.equals("add")) {
+				List<ComboItem> newListComboItem = new ArrayList<ComboItem>();
+			
+			for(ComboItem item: sc.getServices()) {
+				// iterate through the combo as a template
+				// iN THIS MANNER the combo item in the appointment will also follow certain order!
+				// 1. ADD MANDATORY
+				if(item.getMandatory() == true) {
+					newListComboItem.add(item);
+				}else {
+					// 2. keeps the ones already exist
+					if (getChosenItems().contains(item)) {
+						newListComboItem.add(item);
+					}else {
+						// 3. add the chosen one
+						for(String name: serviceNameList) {
+							if(name.equals(item.getService().getName())) {
+								newListComboItem.add(item);
+							}
+							
+						}
+						
+					}
+					
+					
+				}
+			}
+			
+			this.chosenItems = newListComboItem;
+
+			
+			int newDuration = calcActualTimeOfAppointment(getChosenItems());
+			Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
+			TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
+					newEndTime, getFlexiBook());
+			
+			setTimeSlot(timeSlot);
+			
+
+			
 		}
-		  
 		  
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
@@ -91,7 +145,9 @@ class Appointment{
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
-    }
+  }
+   
+	
 	  
 	  public void incrementNoShow() {
 		int noShowCount = this.getCustomer().getNoShowCount();
@@ -121,9 +177,21 @@ class Appointment{
 	public boolean SameDay(Date date) {
 		Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
-		if (date.euqals(tempToday)) {
+		if (date.equals(tempToday)) {
 			check = true;
 		}
 		return check; 
+	}
+	
+	 private static int calcActualTimeOfAppointment(List<ComboItem> comboItemList) {
+
+		int actualTime = 0;
+
+		for (ComboItem ci : comboItemList) {
+			actualTime = actualTime + ci.getService().getDuration();
+		}
+
+		return actualTime;
+
 	}
  }
