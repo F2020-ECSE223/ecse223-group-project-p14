@@ -2404,7 +2404,8 @@ public class CucumberStepDefinitions {
 		for (Appointment appointment:findAppointmentByUserName(username)) {
 			if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
 			{
-					appointment.updateContent("add", optionalService);
+					//appointment.updateContent("add", optionalService);
+					appointment.updateAppointmentContent("add", optionalService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
 					specificAppointment = appointment;
 				}
 			}
@@ -2425,6 +2426,9 @@ public class CucumberStepDefinitions {
 //		
 	    
 	}
+	
+
+
 
 		/**
 		 * @author jedla
@@ -2479,13 +2483,13 @@ public class CucumberStepDefinitions {
 		// should not be correct here
 		// How should we know what is the current appointment
 		// Add a currentAppointment but nit using. Currently trying this:
-		int appNumber = flexiBook.getAppointments().size();
+		//int appNumber = flexiBook.getAppointments().size();
 		
 		// assume the last app in the system is the one we are talking about at this place
 		// since we just add it.
 		// (please work, amen)
-		assertEquals(flexiBook.getAppointments().get(appNumber-1).getAppointmentStatus(), AppointmentStatus.InProgress);
-		
+		//assertEquals(flexiBook.getAppointments().get(appNumber-1).getAppointmentStatus(), AppointmentStatus.InProgress);
+		assertEquals(specificAppointment.getAppointmentStatus(), AppointmentStatus.InProgress);
 
 	}
 
@@ -2506,8 +2510,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		
 		// Again, might dont know which appointment we suppose to get
-		int appNumber = flexiBook.getAppointments().size();
-		flexiBook.getAppointments().get(appNumber-1).registeredNoShow();
+		//int appNumber = flexiBook.getAppointments().size();
+		specificAppointment.registeredNoShow();
 		
 		 
 	}
@@ -2521,8 +2525,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		
 		// Again, might dont know which appointment we suppose to get
-		int appNumber = flexiBook.getAppointments().size();
-		flexiBook.getAppointments().get(appNumber-1).finishedAppointment();
+		//int appNumber = flexiBook.getAppointments().size();
+		specificAppointment.finishedAppointment();
 	}
 
 
