@@ -2306,7 +2306,7 @@ public class CucumberStepDefinitions {
 	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @param customer
 	 * @param currentDateTime
-	 * @author mikewang
+	 * @author mikewang & jedla
 	 */
 	@When("{string} attempts to cancel the appointment at {string}")
 	public void attempts_to_cancel_the_appointment_at(String customer, String currentDateTime) {
@@ -2314,11 +2314,17 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if(appointment.getChosenItems().size() == 0) {
 				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-					appointment.cancelAppointment();
+					deleteAppointment.add(appointment);
 				}
+			}
+		}
+		if (deleteAppointment != null) {
+			for (Appointment aAppointment : deleteAppointment) {
+				aAppointment.delete();
 			}
 		}
 	}
