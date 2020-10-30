@@ -772,6 +772,7 @@ public class CucumberStepDefinitions {
 					//Service s =  FlexiBookController.findSingleService(name);
 					app.addChosenItem(findComboItemByServiceName((ServiceCombo)bs, name));
 				}
+				
 				flexiBook.addAppointment(app);
 
 			}
@@ -2353,20 +2354,46 @@ public class CucumberStepDefinitions {
 	    }
 	}
 	/**
-	 * @author jedla
+	 * @author jedla or Antoine
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
-	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
-		TOTimeSlot RegisterTime = currentRegisterTime(time);
-		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
-		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		for (Appointment appointment:findAppointmentByUserName(username)) {
-			if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
-				{
-					appointment.updateContent("add", optionalService);
-				}
+
+	//public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
+		//TOTimeSlot RegisterTime = currentRegisterTime(time);
+		//FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
+		//FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
+		//for (Appointment appointment:findAppointmentByUserName(username)) {
+			//if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
+			//	{
+				//	appointment.updateContent("add", optionalService);
+				//}
+			//}
+	//	}
+
+	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
+	    
+		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
+		
+		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
+
+		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
+		
+		Appointment app = null;
+		
+		for (Appointment a: flexiBook.getAppointments()) {
+			if(a.getTimeSlot().getStartDate().equals(Date.valueOf(d)) && a.getTimeSlot().getStartTime().equals(Time.valueOf(t))) {
+				app = a;
+				break;
 			}
 		}
+		
+		if (app == null) {
+			// just an error indicator
+			throw new io.cucumber.java.PendingException();
+		}else {
+			app.updateContent("add",  optserviceName);
+		}
+	    
 	}
 		
 		/**
@@ -2398,13 +2425,52 @@ public class CucumberStepDefinitions {
 				result = result + aItem.getService().getName();
 			}
 			assertEquals(result, itemList);
-		}
+		}}
 		
-	    
-	}
+
+	//Antoine's Code
+		//public void the_service_combo_shall_have_selected_services(String string) {
+	//    List<String> servicesShouldBeExistingAsComboItems = ControllerUtils.parseString(string, ","); }
 
 	
 	
+	
+	/**
+	 * 
+	 * @author AntoineW
+	 */
+	@Then("the appointment shall be in progress")
+	public void the_appointment_shall_be_in_progress() {
+		// Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+
+	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
+	@When("the owner attempts to register a no-show for the appointment at {string}")
+	public void the_owner_attempts_to_register_a_no_show_for_the_appointment_at(String string) {
+		   // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+	
+	@When("the owner attempts to end the appointment at {string}")
+	public void the_owner_attempts_to_end_the_appointment_at(String string) {
+		  // Write code here that turns the phrase above into concrete actions
+		throw new io.cucumber.java.PendingException();
+	}
+
+
+
+
+
+
+
+
+
 	
 	/*---------------------------private helper methods--------------------------*/
 
