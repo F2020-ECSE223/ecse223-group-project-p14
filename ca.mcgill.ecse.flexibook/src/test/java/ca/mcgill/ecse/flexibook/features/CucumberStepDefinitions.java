@@ -2080,11 +2080,6 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
 	public void makes_a_appointment_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
-//		String[] arrOfDateTime = currentDateTime.split("\\+");
-//		String currentDate = "";
-//		String currentTime = ""; 
-//		currentDate = arrOfDateTime[0];
-//		currentTime = arrOfDateTime[1];
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
@@ -2113,7 +2108,7 @@ public class CucumberStepDefinitions {
 	 * @param currentDateTime
 	 * 
 	 * @author chengchen
-	 * @throws InvalidInputException 
+	 * 
 	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
 	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) throws InvalidInputException {
@@ -2169,9 +2164,6 @@ public class CucumberStepDefinitions {
 			assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
 			assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
 		}
-//		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
-//		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
-//		assertEquals(stringToTime(endTime),flexiBook.getAppointment(1).getTimeSlot().getEndTime());
 	}
 	
 	
