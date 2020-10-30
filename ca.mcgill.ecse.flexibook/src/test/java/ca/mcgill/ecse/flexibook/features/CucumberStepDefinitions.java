@@ -60,6 +60,9 @@ public class CucumberStepDefinitions {
 	private Service aService;
 	private Appointment previousAppointment;
 	private Appointment currentAppointment;
+	
+	private Appointment specificAppointment;
+	
 
 
 
@@ -2352,22 +2355,48 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
-		
-		if (findServiceCombo(serviceName)!= null) {
-			
-	    		Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
-	    		for (ComboItem c: findServiceCombo(serviceName).getServices()) {
-	    			appointment.addChosenItem(c);
-	    		}
+		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
+
+		//if (flexiBook.getAppointments() == null){
+
+			if (findServiceCombo(serviceName)!= null) {
+
+				Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
+				for (ComboItem c: findServiceCombo(serviceName).getServices()) {
+					if (c.isMandatory()){
+					appointment.addChosenItem(c);
+					}
+				}
 				flexiBook.addAppointment(appointment);
-	    }
-	}
+				specificAppointment = appointment;
+			}
+		}
+//	else {
+//		for (Appointment appointment : flexiBook.getAppointments()) {
+//			deleteAppointment.add(appointment);		
+//		}
+//		for (Appointment aAppointment : deleteAppointment) {
+//			aAppointment.delete();
+//		}
+//		if (findServiceCombo(serviceName)!= null) {
+//			Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
+//			for (ComboItem c: findServiceCombo(serviceName).getServices()) {
+//				if (c.isMandatory()){
+//					appointment.addChosenItem(c);
+//				}
+//			}
+//			flexiBook.addAppointment(appointment);
+//			//specificAppointment = appointment;
+//		}
+//
+//	}
+//
+//}
+	
 	/**
 	 * @author jedla
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
-
-
 	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
 		TOTimeSlot RegisterTime = currentRegisterTime(time);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
@@ -2376,21 +2405,10 @@ public class CucumberStepDefinitions {
 			if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
 			{
 					appointment.updateContent("add", optionalService);
+					specificAppointment = appointment;
 				}
 			}
 		}
-
-	//public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String username, String optionalService, String time) {
-		//TOTimeSlot RegisterTime = currentRegisterTime(time);
-		//FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
-		//FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		//for (Appointment appointment:findAppointmentByUserName(username)) {
-			//if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
-			//	{
-				//	appointment.updateContent("add", optionalService);
-				//}
-			//}
-	//	}
 
 //	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
 //	    
@@ -2406,9 +2424,7 @@ public class CucumberStepDefinitions {
 //		flexiBook.getAppointments().get(appNumber-1).updateContent("add",  optserviceName);
 //		
 	    
-
 	}
-
 
 		/**
 		 * @author jedla
@@ -2419,7 +2435,6 @@ public class CucumberStepDefinitions {
 		for (Appointment instanceOfAppointment : flexiBook.getAppointments()) {
 			assertEquals(instanceOfAppointment.getBookableService().getName(), (mainService));
 			}
-			
 		}
 		
 	//@Then("the service combo in the appointment shall be {string}")
@@ -2435,17 +2450,20 @@ public class CucumberStepDefinitions {
 	public void the_service_combo_shall_have_selected_services(String itemList) {
 		for (Appointment instanceOfAppointment :flexiBook.getAppointments()) {
 			String result = "";
-			int counter = 1;
-			for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
-				if (counter != 1){
-				result = result + "," + aItem.getService().getName();
+			if (specificAppointment.equals(instanceOfAppointment)){
+				int counter = 1;
+				for (ComboItem aItem : instanceOfAppointment.getChosenItems()) {
+					if (counter != 1){
+						result = result + "," + aItem.getService().getName();
+					}
+					else {
+						result = result+ aItem.getService().getName();
+						counter= 0;		
+					}
 				}
-				else {
-					result = result+ aItem.getService().getName();
-					counter= 0;		
-				}
+				assertEquals(result, itemList);
 			}
-			assertEquals(result, itemList);
+			
 		}
 	}
 
