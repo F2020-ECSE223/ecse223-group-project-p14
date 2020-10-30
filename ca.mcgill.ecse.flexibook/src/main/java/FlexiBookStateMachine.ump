@@ -19,14 +19,14 @@ class Appointment{
   	{updateContent(action, optService);}->Booked;
   
   	startAppointment(Time currentTime)[goodStartTime(currentTime)] -> InProgress;
+
+  	registeredNoShow()/{incrementNoShow();} -> FinalState; 
  
 	}
 
 	InProgress{
   
   	updateAppointmentContent()[isInGoodTimeSlot()]-> InProgress;
-  
-  	registeredNoShow()/{incrementNoShow();} -> FinalState; 
   
   	finishedAppointment() -> FinalState ;
   

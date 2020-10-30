@@ -2124,7 +2124,7 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment:findAppointmentByUserName(username)) {
 			if (appointment.getChosenItems().size() == 0) {
-				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
 					appointment.updateContent("", serviceName);
 				}
 			}
@@ -2295,7 +2295,7 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if(appointment.getChosenItems().size() == 0) {
-				if (!appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
 					appointment.updateTime(stringToDate(newDate),stringToTime(newTime));
 				}
 			}
@@ -2319,7 +2319,7 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if(appointment.getChosenItems().size() == 0) {
-				if (appointment.SameDay(FlexiBookApplication.getCurrentDate(true))) {
+				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
 					appointment.cancelAppointment();
 				}
 			}
