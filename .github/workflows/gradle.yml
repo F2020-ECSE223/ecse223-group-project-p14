@@ -23,7 +23,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ca.mcgill.ecse.flexibook/build.gradle/gradlew build 
+      run: ca.mcgill.ecse.flexibook/build.gradle build 
    # - uses: actions/upload-artifact@v2
    #   with:
    #     name: Package
