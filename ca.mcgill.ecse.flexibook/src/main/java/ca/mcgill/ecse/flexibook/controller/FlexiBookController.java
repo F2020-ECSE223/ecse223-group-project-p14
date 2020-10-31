@@ -1460,8 +1460,11 @@ public class FlexiBookController {
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		for (Appointment appointment: FlexiBookApplication.getFlexiBook().getAppointments()) {
 
+			TOTimeSlot toTimeSlot = new TOTimeSlot(appointment.getTimeSlot().getStartDate(),appointment.getTimeSlot().getStartTime(),
+					appointment.getTimeSlot().getEndDate(),appointment.getTimeSlot().getEndTime());
+		
 			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
-					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
+					appointment.getBookableService().getName(), toTimeSlot);
 			// Added feature TOAppointment can show all downtime
 			// by mikewang
 			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
@@ -1469,27 +1472,14 @@ public class FlexiBookController {
 			}
 			// ToAppointment need to show all the service item (comboitem)
 			// by AnTW
-			for (TOComboItem toc:getToTOComboItem(appointment)) {
+			for (TOComboItem toc:getTOComboItems(appointment.getBookableService().getName(), appointment.getTimeSlot().getStartDate(), appointment.getTimeSlot().getStartTime())) {
 				toAppointment.addChosenItem(toc);
 			}
 			appointments.add(toAppointment);
 		}
 		return appointments;
 
-	}	
-
-	/**
-	 * This is a query method which can covert a TimeSlot object to it's Transfer Object
-	 * @param timeSlot
-	 * @return
-	 * @author mikewang
-	 */
-	public static TOTimeSlot CovertToTOTimeSlot(TimeSlot timeSlot) {
-		TOTimeSlot toTimeSlot = new TOTimeSlot(timeSlot.getStartDate(),timeSlot.getStartTime(),timeSlot.getEndDate(),timeSlot.getEndTime());
-		return toTimeSlot;
 	}
-
-
 
 
 	/**
@@ -1528,9 +1518,12 @@ public class FlexiBookController {
 	 * @param appointment
 	 * @return
 	 * @author mikewang
+	 * @author gtjarvis later made a small change
 	 */
-	public static List<TOComboItem> getToTOComboItem(Appointment appointment){
-		//@ TODO
+	public static List<TOComboItem> getTOComboItems(String aName, Date date, Time time){
+		//gtjarvis start
+		Appointment appointment = findAppointment(aName, date, time);
+		//gtjarvis end
 		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
 		for (ComboItem comboitems: appointment.getChosenItems()) {
 			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
