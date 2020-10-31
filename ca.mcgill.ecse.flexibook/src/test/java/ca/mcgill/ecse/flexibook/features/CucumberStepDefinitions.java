@@ -2156,7 +2156,7 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		// AntoineW did this end------
 		try{
-			FlexiBookController.startAppointment(specificAppointment);
+			FlexiBookController.startAppointment(specificAppointment.getBookableService().getName(), specificAppointment.getTimeSlot().getStartDate(), specificAppointment.getTimeSlot().getStartTime());
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
@@ -2180,8 +2180,8 @@ public class CucumberStepDefinitions {
 		// AntoineW did this end------
 		
     	try{
-    		FlexiBookController.endAppointment(specificAppointment);
-    	} catch (InvalidInputException e) {
+    		FlexiBookController.endAppointment(specificAppointment.getBookableService().getName(), specificAppointment.getTimeSlot().getStartDate(), specificAppointment.getTimeSlot().getStartTime());
+		} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
 		}

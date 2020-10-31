@@ -927,8 +927,8 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author gtjarvis
 	 */
-	public static boolean startAppointment(Appointment a) throws InvalidInputException{ 
-		//make sure current user is owner
+	public static boolean startAppointment(String serviceName, Date date, Time time) throws InvalidInputException{ 
+		Appointment a = findAppointment(serviceName, date, time);
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		a.startAppointment(currentTime);
 		return true;
@@ -941,8 +941,8 @@ public class FlexiBookController {
 	 * @throws InvalidInputException
 	 * @author gtjarvis
 	 */
-	public static boolean endAppointment(Appointment a) throws InvalidInputException{ 
-		//make sure current user is owner
+	public static boolean endAppointment(String serviceName, Date date, Time time) throws InvalidInputException{ 
+		Appointment a = findAppointment(serviceName, date, time);
 		a.finishedAppointment();
 		return true;
 	}
