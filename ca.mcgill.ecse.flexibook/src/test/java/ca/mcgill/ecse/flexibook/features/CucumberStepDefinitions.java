@@ -2194,7 +2194,9 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be booked")
 	public void the_appointment_shall_be_booked() {
-	    assertEquals(false, flexiBook.getAppointments().size()==0);
+//	    assertEquals(false, flexiBook.getAppointments().size()==0);
+		assertEquals(specificAppointment.getAppointmentStatus(), AppointmentStatus.Booked);
+		
 	}
 	/**
 	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
