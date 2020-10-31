@@ -5,8 +5,14 @@ package ca.mcgill.ecse.flexibook.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
+import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
+import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+
 import java.util.*;
 
 // line 1 "../../../../../FlexiBookStateMachine.ump"
@@ -103,7 +109,7 @@ public class Appointment
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
+        if (!(isOnHoliday(newDate,newStartTime,currentDate))&&!(isOnVacation(newDate,newStartTime,currentDate))&&isInGoodTimeSlot()&&!(SameDay(currentDate)))
         {
         // line 15 "../../../../../FlexiBookStateMachine.ump"
           updateTime(newDate , newStartTime);
@@ -618,6 +624,179 @@ public class Appointment
 		}
 
 		return actualTime;
+  }
+
+  // line 238 "../../../../../FlexiBookStateMachine.ump"
+   private static  boolean isInGoodTiming(TimeSlot timeSlot, int index, int oldIndex){
+    // here handle Scenario: A customer attempts to make various invalid appointments for services
+		// there are three time constraints to check:
+		// 1. if in the business time, if not, fail directly
+		// 		2. if overlap with other time slot (other appointment/vacation/holiday). if there is overlap, we check the downtime!
+		// 		3. if not in the downtime of other app, fail
+		if (!isDuringWorkTime(timeSlot)) {
+			return false;
+		}else {
+			if(!isNotOverlapWithOtherTimeSlots (timeSlot, index, oldIndex)) {
+				if (!isDuringDowntime(timeSlot)) {
+					return false;
+				}
+			}
+		}
+
+		// Make sure appointment is made in the future not in the past
+		if (!isInTheFuture(timeSlot)) {
+			return false;
+		}
+		return true;
+  }
+
+  // line 262 "../../../../../FlexiBookStateMachine.ump"
+   private static  boolean isDuringWorkTime(TimeSlot timeSlot){
+    boolean isDuringWorkTime = false;
+
+		//First get the weekday
+		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
+		// then check all businessHour list
+		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		for(BusinessHour bh: bhList) {
+			// check weekday
+
+			if(dOfWeek .equals(bh.getDayOfWeek())) {
+				// if the appointment is on that day, compare if the time slot is included by business hour
+				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
+						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
+						&&
+						timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
+						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime())) {
+					isDuringWorkTime = true;
+					break;
+				}
+			}
+
+		}
+		return isDuringWorkTime;
+  }
+
+  // line 288 "../../../../../FlexiBookStateMachine.ump"
+   private static  boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot, int index, int oldIndex){
+    FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+
+		boolean isTheCase = true;
+
+		for (TimeSlot ts :flexiBook.getTimeSlots()){
+			LocalDateTime tsStart = ControllerUtils.combineDateAndTime(ts.getStartDate(), ts.getStartTime());
+			LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(ts.getEndDate(), ts.getEndTime());
+
+
+			if(timeSlotEnd.isBefore(tsStart) || tsEnd.isBefore(timeSlotStart) || timeSlotEnd.equals(tsStart)||tsEnd.equals(timeSlotStart) ||
+					flexiBook.getTimeSlots().indexOf(ts) ==  index ||
+					flexiBook.getTimeSlots().indexOf(ts) ==  oldIndex) {
+				isTheCase = true;
+			}else {
+				isTheCase = false;
+				break;
+			}
+		}		
+		return isTheCase;
+  }
+
+  // line 311 "../../../../../FlexiBookStateMachine.ump"
+   private static  boolean isInTheFuture(TimeSlot timeSlot){
+    boolean isInFuture = true;
+		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+		Time currentTime = FlexiBookApplication.getCurrentTime(true);
+		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
+
+		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		if(appointmentDateTime.isBefore(now)) {
+			isInFuture = false;
+		}
+
+		return isInFuture;
+  }
+
+  // line 327 "../../../../../FlexiBookStateMachine.ump"
+   private static  boolean isDuringDowntime(TimeSlot timeSlot){
+    // Initially false, if there is a downtime period completely contains a timeslot
+		// then will be turned true
+		boolean isDuringDowntime = false;
+
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+
+		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+
+		for (Appointment app: flexiBook.getAppointments()) {
+
+			List<TOTimeSlot> tsList = ControllerUtils.getDowntimesByAppointment(app);
+			for(TOTimeSlot TOTs: tsList) {
+				LocalDateTime tsStart = ControllerUtils.combineDateAndTime(TOTs.getStartDate(), TOTs.getStartTime());
+				LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(TOTs.getEndDate(), TOTs.getEndTime());
+
+				if((timeSlotStart.isAfter(tsStart)||timeSlotStart.equals(tsStart))
+						&& (timeSlotEnd.isBefore(tsEnd)||timeSlotEnd.equals(tsEnd))) {
+					isDuringDowntime = true;
+					break;
+				}
+			}		
+		}
+		return isDuringDowntime;
+  }
+
+  // line 354 "../../../../../FlexiBookStateMachine.ump"
+   public Boolean isOnVacation(Date newDate, Time newStartTime, Date currentDate){
+    boolean check = false;
+    TimeSlot oldTimeSlot = getTimeSlot();
+    int oldDuration = calcActualTimeOfAppointment(getChosenItems());
+    Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(oldDuration));
+	TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, 
+			newEndTime, getFlexiBook());   
+    List<TimeSlot> vacations = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+	   for (TimeSlot aTimeSlot:vacations) {
+		  if (isOverlap(aTimeSlot, timeSlot)) {
+			  check = true;
+	   }	      
+   }
+	   return check;
+  }
+
+  // line 371 "../../../../../FlexiBookStateMachine.ump"
+   public Boolean isOnHoliday(Date newDate, Time newStartTime, Date currentDate){
+    boolean check = false;
+    TimeSlot oldTimeSlot = getTimeSlot();
+    int oldDuration = calcActualTimeOfAppointment(getChosenItems());
+    Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(oldDuration));
+	TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, 
+			newEndTime, getFlexiBook()); 
+	   List<TimeSlot> holidaySlots = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+	   for (TimeSlot aTimeSlot:holidaySlots) {
+		   if (isOverlap(aTimeSlot, timeSlot)) {
+			   check = true;
+		   }
+	   }
+	   return check;
+  }
+
+  // line 387 "../../../../../FlexiBookStateMachine.ump"
+   public static  Boolean isOverlap(TimeSlot timeSlot1, TimeSlot timeSlot2){
+    Boolean isUnavailable = false;
+		  if (timeSlot1.getStartDate().equals(timeSlot2.getStartDate())) {
+			  if ((timeSlot1.getStartTime()).after(timeSlot2.getStartTime())) {
+					if (timeSlot1.getStartTime().before(timeSlot2.getEndTime())) {
+						isUnavailable = true;
+					}
+
+				}
+				else if (timeSlot1.getStartTime().before(timeSlot2.getStartTime())) {
+					if (timeSlot1.getEndTime().after(timeSlot2.getStartTime())){
+						isUnavailable = true;
+					}
+				}
+		  }
+		  
+		  return isUnavailable;
   }
 
 }
