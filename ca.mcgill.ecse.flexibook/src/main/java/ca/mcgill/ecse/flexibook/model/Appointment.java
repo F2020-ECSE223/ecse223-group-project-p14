@@ -552,7 +552,7 @@ public class Appointment
    public boolean goodStartTime(Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
-		if (time.after(tempTime)) {
+		if (time.after(tempTime) || time.equals(tempTime)) {
 			check = true;
 		}
 		return check;

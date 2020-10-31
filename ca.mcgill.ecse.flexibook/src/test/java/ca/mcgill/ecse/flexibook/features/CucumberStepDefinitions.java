@@ -64,7 +64,7 @@ public class CucumberStepDefinitions {
 	private Appointment specificAppointment;
 	
 
-	private List<Appointment> currentAppointmentsInSystem = new ArrayList<Appointment>();
+
 
 	private int appointmentCount = 0;
 	private int errorCount = 0;
@@ -780,7 +780,6 @@ public class CucumberStepDefinitions {
 				}
 				
 				flexiBook.addAppointment(app);
-				currentAppointmentsInSystem.add(app);
 
 			}
 
@@ -2086,6 +2085,11 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
 	public void makes_a_appointment_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
+//		String[] arrOfDateTime = currentDateTime.split("\\+");
+//		String currentDate = "";
+//		String currentTime = ""; 
+//		currentDate = arrOfDateTime[0];
+//		currentTime = arrOfDateTime[1];
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
@@ -2116,22 +2120,21 @@ public class CucumberStepDefinitions {
 	 * @param currentDateTime
 	 * 
 	 * @author chengchen
-	 * 
+	 * @throws InvalidInputException 
 	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
 	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) throws InvalidInputException {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-//		for (Appointment appointment:findAppointmentByUserName(username)) {
-//			if (appointment.getChosenItems().size() == 0) {
-//				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-//					appointment.updateAppointmentContent("add", null, currentDate, currentTime)("", serviceName);
-//				}
-//			}
-//		
-//		}
-		specificAppointment.updateAppointmentContent("add", serviceName, FlexiBookApplication.getCurrentDate(true), FlexiBookApplication.getCurrentTime(true));
+		for (Appointment appointment:findAppointmentByUserName(username)) {
+			if (appointment.getChosenItems().size() == 0) {
+				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
+					appointment.updateContent("", serviceName);
+				}
+			}
+		
+		}
 
 	}
 
@@ -2152,10 +2155,8 @@ public class CucumberStepDefinitions {
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		// AntoineW did this end------
-		
-		//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
 		try{
-			FlexiBookController.startAppointment(previousAppointment);
+			FlexiBookController.startAppointment(specificAppointment);
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
@@ -2178,10 +2179,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		// AntoineW did this end------
 		
-		
-    	//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
     	try{
-    		FlexiBookController.endAppointment(previousAppointment);
+    		FlexiBookController.endAppointment(specificAppointment);
     	} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
@@ -2194,9 +2193,7 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be booked")
 	public void the_appointment_shall_be_booked() {
-//	    assertEquals(false, flexiBook.getAppointments().size()==0);
-		assertEquals(specificAppointment.getAppointmentStatus(), AppointmentStatus.Booked);
-		
+	    assertEquals(false, flexiBook.getAppointments().size()==0);
 	}
 	/**
 	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
@@ -2233,6 +2230,9 @@ public class CucumberStepDefinitions {
 				assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
 			}
 		}
+//		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
+//		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
+//		assertEquals(stringToTime(endTime),flexiBook.getAppointment(1).getTimeSlot().getEndTime());
 	}
 	
 	
@@ -2359,14 +2359,12 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
-//		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
 
 		//if (flexiBook.getAppointments() == null){
 
 			if (findServiceCombo(serviceName)!= null) {
 
 				Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
-				
 				for (ComboItem c: findServiceCombo(serviceName).getServices()) {
 					if (c.isMandatory()){
 					appointment.addChosenItem(c);
@@ -2534,6 +2532,8 @@ public class CucumberStepDefinitions {
 		//int appNumber = flexiBook.getAppointments().size();
 		specificAppointment.finishedAppointment();
 	}
+
+
 
 
 
