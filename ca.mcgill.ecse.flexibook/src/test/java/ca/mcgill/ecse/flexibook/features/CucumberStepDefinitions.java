@@ -47,6 +47,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.plugin.event.Result;
 
 
 
@@ -2223,13 +2224,19 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
 	public void the_appointment_shall_be_for_the_date_with_start_time_and_end_time(String date, String startTime, String endTime) {
-
-		for (Appointment appointment:findAppointmentByStartDate(stringToDate(date))) {
-			if(appointment.getChosenItems().size() ==0) {
-				assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
-				assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+		if (findAppointmentByStartDate(stringToDate(date)).size()==2) {
+			assertEquals(stringToTime(startTime),specificAppointment.getTimeSlot().getStartTime());
+			assertEquals(stringToTime(endTime),specificAppointment.getTimeSlot().getEndTime());
+		}
+		else {
+			for (Appointment appointment:findAppointmentByStartDate(stringToDate(date))) {
+				if(appointment.getChosenItems().size() ==0) {
+					assertEquals(stringToTime(startTime), appointment.getTimeSlot().getStartTime());
+					assertEquals(stringToTime(endTime),appointment.getTimeSlot().getEndTime());
+				}
 			}
 		}
+		
 //		assertEquals(stringToDate(date),flexiBook.getAppointment(1).getTimeSlot().getStartDate());
 //		assertEquals(stringToTime(startTime),flexiBook.getAppointment(1).getTimeSlot().getStartTime());
 //		assertEquals(stringToTime(endTime),flexiBook.getAppointment(1).getTimeSlot().getEndTime());
@@ -2359,7 +2366,6 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
-
 		//if (flexiBook.getAppointments() == null){
 
 			if (findServiceCombo(serviceName)!= null) {
@@ -2373,6 +2379,8 @@ public class CucumberStepDefinitions {
 				flexiBook.addAppointment(appointment);
 				specificAppointment = appointment;
 			}
+		
+		
 		}
 //	else {
 //		for (Appointment appointment : flexiBook.getAppointments()) {
@@ -3181,15 +3189,27 @@ public class CucumberStepDefinitions {
 	 * This method finds the duration of a serviceCombo
 	 * @param name
 	 * @return
-	 * @author jedla
+	 * @author jedla & chengchen
 	 * 
 	 */
 	public static int getDurationOfServiceCombo(String name) {
-		ServiceCombo comboName = findServiceCombo(name);
 		int result = 0;
-		for (ComboItem combo: comboName.getServices()) {
-			result =+ combo.getService().getDuration();
+		for (BookableService bookableService:FlexiBookApplication.getFlexiBook().getBookableServices()) {
+			if (bookableService instanceof ServiceCombo && bookableService.getName().equals(name)) {
+				for (ComboItem comboItem:((ServiceCombo) bookableService).getServices()) {
+					if (comboItem.isMandatory()) {
+						result = result + comboItem.getService().getDuration();
+					}
+					
+				}
+			}
 		}
+//		ServiceCombo comboName = findServiceCombo(name);
+//				for (ComboItem combo: comboName.getServices()) {
+//			if (combo.isMandatory()) {
+//				result =+ combo.getService().getDuration();
+//			}
+//		}
 		return result;
 	}
 	
