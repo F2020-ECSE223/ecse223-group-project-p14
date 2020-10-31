@@ -4,8 +4,7 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.util.*;
 
-// line 20 "../../../../../../model.ump"
-// line 311 "../../../../../../model.ump"
+// line 21 "../../../../../FlexiBook.ump"
 public class Owner extends User
 {
 

@@ -4,8 +4,7 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.sql.Time;
 
-// line 46 "../../../../../../model.ump"
-// line 326 "../../../../../../model.ump"
+// line 47 "../../../../../FlexiBook.ump"
 public class BusinessHour
 {
 

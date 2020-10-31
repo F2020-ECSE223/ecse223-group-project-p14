@@ -10,7 +10,7 @@ class Appointment{
 
 	Booked{
   
-  	cancelAppointment() -> FinalState;
+  	cancelAppointment(Date currentDate) [!SameDay(currentDate)]-> FinalState;
  
   	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && !SameDay(currentDate)]/
   	{updateTime(newDate , newStartTime);}->Booked;
