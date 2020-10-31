@@ -64,7 +64,7 @@ public class CucumberStepDefinitions {
 	private Appointment specificAppointment;
 	
 
-
+	private List<Appointment> currentAppointmentsInSystem = new ArrayList<Appointment>();
 
 	private int appointmentCount = 0;
 	private int errorCount = 0;
@@ -780,6 +780,7 @@ public class CucumberStepDefinitions {
 				}
 				
 				flexiBook.addAppointment(app);
+				currentAppointmentsInSystem.add(app);
 
 			}
 
@@ -2347,13 +2348,14 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
-		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
+//		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
 
 		//if (flexiBook.getAppointments() == null){
 
 			if (findServiceCombo(serviceName)!= null) {
 
 				Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
+				
 				for (ComboItem c: findServiceCombo(serviceName).getServices()) {
 					if (c.isMandatory()){
 					appointment.addChosenItem(c);
@@ -2516,8 +2518,6 @@ public class CucumberStepDefinitions {
 		int appNumber = flexiBook.getAppointments().size();
 		flexiBook.getAppointments().get(appNumber-1).finishedAppointment();
 	}
-
-
 
 
 
