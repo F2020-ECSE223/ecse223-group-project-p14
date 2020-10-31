@@ -56,8 +56,11 @@ class Appointment{
   }
 
 
-   public void updateContent(String action, String optService){
+public void updateContent(String action, String optService){
+	   if (isInGoodTimeSlotForUpdate(optService)) {
     if(getBookableService() instanceof ServiceCombo) {
+    	
+    		
     	
     	TimeSlot oldTimeSlot = getTimeSlot();
     	ServiceCombo sc = (ServiceCombo)getBookableService();
@@ -147,6 +150,7 @@ class Appointment{
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
+	   }
   }
 
 

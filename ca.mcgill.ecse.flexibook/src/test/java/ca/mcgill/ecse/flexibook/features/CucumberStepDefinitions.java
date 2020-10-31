@@ -2124,21 +2124,23 @@ public class CucumberStepDefinitions {
 	 * @throws InvalidInputException 
 	 */
 	@When("{string} attempts to change the service in the appointment to {string} at {string}")
-	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String serviceName, String currentDateTime) throws InvalidInputException {
+	public void attempts_to_change_the_service_in_the_appointment_to_at(String username, String newServiceName, String currentDateTime) throws InvalidInputException {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		for (Appointment appointment:findAppointmentByUserName(username)) {
-			if (appointment.getChosenItems().size() == 0) {
-				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-					// added by Mike
-					if (appointment.isInGoodTimeSlotForUpdate(serviceName)){
-						appointment.updateContent("", serviceName);
-					}
-				}
-			}
-		
+		// added by Mike start ---
+		if (specificAppointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
+			specificAppointment.updateContent("", newServiceName);
 		}
+		// added by Mike end ---
+//		for (Appointment appointment:findAppointmentByUserName(username)) {
+//			if (appointment.getChosenItems().size() == 0) {
+//				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
+//						appointment.updateContent("", newServiceName);
+//				}
+//			}
+//		
+//		}
 
 	}
 

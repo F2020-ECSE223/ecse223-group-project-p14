@@ -440,7 +440,10 @@ public class Appointment
 
   // line 60 "../../../../../FlexiBookStateMachine.ump"
    public void updateContent(String action, String optService){
+    if (isInGoodTimeSlotForUpdate(optService)) {
     if(getBookableService() instanceof ServiceCombo) {
+    	
+    		
     	
     	TimeSlot oldTimeSlot = getTimeSlot();
     	ServiceCombo sc = (ServiceCombo)getBookableService();
@@ -530,16 +533,17 @@ public class Appointment
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
+	   }
   }
 
-  // line 154 "../../../../../FlexiBookStateMachine.ump"
+  // line 158 "../../../../../FlexiBookStateMachine.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
 
-  // line 161 "../../../../../FlexiBookStateMachine.ump"
+  // line 165 "../../../../../FlexiBookStateMachine.ump"
    public boolean isInGoodTimeSlot(){
     boolean check = true;
 		for(Appointment a : getFlexiBook().getAppointments()){
@@ -550,7 +554,7 @@ public class Appointment
 		return check;
   }
 
-  // line 172 "../../../../../FlexiBookStateMachine.ump"
+  // line 176 "../../../../../FlexiBookStateMachine.ump"
    public boolean goodStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -560,7 +564,7 @@ public class Appointment
 		return check;
   }
 
-  // line 182 "../../../../../FlexiBookStateMachine.ump"
+  // line 186 "../../../../../FlexiBookStateMachine.ump"
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -570,7 +574,7 @@ public class Appointment
 		return check;
   }
 
-  // line 193 "../../../../../FlexiBookStateMachine.ump"
+  // line 197 "../../../../../FlexiBookStateMachine.ump"
    public boolean isInGoodTimeSlotForUpdate(String optService){
     boolean check = true;
 	    Service s = null;
@@ -605,7 +609,7 @@ public class Appointment
 		return check;
   }
 
-  // line 227 "../../../../../FlexiBookStateMachine.ump"
+  // line 231 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
