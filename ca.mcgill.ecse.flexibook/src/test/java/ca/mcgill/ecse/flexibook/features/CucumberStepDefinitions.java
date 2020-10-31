@@ -2155,10 +2155,8 @@ public class CucumberStepDefinitions {
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		// AntoineW did this end------
-		
-		//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
 		try{
-			FlexiBookController.startAppointment(previousAppointment);
+			FlexiBookController.startAppointment(specificAppointment);
 		} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
@@ -2181,10 +2179,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
 		// AntoineW did this end------
 		
-		
-    	//FlexiBookApplication.setCurrentTime(stringToTime(dateString));
     	try{
-    		FlexiBookController.endAppointment(previousAppointment);
+    		FlexiBookController.endAppointment(specificAppointment);
     	} catch (InvalidInputException e) {
 			error += e.getMessage();
 			errorCntr++;
