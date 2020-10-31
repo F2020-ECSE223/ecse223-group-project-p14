@@ -1,0 +1,114 @@
+// assumption: dateTime(Date, Time) returns a complete DateTime object
+
+for each FlexiBook:
+   // checks whether there is no overlap between two time slots
+   isNoOverlap(TimeSlot t1, TimeSlot t2) : Boolean = (t1 <> t2) implies 
+      [dateTime(t1.endDate, t1.endTime).isBefore(dateTime(t2.startDate, t2.startTime)) or 
+      dateTime(t2.endDate, t2.endTime).isBefore(dateTime(t1.startDate, t1.startTime))]
+
+   // appointments do not overlap unless the overlap is during the downtime;
+   // assumption: a method List<TimeSlot> Appointment.getDowntimes() exists that returns the 
+   // downtime time slots for a given appointment
+   forAll (select a1, a2 in appointments such that not isNoOverlap(a1.timeSlot, a2.timeSlot)) it is true that 
+      [(exists t in a2.getDowntimes() such that a1.timeslot.isWithinButAfter(t)) or 
+      (exists t in a1.getDowntimes() such that a2.timeslot.isWithinButAfter(t))]
+
+   // a time slot is used for only one of appointment, vacation, holidays at a time
+   (intersection of appointments.timeSlot and business.vacation) is empty
+   (intersection of appointments.timeSlot and business.holidays) is empty
+   (intersection of business.vacation and business.holidays) is empty
+
+   // appointment cannot be made on holidays or during vacation
+   forAll t1 in appointments.timeSlot it is true that
+      forAll t2 in (union of business.holidays and business.vacation) it is true that
+          isNoOverlap(t1, t2) 
+
+   // appointments can only be made if a business exists
+   (appointments is not empty) implies business <> null
+
+   // appointment has to be made within business hours
+   // assumption: a method DayOfWeek Date.getDayOfWeek() exists
+   forAll t in appointments.timeSlot it is true that
+      exists bh in business.getBusinessHoursFor(t.startDate.getDayOfWeek()) such that
+         t.isWithin(bh.startTime, bh.endTime)
+
+// unique User.username already captured by unique keyword in Umple
+
+for each Owner:
+   // the username of the owner account is always owner
+   username = "owner"
+
+for each Business:
+   // finds the business hour for a given day of the week
+   getBusinessHoursFor(DayOfWeek dow) : List<BusinessHour> = 
+      select bh in businessHours such that bh.dayOfWeek = dow
+
+   // business hours do not overlap
+   forAll b1, b2 in businessHours it is true that 
+      (b1 <> b2 and b1.dayOfWeek = b2.dayOfWeek) implies 
+      (b1.endTime.isBefore(b2.startTime) or b2.endTime.isBefore(b1.startTime))
+
+   // vacation and holidays do not overlap
+   forAll t1, t2 in (union of vacation and holidays) it is true that 
+     (t1 <> t2) implies 
+     (dateTime(t1.endDate, t1.endTime).isBefore(dateTime(t2.startDate, t2.startTime)) or 
+     dateTime(t2.endDate, t2.endTime).isBefore(dateTime(t1.startDate, t1.startTime)))
+
+for each BusinessHour:
+   // start of business hour is before end of business hour
+   startTime.isBefore(endTime)
+
+for each TimeSlot:
+   // checks that the time slot is on one day and within a start/end time range 
+   // allowing both start times and end times to be the same
+   isWithin(Time start, Time end) : Boolean = self.startDate.equals(self.endDate) and 
+      start.isBeforeOrSame(self.startTime) and end.isAfterOrSame(self.endTime)
+
+   // checks that the time slot is within another but allows the end dates/times to be the same;
+   // it does not allow the start dates/times to be the same, because downtime at the beginning of
+   // a time slot does not make sense
+   isWithinButAfter(TimeSlot t) : Boolean = (self <> t) implies 
+      [dateTime(t.startDate, t.startTime).isBefore(dateTime(self.startDate, self.startTime)) and 
+      dateTime(t.endDate, t.endTime).isAfterOrSame(dateTime(self.endDate, self.endTime))]
+
+   // start of a time slot is before the end of a time slot
+   dateTime(startDate, startTime).isBefore(dateTime(endDate, endTime))
+
+// unique BookableService.name already captured by unique keyword in Umple
+
+for each Service:
+   // duration has to be greater than zero
+   duration > 0
+
+   // downtimeDuration cannot be negative
+   downtimeDuration >= 0
+
+   // if downtimeDuration is zero, downtimeStart is irrelevant but 
+   // set somewhat arbitrarily to zero for the last constraint to hold
+   (downtimeDuration = 0) implies (downtimeStart = 0)
+
+   // it is not possible for downtime to start at the beginning of the service
+   (downtimeDuration <> 0) implies (downtimeStart > 0)
+
+   // downtimeStart has to be early enough for the downtime to finish before the end of the service
+   downtimeStart <= duration - downtimeDuration
+
+for each ServiceCombo:
+   // the mainService is always mandatory
+   // (note: there may be other services in the service combo that are mandatory)
+   mainService.mandatory = true
+
+   // the following could be modeled with {subsets} in the domain model,
+   // but Umple does not support this keyword
+   services includes mainService
+
+for each Appointment:
+   // start and end date of an appointment have to be the same
+   startDate.equals(endDate)
+
+   // if service chosen, there are no chosenItems
+   (bookableService is of kind Service) implies chosenItems.size() = 0
+
+   // chosen combo items must be in the booked service combo
+   (bookableService is of kind ServiceCombo) implies bookableService.services includes chosenItems
+
