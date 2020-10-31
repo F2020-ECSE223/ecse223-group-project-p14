@@ -615,5 +615,6 @@ public class Appointment
 
 		return actualTime;
   }
+   public static Boolean isInVacation(TimeSlot)
 
 }

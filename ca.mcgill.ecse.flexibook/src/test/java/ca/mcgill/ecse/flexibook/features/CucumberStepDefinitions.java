@@ -2478,7 +2478,7 @@ public class CucumberStepDefinitions {
 						counter= 0;		
 					}
 				}
-				assertEquals(result, itemList);
+				assertEquals(itemList, result);
 			}
 			
 		}
