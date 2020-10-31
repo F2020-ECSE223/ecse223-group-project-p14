@@ -2131,7 +2131,10 @@ public class CucumberStepDefinitions {
 		for (Appointment appointment:findAppointmentByUserName(username)) {
 			if (appointment.getChosenItems().size() == 0) {
 				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-					appointment.updateContent("", serviceName);
+					// added by Mike
+					if (appointment.isInGoodTimeSlotForUpdate(serviceName)){
+						appointment.updateContent("", serviceName);
+					}
 				}
 			}
 		
