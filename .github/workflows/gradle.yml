@@ -23,6 +23,17 @@ jobs:
     - name: Grant execute permission for gradlew 
       run: cd ca.mcgill.ecse.flexibook; chmod +x gradlew
     - name: Build with Gradle
-      run:  cd ca.mcgill.ecse.flexibook; ./gradlew build # this isn't running the correct tasks. so maybe it's not the right directory
-    - uses: actions/upload-artifact@v2
+      run:  cd ca.mcgill.ecse.flexibook; ./gradlew build 
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1.3
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        check_name: Unit Test Results
+        comment_title: Unit Test Statistics
+        hide_comments: all but latest
+        comment_on_pr: true
+        files: test-results/**/*.xml
+        report_individual_runs: true
+        deduplicate_classes_by_file_name: false
 
