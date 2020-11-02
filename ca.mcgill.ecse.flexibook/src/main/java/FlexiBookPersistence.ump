@@ -1,0 +1,59 @@
+namespace ca.mcgill.ecse.flexibook.persistence;
+
+external interface Serializable {}
+
+
+class FlexiBook {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class Appointment {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class BookableService {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class Business {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class BusinessHours {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class ComboItem {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+
+class Customer {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+class Owner {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+class Service {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+class ServiceCombo {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+class TimeSlot {
+    depend java.io.Serializable;
+    isA Serializable;
+}
+class User {
+    depend java.io.Serializable;
+    isA Serializable;
+}
