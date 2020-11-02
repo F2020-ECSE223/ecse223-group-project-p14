@@ -2082,15 +2082,15 @@ public class CucumberStepDefinitions {
 		}
 	}
 	/**
+	 * @param username 
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * @param currentDateTime
 	 * @author chengchen
 	 */
 	@When("{string} makes a {string} appointment for the date {string} and time {string} at {string}")
 	public void makes_a_appointment_for_the_date_and_time_at(String username, String serviceName, String date, String time, String currentDateTime) {
-//		String[] arrOfDateTime = currentDateTime.split("\\+");
-//		String currentDate = "";
-//		String currentTime = ""; 
-//		currentDate = arrOfDateTime[0];
-//		currentTime = arrOfDateTime[1];
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
@@ -2103,14 +2103,6 @@ public class CucumberStepDefinitions {
 				specificAppointment = appointment; // @AntoineW
 	    }
 		
-//		else if (findServiceCombo(serviceName) != null) {
-//			try {
-//				FlexiBookController.addAppointmentForComboService(serviceName, null, stringToDate(date), stringToTime(time));
-//			} catch (InvalidInputException e) {
-//				error += e.getMessage();
-//				errorCntr++;
-//			}		
-//		}
 	}
 	
 	
@@ -2132,16 +2124,6 @@ public class CucumberStepDefinitions {
 		if (specificAppointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
 			specificAppointment.updateContent("", newServiceName);
 		}
-		// added by Mike end ---
-//		for (Appointment appointment:findAppointmentByUserName(username)) {
-//			if (appointment.getChosenItems().size() == 0) {
-//				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-//						appointment.updateContent("", newServiceName);
-//				}
-//			}
-//		
-//		}
-
 	}
 
 	/**
@@ -3212,12 +3194,6 @@ public class CucumberStepDefinitions {
 				}
 			}
 		}
-//		ServiceCombo comboName = findServiceCombo(name);
-//				for (ComboItem combo: comboName.getServices()) {
-//			if (combo.isMandatory()) {
-//				result =+ combo.getService().getDuration();
-//			}
-//		}
 		return result;
 	}
 	
