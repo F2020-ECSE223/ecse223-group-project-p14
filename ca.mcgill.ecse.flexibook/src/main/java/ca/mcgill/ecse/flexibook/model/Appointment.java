@@ -605,50 +605,7 @@ public class Appointment
    * line 197 "../../../../../FlexiBookStateMachine.ump"
    */
   // line 199 "../../../../../FlexiBookStateMachine.ump"
-   public boolean isInGoodTimeSlotForUpdate(String optService){
-//	   boolean available = false; //if true, then isInGoodTimeSlotForUpdate returns true
-//	   //get day of appointment
-//	   Date appointmentDay = this.getTimeSlot().getStartDate(); //assuming start date and end date are always the same
-//	   //figure out downtimes later
-//	   
-//	   //find bookable service optService
-//	   Service newOptService = null; //service being added/switched out
-//	   for(BookableService service: getFlexiBook().getBookableServices()) {
-//	    	if(service.getName().equals(optService)) {
-//	    		newOptService = (Service)service;
-//	    	}
-//	    } 
-//	   
-//	   //get new endtime
-//	   //if switching out single service
-//	   if (getBookableService() instanceof Service) {
-//		   LocalTime anEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(newOptService.getDuration());
-//		   Time newEndTime  = Time.valueOf(anEndtime);
-//	   }
-//	
-//	   //if adding a service to a combo
-//	   if (getBookableService() instanceof ServiceCombo) {
-//		   LocalTime anEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(newOptService.getDuration());
-//			Time newEndTime  = Time.valueOf(anEndtime);
-//	   }
-//	   
-//
-//	   //check if day is a holiday
-//		List<TimeSlot> holidays = new ArrayList<TimeSlot>();
-//		for (TimeSlot holiday : FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-//			if (app.getCustomer().getUsername().equals(username)){
-//				appointments.add(app);
-//			}
-//		}
-//		return appointments;
-//	   
-//	   //check if day is a vacation
-//	   		//if vacation is a half day, then check if overlap
-//	   //check if outside business hours
-//	   //check if overlaps with another appointment
-//	   //if passes all of these, then boolean true
-	   
-	   
+   public boolean isInGoodTimeSlotForUpdate(String optService){   
     boolean check = true;
 	    Service s = null;
 	    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
