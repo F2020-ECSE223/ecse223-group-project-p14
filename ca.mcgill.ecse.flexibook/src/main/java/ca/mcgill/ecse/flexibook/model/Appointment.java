@@ -577,118 +577,99 @@ public class Appointment
   }
 
   // line 197 "../../../../../FlexiBookStateMachine.ump"
-   public boolean isInGoodTimeSlotForUpdate(String optService){
-    boolean check = true;
-	    Service s = null;
-	    List<TimeSlot> vacations = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
+   	public boolean isInGoodTimeSlotForUpdate(String optService){
+      List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
+      for(String serviceName: serviceNameList){
+        for(BookableService service: getFlexiBook().getBookableServices()) {
+          if(service.getName().equals(serviceName)) {
+            if(service instanceof Service){
+              setBookableService(service);
+            } else {
+              ServiceCombo sc = (ServiceCombo)getBookableService();
+              ComboItem ci = new ComboItem(true, , sc)
+              addChosenItem();
+            }
+          }
+        }
+      }
+      
+   		List<TimeSlot> completeTimeSlots = new ArrayList<TimeSlot>();
+    	boolean check = true;
+	    List<TimeSlot> validTimeSlots = new ArrayList<TimeSlot>();
+	    Time t1 = Time.valueOf("00:00:00");
+	    Time t2 = Time.valueOf("24:00:00");
+	    validTimeSlots.add(new TimeSlot(getTimeSlot().getStartDate(), t1, getTimeSlot().getStartDate(), t2, flexiBook));
+	    List<TimeSlot> vacationSlots = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
 	    List<TimeSlot> holidaySlots = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
-	    for(BookableService service: getFlexiBook().getBookableServices()) {
-	    	if(service.getName().equals(optService)) {
-	    		s = (Service)service;
-	    	}
-	    }
-		for(Appointment a : getFlexiBook().getAppointments()){
-//			for (TimeSlot vacation: vacations) {
-//				
-//			}
-//			for (TimeSlot holiday: holidaySlots) {
-//				
-//			}
-			for (TimeSlot vacation: vacations) {
-				for (TimeSlot holiday: holidaySlots) {
-				if (vacation.getStartDate().after(getTimeSlot().getStartDate())) {
-					if (holiday.getStartDate().after(getTimeSlot().getStartDate())) {
-						// only check appointment on the same day
-						if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-								getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-							// if single service: replace the endtime with new duration
-							if(getBookableService() instanceof Service) {
-								LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-									check = false;
-								}
-							// if service combo, meaning we are appending something, we add to the endtime
-							}else if(getBookableService() instanceof ServiceCombo) {
-								LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-									check = false;
-								}
-								
-							}
-							
-						}
-					}else if(holiday.getStartDate().equals(getTimeSlot().getStartDate())){
-						// only check appointment on the same day
-						if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-								getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-							// if single service: replace the endtime with new duration
-							if(getBookableService() instanceof Service) {
-								LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(holiday.getStartTime())) {
-									check = false;
-								}
-							// if service combo, meaning we are appending something, we add to the endtime
-							}else if(getBookableService() instanceof ServiceCombo) {
-								LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(holiday.getStartTime())) {
-									check = false;
-								}
-								
-							}
-							
-						}
-					}
-				}else if(vacation.getStartDate().equals(getTimeSlot().getStartDate())){
-					// only check appointment on the same day
-					if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-							getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-						// if single service: replace the endtime with new duration
-						if(getBookableService() instanceof Service) {
-							LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-							Time newEndTime  = Time.valueOf(aEndtime);
-							if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(vacation.getStartTime())) {
-								check = false;
-							}
-						// if service combo, meaning we are appending something, we add to the endtime
-						}else if(getBookableService() instanceof ServiceCombo) {
-							LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-							Time newEndTime  = Time.valueOf(aEndtime);
-							if(newEndTime.after(a.getTimeSlot().getStartTime())|| newEndTime.after(vacation.getStartTime())) {
-								check = false;
-							}
-							
-						}
-						
-					}
-				}
-//			// only check appointment on the same day
-//			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-//					getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-//				// if single service: replace the endtime with new duration
-//				if(getBookableService() instanceof Service) {
-//					LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-//					Time newEndTime  = Time.valueOf(aEndtime);
-//					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-//						check = false;
-//					}
-//				// if service combo, meaning we are appending something, we add to the endtime
-//				}else if(getBookableService() instanceof ServiceCombo) {
-//					LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-//					Time newEndTime  = Time.valueOf(aEndtime);
-//					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-//						check = false;
-//					}
-//					
-//				}
-//				
-//			}
-		}
+	    List<TimeSlot> appointmentSlots = new ArrayList<TimeSlot>();
+	    for(BusinessHour b: flexiBook.getHours()){
+			 if(b.getDayOfWeek().equals(timeSlot.getStartDate().getDay())){
+				TimeSlot businessSlot = new TimeSlot(timeSlot.getStartDate(), b.getStartTime(), timeSlot.getStartDate(), b.getEndTime(), flexiBook);
+				TimeSlot businessSlotStart = new TimeSlot(timeSlot.getStartDate(), t1, timeSlot.getStartDate(), timeSlot.getStartTime(), flexiBook);
+	    		TimeSlot businessSlotEnd = new TimeSlot(timeSlot.getStartDate(), businessSlot.getEndTime(), timeSlot.getStartDate(), t2, flexiBook);	    
+				completeTimeSlots.add(businessSlotStart);
+				completeTimeSlots.add(businessSlotEnd);
 			}
 		}
+	    for(Appointment a: flexiBook.getAppointments()){
+	    	if(a.getBookableService() instanceof Service){
+	    		Service s = (Service)a.getBookableService();
+				if(s.getDowntimeDuration() == 0){
+					appointmentSlots.add(a.getTimeSlot());
+				} else {
+					LocalTime t1EndLocalTime = a.getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDowntimeStart());
+					Time t1End  = Time.valueOf(t1EndLocalTime);
+					TimeSlot t_1 = new TimeSlot(a.getTimeSlot().getStartDate(), a.getTimeSlot().getStartTime(), a.getTimeSlot().getStartDate(), t1End, flexiBook);
+					LocalTime t2StartLocalTime = t1End.toLocalTime().plusMinutes(s.getDuration());
+					Time t2Start  = Time.valueOf(t2StartLocalTime);
+					TimeSlot t_2 = new TimeSlot(a.getTimeSlot().getStartDate(), t2Start, a.getTimeSlot().getStartDate(), a.getTimeSlot().getEndTime(), flexiBook);
+					appointmentSlots.add(t_1);
+					appointmentSlots.add(t_2);
+				}
+			} else {
+				ServiceCombo sc = (ServiceCombo)a.getBookableService();
+				int currentTime = 0;
+				for(ComboItem c: sc){
+					Service s = (Service)c.getService();
+					if(s.getDowntimeDuration() == 0){
+						LocalTime tStartLocalTime = a.getTimeSlot().getStartTime().toLocalTime().plusMinutes(currentTime);
+						Time tStart = Time.valueOf(tStartLocalTime);
+						LocalTime tEndLocalTime = tStart.toLocalTime().plusMinutes(s.getDuration());
+						Time tEnd = Time.valueOf(tEndLocalTime);
+						appointmentSlots.add(new TimeSlot(a.getTimeSlot().getStartDate(), tStart, a.getTimeSlot().getStartDate(), tEnd, flexiBook));
+					} else {
+						LocalTime t1StartLocalTime = a.getTimeSlot().getStartTime().toLocalTime().plusMinutes(currentTime);
+						Time t1Start  = Time.valueOf(t1StartLocalTime);
+						LocalTime t1EndLocalTime = t1Start.toLocalTime().plusMinutes(s.getDowntimeStart());
+						Time t1End = Time.valueOf(t1EndLocalTime);
+						TimeSlot t_1 = new TimeSlot(a.getTimeSlot().getStartDate(), t1Start, a.getTimeSlot().getStartDate(), t1End, flexiBook);
+						LocalTime t2StartLocalTime = t1End.toLocalTime().plusMinutes(s.getDowntimeDuration());
+						Time t2Start  = Time.valueOf(t2StartLocalTime);
+						LocalTime t2EndLocalTime = t1Start.toLocalTime().plusMinutes(s.getDuration());
+						Time t2End = Time.valueOf(t2EndLocalTime);
+						TimeSlot t_2 = new TimeSlot(a.getTimeSlot().getStartDate(), t2Start, a.getTimeSlot().getStartDate(), t2End, flexiBook);
+						appointmentSlots.add(t_1);
+						appointmentSlots.add(t_2);
+					}
+					currentTime += s.getDuration();
+				}
+
+			}
+			
+		}
+		completeTimeSlots.addAll(vacationSlots);
+		completeTimeSlots.addAll(holidaySlots);
+		completeTimeSlots.addAll(appointmentSlots);
+
+		List<TimeSlots> ourAppointmentSlots = new ArrayList<TimeSlot>();
+
+
+	    for(BookableService service: getFlexiBook().getBookableServices()) {
+	    	if(service.getName().equals(optService)) {
+	    		break;
+	    	}
+	    }
+		
 		return check;
   }
 
