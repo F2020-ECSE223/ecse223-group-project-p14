@@ -25,7 +25,4 @@ jobs:
     - name: Build with Gradle
       run:  cd ca.mcgill.ecse.flexibook; ./gradlew build # this isn't running the correct tasks. so maybe it's not the right directory
     - uses: actions/upload-artifact@v2
-      with:
-       name: Package
-       path: build/libs
 
