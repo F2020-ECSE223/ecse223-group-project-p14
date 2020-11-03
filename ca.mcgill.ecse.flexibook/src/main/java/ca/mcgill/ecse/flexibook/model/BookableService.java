@@ -14,10 +14,7 @@ public abstract class BookableService implements Serializable
   // STATIC VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = 3068935594413766324L;
-
-private static Map<String, BookableService> bookableservicesByName = new HashMap<String, BookableService>();
+  private static Map<String, BookableService> bookableservicesByName = new HashMap<String, BookableService>();
 
   //------------------------
   // MEMBER VARIABLES

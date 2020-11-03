@@ -14,9 +14,7 @@ public class ServiceCombo extends BookableService implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
- 
-	private static final long serialVersionUID = -1196511853633776656L;
-//ServiceCombo Associations
+  //ServiceCombo Associations
   private ComboItem mainService;
   private List<ComboItem> services;
 

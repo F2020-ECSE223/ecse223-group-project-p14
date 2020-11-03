@@ -14,10 +14,7 @@ public class Customer extends User implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = -8933722542960842318L;
-
-//Customer Attributes
+  //Customer Attributes
   private int noShowCount;
 
   //Customer Associations

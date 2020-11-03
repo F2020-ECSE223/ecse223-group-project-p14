@@ -14,11 +14,7 @@ public class BusinessHour implements Serializable
   // ENUMERATIONS
   //------------------------
 
-
-	private static final long serialVersionUID = -123145035308623337L;
-
-
-public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // MEMBER VARIABLES

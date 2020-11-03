@@ -14,9 +14,7 @@ public class Owner extends User implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-  
-	private static final long serialVersionUID = -8893802895060408572L;
-//Owner Associations
+  //Owner Associations
   private FlexiBook flexiBook;
 
   //------------------------

@@ -2121,9 +2121,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		// added by Mike start ---
-		if (specificAppointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-			specificAppointment.updateContent("", newServiceName);
-		}
+		specificAppointment.updateAppointmentContent("", newServiceName, RegisterTime.getStartDate(), RegisterTime.getStartTime());
+		// added by Mike end ---
 	}
 
 	/**
@@ -2207,7 +2206,7 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
-	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * 
 	 * @author mikewang
 	 */
 	@Then("the appointment shall be for the date {string} with start time {string} and end time {string}")
@@ -2276,7 +2275,6 @@ public class CucumberStepDefinitions {
 	 * Scenario: Change the date and time of appointment for a service on its day
 	 */
 	/**
-	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @param customer
 	 * @param newDate
 	 * @param newTime
@@ -2291,9 +2289,8 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if(appointment.getChosenItems().size() == 0) {
-				if (appointment.getTimeSlot().getStartDate().after(FlexiBookApplication.getCurrentDate(true))) {
-					appointment.updateTime(stringToDate(newDate),stringToTime(newTime));
-				}
+				appointment.updateAppointmentTime(stringToDate(newDate),stringToTime(newTime),RegisterTime.getStartDate());
+				
 			}
 		}
 	}
@@ -2302,7 +2299,6 @@ public class CucumberStepDefinitions {
 	 * Scenario: Cancel the appointment for a service at least one day ahead
 	 */
 	/**
-	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
 	 * @param customer
 	 * @param currentDateTime
 	 * @author mikewang & jedla & AntoineW
@@ -2314,7 +2310,6 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		List<Appointment> deleteAppointment = new ArrayList<Appointment>();
 		
 		specificAppointment.cancelAppointment(FlexiBookApplication.getCurrentDate(true));
 //		for (Appointment appointment: flexiBook.getAppointments()) {

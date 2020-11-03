@@ -15,9 +15,7 @@ public class TimeSlot implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = 7418623320738637954L;
-//TimeSlot Attributes
+  //TimeSlot Attributes
   private Date startDate;
   private Time startTime;
   private Date endDate;

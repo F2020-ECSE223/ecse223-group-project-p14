@@ -13,9 +13,7 @@ public class ComboItem implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-	private static final long serialVersionUID = 1957019762097795700L;
-
-//ComboItem Attributes
+  //ComboItem Attributes
   private boolean mandatory;
 
   //ComboItem Associations

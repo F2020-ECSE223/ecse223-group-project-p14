@@ -14,16 +14,14 @@ public abstract class User implements Serializable
   // STATIC VARIABLES
   //------------------------
 
-	private static final long serialVersionUID = -4081303599416950029L;
-
-private static Map<String, User> usersByUsername = new HashMap<String, User>();
+  private static Map<String, User> usersByUsername = new HashMap<String, User>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //User Attributes
-  private String username; 
+  private String username;
   private String password;
 
   //------------------------

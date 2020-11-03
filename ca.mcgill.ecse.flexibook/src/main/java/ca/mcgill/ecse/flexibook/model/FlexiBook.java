@@ -16,9 +16,7 @@ public class FlexiBook implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = -1210480817575488995L;
-//FlexiBook Associations
+  //FlexiBook Associations
   private Business business;
   private Owner owner;
   private List<Customer> customers;

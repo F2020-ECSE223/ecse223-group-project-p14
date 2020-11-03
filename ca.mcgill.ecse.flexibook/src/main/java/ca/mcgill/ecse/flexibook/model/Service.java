@@ -14,9 +14,7 @@ public class Service extends BookableService implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
- 
-	private static final long serialVersionUID = -7469050870390590359L;
-//Service Attributes
+  //Service Attributes
   private int duration;
   private int downtimeDuration;
   private int downtimeStart;

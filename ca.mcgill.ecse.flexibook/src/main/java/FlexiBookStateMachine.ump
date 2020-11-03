@@ -14,7 +14,7 @@ class Appointment{
   
   	cancelAppointment(Date currentDate) [!SameDay(currentDate)]-> FinalState;
  
-  	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && !SameDay(currentDate)]/
+  	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && beforeToday(currentDate)]/
   	{updateTime(newDate , newStartTime);}->Booked;
   
   	updateAppointmentContent(String action, String optService, Date currentDate, Time currentTime)[isInGoodTimeSlotForUpdate(optService) && !SameDay(currentDate) ]/
@@ -164,12 +164,36 @@ class Appointment{
   }
 
   // line 165 "../../../../../FlexiBookStateMachine.ump"
-   public boolean isInGoodTimeSlot(){
+ public boolean isInGoodTimeSlot(){
     boolean check = true;
+    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
+    List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
+    //check if overlapping with other appointment
 		for(Appointment a : getFlexiBook().getAppointments()){
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) && getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  && getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())){
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
+					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
+					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
 				check = false;
 			}
+		}
+	// check vacations
+		for (TimeSlot vacation: vacations) {
+			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& vacation.getStartTime().before(getTimeSlot().getStartTime())
+					&& vacation.getStartTime().after(getTimeSlot().getEndDate())) {
+				check =false; 
+			}
+			
+		}
+	// check holidays 
+		for (TimeSlot holiday: holidays) {
+			if(holiday.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& holiday.getStartTime().before(getTimeSlot().getStartTime())
+					&& holiday.getStartTime().after(getTimeSlot().getEndDate())) {
+				check = false; 
+			}
+			
 		}
 		return check;
   }
@@ -193,6 +217,16 @@ class Appointment{
 		}
 		return check;
   }
+  
+  
+     public boolean beforeToday(Date date) {
+	   Date tempToday = getTimeSlot().getStartDate();
+	   boolean check = false;
+	   if (date.before(tempToday)) {
+		   check =true;
+	   }
+	   return check;
+   }
 
   // line 197 "../../../../../FlexiBookStateMachine.ump"
    public boolean isInGoodTimeSlotForUpdate(String optService){

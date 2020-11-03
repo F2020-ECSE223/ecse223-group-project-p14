@@ -22,11 +22,7 @@ public class Appointment implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = 6081235010590935590L;
-
-
-//Appointment State Machines
+  //Appointment State Machines
   public enum AppointmentStatus { Booked, InProgress, FinalState }
   private AppointmentStatus appointmentStatus;
 
@@ -111,7 +107,7 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlot()&&!(SameDay(currentDate)))
+        if (isInGoodTimeSlot()&&beforeToday(currentDate))
         {
         // line 17 "../../../../../FlexiBookStateMachine.ump"
           updateTime(newDate , newStartTime);
@@ -570,10 +566,34 @@ public class Appointment implements Serializable
   // line 168 "../../../../../FlexiBookStateMachine.ump"
    public boolean isInGoodTimeSlot(){
     boolean check = true;
+    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
+    List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
+    //check if overlapping with other appointment
 		for(Appointment a : getFlexiBook().getAppointments()){
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) && getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  && getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())){
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
+					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
+					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
 				check = false;
 			}
+		}
+	// check vacations
+		for (TimeSlot vacation: vacations) {
+			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& vacation.getStartTime().before(getTimeSlot().getStartTime())
+					&& vacation.getStartTime().after(getTimeSlot().getEndDate())) {
+				check =false; 
+			}
+			
+		}
+	// check holidays 
+		for (TimeSlot holiday: holidays) {
+			if(holiday.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& holiday.getStartTime().before(getTimeSlot().getStartTime())
+					&& holiday.getStartTime().after(getTimeSlot().getEndDate())) {
+				check = false; 
+			}
+			
 		}
 		return check;
   }
@@ -582,7 +602,7 @@ public class Appointment implements Serializable
   /**
    * line 176 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 179 "../../../../../FlexiBookStateMachine.ump"
+  // line 203 "../../../../../FlexiBookStateMachine.ump"
    public boolean goodStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -596,7 +616,7 @@ public class Appointment implements Serializable
   /**
    * line 186 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 189 "../../../../../FlexiBookStateMachine.ump"
+  // line 213 "../../../../../FlexiBookStateMachine.ump"
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -606,11 +626,21 @@ public class Appointment implements Serializable
 		return check;
   }
 
+  // line 223 "../../../../../FlexiBookStateMachine.ump"
+   public boolean beforeToday(Date date){
+    Date tempToday = getTimeSlot().getStartDate();
+	   boolean check = false;
+	   if (date.before(tempToday)) {
+		   check =true;
+	   }
+	   return check;
+  }
+
 
   /**
    * line 197 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 199 "../../../../../FlexiBookStateMachine.ump"
+  // line 233 "../../../../../FlexiBookStateMachine.ump"
    public boolean isInGoodTimeSlotForUpdate(String optService){
     boolean check = true;
 	    Service s = null;
@@ -747,7 +777,7 @@ public class Appointment implements Serializable
   /**
    * line 312 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 332 "../../../../../FlexiBookStateMachine.ump"
+  // line 366 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 

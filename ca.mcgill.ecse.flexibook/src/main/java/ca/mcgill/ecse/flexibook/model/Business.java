@@ -14,9 +14,7 @@ public class Business implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = 2099877765709657892L;
-//Business Attributes
+  //Business Attributes
   private String name;
   private String address;
   private String phoneNumber;
