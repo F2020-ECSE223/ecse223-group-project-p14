@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.Time;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.User;
+import ca.mcgill.ecse.flexibook.persistence.FlexiBookPersistence;
 
 
 
@@ -32,10 +33,9 @@ public class FlexiBookApplication {
 	 * @author chengchen
 	 */
     public static FlexiBook getFlexiBook() {
-		if (flexiBook == null) {
-			
-			flexiBook = new FlexiBook();
-			
+    	if (flexiBook == null) {
+			// load model
+	        flexiBook = FlexiBookPersistence.load();
 		}
  		return flexiBook;
 	}
