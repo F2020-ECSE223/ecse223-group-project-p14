@@ -2,10 +2,12 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.util.*;
 
-// line 61 "../../../../../FlexiBook.ump"
-public abstract class BookableService
+// line 16 "../../../../../FlexiBookPersistence.ump"
+// line 62 "../../../../../FlexiBook.ump"
+public abstract class BookableService implements Serializable
 {
 
   //------------------------

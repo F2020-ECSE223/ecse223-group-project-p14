@@ -2,9 +2,11 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 
-// line 82 "../../../../../FlexiBook.ump"
-public class ComboItem
+// line 31 "../../../../../FlexiBookPersistence.ump"
+// line 83 "../../../../../FlexiBook.ump"
+public class ComboItem implements Serializable
 {
 
   //------------------------

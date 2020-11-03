@@ -5,6 +5,8 @@ class Appointment{
 	depend java.time.Duration;
 	depend java.time.LocalTime;
 	depend ca.mcgill.ecse.flexibook.controller.ControllerUtils;
+	depend ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+	depend java.time.LocalDateTime;
 
 	AppointmentStatus{
 
@@ -12,7 +14,7 @@ class Appointment{
   
   	cancelAppointment(Date currentDate) [!SameDay(currentDate)]-> FinalState;
  
-  	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && !SameDay(currentDate)]/
+  	updateAppointmentTime(Date newDate ,Time newStartTime, Date currentDate)[isInGoodTimeSlot() && beforeToday(currentDate)]/
   	{updateTime(newDate , newStartTime);}->Booked;
   
   	updateAppointmentContent(String action, String optService, Date currentDate, Time currentTime)[isInGoodTimeSlotForUpdate(optService) && !SameDay(currentDate) ]/
@@ -44,6 +46,7 @@ class Appointment{
 	
 	
 
+  // line 48 "../../../../../FlexiBookStateMachine.ump"
    public void updateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -55,9 +58,9 @@ class Appointment{
 		setTimeSlot(timeSlot);
   }
 
-
-public void updateContent(String action, String optService){
-	   if (isInGoodTimeSlotForUpdate(optService)) {
+  // line 60 "../../../../../FlexiBookStateMachine.ump"
+   public void updateContent(String action, String optService){
+    if (isInGoodTimeSlotForUpdate(optService)) {
     if(getBookableService() instanceof ServiceCombo) {
     	
     		
@@ -153,25 +156,49 @@ public void updateContent(String action, String optService){
 	   }
   }
 
-
+  // line 158 "../../../../../FlexiBookStateMachine.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
 
-
-   public boolean isInGoodTimeSlot(){
+  // line 165 "../../../../../FlexiBookStateMachine.ump"
+ public boolean isInGoodTimeSlot(){
     boolean check = true;
+    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
+    List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
+    //check if overlapping with other appointment
 		for(Appointment a : getFlexiBook().getAppointments()){
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) && getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  && getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())){
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
+					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
+					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
 				check = false;
 			}
+		}
+	// check vacations
+		for (TimeSlot vacation: vacations) {
+			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& vacation.getStartTime().before(getTimeSlot().getStartTime())
+					&& vacation.getStartTime().after(getTimeSlot().getEndDate())) {
+				check =false; 
+			}
+			
+		}
+	// check holidays 
+		for (TimeSlot holiday: holidays) {
+			if(holiday.getStartDate().equals(getTimeSlot().getStartDate()) 
+					&& holiday.getStartTime().before(getTimeSlot().getStartTime())
+					&& holiday.getStartTime().after(getTimeSlot().getEndDate())) {
+				check = false; 
+			}
+			
 		}
 		return check;
   }
 
-
+  // line 176 "../../../../../FlexiBookStateMachine.ump"
    public boolean goodStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -181,7 +208,7 @@ public void updateContent(String action, String optService){
 		return check;
   }
 
-
+  // line 186 "../../../../../FlexiBookStateMachine.ump"
    public boolean SameDay(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -190,124 +217,151 @@ public void updateContent(String action, String optService){
 		}
 		return check;
   }
+  
+  
+     public boolean beforeToday(Date date) {
+	   Date tempToday = getTimeSlot().getStartDate();
+	   boolean check = false;
+	   if (date.before(tempToday)) {
+		   check =true;
+	   }
+	   return check;
+   }
 
-
-
-	      public boolean isInGoodTimeSlotForUpdate(String optService){
+  // line 197 "../../../../../FlexiBookStateMachine.ump"
+   public boolean isInGoodTimeSlotForUpdate(String optService){
     boolean check = true;
 	    Service s = null;
-	    List<TimeSlot> vacations = FlexiBookApplication.getFlexiBook().getBusiness().getVacation();
-	    List<TimeSlot> holidaySlots = FlexiBookApplication.getFlexiBook().getBusiness().getHolidays();
+	    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
+	    List<TimeSlot> holidaySlots = getFlexiBook().getBusiness().getHolidays();
 	    for(BookableService service: getFlexiBook().getBookableServices()) {
 	    	if(service.getName().equals(optService)) {
 	    		s = (Service)service;
 	    	}
 	    }
+	    // 1. check with other app
 		for(Appointment a : getFlexiBook().getAppointments()){
-//			for (TimeSlot vacation: vacations) {
-//				
-//			}
-//			for (TimeSlot holiday: holidaySlots) {
-//				
-//			}
-			for (TimeSlot vacation: vacations) {
-				for (TimeSlot holiday: holidaySlots) {
-				if (vacation.getStartDate().after(getTimeSlot().getStartDate())) {
-					if (holiday.getStartDate().after(getTimeSlot().getStartDate())) {
-						// only check appointment on the same day
-						if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-								getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-							// if single service: replace the endtime with new duration
-							if(getBookableService() instanceof Service) {
-								LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-									check = false;
-								}
-							// if service combo, meaning we are appending something, we add to the endtime
-							}else if(getBookableService() instanceof ServiceCombo) {
-								LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-									check = false;
-								}
-								
-							}
-							
-						}
-					}else if(holiday.getStartDate().equals(getTimeSlot().getStartDate())){
-						// only check appointment on the same day
-						if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-								getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-							// if single service: replace the endtime with new duration
-							if(getBookableService() instanceof Service) {
-								LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(holiday.getStartTime())) {
-									check = false;
-								}
-							// if service combo, meaning we are appending something, we add to the endtime
-							}else if(getBookableService() instanceof ServiceCombo) {
-								LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-								Time newEndTime  = Time.valueOf(aEndtime);
-								if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(holiday.getStartTime())) {
-									check = false;
-								}
-								
-							}
-							
-						}
+			// only check appointment on the same day
+			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
+					getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
+				// if single service: replace the endtime with new duration
+				if(getBookableService() instanceof Service) {
+					LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
+					Time newEndTime  = Time.valueOf(aEndtime);
+					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
+						check = false;
 					}
-				}else if(vacation.getStartDate().equals(getTimeSlot().getStartDate())){
-					// only check appointment on the same day
-					if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-							getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-						// if single service: replace the endtime with new duration
-						if(getBookableService() instanceof Service) {
-							LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-							Time newEndTime  = Time.valueOf(aEndtime);
-							if(newEndTime.after(a.getTimeSlot().getStartTime()) || newEndTime.after(vacation.getStartTime())) {
-								check = false;
-							}
-						// if service combo, meaning we are appending something, we add to the endtime
-						}else if(getBookableService() instanceof ServiceCombo) {
-							LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-							Time newEndTime  = Time.valueOf(aEndtime);
-							if(newEndTime.after(a.getTimeSlot().getStartTime())|| newEndTime.after(vacation.getStartTime())) {
-								check = false;
-							}
-							
-						}
-						
+				// if service combo, meaning we are appending something, we add to the endtime
+				}else if(getBookableService() instanceof ServiceCombo) {
+					LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
+					Time newEndTime  = Time.valueOf(aEndtime);
+					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
+						check = false;
 					}
+					
 				}
-//			// only check appointment on the same day
-//			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-//					getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-//				// if single service: replace the endtime with new duration
-//				if(getBookableService() instanceof Service) {
-//					LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-//					Time newEndTime  = Time.valueOf(aEndtime);
-//					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-//						check = false;
-//					}
-//				// if service combo, meaning we are appending something, we add to the endtime
-//				}else if(getBookableService() instanceof ServiceCombo) {
-//					LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-//					Time newEndTime  = Time.valueOf(aEndtime);
-//					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-//						check = false;
-//					}
-//					
-//				}
-//				
-//			}
-		}
+				
 			}
 		}
+		// 2. check with vacation
+		for (TimeSlot vacation: vacations) {
+			if(getBookableService() instanceof Service) {
+				
+				LocalDateTime vStart = ControllerUtils.combineDateAndTime(vacation.getStartDate(), vacation.getStartTime());
+				LocalDateTime vEnd = ControllerUtils.combineDateAndTime(vacation.getEndDate(), vacation.getEndTime());
+				
+				LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
+				//LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
+				
+				LocalDateTime aNewEnd = aStart.plusMinutes(s.getDuration());
+				
+				if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
+					check = false;
+				}
+				
+			}else if(getBookableService() instanceof ServiceCombo) {
+				LocalDateTime vStart = ControllerUtils.combineDateAndTime(vacation.getStartDate(), vacation.getStartTime());
+				LocalDateTime vEnd = ControllerUtils.combineDateAndTime(vacation.getEndDate(), vacation.getEndTime());
+				
+				LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
+				LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
+				
+				LocalDateTime aNewEnd = aEnd.plusMinutes(s.getDuration());
+				
+				if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
+					check = false;
+				}
+			}
+		}
+		
+		// 2.5 check with holiday
+				for (TimeSlot holiday: holidaySlots) {
+					if(getBookableService() instanceof Service) {
+						
+						LocalDateTime vStart = ControllerUtils.combineDateAndTime(holiday.getStartDate(), holiday.getStartTime());
+						LocalDateTime vEnd = ControllerUtils.combineDateAndTime(holiday.getEndDate(), holiday.getEndTime());
+						
+						LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
+						//LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
+						
+						LocalDateTime aNewEnd = aStart.plusMinutes(s.getDuration());
+						
+						if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
+							check = false;
+						}
+						
+					}else if(getBookableService() instanceof ServiceCombo) {
+						LocalDateTime vStart = ControllerUtils.combineDateAndTime(holiday.getStartDate(), holiday.getStartTime());
+						LocalDateTime vEnd = ControllerUtils.combineDateAndTime(holiday.getEndDate(), holiday.getEndTime());
+						
+						LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
+						LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
+						
+						LocalDateTime aNewEnd = aEnd.plusMinutes(s.getDuration());
+						
+						if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
+							check = false;
+						}
+					}
+				}
+			
+		// 3. check with workyime
+		//First get the weekday
+		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
+		// then check all businessHour list
+		List<BusinessHour> bhList = getFlexiBook().getBusiness().getBusinessHours();
+		// if single service: replace the endtime with new duration
+		Time newEndTime = null;
+		if(getBookableService() instanceof Service) {
+			LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
+			newEndTime  = Time.valueOf(aEndtime);
+		// if service combo, meaning we are appending something, we add to the endtime
+		}else if(getBookableService() instanceof ServiceCombo) {
+			LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
+			newEndTime  = Time.valueOf(aEndtime);
+		}
+		for(BusinessHour bh: bhList) {
+			// check weekday
+
+			if(dOfWeek .equals(bh.getDayOfWeek())) {
+				// if the appointment is on that day, compare if the time slot is included by business hour
+				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
+						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
+						&&
+						newEndTime.toLocalTime().isBefore(bh.getEndTime().toLocalTime())
+						|| newEndTime.toLocalTime().equals(bh.getEndTime().toLocalTime())) {
+					// let the check remain what it is
+				}else {
+					check = false;
+				}
+			}
+
+		}
+		
 		return check;
   }
 
+  // line 312 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
