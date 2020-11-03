@@ -2133,28 +2133,17 @@ public class CucumberStepDefinitions {
 	@When("the owner starts the appointment at {string}")
 	public void the_owner_starts_the_appointment_at(String dateString) {
 		
-//		// AntoineW did this start------
-//		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
-//		
-//		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
-//		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
-//
-//		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
-//		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-//		// AntoineW did this end------
-		
 		// Mike add this start------
 		TOTimeSlot RegisterTime = currentRegisterTime(dateString);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		// Mike add this end -----
-//		try{
-//			FlexiBookController.startAppointment(specificAppointment.getBookableService().getName(), specificAppointment.getTimeSlot().getStartDate(), specificAppointment.getTimeSlot().getStartTime());
-//		} catch (InvalidInputException e) {
-//			error += e.getMessage();
-//			errorCntr++;
-//		}	
-		specificAppointment.startAppointment(FlexiBookApplication.getCurrentDate(true), FlexiBookApplication.getCurrentTime(true));
+		try{
+			FlexiBookController.startAppointment(specificAppointment.getBookableService().getName(), specificAppointment.getTimeSlot().getStartDate(), specificAppointment.getTimeSlot().getStartTime());
+		} catch (InvalidInputException e) {
+			error += e.getMessage();
+			errorCntr++;
+		}	
 	}
 
 	
