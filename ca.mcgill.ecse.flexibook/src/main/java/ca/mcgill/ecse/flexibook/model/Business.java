@@ -2,17 +2,21 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.util.*;
 
-// line 30 "../../../../../FlexiBook.ump"
-public class Business
+// line 21 "../../../../../FlexiBookPersistence.ump"
+// line 31 "../../../../../FlexiBook.ump"
+public class Business implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Business Attributes
+
+	private static final long serialVersionUID = 2099877765709657892L;
+//Business Attributes
   private String name;
   private String address;
   private String phoneNumber;

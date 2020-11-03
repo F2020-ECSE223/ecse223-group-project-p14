@@ -9,18 +9,24 @@ import java.time.LocalTime;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.*;
 
 // line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 87 "../../../../../FlexiBook.ump"
-public class Appointment
+// line 11 "../../../../../FlexiBookPersistence.ump"
+// line 88 "../../../../../FlexiBook.ump"
+public class Appointment implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Appointment State Machines
+
+	private static final long serialVersionUID = 6081235010590935590L;
+
+
+//Appointment State Machines
   public enum AppointmentStatus { Booked, InProgress, FinalState }
   private AppointmentStatus appointmentStatus;
 

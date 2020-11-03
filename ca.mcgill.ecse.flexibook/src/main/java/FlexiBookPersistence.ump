@@ -1,4 +1,4 @@
-namespace ca.mcgill.ecse.flexibook.persistence;
+
 
 external interface Serializable {}
 
@@ -23,7 +23,7 @@ class Business {
     isA Serializable;
 }
 
-class BusinessHours {
+class BusinessHour {
     depend java.io.Serializable;
     isA Serializable;
 }

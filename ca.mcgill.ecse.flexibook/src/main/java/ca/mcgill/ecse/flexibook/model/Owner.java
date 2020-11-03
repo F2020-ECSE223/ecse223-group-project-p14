@@ -2,17 +2,21 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.util.*;
 
-// line 21 "../../../../../FlexiBook.ump"
-public class Owner extends User
+// line 40 "../../../../../FlexiBookPersistence.ump"
+// line 22 "../../../../../FlexiBook.ump"
+public class Owner extends User implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Owner Associations
+  
+	private static final long serialVersionUID = -8893802895060408572L;
+//Owner Associations
   private FlexiBook flexiBook;
 
   //------------------------
