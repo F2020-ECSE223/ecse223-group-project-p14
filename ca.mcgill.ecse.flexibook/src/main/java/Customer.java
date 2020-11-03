@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
-package ca.mcgill.ecse.flexibook.persistence;
+
 import java.io.Serializable;
 
-// line 11 "../../../../../FlexiBookPersistence.ump"
-public class Appointment implements Serializable
+// line 36 "FlexiBookPersistence.ump"
+public class Customer implements Serializable
 {
 
   //------------------------
@@ -16,10 +16,7 @@ public class Appointment implements Serializable
   // CONSTRUCTOR
   //------------------------
 
-
-	private static final long serialVersionUID = 6774685806764338746L;
-
-public Appointment()
+  public Customer()
   {}
 
   //------------------------

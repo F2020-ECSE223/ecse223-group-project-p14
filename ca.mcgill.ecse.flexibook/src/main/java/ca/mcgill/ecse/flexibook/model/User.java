@@ -2,24 +2,28 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.util.*;
 
-// line 15 "../../../../../FlexiBook.ump"
-public abstract class User
+// line 56 "../../../../../FlexiBookPersistence.ump"
+// line 16 "../../../../../FlexiBook.ump"
+public abstract class User implements Serializable
 {
 
   //------------------------
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<String, User> usersByUsername = new HashMap<String, User>();
+	private static final long serialVersionUID = -4081303599416950029L;
+
+private static Map<String, User> usersByUsername = new HashMap<String, User>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //User Attributes
-  private String username;
+  private String username; 
   private String password;
 
   //------------------------

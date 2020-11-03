@@ -2,17 +2,23 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.sql.Time;
 
-// line 47 "../../../../../FlexiBook.ump"
-public class BusinessHour
+// line 26 "../../../../../FlexiBookPersistence.ump"
+// line 48 "../../../../../FlexiBook.ump"
+public class BusinessHour implements Serializable
 {
 
   //------------------------
   // ENUMERATIONS
   //------------------------
 
-  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+
+	private static final long serialVersionUID = -123145035308623337L;
+
+
+public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // MEMBER VARIABLES

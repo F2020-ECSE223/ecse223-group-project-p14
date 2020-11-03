@@ -2,18 +2,22 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 54 "../../../../../FlexiBook.ump"
-public class TimeSlot
+// line 52 "../../../../../FlexiBookPersistence.ump"
+// line 55 "../../../../../FlexiBook.ump"
+public class TimeSlot implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //TimeSlot Attributes
+
+	private static final long serialVersionUID = 7418623320738637954L;
+//TimeSlot Attributes
   private Date startDate;
   private Time startTime;
   private Date endDate;

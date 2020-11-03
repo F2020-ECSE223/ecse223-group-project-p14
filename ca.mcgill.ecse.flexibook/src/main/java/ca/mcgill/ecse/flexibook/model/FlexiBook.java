@@ -2,19 +2,23 @@
 /*This code was generated using the UMPLE 1.30.1.5099.60569f335 modeling language!*/
 
 package ca.mcgill.ecse.flexibook.model;
+import java.io.Serializable;
 import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
-// line 5 "../../../../../FlexiBook.ump"
-public class FlexiBook
+// line 6 "../../../../../FlexiBookPersistence.ump"
+// line 6 "../../../../../FlexiBook.ump"
+public class FlexiBook implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //FlexiBook Associations
+
+	private static final long serialVersionUID = -1210480817575488995L;
+//FlexiBook Associations
   private Business business;
   private Owner owner;
   private List<Customer> customers;
