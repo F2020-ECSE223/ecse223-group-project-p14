@@ -24,9 +24,17 @@ jobs:
       run: cd ca.mcgill.ecse.flexibook; chmod +x gradlew
     - name: Build with Gradle
       run:  cd ca.mcgill.ecse.flexibook; ./gradlew build 
-    - name: Publish Unit Test Results
+
+    - name: Upload Unit Test Results
       if: always()
-      run:  cd ca.mcgill.ecse.flexibook; ./gradlew build
+      uses: actions/upload-artifact@v2
+      with:
+        name: Unit Test Results (Java ${{ matrix.java-version }})
+        path: test-results/**/*.xml
+
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1.3
+      if: always()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         check_name: Unit Test Results
@@ -36,4 +44,5 @@ jobs:
         files: test-results/**/*.xml
         report_individual_runs: true
         deduplicate_classes_by_file_name: false
+
 
