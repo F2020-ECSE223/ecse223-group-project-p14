@@ -2240,7 +2240,7 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * 
 	 * @param string
 	 * @author mikewang
 	 */
@@ -2466,7 +2466,6 @@ public class CucumberStepDefinitions {
 
 	
 	
-	
 	/**
 	 * 
 	 * @author AntoineW
@@ -2522,13 +2521,9 @@ public class CucumberStepDefinitions {
 		specificAppointment.finishedAppointment();
 	}
 
-
-
-
-
-
-
-
+  
+	 
+  
 
 	
 	/*---------------------------private helper methods--------------------------*/

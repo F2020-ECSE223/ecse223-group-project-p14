@@ -78,13 +78,5 @@ public class Owner extends User implements Serializable
     }
     super.delete();
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 50 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 8L ;
 
-  
 }

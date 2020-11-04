@@ -99,14 +99,5 @@ public abstract class User implements Serializable
     return super.toString() + "["+
             "username" + ":" + getUsername()+ "," +
             "password" + ":" + getPassword()+ "]";
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 69 "../../../../../FlexiBookPersistence.ump"
-  
-    private static final long serialVersionUID = 12L ;
-
-  
+  }
 }

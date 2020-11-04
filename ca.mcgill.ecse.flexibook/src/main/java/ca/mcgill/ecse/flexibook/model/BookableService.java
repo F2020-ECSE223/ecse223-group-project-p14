@@ -231,13 +231,5 @@ public abstract class BookableService implements Serializable
     return super.toString() + "["+
             "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 21 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 3L ;
-
-  
+  }
 }

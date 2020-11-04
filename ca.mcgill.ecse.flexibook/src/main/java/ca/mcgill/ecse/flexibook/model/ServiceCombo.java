@@ -189,13 +189,5 @@ public class ServiceCombo extends BookableService implements Serializable
     
     super.delete();
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 60 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 10L ;
 
-  
 }
