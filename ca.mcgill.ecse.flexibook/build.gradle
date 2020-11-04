@@ -51,12 +51,3 @@ test {
     useJUnitPlatform()
 }
 
-reporting.baseDir = "testResult"
-testResultsDirName = "$buildDir/test-results"
-
-task showDirs {
-    doLast {
-        logger.quiet(rootDir.toPath().relativize(project.reportsDir.toPath()).toString())
-        logger.quiet(rootDir.toPath().relativize(project.testResultsDir.toPath()).toString())
-    }
-}
