@@ -32,6 +32,10 @@ jobs:
         name: Unit Test Results (Java ${{ matrix.java-version }})
         path: test-results.xml
 
+
+    - name: Download Artifacts
+        uses: actions/download-artifact@v2
+
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1.3
       if: always()
