@@ -163,13 +163,13 @@ public class FlexiBookController {
 		if (!comboItemsToDelete.isEmpty()) {
 			for (ComboItem comboItem:comboItemsToDelete) {
 				comboItem.delete();
-
+				//add by Mike start ---
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
 				}
-
+				//add by Mike end ---
 				isSuccess = true;
 			}
 		}
@@ -264,7 +264,13 @@ public class FlexiBookController {
 			}
 			((Service) bookableService).setDowntimeStart(newDowntimeStart);
 			((Service) bookableService).setDowntimeDuration(newDowntimeDuration);
-			FlexiBookPersistence.save(flexiBook);
+			//add by Mike start ---
+			try {
+				FlexiBookPersistence.save(flexiBook);
+			} catch(RuntimeException e) {
+				throw new InvalidInputException(e.getMessage());
+			}
+			//add by Mike end ---
 			isSuccess = true;
 
 		}
@@ -286,7 +292,9 @@ public class FlexiBookController {
 	 */
 	public static Appointment addAppointmentForService(String serviceName, Date date, Time time) 
 			throws InvalidInputException{
-
+		// changed by mike start --- 
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		// changed by mike end --- 
 		User user = FlexiBookApplication.getCurrentLoginUser();
 		// Scenario: The owner attempts to make an appointment
 		if(user instanceof Owner) {
@@ -305,11 +313,11 @@ public class FlexiBookController {
 
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
-				FlexiBookApplication.getFlexiBook());
-		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+				flexiBook);
+		int index = flexiBook.indexOfTimeSlot(timeSlot);
 		if(!isInGoodTiming(timeSlot, index,-1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
-			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+			flexiBook.removeTimeSlot(timeSlot);
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
 				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + timeStr);
@@ -322,7 +330,10 @@ public class FlexiBookController {
 		try {
 
 			Appointment appointment = new Appointment((Customer) user, s, timeSlot,FlexiBookApplication.getFlexiBook() );
-			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+			flexiBook.addAppointment(appointment);
+			//add by Mike start ---
+			FlexiBookPersistence.save(flexiBook);
+			//add by Mike end ---
 			return appointment;
 		} catch (RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
@@ -347,7 +358,9 @@ public class FlexiBookController {
 	 */
 	public static Appointment addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
 			throws InvalidInputException{
-
+		// changed by mike start --- 
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		// changed by mike end --- 
 		User user = FlexiBookApplication.getCurrentLoginUser();
 		// Scenario: The owner attempts to make an appointment
 		if(user instanceof Owner) {
@@ -370,11 +383,11 @@ public class FlexiBookController {
 
 		// Here handle constraints: start and end date of an appointment have to be the same
 		TimeSlot timeSlot = new TimeSlot(date, time, date, endTime, 
-				FlexiBookApplication.getFlexiBook());
-		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+				flexiBook);
+		int index = flexiBook.indexOfTimeSlot(timeSlot);
 		if(!isInGoodTiming(timeSlot,index, -1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
-			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+			flexiBook.removeTimeSlot(timeSlot);
 			// tweak format to pass tests
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
@@ -396,17 +409,23 @@ public class FlexiBookController {
 
 				if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
 					appointment.addChosenItem(ControllerUtils.findComboItemByServiceName(sCombo, item.getService().getName()));
+					//add by Mike start ---
+					FlexiBookPersistence.save(flexiBook);
+					//add by Mike end ---
 				}else{
 					for(String name : ControllerUtils.parseString(optService, ",")) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
+							//add by Mike start ---
+							FlexiBookPersistence.save(flexiBook);
+							//add by Mike end ---
 						}
 					}
 				}
 			}	
 
 
-			FlexiBookApplication.getFlexiBook().addAppointment(appointment);
+			flexiBook.addAppointment(appointment);
 
 
 			return appointment;
@@ -457,7 +476,7 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	public static boolean updateAppointmentTime(String serviceName, Date date, Time time, Date newDate ,Time newStartTime) throws InvalidInputException {
-
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName, date, time);
 
 		// Scenario: check if the current user is tweaking his/her own appointment
@@ -489,6 +508,13 @@ public class FlexiBookController {
 //		appInSystem.setTimeSlot(timeSlot);
 		
 		boolean ret = appInSystem.updateAppointmentTime(newDate, newStartTime, FlexiBookApplication.getCurrentDate(true),FlexiBookApplication.getCurrentTime(true));
+		//add by Mike start ---
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		//add by Mike end ---
 		return ret;
 	}
 
@@ -507,7 +533,8 @@ public class FlexiBookController {
 	 * @author AntoineW
 	 */
 	public static boolean updateAppointmentContent(String serviceName, Date date, Time time, String action, String optService) throws InvalidInputException {
-
+		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 
 		// Scenario: check if the current user is tweaking his/her own appointment
@@ -518,6 +545,14 @@ public class FlexiBookController {
 		}
 		
 		boolean ret = appInSystem.updateAppointmentContent(action, optService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
+		
+		//add by Mike start --- 
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		//add by Mike end ---		
 		return ret;
 	}
 
@@ -532,6 +567,7 @@ public class FlexiBookController {
 	 */
 	public static boolean cancelAppointment(String serviceName, Date date, Time time) throws InvalidInputException {
 
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 
 		// Scenario: check if the current user is tweaking his/her own appointment
@@ -552,6 +588,13 @@ public class FlexiBookController {
 //		}
 		
 		boolean ret = appInSystem.cancelAppointment(today);
+		//add by Mike start --- 
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		//add by Mike end ---			
 		
 		if(date.equals(today)) {
 			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
@@ -590,9 +633,17 @@ public class FlexiBookController {
 		}
 		else {
 			Customer aCustomer = new Customer(username, password, 0, flexiBook);
-			flexiBook.addCustomer(aCustomer); 
+			flexiBook.addCustomer(aCustomer); 		
 			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
+			
+			//add by Mike start --- 
+			try {
+				FlexiBookPersistence.save(flexiBook);
+			} catch(RuntimeException e) {
+				throw new InvalidInputException(e.getMessage());
+			}
+			//add by Mike end ---	
 			signUpSuccessful = true;
 		}
 		return signUpSuccessful;
@@ -611,6 +662,8 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException { 
+		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean updateSuccessful = false;
 		if (!user.getUsername().equals(currentUsername)) {
@@ -631,6 +684,13 @@ public class FlexiBookController {
 		else {
 			user.setUsername(newUsername);
 			user.setPassword(newPassword);
+			//add by Mike start --- 
+			try {
+				FlexiBookPersistence.save(flexiBook);
+			} catch(RuntimeException e) {
+				throw new InvalidInputException(e.getMessage());
+			}
+			//add by Mike end ---	
 			updateSuccessful = true;
 		}
 		return updateSuccessful;
@@ -646,6 +706,8 @@ public class FlexiBookController {
 	 * @author Catherine
 	 */
 	public static boolean deleteCustomerAccount(String username) throws InvalidInputException{ 
+		
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		User user = FlexiBookApplication.getCurrentLoginUser(); 
 		boolean deleteSuccessful = false;
 		if (!user.getUsername().equals(username) || user.getUsername().equals("owner")) { //alternative: user instanceof Owner
@@ -654,6 +716,13 @@ public class FlexiBookController {
 		else {
 			((Customer)user).delete(); 
 			FlexiBookApplication.clearCurrentLoginUser();
+			//add by Mike start --- 
+			try {
+				FlexiBookPersistence.save(flexiBook);
+			} catch(RuntimeException e) {
+				throw new InvalidInputException(e.getMessage());
+			}
+			//add by Mike end ---	
 			deleteSuccessful = true;
 		}
 		return deleteSuccessful;
