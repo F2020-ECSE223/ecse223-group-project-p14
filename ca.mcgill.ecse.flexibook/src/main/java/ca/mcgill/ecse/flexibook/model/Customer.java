@@ -202,13 +202,5 @@ public class Customer extends User implements Serializable
     return super.toString() + "["+
             "noShowCount" + ":" + getNoShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 45 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 7L ;
-
-  
+  }
 }

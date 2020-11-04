@@ -89,13 +89,5 @@ public class Service extends BookableService implements Serializable
             "duration" + ":" + getDuration()+ "," +
             "downtimeDuration" + ":" + getDowntimeDuration()+ "," +
             "downtimeStart" + ":" + getDowntimeStart()+ "]";
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 55 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 9L ;
-
-  
+  }
 }

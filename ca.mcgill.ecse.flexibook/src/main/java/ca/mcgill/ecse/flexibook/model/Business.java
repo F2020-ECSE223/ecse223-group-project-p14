@@ -425,13 +425,5 @@ public class Business implements Serializable
             "phoneNumber" + ":" + getPhoneNumber()+ "," +
             "email" + ":" + getEmail()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 27 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 4L ;
-
-  
+  }
 }

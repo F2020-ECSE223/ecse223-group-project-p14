@@ -2240,7 +2240,7 @@ public class CucumberStepDefinitions {
 	
 	
 	/**
-	 *  PLEASE DON'T TOUCH MIKE WILL FINISH THIS 
+	 * 
 	 * @param string
 	 * @author mikewang
 	 */

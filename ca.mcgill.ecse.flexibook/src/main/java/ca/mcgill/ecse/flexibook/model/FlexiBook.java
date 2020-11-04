@@ -677,13 +677,5 @@ public class FlexiBook implements Serializable
     }
     
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 9 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 1L ;
 
-  
 }

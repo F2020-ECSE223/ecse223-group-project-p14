@@ -155,8 +155,12 @@ class Appointment{
 	  }
 	   
   }
-
-
+  
+	/**
+	 * Increments the noShowCount of the customer associated to the account
+	 * 
+	 * @author Catherine
+	 */
   // line 161 "../../../../../FlexiBookStateMachine.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
