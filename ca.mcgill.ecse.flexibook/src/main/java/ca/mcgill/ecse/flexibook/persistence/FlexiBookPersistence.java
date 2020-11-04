@@ -17,9 +17,17 @@ public class FlexiBookPersistence{
 	    if (flexiBook == null) {
 	        flexiBook = new FlexiBook();
 	    }
+// requires method reinirailize() to works
+//	    else {
+//	    	flexiBook.reinitialize();
+//	    }
 	    return flexiBook;
 	}
 	
+// this should be in UMP file	
+//	public void reinitialize() {
+//		BookableService.reintializeUniquebookableservicesByName(this.getClass());
+//	}
 	
 	public static void setFileName(String fileName) {
 		FlexiBookPersistence.filename = fileName;
