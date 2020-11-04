@@ -26,6 +26,7 @@ jobs:
       run:  cd ca.mcgill.ecse.flexibook; ./gradlew build 
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1.3
+      run:  cd ca.mcgill.ecse.flexibook; ./gradlew build
       if: always()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
