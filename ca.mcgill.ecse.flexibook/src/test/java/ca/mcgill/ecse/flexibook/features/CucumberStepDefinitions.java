@@ -842,7 +842,8 @@ public class CucumberStepDefinitions {
 					app.getTimeSlot().getStartDate().equals(stringToDate(date)) &&
 					app.getTimeSlot().getStartTime().equals(stringToTime(timeStart)) && 
 					app.getTimeSlot().getEndTime().equals(stringToTime(timeEnd))){
-
+					
+					
 				isTheCase = true;
 			}
 		}
@@ -2296,7 +2297,7 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if(appointment.getChosenItems().size() == 0) {
-				appointment.updateAppointmentTime(stringToDate(newDate),stringToTime(newTime),RegisterTime.getStartDate());
+				appointment.updateAppointmentTime(stringToDate(newDate),stringToTime(newTime),RegisterTime.getStartDate(),RegisterTime.getStartTime());
 				
 			}
 		}

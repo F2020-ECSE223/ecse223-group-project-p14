@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import ca.mcgill.ecse.flexibook.controller.ControllerUtils;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import java.time.LocalDateTime;
+import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import java.io.Serializable;
 import java.util.*;
 
@@ -85,7 +86,7 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (!(SameDay(currentDate)))
+        if (!(isOnSameDayAsAppointment(currentDate)))
         {
           setAppointmentStatus(AppointmentStatus.FinalState);
           wasEventProcessed = true;
@@ -99,7 +100,7 @@ public class Appointment implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean updateAppointmentTime(Date newDate,Time newStartTime,Date currentDate)
+  public boolean updateAppointmentTime(Date newDate,Time newStartTime,Date currentDate,Time currentTime)
   {
     boolean wasEventProcessed = false;
     
@@ -107,10 +108,10 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlot()&&beforeToday(currentDate))
+        if (isGoodForTimeUpdate(newDate,newStartTime,currentDate,currentTime)&&isBeforeToday(currentDate))
         {
-        // line 17 "../../../../../FlexiBookStateMachine.ump"
-          updateTime(newDate , newStartTime);
+        // line 19 "../../../../../FlexiBookStateMachine.ump"
+          doUpdateTime(newDate , newStartTime);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
           break;
@@ -131,20 +132,20 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (isInGoodTimeSlotForUpdate(optService)&&!(SameDay(currentDate)))
+        if (isGoodForContentUpdate(action,optService,currentDate,currentTime)&&!(isOnSameDayAsAppointment(currentDate)))
         {
-        // line 20 "../../../../../FlexiBookStateMachine.ump"
-          updateContent(action, optService);
+        // line 22 "../../../../../FlexiBookStateMachine.ump"
+          doUpdateContent(action, optService);
           setAppointmentStatus(AppointmentStatus.Booked);
           wasEventProcessed = true;
           break;
         }
         break;
       case InProgress:
-        if (isInGoodTimeSlotForUpdate(optService))
+        if (isGoodForContentUpdate(action,optService,currentDate,currentTime))
         {
-        // line 32 "../../../../../FlexiBookStateMachine.ump"
-          updateContent(action, optService);
+        // line 33 "../../../../../FlexiBookStateMachine.ump"
+          doUpdateContent(action, optService);
           setAppointmentStatus(AppointmentStatus.InProgress);
           wasEventProcessed = true;
           break;
@@ -165,7 +166,7 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        if (goodStartTime(currentDate,currentTime))
+        if (hasReachedStartTime(currentDate,currentTime))
         {
           setAppointmentStatus(AppointmentStatus.InProgress);
           wasEventProcessed = true;
@@ -187,7 +188,7 @@ public class Appointment implements Serializable
     switch (aAppointmentStatus)
     {
       case Booked:
-        // line 25 "../../../../../FlexiBookStateMachine.ump"
+        // line 26 "../../../../../FlexiBookStateMachine.ump"
         incrementNoShow();
         setAppointmentStatus(AppointmentStatus.FinalState);
         wasEventProcessed = true;
@@ -225,7 +226,7 @@ public class Appointment implements Serializable
     switch(appointmentStatus)
     {
       case FinalState:
-        // line 40 "../../../../../FlexiBookStateMachine.ump"
+        // line 41 "../../../../../FlexiBookStateMachine.ump"
         this.delete();
         break;
     }
@@ -432,10 +433,10 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 48 "../../../../../FlexiBookStateMachine.ump"
+   * line 51 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 51 "../../../../../FlexiBookStateMachine.ump"
-   public void updateTime(Date newDate, Time newStartTime){
+  // line 52 "../../../../../FlexiBookStateMachine.ump"
+   public void doUpdateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
 		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
@@ -448,21 +449,20 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 60 "../../../../../FlexiBookStateMachine.ump"
+   * line 63 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 63 "../../../../../FlexiBookStateMachine.ump"
-   public void updateContent(String action, String optService){
-    if (isInGoodTimeSlotForUpdate(optService)) {
+  // line 66 "../../../../../FlexiBookStateMachine.ump"
+   private void doUpdateContent(String action, String optService){
     if(getBookableService() instanceof ServiceCombo) {
-    	
-    		
-    	
+    	  	
     	TimeSlot oldTimeSlot = getTimeSlot();
-    	ServiceCombo sc = (ServiceCombo)getBookableService();
-    	List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
-		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
-		
+
+		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
 		if (action.equals("remove")) {
+				if(findServiceCombo(this.getBookableService().getName()).getMainService().getService().getName().equals(optService)) {
+					// bad request: cannot remove main service
+					return;
+				}
 
 			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
 			List<ComboItem> copy= new ArrayList<ComboItem>();
@@ -470,21 +470,19 @@ public class Appointment implements Serializable
 				copy.add(item);
 			}
 			for(ComboItem item: copy) {
-				for (String name: serviceNameList) {
-					// When we search that there is a name mentioned in the request
-					// we check if it is mandatory or main service.
-					// we can only removed it if the above two conditions are both wrong.
-					if(item.getService().getName().equals(name)) {
-						if(!item.getMandatory() && !name.equals(sc.getMainService().getService().getName())) {
+					if(item.getService().getName().equals(optService)) {
+						if(item.getMandatory()) {
+							// bad request: cannot remove mandatory service
+							return;
+						}else {					
 							removeChosenItem(item);
 						}
 					}	
-				}
 			}
-		}else if(action.equals("add")) {
-				List<ComboItem> newListComboItem = new ArrayList<ComboItem>();
+		}else if (action.equals("add")) {
 			
-			for(ComboItem item: sc.getServices()) {
+			List<ComboItem> newListComboItem = new ArrayList<ComboItem>();
+			for(ComboItem item: findServiceCombo(this.getBookableService().getName()).getServices()) {
 				// iterate through the combo as a template
 				// iN THIS MANNER the combo item in the appointment will also follow certain order!
 				// 1. ADD MANDATORY
@@ -496,33 +494,33 @@ public class Appointment implements Serializable
 						newListComboItem.add(item);
 					}else {
 						// 3. add the chosen one
-						for(String name: serviceNameList) {
-							if(name.equals(item.getService().getName())) {
+							if(optService.equals(item.getService().getName())) {
 								newListComboItem.add(item);
 							}
 							
-						}
-						
 					}
 					
 					
 				}
 			}
 			
-			this.chosenItems = newListComboItem;
+			List<ComboItem> existingItems = getChosenItems();
+			int index = 0;
+			for(ComboItem newitem: newListComboItem) {
+					if (!existingItems.contains(newitem)) {
+						addChosenItemAt(newitem, index);
+				}
+				index++;
+			}
 
-			
+		}
 			int newDuration = calcActualTimeOfAppointment(getChosenItems());
 			Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
 			TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
 					newEndTime, getFlexiBook());
 			
 			setTimeSlot(timeSlot);
-			
 
-			
-		}
-		  
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
 		  for (BookableService bservice : getFlexiBook().getBookableServices()) {
@@ -545,14 +543,13 @@ public class Appointment implements Serializable
 			  this.getTimeSlot().setEndTime(endTime);
 		  }
 	  }
-	   }
   }
 
 
   /**
-   * line 158 "../../../../../FlexiBookStateMachine.ump"
+   * line 161 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 161 "../../../../../FlexiBookStateMachine.ump"
+  // line 162 "../../../../../FlexiBookStateMachine.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
@@ -561,11 +558,30 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 165 "../../../../../FlexiBookStateMachine.ump"
+   * line 168 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 168 "../../../../../FlexiBookStateMachine.ump"
-   public boolean isInGoodTimeSlot(){
-    boolean check = true;
+  // line 171 "../../../../../FlexiBookStateMachine.ump"
+   public boolean isGoodForTimeUpdate(Date newDate, Time newStartTime, Date currentDate, Time currentTime){
+    //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
+		// get duration of the original service
+		TimeSlot oldTimeSlot = getTimeSlot();
+		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
+		// get the duration to set new end time. Since there is no change in combo item, the time is same
+		int durationMinutes = (int) d.toMinutes();
+		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
+
+
+		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, getFlexiBook());
+		int index = getFlexiBook().indexOfTimeSlot(timeSlot);
+		int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+
+		if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
+			getFlexiBook().removeTimeSlot(timeSlot);
+			return false;
+		}
+
+	   
+    //--------------------------------- Implemented by Mike Wang & -----------------------------------------------------------------
     List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
     List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
     //check if overlapping with other appointment
@@ -574,7 +590,7 @@ public class Appointment implements Serializable
 					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
 					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
 					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
-				check = false;
+				return false;
 			}
 		}
 	// check vacations
@@ -582,7 +598,7 @@ public class Appointment implements Serializable
 			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
 					&& vacation.getStartTime().before(getTimeSlot().getStartTime())
 					&& vacation.getStartTime().after(getTimeSlot().getEndDate())) {
-				check =false; 
+				return false;
 			}
 			
 		}
@@ -591,19 +607,19 @@ public class Appointment implements Serializable
 			if(holiday.getStartDate().equals(getTimeSlot().getStartDate()) 
 					&& holiday.getStartTime().before(getTimeSlot().getStartTime())
 					&& holiday.getStartTime().after(getTimeSlot().getEndDate())) {
-				check = false; 
+				return false;
 			}
 			
 		}
-		return check;
+		return true;
   }
 
 
   /**
-   * line 176 "../../../../../FlexiBookStateMachine.ump"
+   * line 203 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 203 "../../../../../FlexiBookStateMachine.ump"
-   public boolean goodStartTime(Date date, Time time){
+  // line 226 "../../../../../FlexiBookStateMachine.ump"
+   public boolean hasReachedStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
 		if ((time.after(tempTime) || time.equals(tempTime)) && date.equals(getTimeSlot().getStartDate())) {
@@ -614,10 +630,10 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 186 "../../../../../FlexiBookStateMachine.ump"
+   * line 213 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 213 "../../../../../FlexiBookStateMachine.ump"
-   public boolean SameDay(Date date){
+  // line 237 "../../../../../FlexiBookStateMachine.ump"
+   public boolean isOnSameDayAsAppointment(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
 		if (date.equals(tempToday)) {
@@ -626,8 +642,12 @@ public class Appointment implements Serializable
 		return check;
   }
 
-  // line 223 "../../../../../FlexiBookStateMachine.ump"
-   public boolean beforeToday(Date date){
+
+  /**
+   * line 223 "../../../../../FlexiBookStateMachine.ump"
+   */
+  // line 247 "../../../../../FlexiBookStateMachine.ump"
+   public boolean isBeforeToday(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 	   boolean check = false;
 	   if (date.before(tempToday)) {
@@ -638,44 +658,90 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 197 "../../../../../FlexiBookStateMachine.ump"
+   * line 233 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 233 "../../../../../FlexiBookStateMachine.ump"
-   public boolean isInGoodTimeSlotForUpdate(String optService){
-    boolean check = true;
-	    Service s = null;
-	    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
-	    List<TimeSlot> holidaySlots = getFlexiBook().getBusiness().getHolidays();
+  // line 259 "../../../../../FlexiBookStateMachine.ump"
+   public boolean isGoodForContentUpdate(String action, String optService, Date currentDate, Time currentTime){
+    //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
+		TimeSlot oldTimeSlot = getTimeSlot();
+
+		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
+		if (action.equals("remove")) {
+				if(findServiceCombo(this.getBookableService().getName()).getMainService().getService().getName().equals(optService)) {
+					// bad request: cannot remove main service
+					return false;
+				}
+
+			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
+			List<ComboItem> copy= new ArrayList<ComboItem>();
+			for(ComboItem item: getChosenItems()) {
+				copy.add(item);
+			}
+			for(ComboItem item: copy) {
+					if(item.getService().getName().equals(optService)) {
+						if(item.getMandatory()) {
+							
+							return false;
+							}
+
+					}	
+			}
+		}else if (action.equals("add")) {
+			// add: there is no restriction for adding option service other than time
+			// thus do nothing in this part.
+		}
+		Service s = null;
 	    for(BookableService service: getFlexiBook().getBookableServices()) {
 	    	if(service.getName().equals(optService)) {
 	    		s = (Service)service;
 	    	}
 	    }
-	    // 1. check with other app
-		for(Appointment a : getFlexiBook().getAppointments()){
-			// only check appointment on the same day
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate())&& 
-					getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this)) {
-				// if single service: replace the endtime with new duration
-				if(getBookableService() instanceof Service) {
-					LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-					Time newEndTime  = Time.valueOf(aEndtime);
-					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-						check = false;
-					}
-				// if service combo, meaning we are appending something, we add to the endtime
-				}else if(getBookableService() instanceof ServiceCombo) {
-					LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-					Time newEndTime  = Time.valueOf(aEndtime);
-					if(newEndTime.after(a.getTimeSlot().getStartTime())) {
-						check = false;
-					}
-					
-				}
-				
+		if(getBookableService() instanceof Service) {
+			
+			LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
+			Time newEndTime  = Time.valueOf(aEndtime);
+			TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
+					newEndTime, getFlexiBook());
+			int index = getFlexiBook().indexOfTimeSlot(timeSlot);
+			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
+				getFlexiBook().removeTimeSlot(timeSlot);
+				return false;
 			}
+			
+		}else {
+
+			int addOrMinusTime = 1;
+			if (action.equals("remove")) {
+				// remove means minus time since the slot is shorter
+				addOrMinusTime = -1;
+			}
+			LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(addOrMinusTime*s.getDuration());
+			Time newEndTime  = Time.valueOf(aEndtime);
+
+			TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
+						newEndTime, getFlexiBook());
+			int index = getFlexiBook().indexOfTimeSlot(timeSlot);
+			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+			
+			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
+				getFlexiBook().removeTimeSlot(timeSlot);
+				// remove all newly added service since the time is not good
+				// update fails, later return false
+				for(ComboItem item: findServiceCombo(this.getBookableService().getName()).getServices()) {
+					if(item.getService().getName().equals(optService)) {
+						removeChosenItem(item);
+					}
+				}
+				return false;
+			}
+
 		}
-		// 2. check with vacation
+		
+		// ----------------------------------------------  Implemented by Mike Wang, Chen Charles & ----------------------------------
+	    List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
+	    List<TimeSlot> holidaySlots = getFlexiBook().getBusiness().getHolidays();
+		// 1. check with vacation
 		for (TimeSlot vacation: vacations) {
 			if(getBookableService() instanceof Service) {
 				
@@ -683,12 +749,11 @@ public class Appointment implements Serializable
 				LocalDateTime vEnd = ControllerUtils.combineDateAndTime(vacation.getEndDate(), vacation.getEndTime());
 				
 				LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
-				//LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
 				
 				LocalDateTime aNewEnd = aStart.plusMinutes(s.getDuration());
 				
 				if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
-					check = false;
+					return false;
 				}
 				
 			}else if(getBookableService() instanceof ServiceCombo) {
@@ -701,12 +766,12 @@ public class Appointment implements Serializable
 				LocalDateTime aNewEnd = aEnd.plusMinutes(s.getDuration());
 				
 				if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
-					check = false;
+					return false;
 				}
 			}
 		}
 		
-		// 2.5 check with holiday
+		// 2. check with holiday
 				for (TimeSlot holiday: holidaySlots) {
 					if(getBookableService() instanceof Service) {
 						
@@ -714,12 +779,11 @@ public class Appointment implements Serializable
 						LocalDateTime vEnd = ControllerUtils.combineDateAndTime(holiday.getEndDate(), holiday.getEndTime());
 						
 						LocalDateTime aStart = ControllerUtils.combineDateAndTime(this.getTimeSlot().getStartDate(), this.getTimeSlot().getStartTime());
-						//LocalDateTime aEnd = ControllerUtils.combineDateAndTime(this.getTimeSlot().getEndDate(), this.getTimeSlot().getEndTime());
 						
 						LocalDateTime aNewEnd = aStart.plusMinutes(s.getDuration());
 						
 						if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
-							check = false;
+							return false;
 						}
 						
 					}else if(getBookableService() instanceof ServiceCombo) {
@@ -732,52 +796,19 @@ public class Appointment implements Serializable
 						LocalDateTime aNewEnd = aEnd.plusMinutes(s.getDuration());
 						
 						if(!(aNewEnd.isBefore(vStart) || vEnd.isBefore(aStart))) {
-							check = false;
+							return false;
 						}
 					}
 				}
-			
-		// 3. check with workyime
-		//First get the weekday
-		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
-		// then check all businessHour list
-		List<BusinessHour> bhList = getFlexiBook().getBusiness().getBusinessHours();
-		// if single service: replace the endtime with new duration
-		Time newEndTime = null;
-		if(getBookableService() instanceof Service) {
-			LocalTime aEndtime = getTimeSlot().getStartTime().toLocalTime().plusMinutes(s.getDuration());
-			newEndTime  = Time.valueOf(aEndtime);
-		// if service combo, meaning we are appending something, we add to the endtime
-		}else if(getBookableService() instanceof ServiceCombo) {
-			LocalTime aEndtime = getTimeSlot().getEndTime().toLocalTime().plusMinutes(s.getDuration());
-			newEndTime  = Time.valueOf(aEndtime);
-		}
-		for(BusinessHour bh: bhList) {
-			// check weekday
-
-			if(dOfWeek .equals(bh.getDayOfWeek())) {
-				// if the appointment is on that day, compare if the time slot is included by business hour
-				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
-						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
-						&&
-						newEndTime.toLocalTime().isBefore(bh.getEndTime().toLocalTime())
-						|| newEndTime.toLocalTime().equals(bh.getEndTime().toLocalTime())) {
-					// let the check remain what it is
-				}else {
-					check = false;
-				}
-			}
-
-		}
 		
-		return check;
+		return true;
   }
 
 
   /**
-   * line 312 "../../../../../FlexiBookStateMachine.ump"
+   * line 366 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 366 "../../../../../FlexiBookStateMachine.ump"
+  // line 404 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
@@ -786,6 +817,168 @@ public class Appointment implements Serializable
 		}
 
 		return actualTime;
+  }
+
+  // line 415 "../../../../../FlexiBookStateMachine.ump"
+   private ServiceCombo findServiceCombo(String name){
+    for (BookableService bservice : getFlexiBook().getBookableServices()) {
+			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
+				return (ServiceCombo)bservice;
+			}
+		}
+		return null;
+  }
+
+  // line 424 "../../../../../FlexiBookStateMachine.ump"
+   private boolean isInGoodTiming(TimeSlot timeSlot, int index, int oldIndex, AppointmentStatus status, Date currentDate, Time currentTime){
+    // here handle Scenario: A customer attempts to make various invalid appointments for services
+		// there are three time constraints to check:
+		// 1. if in the business time, if not, fail directly
+		// 		2. if overlap with other time slot (other appointment/vacation/holiday). if there is overlap, we check the downtime!
+		// 		3. if not in the downtime of other app, fail
+		if (!isDuringWorkTime(timeSlot)) {
+			return false;
+		}else {
+			if(!isNotOverlapWithOtherTimeSlots (timeSlot, index, oldIndex)) {
+				if (!isDuringDowntime(timeSlot)) {
+					return false;
+				}
+			}
+		}
+
+		// Make sure appointment is made in the future not in the past
+		
+		if(status != AppointmentStatus.InProgress) {
+		if (!isInTheFuture(timeSlot,currentDate,currentTime)) {
+			return false;
+		}
+		}
+		return true;
+  }
+
+
+  /**
+   * 
+   * Check if the time slot overlaps with other appointment
+   * solves constraint: checks whether there is no overlap between two time slots
+   * @author AntoineW
+   */
+  // line 455 "../../../../../FlexiBookStateMachine.ump"
+   private boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot, int index, int oldIndex){
+    FlexiBook flexiBook = getFlexiBook();
+		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+
+		boolean isTheCase = true;
+
+		for (TimeSlot ts :flexiBook.getTimeSlots()){
+			LocalDateTime tsStart = ControllerUtils.combineDateAndTime(ts.getStartDate(), ts.getStartTime());
+			LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(ts.getEndDate(), ts.getEndTime());
+
+
+			if(timeSlotEnd.isBefore(tsStart) || tsEnd.isBefore(timeSlotStart) || timeSlotEnd.equals(tsStart)||tsEnd.equals(timeSlotStart) ||
+					flexiBook.getTimeSlots().indexOf(ts) ==  index ||
+					flexiBook.getTimeSlots().indexOf(ts) ==  oldIndex) {
+				isTheCase = true;
+			}else {
+				isTheCase = false;
+				break;
+			}
+		}		
+		return isTheCase;
+  }
+
+
+  /**
+   * 
+   * appointments do not overlap UNLESS the overlap is during the downtime;
+   * @param timeSlot
+   * @return
+   * @author AntoineW
+   */
+  // line 486 "../../../../../FlexiBookStateMachine.ump"
+   private boolean isDuringDowntime(TimeSlot timeSlot){
+    // Initially false, if there is a downtime period completely contains a timeslot
+		// then will be turned true
+		boolean isDuringDowntime = false;
+
+		FlexiBook flexiBook = getFlexiBook();
+
+		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		LocalDateTime timeSlotEnd = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+
+		for (Appointment app: flexiBook.getAppointments()) {
+
+			List<TOTimeSlot> tsList = ControllerUtils.getDowntimesByAppointment(app);
+			for(TOTimeSlot TOTs: tsList) {
+				LocalDateTime tsStart = ControllerUtils.combineDateAndTime(TOTs.getStartDate(), TOTs.getStartTime());
+				LocalDateTime tsEnd = ControllerUtils.combineDateAndTime(TOTs.getEndDate(), TOTs.getEndTime());
+
+				if((timeSlotStart.isAfter(tsStart)||timeSlotStart.equals(tsStart))
+						&& (timeSlotEnd.isBefore(tsEnd)||timeSlotEnd.equals(tsEnd))) {
+					isDuringDowntime = true;
+					break;
+				}
+			}		
+		}
+		return isDuringDowntime;
+  }
+
+
+  /**
+   * 
+   * appointment cannot be made on holidays or during vacation
+   * @param timeSlot
+   * @return
+   * @author AntoineW
+   */
+  // line 521 "../../../../../FlexiBookStateMachine.ump"
+   private boolean isDuringWorkTime(TimeSlot timeSlot){
+    boolean isDuringWorkTime = false;
+
+		//First get the weekday
+		DayOfWeek dOfWeek = ControllerUtils.getDoWByDate(timeSlot.getStartDate());
+		// then check all businessHour list
+		List<BusinessHour> bhList =getFlexiBook().getBusiness().getBusinessHours();
+		for(BusinessHour bh: bhList) {
+			// check weekday
+
+			if(dOfWeek .equals(bh.getDayOfWeek())) {
+				// if the appointment is on that day, compare if the time slot is included by business hour
+				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
+						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
+						&&
+						timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
+						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime())) {
+					isDuringWorkTime = true;
+					break;
+				}
+			}
+
+		}
+		return isDuringWorkTime;
+  }
+
+
+  /**
+   * 
+   * Check if the appointment is made before now (which is not allowed)
+   * @param timeSlot
+   * @return
+   * 
+   * @author AntoineW
+   */
+  // line 554 "../../../../../FlexiBookStateMachine.ump"
+   private boolean isInTheFuture(TimeSlot timeSlot, Date currentDate, Time currentTime){
+    boolean isInFuture = true;
+		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
+
+		LocalDateTime appointmentDateTime = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
+		if(appointmentDateTime.isBefore(now)) {
+			isInFuture = false;
+		}
+
+		return isInFuture;
   }
 
 }

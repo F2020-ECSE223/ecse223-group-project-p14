@@ -438,26 +438,28 @@ public class FlexiBookController {
 		}
 
 
-		// get duration of the original service
-		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
-		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
-		// get the duration to set new end time. Since there is no change in combo item, the time is same
-		int durationMinutes = (int) d.toMinutes();
-		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
-
-
-		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
-		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
-		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
-
-		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
-			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
-			return false;
-		}
-
-
-		appInSystem.setTimeSlot(timeSlot);
-		return true;
+//		// get duration of the original service
+//		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
+//		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
+//		// get the duration to set new end time. Since there is no change in combo item, the time is same
+//		int durationMinutes = (int) d.toMinutes();
+//		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
+//
+//
+//		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
+//		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
+//		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
+//
+//		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
+//			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
+//			return false;
+//		}
+//
+//
+//		appInSystem.setTimeSlot(timeSlot);
+		
+		boolean ret = appInSystem.updateAppointmentTime(newDate, newStartTime, FlexiBookApplication.getCurrentDate(true),FlexiBookApplication.getCurrentTime(true));
+		return ret;
 	}
 
 
@@ -477,7 +479,6 @@ public class FlexiBookController {
 	public static boolean updateAppointmentContent(String serviceName, Date date, Time time, String action, String optService) throws InvalidInputException {
 
 		Appointment appInSystem = findAppointment(serviceName,date, time);
-		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
 
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
@@ -485,71 +486,9 @@ public class FlexiBookController {
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
-
-		List<String> serviceNameList = ControllerUtils.parseString(optService, ",");
-		List<ComboItem> newlyAddedItem = new ArrayList<ComboItem>();
-		// Scenario: check if the request on adding and removing is legitimate, aka can not remove a mandatory service
-		if (action.equals("remove")) {
-			for (String name: serviceNameList) {
-				if(findServiceCombo(serviceName).getMainService().getService().getName().equals(name)) {
-					// bad request: cannot remove main service
-					return false;
-				}
-			}
-
-			// since appInSystem.getChosenItems() is inmutable by umple, have to create a deep copy here to iterate
-			List<ComboItem> copy= new ArrayList<ComboItem>();
-			for(ComboItem item: appInSystem.getChosenItems()) {
-				copy.add(item);
-			}
-			for(ComboItem item: copy) {
-				for (String name: serviceNameList) {
-					if(item.getService().getName().equals(name)) {
-						if(item.getMandatory()) {
-							// bad request: cannot remove mandatory service
-							return false;
-						}else {					
-							appInSystem.removeChosenItem(item);
-						}
-					}	
-				}
-			}
-		}else if (action.equals("add")) {
-
-			for(String name: serviceNameList) {
-				for(ComboItem item: findServiceCombo(serviceName).getServices()) {
-					if(item.getService().getName().equals(name)) {
-						// find the right item in ServiceCombo and add it to the appointment.
-						// will check time later
-						appInSystem.addChosenItem(item);
-						newlyAddedItem.add(item);
-					}
-				}
-			}
-
-		}
-
-
-		int newDuration = calcActualTimeOfAppointment(appInSystem.getChosenItems());
-		Time newEndTime = Time.valueOf(oldTimeSlot.getStartTime().toLocalTime().plusMinutes(newDuration));
-
-		TimeSlot timeSlot = new TimeSlot(oldTimeSlot.getStartDate(), oldTimeSlot.getStartTime(), oldTimeSlot.getEndDate(), 
-				newEndTime, FlexiBookApplication.getFlexiBook());
-		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
-		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
-		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
-			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
-			// remove all newly added service since the time is not good
-			// update fails, later return false
-			for(ComboItem item: newlyAddedItem) {
-				appInSystem.removeChosenItem(item);
-			}
-			return false;
-		}
-
-
-		appInSystem.setTimeSlot(timeSlot);
-		return true;
+		
+		boolean ret = appInSystem.updateAppointmentContent(action, optService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
+		return ret;
 	}
 
 	/**
@@ -573,15 +512,22 @@ public class FlexiBookController {
 		}
 
 		Date today = FlexiBookApplication.getCurrentDate(true);
+//		if(date.equals(today)) {
+//			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
+//		}else if(date.after(today)){
+//			//make sure the customer can only cancel appointment in the future
+//			appInSystem.delete();
+//			return true;
+//
+//		}
+		
+		boolean ret = appInSystem.cancelAppointment(today);
+		
 		if(date.equals(today)) {
 			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
-		}else if(date.after(today)){
-			//make sure the customer can only cancel appointment in the future
-			appInSystem.delete();
-			return true;
-
 		}
-		return false;
+		
+		return ret;
 
 	}
 
