@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 11 "../../../../../FlexiBookPersistence.ump"
+// line 12 "../../../../../FlexiBookPersistence.ump"
 // line 88 "../../../../../FlexiBook.ump"
 public class Appointment implements Serializable
 {
@@ -980,5 +980,13 @@ public class Appointment implements Serializable
 
 		return isInFuture;
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 15 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 2L ;
 
+  
 }
