@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.sql.Time;
 
-// line 26 "../../../../../FlexiBookPersistence.ump"
+// line 30 "../../../../../FlexiBookPersistence.ump"
 // line 48 "../../../../../FlexiBook.ump"
 public class BusinessHour implements Serializable
 {
@@ -14,11 +14,7 @@ public class BusinessHour implements Serializable
   // ENUMERATIONS
   //------------------------
 
-
-	private static final long serialVersionUID = -123145035308623337L;
-
-
-public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
+  public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
   //------------------------
   // MEMBER VARIABLES
@@ -133,5 +129,13 @@ public enum DayOfWeek { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, 
             "  " + "startTime" + "=" + (getStartTime() != null ? !getStartTime().equals(this)  ? getStartTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 33 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 5L ;
+
+  
 }

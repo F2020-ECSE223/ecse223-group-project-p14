@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 21 "../../../../../FlexiBookPersistence.ump"
+// line 24 "../../../../../FlexiBookPersistence.ump"
 // line 31 "../../../../../FlexiBook.ump"
 public class Business implements Serializable
 {
@@ -14,9 +14,7 @@ public class Business implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
-
-	private static final long serialVersionUID = 2099877765709657892L;
-//Business Attributes
+  //Business Attributes
   private String name;
   private String address;
   private String phoneNumber;
@@ -427,5 +425,13 @@ public class Business implements Serializable
             "phoneNumber" + ":" + getPhoneNumber()+ "," +
             "email" + ":" + getEmail()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 27 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 4L ;
+
+  
 }

@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 44 "../../../../../FlexiBookPersistence.ump"
+// line 52 "../../../../../FlexiBookPersistence.ump"
 // line 67 "../../../../../FlexiBook.ump"
 public class Service extends BookableService implements Serializable
 {
@@ -14,9 +14,7 @@ public class Service extends BookableService implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
- 
-	private static final long serialVersionUID = -7469050870390590359L;
-//Service Attributes
+  //Service Attributes
   private int duration;
   private int downtimeDuration;
   private int downtimeStart;
@@ -91,5 +89,13 @@ public class Service extends BookableService implements Serializable
             "duration" + ":" + getDuration()+ "," +
             "downtimeDuration" + ":" + getDowntimeDuration()+ "," +
             "downtimeStart" + ":" + getDowntimeStart()+ "]";
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 55 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 9L ;
+
+  
 }

@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 48 "../../../../../FlexiBookPersistence.ump"
+// line 57 "../../../../../FlexiBookPersistence.ump"
 // line 75 "../../../../../FlexiBook.ump"
 public class ServiceCombo extends BookableService implements Serializable
 {
@@ -14,9 +14,7 @@ public class ServiceCombo extends BookableService implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
- 
-	private static final long serialVersionUID = -1196511853633776656L;
-//ServiceCombo Associations
+  //ServiceCombo Associations
   private ComboItem mainService;
   private List<ComboItem> services;
 
@@ -191,5 +189,13 @@ public class ServiceCombo extends BookableService implements Serializable
     
     super.delete();
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 60 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 10L ;
 
+  
 }

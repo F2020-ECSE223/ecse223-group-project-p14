@@ -6,54 +6,66 @@ external interface Serializable {}
 class FlexiBook {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 1L;
 }
 
 class Appointment {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 2L;
 }
 
 class BookableService {
     depend java.io.Serializable;
     isA Serializable;
+//   private static final long serialVersionUID = 3L;
 }
 
 class Business {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 4L;
 }
 
 class BusinessHour {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 5L;
 }
 
 class ComboItem {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 6L;
 }
 
 class Customer {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 7L;
 }
 class Owner {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 8L;
 }
 class Service {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 9L;
 }
 class ServiceCombo {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 10L;
 }
 class TimeSlot {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 11L;
 }
 class User {
     depend java.io.Serializable;
     isA Serializable;
+//    private static final long serialVersionUID = 12L;
 }
