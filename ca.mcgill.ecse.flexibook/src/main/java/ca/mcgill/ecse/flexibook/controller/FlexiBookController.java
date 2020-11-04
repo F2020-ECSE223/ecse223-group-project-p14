@@ -14,6 +14,7 @@ import java.util.regex.*;
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+import ca.mcgill.ecse.flexibook.persistence.FlexiBookPersistence;
 
 
 
@@ -82,6 +83,7 @@ public class FlexiBookController {
 			try {
 				BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
 				flexiBook.addBookableService(service);
+				FlexiBookPersistence.save(flexiBook);
 				isSuccess = true;
 			} catch (Exception e) {
 				if (e.getMessage().equals("Cannot create due to duplicate name. See http://manual.umple.org?RE003ViolationofUniqueness.html")) {
@@ -142,6 +144,7 @@ public class FlexiBookController {
 			for (String comboName:serviceComboNamesToDelete) {
 				ServiceCombo bserCombo = findServiceCombo(comboName);
 				bserCombo.delete();
+				FlexiBookPersistence.save(flexiBook);
 				isSuccess = true;
 			}
 
@@ -150,12 +153,14 @@ public class FlexiBookController {
 		if (!comboItemsToDelete.isEmpty()) {
 			for (ComboItem comboItem:comboItemsToDelete) {
 				comboItem.delete();
+				FlexiBookPersistence.save(flexiBook);
 				isSuccess = true;
 			}
 		}
 
 
 		service.delete();
+		FlexiBookPersistence.save(flexiBook);
 		isSuccess = true;
 		return isSuccess;
 	}
@@ -235,6 +240,7 @@ public class FlexiBookController {
 			}
 			((Service) bookableService).setDowntimeStart(newDowntimeStart);
 			((Service) bookableService).setDowntimeDuration(newDowntimeDuration);
+			FlexiBookPersistence.save(flexiBook);
 			isSuccess = true;
 
 		}
