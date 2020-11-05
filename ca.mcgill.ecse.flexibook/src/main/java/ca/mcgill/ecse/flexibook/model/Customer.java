@@ -11,6 +11,12 @@ public class Customer extends User implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 7L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -202,13 +208,5 @@ public class Customer extends User implements Serializable
     return super.toString() + "["+
             "noShowCount" + ":" + getNoShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 56 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 7L ;
-
-  
+  }
 }

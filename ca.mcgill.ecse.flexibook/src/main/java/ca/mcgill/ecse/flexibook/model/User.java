@@ -14,6 +14,7 @@ public abstract class User implements Serializable
   // STATIC VARIABLES
   //------------------------
 
+  public static final long SerialVersionUID = 12L;
   private static Map<String, User> usersByUsername = new HashMap<String, User>();
 
   //------------------------
@@ -94,11 +95,12 @@ public abstract class User implements Serializable
   }
 
   // line 83 "../../../../../FlexiBookPersistence.ump"
-   public static  void reinitializeUniqueUsersByUsername(List<User> users){
+   public static  void reinitializeUniqueUsersByUsername(List<Customer> customers, Owner owner){
     usersByUsername = new HashMap<String, User>();
-    	for (User user : users) {
-       	 	usersByUsername.put(user.getUsername(), user);
-    	}
+		for (Customer customer: customers) {
+   	 		usersByUsername.put(customer.getUsername(), customer);
+		}
+		usersByUsername.put(owner.getUsername(), owner);
   }
 
 
@@ -107,13 +109,5 @@ public abstract class User implements Serializable
     return super.toString() + "["+
             "username" + ":" + getUsername()+ "," +
             "password" + ":" + getPassword()+ "]";
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 81 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 12L ;
-
-  
+  }
 }

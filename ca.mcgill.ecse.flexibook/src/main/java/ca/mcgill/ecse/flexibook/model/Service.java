@@ -11,6 +11,12 @@ public class Service extends BookableService implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 9L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -89,13 +95,5 @@ public class Service extends BookableService implements Serializable
             "duration" + ":" + getDuration()+ "," +
             "downtimeDuration" + ":" + getDowntimeDuration()+ "," +
             "downtimeStart" + ":" + getDowntimeStart()+ "]";
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 66 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 9L ;
-
-  
+  }
 }

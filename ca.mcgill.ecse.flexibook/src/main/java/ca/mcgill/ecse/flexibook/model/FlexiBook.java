@@ -13,6 +13,12 @@ public class FlexiBook implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 1L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -680,16 +686,15 @@ public class FlexiBook implements Serializable
 
   // line 12 "../../../../../FlexiBookPersistence.ump"
    public void reinitialize(){
-    BookableService.reinitializeUniqueBookableServicesByName(this.getClass());
-		User.reinitializeUniqueUsersByUsername(this.getClass());
+    BookableService.reinitializeUniqueBookableServicesByName(this.getBookableServices());
+		User.reinitializeUniqueUsersByUsername(this.getCustomers(),this.getOwner());
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 9 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = -2683593616927798071L ;
 
-  
+
+  public String toString()
+  {
+    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "business = "+(getBusiness()!=null?Integer.toHexString(System.identityHashCode(getBusiness())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "owner = "+(getOwner()!=null?Integer.toHexString(System.identityHashCode(getOwner())):"null");
+  }
 }

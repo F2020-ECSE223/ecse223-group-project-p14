@@ -11,6 +11,12 @@ public class Owner extends User implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 8L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -78,13 +84,11 @@ public class Owner extends User implements Serializable
     }
     super.delete();
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 61 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 8L ;
 
-  
+
+  public String toString()
+  {
+    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
+  }
 }

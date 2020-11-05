@@ -10,6 +10,12 @@ public class ComboItem implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 6L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -129,13 +135,5 @@ public class ComboItem implements Serializable
             "mandatory" + ":" + getMandatory()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "service = "+(getService()!=null?Integer.toHexString(System.identityHashCode(getService())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "serviceCombo = "+(getServiceCombo()!=null?Integer.toHexString(System.identityHashCode(getServiceCombo())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 50 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 6L ;
-
-  
+  }
 }

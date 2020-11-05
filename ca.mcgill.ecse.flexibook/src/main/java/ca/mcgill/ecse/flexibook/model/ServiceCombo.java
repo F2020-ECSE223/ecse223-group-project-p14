@@ -11,6 +11,12 @@ public class ServiceCombo extends BookableService implements Serializable
 {
 
   //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  public static final long SerialVersionUID = 10L;
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
 
@@ -189,13 +195,11 @@ public class ServiceCombo extends BookableService implements Serializable
     
     super.delete();
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 71 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 10L ;
 
-  
+
+  public String toString()
+  {
+    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "mainService = "+(getMainService()!=null?Integer.toHexString(System.identityHashCode(getMainService())):"null");
+  }
 }

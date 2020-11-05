@@ -14,6 +14,7 @@ public abstract class BookableService implements Serializable
   // STATIC VARIABLES
   //------------------------
 
+  public static final long SerialVersionUID = 3L;
   private static Map<String, BookableService> bookableservicesByName = new HashMap<String, BookableService>();
 
   //------------------------
@@ -239,13 +240,5 @@ public abstract class BookableService implements Serializable
     return super.toString() + "["+
             "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 26 "../../../../../FlexiBookPersistence.ump"
-  private static final long serialVersionUID = 3L ;
-
-  
+  }
 }
