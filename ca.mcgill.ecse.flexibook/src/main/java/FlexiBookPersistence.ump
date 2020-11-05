@@ -6,66 +6,83 @@ external interface Serializable {}
 class FlexiBook {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 1L;
+    unique long serialVersionUID = 1L; 
+	
+	public void reinitialize() {
+		BookableService.reinitializeUniqueBookableServicesByName(this.getClass());
+		User.reinitializeUniqueUsersByUsername(this.getClass());
+	}
 }
 
 class Appointment {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 2L;
 }
 
 class BookableService {
     depend java.io.Serializable;
     isA Serializable;
-//   private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 3L;
+	public static void reinitializeUniqueBookableServicesByName(List<BookableService> bookableServices) {
+    	bookableservicesByName = new HashMap<String, BookableService>();
+    	for (BookableService bookableService : bookableServices) {
+       	 	bookableservicesByName.put(bookableService.getName(), bookableService);
+    	}
+	}
 }
 
 class Business {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 4L;
 }
 
 class BusinessHour {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 5L;
+    private static final long serialVersionUID = 5L;
 }
 
 class ComboItem {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 6L;
+    private static final long serialVersionUID = 6L;
 }
 
 class Customer {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 7L;
+    private static final long serialVersionUID = 7L;
 }
 class Owner {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 8L;
+    private static final long serialVersionUID = 8L;
 }
 class Service {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 9L;
+    private static final long serialVersionUID = 9L;
 }
 class ServiceCombo {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 10L;
+    private static final long serialVersionUID = 10L;
 }
 class TimeSlot {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 11L;
+    private static final long serialVersionUID = 11L;
 }
 class User {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 12L;
+    private static final long serialVersionUID = 12L;
+	public static void reinitializeUniqueUsersByUsername(List<User> users) {
+    	usersByUsername = new HashMap<String, User>();
+    	for (User user : users) {
+       	 	usersByUsername.put(user.getUsername(), user);
+    	}
+	}
 }

@@ -678,4 +678,18 @@ public class FlexiBook implements Serializable
     
   }
 
+  // line 12 "../../../../../FlexiBookPersistence.ump"
+   public void reinitialize(){
+    BookableService.reinitializeUniqueBookableServicesByName(this.getClass());
+		User.reinitializeUniqueUsersByUsername(this.getClass());
+  }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 9 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -2683593616927798071L ;
+
+  
 }

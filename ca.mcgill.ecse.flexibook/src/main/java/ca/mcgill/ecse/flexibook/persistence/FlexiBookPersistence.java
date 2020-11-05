@@ -17,10 +17,10 @@ public class FlexiBookPersistence{
 	    if (flexiBook == null) {
 	        flexiBook = new FlexiBook();
 	    }
-// requires method reinirailize() to works
-//	    else {
-//	    	flexiBook.reinitialize();
-//	    }
+// requires method reinitialize() to works
+	    else {
+	    	flexiBook.reinitialize();
+	    }
 	    return flexiBook;
 	}
 	

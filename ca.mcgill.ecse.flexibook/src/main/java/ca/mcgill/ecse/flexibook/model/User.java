@@ -5,7 +5,7 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 67 "../../../../../FlexiBookPersistence.ump"
+// line 78 "../../../../../FlexiBookPersistence.ump"
 // line 16 "../../../../../FlexiBook.ump"
 public abstract class User implements Serializable
 {
@@ -93,11 +93,27 @@ public abstract class User implements Serializable
     usersByUsername.remove(getUsername());
   }
 
+  // line 83 "../../../../../FlexiBookPersistence.ump"
+   public static  void reinitializeUniqueUsersByUsername(List<User> users){
+    usersByUsername = new HashMap<String, User>();
+    	for (User user : users) {
+       	 	usersByUsername.put(user.getUsername(), user);
+    	}
+  }
+
 
   public String toString()
   {
     return super.toString() + "["+
             "username" + ":" + getUsername()+ "," +
             "password" + ":" + getPassword()+ "]";
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 81 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 12L ;
+
+  
 }
