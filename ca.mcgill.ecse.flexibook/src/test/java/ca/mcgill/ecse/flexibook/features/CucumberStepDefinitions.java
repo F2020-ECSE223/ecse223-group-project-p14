@@ -57,12 +57,8 @@ public class CucumberStepDefinitions {
 	private FlexiBook flexiBook;
 
 	private Owner owner;
-	private Business business;
 	private String error;
 	private int errorCntr; 
-	private Service aService;
-	private Appointment previousAppointment;
-	private Appointment currentAppointment;
 	
 	private Appointment specificAppointment;
 	
@@ -77,7 +73,7 @@ public class CucumberStepDefinitions {
 	private boolean isSetUp = false;
 	private BusinessHour newBusinessHour;
 
-	private boolean statusOfAccount = false;
+
 	
 	private static String filename = "testData.flexiBook";
 	
@@ -2163,15 +2159,6 @@ public class CucumberStepDefinitions {
 	 */
 	@When("the owner ends the appointment at {string}")
 	public void the_owner_ends_the_appointment_at(String dateString) {
-		
-//		// AntoineW did this start------
-//		List<String> dateTime = ControllerUtils.parseString(dateString, "+");
-//		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
-//		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
-//		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
-//		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-//		// AntoineW did this end------
-		
 		// Mike add this start------
 		TOTimeSlot RegisterTime = currentRegisterTime(dateString);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
@@ -2192,7 +2179,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be booked")
 	public void the_appointment_shall_be_booked() {
-	    //assertEquals(false, flexiBook.getAppointments().size()==0);
 		// add by Mike start -----
 	    assertEquals("Booked", specificAppointment.getAppointmentStatusFullName());
 	    // add by Mike end ----
@@ -2208,15 +2194,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the service in the appointment shall be {string}")
 	public void the_service_in_the_appointment_shall_be(String serviceName) {
-	    // Write code here that turns the phrase above into concrete actions
-//		for( Appointment appointment : flexiBook.getAppointments()) {
-//			if (appointment.getChosenItems().size() ==0) {
-//				for (ComboItem comboItem: appointment.getChosenItems()) {
-//					assertEquals(serviceName, comboItem.getService().getName());
-//				}
-//			}
-//
-//		}
 		
 		for (ComboItem comboItem : specificAppointment.getChosenItems()) {
 			assertEquals(serviceName, comboItem.getService().getName());
@@ -2255,7 +2232,6 @@ public class CucumberStepDefinitions {
 	
 	@Then("the username associated with the appointment shall be {string}")
 	public void the_username_associated_with_the_appointment_shall_be(String string) {
-	    // Write code here that turns the phrase above into concrete actions
 		for (Appointment appointment: flexiBook.getAppointments()) {
 			if (appointment.getChosenItems().size() ==0) {
 				assertEquals(appointment.getCustomer().getUsername(), string);
@@ -2280,7 +2256,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the system shall have {int} appointments")
 	public void the_system_shall_have_appointments(Integer int1) {
-	    // Write code here that turns the phrase above into concrete actions
 	    assertEquals(flexiBook.getAppointments().size(), int1);
 	}
 	
@@ -2299,7 +2274,6 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to update the date to {string} and time to {string} at {string}")
 	public void attempts_to_update_the_date_to_and_time_to_at(String customer, String newDate, String newTime, String currentDateTime) {
-	    // Write code here that turns the phrase above into concrete actions
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
@@ -2324,7 +2298,6 @@ public class CucumberStepDefinitions {
 	 */
 	@When("{string} attempts to cancel the appointment at {string}")
 	public void attempts_to_cancel_the_appointment_at(String customer, String currentDateTime) {
-	    // Write code here that turns the phrase above into concrete actions
 		TOTimeSlot RegisterTime = currentRegisterTime(currentDateTime);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
@@ -2353,7 +2326,6 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
 		TimeSlot timeSlot = new TimeSlot(stringToDate(date), stringToTime(time),stringToDate(date), Time.valueOf(stringToTime(time).toLocalTime().plusMinutes((getDurationOfServiceCombo(serviceName)))), flexiBook);
-		//if (flexiBook.getAppointments() == null){
 
 			if (findServiceCombo(serviceName)!= null) {
 
@@ -2369,27 +2341,6 @@ public class CucumberStepDefinitions {
 		
 		
 		}
-//	else {
-//		for (Appointment appointment : flexiBook.getAppointments()) {
-//			deleteAppointment.add(appointment);		
-//		}
-//		for (Appointment aAppointment : deleteAppointment) {
-//			aAppointment.delete();
-//		}
-//		if (findServiceCombo(serviceName)!= null) {
-//			Appointment appointment = new Appointment(findCustomer(username), findServiceCombo(serviceName), timeSlot, flexiBook);
-//			for (ComboItem c: findServiceCombo(serviceName).getServices()) {
-//				if (c.isMandatory()){
-//					appointment.addChosenItem(c);
-//				}
-//			}
-//			flexiBook.addAppointment(appointment);
-//			//specificAppointment = appointment;
-//		}
-//
-//	}
-//
-//}
 	
 	/**
 	 * @author jedla & AntoineW
@@ -2399,30 +2350,9 @@ public class CucumberStepDefinitions {
 		TOTimeSlot RegisterTime = currentRegisterTime(time);
 		FlexiBookApplication.setCurrentDate(RegisterTime.getStartDate());
 		FlexiBookApplication.setCurrentTime(RegisterTime.getStartTime());
-		//for (Appointment appointment:findAppointmentByUserName(username)) {
-			//if (!appointment.getTimeSlot().getStartDate().equals(FlexiBookApplication.getCurrentDate(true)) && appointment.getBookableService() instanceof ServiceCombo) {//Probably need to change that this for 
-			//{
-					//appointment.updateContent("add", optionalService);
-					//boolean here = appointment.updateAppointmentContent("add", optionalService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
 		
 		specificAppointment.updateAppointmentContent("add", optionalService, FlexiBookApplication.getCurrentDate(true), FlexiBookApplication.getCurrentTime(true));
-				//}
-			//}
-		//}
 
-//	public void attempts_to_add_the_optional_service_to_the_service_combo_in_the_appointment_at(String customer, String optserviceName, String dateAndTime) {
-//	    
-//		List<String> dateTime = ControllerUtils.parseString(dateAndTime, "+");
-//		
-//		LocalDate d = LocalDate.parse(dateTime.get(0), DateTimeFormatter.ISO_DATE);
-//		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
-//		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
-//		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-//		Appointment app = null;
-//		
-//		int appNumber = flexiBook.getAppointments().size();
-//		flexiBook.getAppointments().get(appNumber-1).updateContent("add",  optserviceName);
-//		
 	    
 	}
 	
@@ -2440,10 +2370,6 @@ public class CucumberStepDefinitions {
 			}
 		}
 		
-	//@Then("the service combo in the appointment shall be {string}")
-	//public void the_service_combo_in_the_appointment_shall_be(String serviceCombo) {
-	//	assertEquals(FlexiBookApplication.getFlexiBook().getAppointment(0).getBookableService().getName(), serviceCombo);
-	
 	/**
 	 * 
 	 * @param itemList
@@ -2480,15 +2406,6 @@ public class CucumberStepDefinitions {
 	 */
 	@Then("the appointment shall be in progress")
 	public void the_appointment_shall_be_in_progress() {
-		// should not be correct here
-		// How should we know what is the current appointment
-		// Add a currentAppointment but nit using. Currently trying this:
-		//int appNumber = flexiBook.getAppointments().size();
-		
-		// assume the last app in the system is the one we are talking about at this place
-		// since we just add it.
-		// (please work, amen)
-		//assertEquals(flexiBook.getAppointments().get(appNumber-1).getAppointmentStatus(), AppointmentStatus.InProgress);
 		assertEquals(specificAppointment.getAppointmentStatus(), AppointmentStatus.InProgress);
 
 	}
@@ -2508,9 +2425,6 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-		
-		// Again, might dont know which appointment we suppose to get
-		//int appNumber = flexiBook.getAppointments().size();
 		specificAppointment.registeredNoShow();
 		
 		 
@@ -2523,9 +2437,6 @@ public class CucumberStepDefinitions {
 		FlexiBookApplication.setCurrentDate(Date.valueOf(d));
 		LocalTime t = LocalTime.parse(dateTime.get(1), DateTimeFormatter.ISO_TIME);
 		FlexiBookApplication.setCurrentTime(Time.valueOf(t));
-		
-		// Again, might dont know which appointment we suppose to get
-		//int appNumber = flexiBook.getAppointments().size();
 		specificAppointment.finishedAppointment();
 	}
 
@@ -2671,7 +2582,6 @@ public class CucumberStepDefinitions {
 	 */
 	public static Appointment findAppointment(String serviceName, Date date, Time time) {
 		for (Appointment app : FlexiBookApplication.getFlexiBook().getAppointments()) {
-			// check service name, date, time and customer
 			if (app.getBookableService().getName().compareTo(serviceName) == 0 &&
 					app.getTimeSlot().getStartDate().equals(date) &&
 					app.getTimeSlot().getStartTime().equals(time) ){
@@ -2776,9 +2686,7 @@ public class CucumberStepDefinitions {
 
 		if (ByDay == true && ByWeek == false) {
 			if (isValidDate(date1)) {
-				// first check if the input is valid
 				date = Date.valueOf(date1);
-				// second check if it is in Holiday or Vacation
 
 				if (checkIsInHoliday(date)||checkIsInVacation(date)) {
 					DayOfWeek dayOfWeek = ControllerUtils.getDoWByDate(date); 
@@ -2789,13 +2697,10 @@ public class CucumberStepDefinitions {
 						}
 					}
 				} 
-				// if above cases both failed 
 				else {
 					for (TOAppointment toAppointments: getTOAppointment()) {
 						if (toAppointments.getTimeSlot().getStartDate().equals(date)) {
 							if (toAppointments.getDownTimeTimeSlot() != null) {
-								// TOTimeSlot getUnavailbleTimes = new TOTimeSlot(toAppointments.getTimeSlot().getStartDate(), toAppointments.getTimeSlot().getStartTime(), toAppointments.getTimeSlot().getEndDate(),toAppointments.getTimeSlot().getEndTime());
-								// unavailbleTimeSlots.add(getUnavailbleTimes);
 								for (TOTimeSlot downTimeTimeSlot: toAppointments.getDownTimeTimeSlot()) {
 									if (downTimeTimeSlot.getStartTime().after(toAppointments.getTimeSlot().getStartTime())) {
 										TOTimeSlot unavailbleTimeBeforeDownTime = new TOTimeSlot(date, toAppointments.getTimeSlot().getStartTime(), date, downTimeTimeSlot.getStartTime());
@@ -2820,9 +2725,6 @@ public class CucumberStepDefinitions {
 
 		}
 		else if (ByDay == false && ByWeek == true) {
-			//TODO
-			// i need to get some sleep, i will resume my part after i get up
-			// first check if the input is valid
 
 
 			if (!isValidDate(date1)) {
@@ -2848,9 +2750,6 @@ public class CucumberStepDefinitions {
 	 * @return <TOTimeSlot> availble time  
 	 */
 	public static List<TOTimeSlot> getAvailbleTime(String date1, Boolean ByDay, Boolean ByWeek) throws InvalidInputException{
-		List<TOTimeSlot> unavilbleTimes = new ArrayList<TOTimeSlot>();
-		List<TOBusinessHour> BusinessHours = new ArrayList<TOBusinessHour>();
-		List<TOTimeSlot> DayBusinessHour = new ArrayList<TOTimeSlot>();
 		List<TOTimeSlot> DayAvailbleTimes = new ArrayList<TOTimeSlot>();
 		Date date;
 
@@ -3058,12 +2957,10 @@ public class CucumberStepDefinitions {
 
 			TOAppointment toAppointment = new TOAppointment(appointment.getCustomer().getUsername(),
 					appointment.getBookableService().getName(), CovertToTOTimeSlot(appointment.getTimeSlot()));
-			// Added feature TOAppointment can show all downtime
 			// by mikewang
 			for (TOTimeSlot toTimeSlots: ControllerUtils.getDowntimesByAppointment(appointment)) {
 				toAppointment.addDownTimeTimeSlot(toTimeSlots); //= 
 			}
-			// ToAppointment need to show all the service item (comboitem)
 			// by AnTW
 			for (TOComboItem toc:getToTOComboItem(appointment)) {
 				toAppointment.addChosenItem(toc);
