@@ -1,15 +1,14 @@
 package ca.mcgill.ecse.flexibook.controller;
 import java.sql.Date;
 import java.sql.Time;
-import java.time.Duration;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.*;
+
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
@@ -84,10 +83,7 @@ public class FlexiBookController {
 			try {
 				BookableService service = new Service(name, flexiBook, duration, downtimeDuration, downtimeStart);
 				flexiBook.addBookableService(service);
-
-				//add by Mike start ---
 				FlexiBookPersistence.save(flexiBook);
-				//add by Mike end ---
 
 				isSuccess = true;
 			} catch (Exception e) {
@@ -149,13 +145,11 @@ public class FlexiBookController {
 			for (String comboName:serviceComboNamesToDelete) {
 				ServiceCombo bserCombo = findServiceCombo(comboName);
 				bserCombo.delete();
-				//add by Mike start ---
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
 				}
-				//add by Mike end ---
 				isSuccess = true;
 			}
 
@@ -164,13 +158,11 @@ public class FlexiBookController {
 		if (!comboItemsToDelete.isEmpty()) {
 			for (ComboItem comboItem:comboItemsToDelete) {
 				comboItem.delete();
-				//add by Mike start ---
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
 				}
-				//add by Mike end ---
 				isSuccess = true;
 			}
 		}
@@ -178,14 +170,11 @@ public class FlexiBookController {
 
 		
 		service.delete();
-		//add by Mike start ---
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---
-
 		isSuccess = true;
 		return isSuccess;
 	}
@@ -265,13 +254,11 @@ public class FlexiBookController {
 			}
 			((Service) bookableService).setDowntimeStart(newDowntimeStart);
 			((Service) bookableService).setDowntimeDuration(newDowntimeDuration);
-			//add by Mike start ---
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---
 			isSuccess = true;
 
 		}
@@ -421,9 +408,7 @@ public class FlexiBookController {
 
 
 			flexiBook.addAppointment(appointment);
-			//add by Mike start ---
 			FlexiBookPersistence.save(flexiBook);
-			//add by Mike end ---
 			
 
 
@@ -486,13 +471,11 @@ public class FlexiBookController {
 		}
 		
 		boolean ret = appInSystem.updateAppointmentTime(newDate, newStartTime, FlexiBookApplication.getCurrentDate(true),FlexiBookApplication.getCurrentTime(true));
-		//add by Mike start ---
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---
 		return ret;
 	}
 
@@ -524,13 +507,11 @@ public class FlexiBookController {
 		
 		boolean ret = appInSystem.updateAppointmentContent(action, optService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
 		
-		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---		
 		return ret;
 	}
 
