@@ -13,6 +13,7 @@ import java.util.regex.*;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.model.*;
+import ca.mcgill.ecse.flexibook.model.Appointment.AppointmentStatus;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import ca.mcgill.ecse.flexibook.persistence.FlexiBookPersistence;
 
@@ -409,16 +410,10 @@ public class FlexiBookController {
 
 				if(item.getService().getName().equals(sCombo.getMainService().getService().getName()) || item.getMandatory()) {
 					appointment.addChosenItem(ControllerUtils.findComboItemByServiceName(sCombo, item.getService().getName()));
-					//add by Mike start ---
-					FlexiBookPersistence.save(flexiBook);
-					//add by Mike end ---
 				}else{
 					for(String name : ControllerUtils.parseString(optService, ",")) {
 						if (item.getService().getName().equals(name)) {
 							appointment.addChosenItem(item);
-							//add by Mike start ---
-							FlexiBookPersistence.save(flexiBook);
-							//add by Mike end ---
 						}
 					}
 				}
@@ -426,6 +421,10 @@ public class FlexiBookController {
 
 
 			flexiBook.addAppointment(appointment);
+			//add by Mike start ---
+			FlexiBookPersistence.save(flexiBook);
+			//add by Mike end ---
+			
 
 
 			return appointment;
@@ -485,27 +484,6 @@ public class FlexiBookController {
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
-
-
-//		// get duration of the original service
-//		TimeSlot oldTimeSlot = appInSystem.getTimeSlot();
-//		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
-//		// get the duration to set new end time. Since there is no change in combo item, the time is same
-//		int durationMinutes = (int) d.toMinutes();
-//		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
-//
-//
-//		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, FlexiBookApplication.getFlexiBook());
-//		int index = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(timeSlot);
-//		int oldIndex = FlexiBookApplication.getFlexiBook().indexOfTimeSlot(oldTimeSlot);
-//
-//		if (!isInGoodTiming(timeSlot, index, oldIndex)) {
-//			FlexiBookApplication.getFlexiBook().removeTimeSlot(timeSlot);
-//			return false;
-//		}
-//
-//
-//		appInSystem.setTimeSlot(timeSlot);
 		
 		boolean ret = appInSystem.updateAppointmentTime(newDate, newStartTime, FlexiBookApplication.getCurrentDate(true),FlexiBookApplication.getCurrentTime(true));
 		//add by Mike start ---
@@ -578,14 +556,6 @@ public class FlexiBookController {
 		}
 
 		Date today = FlexiBookApplication.getCurrentDate(true);
-//		if(date.equals(today)) {
-//			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
-//		}else if(date.after(today)){
-//			//make sure the customer can only cancel appointment in the future
-//			appInSystem.delete();
-//			return true;
-//
-//		}
 		
 		boolean ret = appInSystem.cancelAppointment(today);
 		//add by Mike start --- 
@@ -596,7 +566,12 @@ public class FlexiBookController {
 		}
 		//add by Mike end ---			
 		
-		if(date.equals(today)) {
+		// Note:
+		// Here all checks and actions have been performed by the state machine
+		// This if statement does a repeat check to the current date
+		// the reason why we leave this one is to guarantee the test from iteration 2 is still passed.
+		// (certain tests in iter 2 checks exception string)
+		if(date.equals(today) && appInSystem.getAppointmentStatus() != AppointmentStatus.InProgress) {
 			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
 		}
 		
