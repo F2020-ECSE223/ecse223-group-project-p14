@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ import ca.mcgill.ecse.flexibook.model.BusinessHour;
 import ca.mcgill.ecse.flexibook.model.ComboItem;
 import ca.mcgill.ecse.flexibook.model.Customer;
 import ca.mcgill.ecse.flexibook.model.User;
+import ca.mcgill.ecse.flexibook.persistence.FlexiBookPersistence;
 import ca.mcgill.ecse.flexibook.model.FlexiBook;
 import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;
@@ -77,9 +79,15 @@ public class CucumberStepDefinitions {
 
 	private boolean statusOfAccount = false;
 	
+	private static String filename = "testData.flexiBook";
+	
 	
 	@Before
 	public static void setUp() {
+		FlexiBookPersistence.setFileName(filename);
+		// remove test file
+		File f = new File(filename);
+		f.delete();
 		// clear all data
 		FlexiBookApplication.getFlexiBook().delete();
 	}

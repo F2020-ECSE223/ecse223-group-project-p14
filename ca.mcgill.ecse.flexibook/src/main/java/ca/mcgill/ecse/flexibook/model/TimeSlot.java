@@ -6,8 +6,11 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 62 "../../../../../FlexiBookPersistence.ump"
-// line 55 "../../../../../FlexiBook.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 86 "../../../../../FlexiBookPersistence.ump"
+// line 56 "../../../../../FlexiBook.ump"
 public class TimeSlot implements Serializable
 {
 
@@ -140,5 +143,13 @@ public class TimeSlot implements Serializable
             "  " + "endDate" + "=" + (getEndDate() != null ? !getEndDate().equals(this)  ? getEndDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "endTime" + "=" + (getEndTime() != null ? !getEndTime().equals(this)  ? getEndTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 89 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 2602370746876772085L ;
+
+  
 }

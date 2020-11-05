@@ -7,8 +7,12 @@ import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
 // line 6 "../../../../../FlexiBookPersistence.ump"
-// line 6 "../../../../../FlexiBook.ump"
+// line 7 "../../../../../FlexiBook.ump"
 public class FlexiBook implements Serializable
 {
 
@@ -678,4 +682,18 @@ public class FlexiBook implements Serializable
     
   }
 
+  // line 11 "../../../../../FlexiBookPersistence.ump"
+   public void reinitialize(){
+    BookableService.reinitializeUniqueBookableServicesByName(this.getBookableServices());
+		User.reinitializeUniqueUsersByUsername(this.getCustomers(),this.getOwner());
+  }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 9 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -9014213673235161086L ;
+
+  
 }

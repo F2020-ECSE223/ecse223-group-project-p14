@@ -2,70 +2,104 @@
 
 external interface Serializable {}
 
-
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class FlexiBook {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -9014213673235161086L;
+	public void reinitialize(){
+   		BookableService.reinitializeUniqueBookableServicesByName(this.getBookableServices());
+		User.reinitializeUniqueUsersByUsername(this.getCustomers(),this.getOwner());
+  	}
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Appointment {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = -1782000978128890763L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class BookableService {
     depend java.io.Serializable;
     isA Serializable;
-//   private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = -2611537589265533601L; 
+	public static void reinitializeUniqueBookableServicesByName(List<BookableService> bookableServices) {
+    	bookableservicesByName = new HashMap<String, BookableService>();
+    	for (BookableService bookableService : bookableServices) {
+       	 	bookableservicesByName.put(bookableService.getName(), bookableService);
+    	}
+	}
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Business {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 2863096905471169308L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class BusinessHour {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6217039387592592860L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class ComboItem {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 6L;
+	private static final long serialVersionUID = -8283775121491368508L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Customer {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 7L;
+	private static final long serialVersionUID = 904125084210709049L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Owner {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 8L;
+	private static final long serialVersionUID = -33499187203441385L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Service {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 9L;
+	private static final long serialVersionUID = -4371758872458522436L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class ServiceCombo {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 10L;
+	private static final long serialVersionUID = -3536292841714777298L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class TimeSlot {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 11L;
+	private static final long serialVersionUID = 2602370746876772085L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class User {
     depend java.io.Serializable;
     isA Serializable;
-//    private static final long serialVersionUID = 12L;
+	private static final long serialVersionUID = 2742757410640449343L;
+	public static  void reinitializeUniqueUsersByUsername(List<Customer> customers, Owner owner){
+    	usersByUsername = new HashMap<String, User>();
+		for (Customer customer: customers) {
+   	 		usersByUsername.put(customer.getUsername(), customer);
+		}
+		usersByUsername.put(owner.getUsername(), owner);
+ 	 }
+
 }

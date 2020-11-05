@@ -3,6 +3,7 @@ namespace ca.mcgill.ecse.flexibook.model;
 use FlexiBookStateMachine.ump;
 use FlexiBookPersistence.ump;
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class FlexiBook {
   1 <@>- 0..1 Business business;
   1 <@>- 0..1 Owner owner;

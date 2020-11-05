@@ -13,9 +13,12 @@ import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
 // line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 12 "../../../../../FlexiBookPersistence.ump"
-// line 88 "../../../../../FlexiBook.ump"
+// line 17 "../../../../../FlexiBookPersistence.ump"
+// line 89 "../../../../../FlexiBook.ump"
 public class Appointment implements Serializable
 {
 
@@ -984,5 +987,13 @@ public class Appointment implements Serializable
 
 		return isInFuture;
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 20 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -1782000978128890763L ;
 
+  
 }

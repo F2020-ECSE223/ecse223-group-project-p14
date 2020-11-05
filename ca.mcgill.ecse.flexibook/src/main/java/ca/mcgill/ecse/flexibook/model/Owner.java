@@ -5,8 +5,11 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 47 "../../../../../FlexiBookPersistence.ump"
-// line 22 "../../../../../FlexiBook.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 65 "../../../../../FlexiBookPersistence.ump"
+// line 23 "../../../../../FlexiBook.ump"
 public class Owner extends User implements Serializable
 {
 
@@ -78,5 +81,13 @@ public class Owner extends User implements Serializable
     }
     super.delete();
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 68 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -33499187203441385L ;
 
+  
 }
