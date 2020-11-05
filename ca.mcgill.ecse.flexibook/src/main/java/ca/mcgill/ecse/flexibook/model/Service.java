@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 63 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 73 "../../../../../FlexiBookPersistence.ump"
 // line 67 "../../../../../FlexiBook.ump"
 public class Service extends BookableService implements Serializable
 {

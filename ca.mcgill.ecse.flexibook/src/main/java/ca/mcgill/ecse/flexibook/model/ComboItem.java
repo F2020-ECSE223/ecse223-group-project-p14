@@ -4,7 +4,10 @@
 package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 
-// line 47 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 52 "../../../../../FlexiBookPersistence.ump"
 // line 83 "../../../../../FlexiBook.ump"
 public class ComboItem implements Serializable
 {

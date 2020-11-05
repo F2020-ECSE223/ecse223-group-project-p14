@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 78 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 94 "../../../../../FlexiBookPersistence.ump"
 // line 16 "../../../../../FlexiBook.ump"
 public abstract class User implements Serializable
 {
@@ -94,7 +97,7 @@ public abstract class User implements Serializable
     usersByUsername.remove(getUsername());
   }
 
-  // line 83 "../../../../../FlexiBookPersistence.ump"
+  // line 99 "../../../../../FlexiBookPersistence.ump"
    public static  void reinitializeUniqueUsersByUsername(List<Customer> customers, Owner owner){
     usersByUsername = new HashMap<String, User>();
 		for (Customer customer: customers) {

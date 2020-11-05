@@ -6,7 +6,10 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 73 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 87 "../../../../../FlexiBookPersistence.ump"
 // line 55 "../../../../../FlexiBook.ump"
 public class TimeSlot implements Serializable
 {

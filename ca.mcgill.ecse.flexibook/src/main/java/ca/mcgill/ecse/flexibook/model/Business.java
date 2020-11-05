@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 35 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 38 "../../../../../FlexiBookPersistence.ump"
 // line 31 "../../../../../FlexiBook.ump"
 public class Business implements Serializable
 {

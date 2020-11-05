@@ -7,6 +7,9 @@ import java.util.*;
 import java.sql.Time;
 import java.sql.Date;
 
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
 // line 6 "../../../../../FlexiBookPersistence.ump"
 // line 6 "../../../../../FlexiBook.ump"
 public class FlexiBook implements Serializable

@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 23 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 25 "../../../../../FlexiBookPersistence.ump"
 // line 62 "../../../../../FlexiBook.ump"
 public abstract class BookableService implements Serializable
 {
@@ -226,7 +229,7 @@ public abstract class BookableService implements Serializable
     }
   }
 
-  // line 28 "../../../../../FlexiBookPersistence.ump"
+  // line 30 "../../../../../FlexiBookPersistence.ump"
    public static  void reinitializeUniqueBookableServicesByName(List<BookableService> bookableServices){
     bookableservicesByName = new HashMap<String, BookableService>();
     	for (BookableService bookableService : bookableServices) {

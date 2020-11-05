@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.sql.Time;
 
-// line 41 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 45 "../../../../../FlexiBookPersistence.ump"
 // line 48 "../../../../../FlexiBook.ump"
 public class BusinessHour implements Serializable
 {

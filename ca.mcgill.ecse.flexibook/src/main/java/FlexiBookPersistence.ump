@@ -2,7 +2,7 @@
 
 external interface Serializable {}
 
-
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class FlexiBook {
     depend java.io.Serializable;
     isA Serializable;
@@ -14,12 +14,14 @@ class FlexiBook {
   	}
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Appointment {
     depend java.io.Serializable;
     isA Serializable;
     const long SerialVersionUID = 2L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class BookableService {
     depend java.io.Serializable;
     isA Serializable;
@@ -32,49 +34,63 @@ class BookableService {
 	}
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Business {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 4L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class BusinessHour {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 5L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class ComboItem {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 6L;
 }
 
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Customer {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 7L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Owner {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 8L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class Service {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 9L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class ServiceCombo {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 10L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class TimeSlot {
     depend java.io.Serializable;
     isA Serializable;
 	const long SerialVersionUID = 11L;
 }
+
+// @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
 class User {
     depend java.io.Serializable;
     isA Serializable;

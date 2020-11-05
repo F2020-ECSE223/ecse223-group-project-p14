@@ -5,7 +5,10 @@ package ca.mcgill.ecse.flexibook.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 53 "../../../../../FlexiBookPersistence.ump"
+/**
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ */
+// line 59 "../../../../../FlexiBookPersistence.ump"
 // line 26 "../../../../../FlexiBook.ump"
 public class Customer extends User implements Serializable
 {
