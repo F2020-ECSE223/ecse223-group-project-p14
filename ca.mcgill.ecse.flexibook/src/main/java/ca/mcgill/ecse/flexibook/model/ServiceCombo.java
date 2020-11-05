@@ -8,16 +8,10 @@ import java.util.*;
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
-// line 80 "../../../../../FlexiBookPersistence.ump"
-// line 75 "../../../../../FlexiBook.ump"
+// line 79 "../../../../../FlexiBookPersistence.ump"
+// line 76 "../../../../../FlexiBook.ump"
 public class ServiceCombo extends BookableService implements Serializable
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  public static final long SerialVersionUID = 10L;
 
   //------------------------
   // MEMBER VARIABLES
@@ -198,11 +192,13 @@ public class ServiceCombo extends BookableService implements Serializable
     
     super.delete();
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 82 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -3536292841714777298L ;
 
-
-  public String toString()
-  {
-    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "mainService = "+(getMainService()!=null?Integer.toHexString(System.identityHashCode(getMainService())):"null");
-  }
+  
 }

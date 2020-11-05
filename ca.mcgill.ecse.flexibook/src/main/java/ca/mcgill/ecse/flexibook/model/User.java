@@ -8,8 +8,8 @@ import java.util.*;
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
-// line 94 "../../../../../FlexiBookPersistence.ump"
-// line 16 "../../../../../FlexiBook.ump"
+// line 93 "../../../../../FlexiBookPersistence.ump"
+// line 17 "../../../../../FlexiBook.ump"
 public abstract class User implements Serializable
 {
 
@@ -17,7 +17,6 @@ public abstract class User implements Serializable
   // STATIC VARIABLES
   //------------------------
 
-  public static final long SerialVersionUID = 12L;
   private static Map<String, User> usersByUsername = new HashMap<String, User>();
 
   //------------------------
@@ -97,7 +96,7 @@ public abstract class User implements Serializable
     usersByUsername.remove(getUsername());
   }
 
-  // line 99 "../../../../../FlexiBookPersistence.ump"
+  // line 98 "../../../../../FlexiBookPersistence.ump"
    public static  void reinitializeUniqueUsersByUsername(List<Customer> customers, Owner owner){
     usersByUsername = new HashMap<String, User>();
 		for (Customer customer: customers) {
@@ -112,5 +111,13 @@ public abstract class User implements Serializable
     return super.toString() + "["+
             "username" + ":" + getUsername()+ "," +
             "password" + ":" + getPassword()+ "]";
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 96 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 2742757410640449343L ;
+
+  
 }

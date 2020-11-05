@@ -17,16 +17,10 @@ import java.util.*;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 1 "../../../../../FlexiBookStateMachine.ump"
-// line 18 "../../../../../FlexiBookPersistence.ump"
-// line 88 "../../../../../FlexiBook.ump"
+// line 17 "../../../../../FlexiBookPersistence.ump"
+// line 89 "../../../../../FlexiBook.ump"
 public class Appointment implements Serializable
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  public static final long SerialVersionUID = 2L;
 
   //------------------------
   // MEMBER VARIABLES
@@ -993,14 +987,13 @@ public class Appointment implements Serializable
 
 		return isInFuture;
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 20 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -1782000978128890763L ;
 
-
-  public String toString()
-  {
-    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "bookableService = "+(getBookableService()!=null?Integer.toHexString(System.identityHashCode(getBookableService())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "timeSlot = "+(getTimeSlot()!=null?Integer.toHexString(System.identityHashCode(getTimeSlot())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  
 }

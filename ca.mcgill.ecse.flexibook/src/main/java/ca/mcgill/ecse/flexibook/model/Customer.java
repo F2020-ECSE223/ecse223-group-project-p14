@@ -8,16 +8,10 @@ import java.util.*;
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
-// line 59 "../../../../../FlexiBookPersistence.ump"
-// line 26 "../../../../../FlexiBook.ump"
+// line 58 "../../../../../FlexiBookPersistence.ump"
+// line 27 "../../../../../FlexiBook.ump"
 public class Customer extends User implements Serializable
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  public static final long SerialVersionUID = 7L;
 
   //------------------------
   // MEMBER VARIABLES
@@ -211,5 +205,13 @@ public class Customer extends User implements Serializable
     return super.toString() + "["+
             "noShowCount" + ":" + getNoShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 61 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = 904125084210709049L ;
+
+  
 }

@@ -9,17 +9,12 @@ import java.sql.Date;
 
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+ * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 6 "../../../../../FlexiBookPersistence.ump"
-// line 6 "../../../../../FlexiBook.ump"
+// line 7 "../../../../../FlexiBook.ump"
 public class FlexiBook implements Serializable
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  public static final long SerialVersionUID = 1L;
 
   //------------------------
   // MEMBER VARIABLES
@@ -687,17 +682,18 @@ public class FlexiBook implements Serializable
     
   }
 
-  // line 12 "../../../../../FlexiBookPersistence.ump"
+  // line 11 "../../../../../FlexiBookPersistence.ump"
    public void reinitialize(){
     BookableService.reinitializeUniqueBookableServicesByName(this.getBookableServices());
 		User.reinitializeUniqueUsersByUsername(this.getCustomers(),this.getOwner());
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 9 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -9014213673235161086L ;
 
-
-  public String toString()
-  {
-    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "business = "+(getBusiness()!=null?Integer.toHexString(System.identityHashCode(getBusiness())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "owner = "+(getOwner()!=null?Integer.toHexString(System.identityHashCode(getOwner())):"null");
-  }
+  
 }

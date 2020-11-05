@@ -8,16 +8,10 @@ import java.util.*;
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
-// line 73 "../../../../../FlexiBookPersistence.ump"
-// line 67 "../../../../../FlexiBook.ump"
+// line 72 "../../../../../FlexiBookPersistence.ump"
+// line 68 "../../../../../FlexiBook.ump"
 public class Service extends BookableService implements Serializable
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  public static final long SerialVersionUID = 9L;
 
   //------------------------
   // MEMBER VARIABLES
@@ -98,5 +92,13 @@ public class Service extends BookableService implements Serializable
             "duration" + ":" + getDuration()+ "," +
             "downtimeDuration" + ":" + getDowntimeDuration()+ "," +
             "downtimeStart" + ":" + getDowntimeStart()+ "]";
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 75 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -4371758872458522436L ;
+
+  
 }

@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 
 public class PersistenceObjectStream {
 
-	private static String filename = "output.txt";
+	private static String filename = "testData.flexiBook";
 
 	public static void serialize(Object object) {
 		FileOutputStream fileOut;

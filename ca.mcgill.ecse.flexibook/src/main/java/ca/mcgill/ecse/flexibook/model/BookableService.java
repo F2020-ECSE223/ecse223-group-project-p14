@@ -8,8 +8,8 @@ import java.util.*;
 /**
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
-// line 25 "../../../../../FlexiBookPersistence.ump"
-// line 62 "../../../../../FlexiBook.ump"
+// line 24 "../../../../../FlexiBookPersistence.ump"
+// line 63 "../../../../../FlexiBook.ump"
 public abstract class BookableService implements Serializable
 {
 
@@ -17,7 +17,6 @@ public abstract class BookableService implements Serializable
   // STATIC VARIABLES
   //------------------------
 
-  public static final long SerialVersionUID = 3L;
   private static Map<String, BookableService> bookableservicesByName = new HashMap<String, BookableService>();
 
   //------------------------
@@ -229,7 +228,7 @@ public abstract class BookableService implements Serializable
     }
   }
 
-  // line 30 "../../../../../FlexiBookPersistence.ump"
+  // line 29 "../../../../../FlexiBookPersistence.ump"
    public static  void reinitializeUniqueBookableServicesByName(List<BookableService> bookableServices){
     bookableservicesByName = new HashMap<String, BookableService>();
     	for (BookableService bookableService : bookableServices) {
@@ -243,5 +242,13 @@ public abstract class BookableService implements Serializable
     return super.toString() + "["+
             "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 27 "../../../../../FlexiBookPersistence.ump"
+  private static final long serialVersionUID = -2611537589265533601L ;
+
+  
 }
