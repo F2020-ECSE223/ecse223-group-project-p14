@@ -436,9 +436,18 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 51 "../../../../../FlexiBookStateMachine.ump"
+   * 
+   * This is the action event "updateAppointmentTime()" takes in the state machine
+   * This method will move the time slot of the appointment to a new one
+   * defined by the date and time parameter passed in.<br>
+   * This action will only be executed if guard condition is passed.
+   * @param newDate
+   * @param newStartTime
+   * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+   * @see #updateAppointmentTime(Date, Time, Date, Time)
+   * @see #isGoodForTimeUpdate(Date, Time, Date, Time)
    */
-  // line 52 "../../../../../FlexiBookStateMachine.ump"
+  // line 62 "../../../../../FlexiBookStateMachine.ump"
    public void doUpdateTime(Date newDate, Time newStartTime){
     // get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -452,9 +461,19 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 63 "../../../../../FlexiBookStateMachine.ump"
+   * 
+   * This is the action event "updateAppointmentContent()" takes in the state machine.
+   * This method will add or remove a service combo item and remain the rest in sequence.<br>
+   * Or if the appointment is a single service, this method will delete the chosen service and link the 
+   * optService to that appointment
+   * This action will only be executed if guard condition is passed.
+   * @param action String indicating the action, can be "add" or "remove"
+   * @param optService String, name of the optional service
+   * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+   * @see #updateAppointmentContent(String, String, Date, Time)
+   * @see #isGoodForContentUpdate(Date, Time, Date, Time)
    */
-  // line 66 "../../../../../FlexiBookStateMachine.ump"
+  // line 87 "../../../../../FlexiBookStateMachine.ump"
    private void doUpdateContent(String action, String optService){
     if(getBookableService() instanceof ServiceCombo) {
     	  	
@@ -554,9 +573,8 @@ public class Appointment implements Serializable
    * Increments the noShowCount of the customer associated to the account
    * 
    * @author Catherine
-   * line 161 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 166 "../../../../../FlexiBookStateMachine.ump"
+  // line 186 "../../../../../FlexiBookStateMachine.ump"
    public void incrementNoShow(){
     int noShowCount = this.getCustomer().getNoShowCount();
 		noShowCount++;
@@ -565,9 +583,22 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 168 "../../../../../FlexiBookStateMachine.ump"
+   * 
+   * Check if the request of moving an appointment's time slot is valid.
+   * This method uses the logic of Controller.isInGoodTiming()<br>
+   * 
+   * This method will create a new time slot o assuming the time update is successful.
+   * Then if the new time slot has no conflict with other time slots, and is in business time,
+   * the check returns true.<br>
+   * Otherwise the provisional timeslot is delete and return false
+   * @param newDate New start date of appointment
+   * @param newStartTime New start time of appointment
+   * @param currentDate current Date of the system
+   * @param currentTime current time of the system
+   * @return
+   * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
    */
-  // line 175 "../../../../../FlexiBookStateMachine.ump"
+  // line 209 "../../../../../FlexiBookStateMachine.ump"
    public boolean isGoodForTimeUpdate(Date newDate, Time newStartTime, Date currentDate, Time currentTime){
     //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
 		// get duration of the original service
@@ -625,7 +656,7 @@ public class Appointment implements Serializable
   /**
    * line 203 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 230 "../../../../../FlexiBookStateMachine.ump"
+  // line 264 "../../../../../FlexiBookStateMachine.ump"
    public boolean hasReachedStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -639,7 +670,7 @@ public class Appointment implements Serializable
   /**
    * line 213 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 241 "../../../../../FlexiBookStateMachine.ump"
+  // line 275 "../../../../../FlexiBookStateMachine.ump"
    public boolean isOnSameDayAsAppointment(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -653,7 +684,7 @@ public class Appointment implements Serializable
   /**
    * line 223 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 251 "../../../../../FlexiBookStateMachine.ump"
+  // line 285 "../../../../../FlexiBookStateMachine.ump"
    public boolean isBeforeToday(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 	   boolean check = false;
@@ -665,9 +696,23 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 233 "../../../../../FlexiBookStateMachine.ump"
+   * 
+   * Check if the request of updating a appointment's content is valid.
+   * Option of updating appointment content please check doUpdateContent()<br>
+   * 
+   * This condition checks if the schedule is allowed to add or remove a service.
+   * Also it make sure the service the customer what to change is not mandatory.<br>
+   * 
+   * @param action A string describing the way of update, can either be "add" or "remove"
+   * @param optService name of the service to add or remove
+   * @param currentDate Current date of the system
+   * @param currentTime Current date of the system
+   * @return Boolean whether the update request is valid. if false, no update will be performed
+   * @see doUpdateContent(String action, String optService)
+   * 
+   * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
    */
-  // line 263 "../../../../../FlexiBookStateMachine.ump"
+  // line 312 "../../../../../FlexiBookStateMachine.ump"
    public boolean isGoodForContentUpdate(String action, String optService, Date currentDate, Time currentTime){
     //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -813,9 +858,15 @@ public class Appointment implements Serializable
 
 
   /**
-   * line 366 "../../../../../FlexiBookStateMachine.ump"
+   * 
+   * This method is a helper method determining the actual time of a appointment
+   * It will only be used for a serviceCombo.<p>
+   * This is implemented because customer can choose to not have certain optional services in a combo.
+   * @return
+   * 
+   * @author p14
    */
-  // line 408 "../../../../../FlexiBookStateMachine.ump"
+  // line 464 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
@@ -826,7 +877,12 @@ public class Appointment implements Serializable
 		return actualTime;
   }
 
-  // line 419 "../../../../../FlexiBookStateMachine.ump"
+
+  /**
+   * Helper method of finding a service combo
+   * Copied from iter 2 controller
+   */
+  // line 476 "../../../../../FlexiBookStateMachine.ump"
    private ServiceCombo findServiceCombo(String name){
     for (BookableService bservice : getFlexiBook().getBookableServices()) {
 			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
@@ -836,7 +892,19 @@ public class Appointment implements Serializable
 		return null;
   }
 
-  // line 428 "../../../../../FlexiBookStateMachine.ump"
+
+  /**
+   * 
+   * wrapper method of isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot), isDuringDowntime(TimeSlot timeSlot), 
+   * isDuringWorkTime(TimeSlot timeSlot) and isInTheFuture(TimeSlot timeSlot)
+   * The method will return true if the timeslot passes through all 4 tests in a specific order.
+   * Note some changes are made and Here it takes in more parameters like AppointmentStatus status,Date currentDate, Time currentTime
+   * All changes are to accomodate the isInTheFuture() method
+   * @return
+   * 
+   * @author p14
+   */
+  // line 496 "../../../../../FlexiBookStateMachine.ump"
    private boolean isInGoodTiming(TimeSlot timeSlot, int index, int oldIndex, AppointmentStatus status, Date currentDate, Time currentTime){
     // here handle Scenario: A customer attempts to make various invalid appointments for services
 		// there are three time constraints to check:
@@ -868,9 +936,9 @@ public class Appointment implements Serializable
    * 
    * Check if the time slot overlaps with other appointment
    * solves constraint: checks whether there is no overlap between two time slots
-   * @author AntoineW
+   * @author p14
    */
-  // line 459 "../../../../../FlexiBookStateMachine.ump"
+  // line 527 "../../../../../FlexiBookStateMachine.ump"
    private boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot, int index, int oldIndex){
     FlexiBook flexiBook = getFlexiBook();
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
@@ -901,9 +969,9 @@ public class Appointment implements Serializable
    * appointments do not overlap UNLESS the overlap is during the downtime;
    * @param timeSlot
    * @return
-   * @author AntoineW
+   * @author p14
    */
-  // line 490 "../../../../../FlexiBookStateMachine.ump"
+  // line 558 "../../../../../FlexiBookStateMachine.ump"
    private boolean isDuringDowntime(TimeSlot timeSlot){
     // Initially false, if there is a downtime period completely contains a timeslot
 		// then will be turned true
@@ -937,9 +1005,9 @@ public class Appointment implements Serializable
    * appointment cannot be made on holidays or during vacation
    * @param timeSlot
    * @return
-   * @author AntoineW
+   * @author p14
    */
-  // line 525 "../../../../../FlexiBookStateMachine.ump"
+  // line 593 "../../../../../FlexiBookStateMachine.ump"
    private boolean isDuringWorkTime(TimeSlot timeSlot){
     boolean isDuringWorkTime = false;
 
@@ -973,9 +1041,9 @@ public class Appointment implements Serializable
    * @param timeSlot
    * @return
    * 
-   * @author AntoineW
+   * @author p14
    */
-  // line 558 "../../../../../FlexiBookStateMachine.ump"
+  // line 626 "../../../../../FlexiBookStateMachine.ump"
    private boolean isInTheFuture(TimeSlot timeSlot, Date currentDate, Time currentTime){
     boolean isInFuture = true;
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);

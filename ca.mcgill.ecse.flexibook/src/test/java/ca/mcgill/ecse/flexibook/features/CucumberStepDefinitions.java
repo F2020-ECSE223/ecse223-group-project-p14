@@ -2430,6 +2430,11 @@ public class CucumberStepDefinitions {
 		 
 	}
 	
+	/**
+	 * 
+	 * @param string
+	 * @author AntoineW
+	 */
 	@When("the owner attempts to end the appointment at {string}")
 	public void the_owner_attempts_to_end_the_appointment_at(String string) {
 		List<String> dateTime = ControllerUtils.parseString(string, "+");

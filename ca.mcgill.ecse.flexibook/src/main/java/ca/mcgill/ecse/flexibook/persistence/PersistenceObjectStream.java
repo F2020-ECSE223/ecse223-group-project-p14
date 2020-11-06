@@ -9,6 +9,16 @@ public class PersistenceObjectStream {
 
 	private static String filename = "testData.flexiBook";
 
+	/**
+	 * 
+	 * @param object
+	 * @author AntoineW
+	 * @author mikewang
+	 * @author jedla
+	 * @author chengchen
+	 * @author Catherine
+	 * @author gtjarvis
+	 */
 	public static void serialize(Object object) {
 		FileOutputStream fileOut;
 		try {
@@ -23,6 +33,16 @@ public class PersistenceObjectStream {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @author AntoineW
+	 * @author mikewang
+	 * @author jedla
+	 * @author chengchen
+	 * @author Catherine
+	 * @author gtjarvis
+	 */
 	public static Object deserialize() {
 		Object o = null;
 		ObjectInputStream in;

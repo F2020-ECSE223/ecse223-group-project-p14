@@ -339,7 +339,7 @@ public class FlexiBookController {
 	 * @param serviceName
 	 * @param date
 	 * @param time
-	 * @param optService String defines all optional service name
+	 * @param optService 
 	 * @throws InvalidInputException
 	 * 
 	 * @author AntoineW
@@ -421,34 +421,7 @@ public class FlexiBookController {
 
 	}
 
-	/**
-	 * wrapper method combining creating appointment for single service and combo
-	 * @param serviceName
-	 * @param optService
-	 * @param date
-	 * @param time
-	 * 
-	 * @author AntoineW
-	 * @throws InvalidInputException 
-	 * @deprecated In the test since there are separated scenrio one for appointment of a single service and one for combo,
-	 * this wrapper is never tested. plz use addAppointmentForComboService(String serviceName, String optService, Date date, Time time) 
-	 * and addAppointmentForService(String serviceName, Date date, Time time) 
-	 * 
-	 * @see addAppointmentForComboService
-	 * @see addAppointmentForService
-	 */
-	public static Appointment makeAppointment(String serviceName, String optService, Date date, Time time) throws InvalidInputException {
-		BookableService bs = findBookableService(serviceName);
 
-		if(bs instanceof Service) {
-			return(addAppointmentForService(serviceName, date, time));
-		}else if(bs instanceof ServiceCombo) {
-			return(addAppointmentForComboService(serviceName, optService, date, time));
-		}else {
-			//BookableService might be null
-			throw new InvalidInputException("No such service or service Combo exist!");
-		}
-	}
 
 	/**
 	 * This method handles customer wants to update appointments time
@@ -482,13 +455,12 @@ public class FlexiBookController {
 
 
 	/**
-	 * This method handles a customer wants to change appointment content.
-	 * can add multiple or remove multiple services at once, as long as all the names are in optService
+	 * This method handles a customer wants to change appointment content. Can add or remove one service each time
 	 * @param serviceName
 	 * @param date
 	 * @param time
 	 * @param action string "add" or "remove"
-	 * @param optService String defines all optional service name
+	 * @param optService 
 	 * @return
 	 * @throws InvalidInputException
 	 * @author AntoineW
@@ -2152,23 +2124,6 @@ public class FlexiBookController {
 		return check; 
 	}
 
-
-	// not a useful method DO NOT USE!!! USE the method defined in the FlexiBook application instead
-	/**
-	 * This is a helper method of finding the current date
-	 * @return
-	 * @author mikewang
-	 * @deprecated use the FlexiBookApplication.getcurrentTime(Boolean) instead
-	 */
-	private static java.util.Date getCurrentDate(){
-		java.util.Calendar cal = java.util.Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		java.util.Date date = cal.getTime();
-		return date;
-	}
 
 	/**
 	 * This is an helper method which provides an opportunity for the owner to set up it's owner account
