@@ -2318,6 +2318,15 @@ public class CucumberStepDefinitions {
 	}
 	
 	/**
+	 * Scenario:  Change the appointment for a service combo at least one day ahead
+	 */
+	
+	/**
+	 * @param username
+	 * @param serviceName
+	 * @param date
+	 * @param time
+	 * @param currentDate
 	 * @author jedla & AntoineW
 	 */
 	@When("{string} makes a {string} appointment without choosing optional services for the date {string} and time {string} at {string}")
@@ -2343,6 +2352,9 @@ public class CucumberStepDefinitions {
 		}
 	
 	/**
+	 * @param username
+	 * @param optionalService
+	 * @param time
 	 * @author jedla & AntoineW
 	 */
 	@When("{string} attempts to add the optional service {string} to the service combo in the appointment at {string}")
@@ -2356,12 +2368,11 @@ public class CucumberStepDefinitions {
 	    
 	}
 	
-
-
-
-		/**
-		 * @author jedla
-		 */
+	/**
+	 * @param mainService
+	 * @author jedla
+	 */
+	
 		
 	@Then("the service combo in the appointment shall be {string}")
 	public void the_service_combo_in_the_appointment_shall_be(String mainService) {

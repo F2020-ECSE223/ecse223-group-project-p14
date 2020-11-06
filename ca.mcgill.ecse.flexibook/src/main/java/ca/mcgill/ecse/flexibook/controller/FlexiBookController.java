@@ -1039,13 +1039,11 @@ public class FlexiBookController {
 		else {
 			Business business = new Business(businessName, address, phoneNumber, email, flexiBook);
 			flexiBook.setBusiness(business);
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 		}
 	}
 
@@ -1072,13 +1070,11 @@ public class FlexiBookController {
 			BusinessHour bh = new BusinessHour(day,startTime, endTime, flexiBook);
 			flexiBook.addHour(bh);
 			flexiBook.getBusiness().addBusinessHour(bh);
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 		}
 	}
 
@@ -1123,13 +1119,11 @@ public class FlexiBookController {
 					TimeSlot vacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
 					business.addVacation(vacationHoliday);
 					flexiBook.addTimeSlot(vacationHoliday);		
-					//add by Mike start --- 
 					try {
 						FlexiBookPersistence.save(flexiBook);
 					} catch(RuntimeException e) {
 						throw new InvalidInputException(e.getMessage());
-					}
-					//add by Mike end ---	
+					}	
 				}
 			}
 			else if (type.equals("holiday")) {
@@ -1145,14 +1139,12 @@ public class FlexiBookController {
 				else {
 					TimeSlot vacationHoliday = new TimeSlot(startDate, startTime, endDate, endTime, flexiBook);
 					business.addHoliday(vacationHoliday);
-					flexiBook.addTimeSlot(vacationHoliday);		
-					//add by Mike start --- 
+					flexiBook.addTimeSlot(vacationHoliday);		 
 					try {
 						FlexiBookPersistence.save(flexiBook);
 					} catch(RuntimeException e) {
 						throw new InvalidInputException(e.getMessage());
-					}
-					//add by Mike end ---	
+					}	
 				}
 			}
 		}	 
@@ -1201,14 +1193,12 @@ public class FlexiBookController {
 					vacation.setEndDate(endDate);
 					vacation.setEndTime(endTime);
 					vacation.setStartDate(startDate);
-					vacation.setStartTime(startTime);		
-					//add by Mike start --- 
+					vacation.setStartTime(startTime);		 
 					try {
 						FlexiBookPersistence.save(flexiBook);
 					} catch(RuntimeException e) {
 						throw new InvalidInputException(e.getMessage());
 					}
-					//add by Mike end ---	
 				}
 			}
 			else if (type.equals("holiday")) {	
@@ -1227,13 +1217,11 @@ public class FlexiBookController {
 					holiday.setEndTime(endTime);
 					holiday.setStartDate(startDate);
 					holiday.setStartTime(startTime);		
-					//add by Mike start --- 
 					try {
 						FlexiBookPersistence.save(flexiBook);
 					} catch(RuntimeException e) {
 						throw new InvalidInputException(e.getMessage());
 					}
-					//add by Mike end ---	
 				}
 			}
 		}	
@@ -1259,24 +1247,20 @@ public class FlexiBookController {
 		else { 
 			if (type.equals("vacation")) {
 				business.removeVacation(isTheVacation(startDate, startTime));	
-				//add by Mike start --- 
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
-				}
-				//add by Mike end ---	
+				}	
 			}
 
 			else if (type.equals("holiday")){
-				business.removeHoliday(isTheHoliday(startDate, startTime));
-				//add by Mike start --- 
+				business.removeHoliday(isTheHoliday(startDate, startTime)); 
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
 				}
-				//add by Mike end ---	
 			}
 		}		
 	}
@@ -1312,13 +1296,11 @@ public class FlexiBookController {
 			temp.setDayOfWeek(day);
 			temp.setEndTime(newEnd);
 			temp.setStartTime(newStart);
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 		}
 	}
 
@@ -1349,13 +1331,12 @@ public class FlexiBookController {
 				currentBusiness.setName(businessName);
 				currentBusiness.setPhoneNumber(phoneNumber);		
 				
-				//add by Mike start --- 
 				try {
 					FlexiBookPersistence.save(flexiBook);
 				} catch(RuntimeException e) {
 					throw new InvalidInputException(e.getMessage());
 				}
-				//add by Mike end ---	
+
 			}
 		}
 	}
@@ -1377,13 +1358,11 @@ public class FlexiBookController {
 		}
 		else if (currentUser instanceof Owner){
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
-			}
-			//add by Mike end ---	
+			}	
 		}	
 	}
 
