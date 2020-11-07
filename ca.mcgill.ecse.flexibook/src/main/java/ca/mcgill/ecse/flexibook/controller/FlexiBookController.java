@@ -562,16 +562,12 @@ public class FlexiBookController {
 		else {
 			Customer aCustomer = new Customer(username, password, 0, flexiBook);
 			flexiBook.addCustomer(aCustomer); 		
-			//assuming signing up also logs you in:
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
-			
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 			signUpSuccessful = true;
 		}
 		return signUpSuccessful;
@@ -612,13 +608,11 @@ public class FlexiBookController {
 		else {
 			user.setUsername(newUsername);
 			user.setPassword(newPassword);
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 			updateSuccessful = true;
 		}
 		return updateSuccessful;
@@ -644,13 +638,11 @@ public class FlexiBookController {
 		else {
 			((Customer)user).delete(); 
 			FlexiBookApplication.clearCurrentLoginUser();
-			//add by Mike start --- 
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
 				throw new InvalidInputException(e.getMessage());
 			}
-			//add by Mike end ---	
 			deleteSuccessful = true;
 		}
 		return deleteSuccessful;

@@ -604,7 +604,7 @@ public class Appointment implements Serializable
 		// get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
 		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
-		// get the duration to set new end time. Since there is no change in combo item, the time is same
+		// get the duration to set new end time. Since there is no change in combo item, the time is the same
 		int durationMinutes = (int) d.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 
@@ -622,7 +622,7 @@ public class Appointment implements Serializable
     //--------------------------------- Implemented by Mike Wang & -----------------------------------------------------------------
     List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
     List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
-    //check if overlapping with other appointment
+    //check if overlapping with another appointment
 		for(Appointment a : getFlexiBook().getAppointments()){
 			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
 					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
@@ -697,13 +697,13 @@ public class Appointment implements Serializable
 
   /**
    * 
-   * Check if the request of updating a appointment's content is valid.
-   * Option of updating appointment content please check doUpdateContent()<br>
+   * Check if the request of updating an appointment's content is valid.
+   * Option of updating appointment content -> please check doUpdateContent()<br>
    * 
    * This condition checks if the schedule is allowed to add or remove a service.
-   * Also it make sure the service the customer what to change is not mandatory.<br>
+   * Also it makes sure the service the customer wants to change is not mandatory.<br>
    * 
-   * @param action A string describing the way of update, can either be "add" or "remove"
+   * @param action A string describing the type of update, can either be "add" or "remove"
    * @param optService name of the service to add or remove
    * @param currentDate Current date of the system
    * @param currentTime Current date of the system
@@ -859,7 +859,7 @@ public class Appointment implements Serializable
 
   /**
    * 
-   * This method is a helper method determining the actual time of a appointment
+   * This method is a helper method determining the actual time of an appointment
    * It will only be used for a serviceCombo.<p>
    * This is implemented because customer can choose to not have certain optional services in a combo.
    * @return
