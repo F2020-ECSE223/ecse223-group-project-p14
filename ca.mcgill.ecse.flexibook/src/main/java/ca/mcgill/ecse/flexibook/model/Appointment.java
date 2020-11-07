@@ -585,8 +585,7 @@ public class Appointment implements Serializable
   /**
    * 
    * Check if the request of moving an appointment's time slot is valid.
-   * Main checking logic is in method isInGoodTiming(). A link has bee set to that method
-   * where there is more explanation.<br>
+   * This method uses the logic of Controller.isInGoodTiming()<br>
    * 
    * This method will create a new time slot o assuming the time update is successful.
    * Then if the new time slot has no conflict with other time slots, and is in business time,
@@ -596,18 +595,17 @@ public class Appointment implements Serializable
    * @param newStartTime New start time of appointment
    * @param currentDate current Date of the system
    * @param currentTime current time of the system
-   * @return`
+   * @return
    * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
-   * @see #isInGoodTiming(TimeSlot, int, int, AppointmentStatus, Date, Time)
    */
   // line 209 "../../../../../FlexiBookStateMachine.ump"
    public boolean isGoodForTimeUpdate(Date newDate, Time newStartTime, Date currentDate, Time currentTime){
     //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
 		// get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
-		Duration duration = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
+		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
 		// get the duration to set new end time. Since there is no change in combo item, the time is same
-		int durationMinutes = (int) duration.toMinutes();
+		int durationMinutes = (int) d.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 
 
@@ -656,9 +654,15 @@ public class Appointment implements Serializable
 
 
   /**
+   * 
+   * Checks to see if the date and time passed as arguments is after the start time of the appointment
+   * @param date -compared to date of appointment
+   * @param time -compared to time of appointment
+   * @return boolean -check passed
+   * @author mikewang and gtjarvis
    * line 203 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 264 "../../../../../FlexiBookStateMachine.ump"
+  // line 270 "../../../../../FlexiBookStateMachine.ump"
    public boolean hasReachedStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
@@ -670,9 +674,14 @@ public class Appointment implements Serializable
 
 
   /**
+   * 
+   * Checks to see if the the date passed is the same date as the date of the appointment
+   * @param date -compared to date of appointment
+   * @return boolean -check passed
+   * @author mikewang and gtjarvis
    * line 213 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 275 "../../../../../FlexiBookStateMachine.ump"
+  // line 286 "../../../../../FlexiBookStateMachine.ump"
    public boolean isOnSameDayAsAppointment(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 		boolean check = false; 
@@ -684,9 +693,14 @@ public class Appointment implements Serializable
 
 
   /**
+   * 
+   * Checks to see if the the date passed is before the date of the appointment
+   * @param date -compared to date of appointment
+   * @return boolean -check passed
+   * @author mikewang and gtjarvis
    * line 223 "../../../../../FlexiBookStateMachine.ump"
    */
-  // line 285 "../../../../../FlexiBookStateMachine.ump"
+  // line 302 "../../../../../FlexiBookStateMachine.ump"
    public boolean isBeforeToday(Date date){
     Date tempToday = getTimeSlot().getStartDate();
 	   boolean check = false;
@@ -714,7 +728,7 @@ public class Appointment implements Serializable
    * 
    * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
    */
-  // line 312 "../../../../../FlexiBookStateMachine.ump"
+  // line 329 "../../../../../FlexiBookStateMachine.ump"
    public boolean isGoodForContentUpdate(String action, String optService, Date currentDate, Time currentTime){
     //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
 		TimeSlot oldTimeSlot = getTimeSlot();
@@ -868,7 +882,7 @@ public class Appointment implements Serializable
    * 
    * @author p14
    */
-  // line 464 "../../../../../FlexiBookStateMachine.ump"
+  // line 481 "../../../../../FlexiBookStateMachine.ump"
    private static  int calcActualTimeOfAppointment(List<ComboItem> comboItemList){
     int actualTime = 0;
 
@@ -884,7 +898,7 @@ public class Appointment implements Serializable
    * Helper method of finding a service combo
    * Copied from iter 2 controller
    */
-  // line 476 "../../../../../FlexiBookStateMachine.ump"
+  // line 493 "../../../../../FlexiBookStateMachine.ump"
    private ServiceCombo findServiceCombo(String name){
     for (BookableService bService : getFlexiBook().getBookableServices()) {
 			if (bService.getName().equals(name) && bService instanceof ServiceCombo) {
@@ -906,7 +920,7 @@ public class Appointment implements Serializable
    * 
    * @author p14
    */
-  // line 496 "../../../../../FlexiBookStateMachine.ump"
+  // line 513 "../../../../../FlexiBookStateMachine.ump"
    private boolean isInGoodTiming(TimeSlot timeSlot, int index, int oldIndex, AppointmentStatus status, Date currentDate, Time currentTime){
     // here handle Scenario: A customer attempts to make various invalid appointments for services
 		// there are three time constraints to check:
@@ -940,7 +954,7 @@ public class Appointment implements Serializable
    * solves constraint: checks whether there is no overlap between two time slots
    * @author p14
    */
-  // line 527 "../../../../../FlexiBookStateMachine.ump"
+  // line 544 "../../../../../FlexiBookStateMachine.ump"
    private boolean isNotOverlapWithOtherTimeSlots(TimeSlot timeSlot, int index, int oldIndex){
     FlexiBook flexiBook = getFlexiBook();
 		LocalDateTime timeSlotStart = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
@@ -973,7 +987,7 @@ public class Appointment implements Serializable
    * @return
    * @author p14
    */
-  // line 558 "../../../../../FlexiBookStateMachine.ump"
+  // line 575 "../../../../../FlexiBookStateMachine.ump"
    private boolean isDuringDowntime(TimeSlot timeSlot){
     // Initially false, if there is a downtime period completely contains a timeslot
 		// then will be turned true
@@ -1009,7 +1023,7 @@ public class Appointment implements Serializable
    * @return
    * @author p14
    */
-  // line 593 "../../../../../FlexiBookStateMachine.ump"
+  // line 610 "../../../../../FlexiBookStateMachine.ump"
    private boolean isDuringWorkTime(TimeSlot timeSlot){
     boolean isDuringWorkTime = false;
 
@@ -1045,7 +1059,7 @@ public class Appointment implements Serializable
    * 
    * @author p14
    */
-  // line 626 "../../../../../FlexiBookStateMachine.ump"
+  // line 643 "../../../../../FlexiBookStateMachine.ump"
    private boolean isInTheFuture(TimeSlot timeSlot, Date currentDate, Time currentTime){
     boolean isInFuture = true;
 		LocalDateTime now = ControllerUtils.combineDateAndTime(currentDate, currentTime);
