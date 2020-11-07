@@ -585,7 +585,8 @@ public class Appointment implements Serializable
   /**
    * 
    * Check if the request of moving an appointment's time slot is valid.
-   * This method uses the logic of Controller.isInGoodTiming()<br>
+   * Main checking logic is in method isInGoodTiming(). A link has bee set to that method
+   * where there is more explanation.<br>
    * 
    * This method will create a new time slot o assuming the time update is successful.
    * Then if the new time slot has no conflict with other time slots, and is in business time,
@@ -595,17 +596,18 @@ public class Appointment implements Serializable
    * @param newStartTime New start time of appointment
    * @param currentDate current Date of the system
    * @param currentTime current time of the system
-   * @return
+   * @return`
    * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
+   * @see #isInGoodTiming(TimeSlot, int, int, AppointmentStatus, Date, Time)
    */
   // line 209 "../../../../../FlexiBookStateMachine.ump"
    public boolean isGoodForTimeUpdate(Date newDate, Time newStartTime, Date currentDate, Time currentTime){
     //--------------------------------- Implemented by AntoineW -----------------------------------------------------------------
 		// get duration of the original service
 		TimeSlot oldTimeSlot = getTimeSlot();
-		Duration d = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
+		Duration duration = Duration.between(oldTimeSlot.getStartTime().toLocalTime(), oldTimeSlot.getEndTime().toLocalTime());
 		// get the duration to set new end time. Since there is no change in combo item, the time is same
-		int durationMinutes = (int) d.toMinutes();
+		int durationMinutes = (int) duration.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 
 
