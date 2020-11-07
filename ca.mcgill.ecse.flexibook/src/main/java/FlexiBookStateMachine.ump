@@ -258,7 +258,13 @@ class Appointment{
 		return true;
   }
 
-
+  /**
+	 * Checks to see if the date and time passed as arguments is after the start time of the appointment
+	 * @param date -compared to date of appointment
+	 * @param time -compared to time of appointment
+	 * @return boolean -check passed
+	 * @author mikewang and gtjarvis
+	 */
   // line 203 "../../../../../FlexiBookStateMachine.ump"
    public boolean hasReachedStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
@@ -269,7 +275,12 @@ class Appointment{
 		return check;
   }
 
-
+  /**
+	 * Checks to see if the the date passed is the same date as the date of the appointment
+	 * @param date -compared to date of appointment
+	 * @return boolean -check passed
+	 * @author mikewang and gtjarvis
+	 */
   // line 213 "../../../../../FlexiBookStateMachine.ump"
    public boolean isOnSameDayAsAppointment(Date date){
     Date tempToday = getTimeSlot().getStartDate();
@@ -280,6 +291,12 @@ class Appointment{
 		return check;
   }
 
+  /**
+	 * Checks to see if the the date passed is before the date of the appointment
+	 * @param date -compared to date of appointment
+	 * @return boolean -check passed
+	 * @author mikewang and gtjarvis
+	 */
   // line 223 "../../../../../FlexiBookStateMachine.ump"
    public boolean isBeforeToday(Date date){
     Date tempToday = getTimeSlot().getStartDate();

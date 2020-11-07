@@ -796,27 +796,16 @@ public class FlexiBookController {
 			mandatory = listOfMandatory.get(i);
 			service = findSingleService(orderedServices.get(i));
 			comboItem = serviceCombo.addService(mandatory, service);
-			//add by Mike start --- 
-			try {
-				FlexiBookPersistence.save(flexiBook);
-			} catch(RuntimeException e) {
-				throw new InvalidInputException(e.getMessage());
-			}
-			//add by Mike end ---	
 			//sets appropirate main service
 			if(service.equals(mainService)){
 				serviceCombo.setMainService(comboItem);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
-				}
-				//add by Mike end ---	
 			}
-
 		}
-
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
 		return true;
 	}
 
@@ -896,36 +885,20 @@ public class FlexiBookController {
 			mandatory = listOfMandatory.get(i);
 			service = findSingleService(orderedServices.get(i));
 			comboItem = serviceCombo.addService(mandatory, service);
-			//add by Mike start --- 
-			try {
-				FlexiBookPersistence.save(flexiBook);
-			} catch(RuntimeException e) {
-				throw new InvalidInputException(e.getMessage());
-			}
-			//add by Mike end ---	
 			//sets appropirate main service
 			if(service.equals(mainService)){
 				serviceCombo.setMainService(comboItem);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
-				}
-				//add by Mike end ---	
 			}
 		}
 		tmp1Combo.delete();
 		tmp2Combo.delete();
 		tmp1.delete();
 		tmp2.delete();
-		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---	
 		return true;
 	}
 
@@ -951,13 +924,11 @@ public class FlexiBookController {
 			throw new InvalidInputException("Service combo " + comboService.getName() + " has future appointments");
 		}
 		comboService.delete();
-		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---	
 		return true;
 	}
 
@@ -974,13 +945,11 @@ public class FlexiBookController {
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		Date currentDate = FlexiBookApplication.getCurrentDate(true);
 		a.startAppointment(currentDate, currentTime);
-		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		//add by Mike end ---	
 		return true;
 	}
 
@@ -995,13 +964,11 @@ public class FlexiBookController {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment a = findAppointment(serviceName, date, time);
 		a.finishedAppointment();
-		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
-		}
-		//add by Mike end ---	
+		}	
 		return true;
 	}
 
