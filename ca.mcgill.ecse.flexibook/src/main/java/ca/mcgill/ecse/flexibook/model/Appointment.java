@@ -545,9 +545,9 @@ public class Appointment implements Serializable
 
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
-		  for (BookableService bservice : getFlexiBook().getBookableServices()) {
-				if (bservice.getName().equals(optService) && bservice instanceof Service) {
-					s = (Service)bservice;
+		  for (BookableService bService : getFlexiBook().getBookableServices()) {
+				if (bService.getName().equals(optService) && bService instanceof Service) {
+					s = (Service)bService;
 					break;
 				}
 			}
@@ -884,9 +884,9 @@ public class Appointment implements Serializable
    */
   // line 476 "../../../../../FlexiBookStateMachine.ump"
    private ServiceCombo findServiceCombo(String name){
-    for (BookableService bservice : getFlexiBook().getBookableServices()) {
-			if (bservice.getName().equals(name) && bservice instanceof ServiceCombo) {
-				return (ServiceCombo)bservice;
+    for (BookableService bService : getFlexiBook().getBookableServices()) {
+			if (bService.getName().equals(name) && bService instanceof ServiceCombo) {
+				return (ServiceCombo)bService;
 			}
 		}
 		return null;
