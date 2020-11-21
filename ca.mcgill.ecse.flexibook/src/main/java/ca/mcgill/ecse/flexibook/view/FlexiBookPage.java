@@ -13,21 +13,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import javax.swing.border.LineBorder;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.*;
 
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
@@ -40,32 +26,44 @@ public class FlexiBookPage extends JFrame {
 	//top bar
 	private JPanel topPanel;
 	//panel for each button on top bar
+	private JPanel infoPanel;
 	private JPanel singleServicesPanel;
 	private JPanel comboServicesPanel;
 	private JPanel calendarPanel;
 	private JPanel businessHoursPanel;
 	private JPanel businessDetailsPanel;
+	private JPanel logOutPanel;
 	
 	//top bar buttons
+	private JButton infoButton;
 	private JButton singleServicesButton;
 	private JButton comboServicesButton;
 	private JButton calendarButton;
 	private JButton businessHoursButton;
 	private JButton businessDetailsButton;
+	private JButton logOutButton;
+
+	//top bar icons
+	private ImageIcon infoIconDark;
+	private ImageIcon infoIconLight;
+	private ImageIcon logOutIconDark;
+	private ImageIcon logOutIconLight;
 
 	//page labels
+	private JLabel infoLabel;
 	private JLabel singleServicesLabel;
 	private JLabel comboServicesLabel;
 	private JLabel calendarLabel;
 	private JLabel businessHoursLabel;
 	private JLabel businessDetailsLabel;
+	private JLabel logOutLabel;
 
 	//tracking last page
 	private JButton previousButton;
 	private JPanel previousPanel;
 
 	//color of top bar
-	private Color darkGrey = new Color(80,80,80);
+	private Color darkGrey = new Color(62,62,62);
 
 
 	/** Creates new form BtmsPage */
@@ -81,14 +79,17 @@ public class FlexiBookPage extends JFrame {
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
-		setPreferredSize(new Dimension(1000,640));
-		setResizable(false);
+		setPreferredSize(new Dimension(1100,640));
+		//setResizable(false);
 
 		//initialize top bar layout
 		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
 		topPanel = new JPanel();
 		topPanel.setLayout(topLayout);
-		topPanel.setPreferredSize(new Dimension(1000,40));
+		topPanel.setPreferredSize(new Dimension(1100,40));
+
+		//initialize info panel
+		initInfoPanel();
 
 		//initialize single service panel
 		initSingleServicesPanel();
@@ -104,6 +105,24 @@ public class FlexiBookPage extends JFrame {
 
 		//initialize business details panel
 		initBusinessDetailsPanel();
+
+		//initialize log out panel
+		initLogOutPanel();
+
+		//initialize image icons
+		infoIconDark = new ImageIcon("infoIconDark.jpg");
+		infoIconLight = new ImageIcon("infoIconLight.jpg");
+		logOutIconDark = new ImageIcon("logOutIconDark.jpg");
+		logOutIconLight = new ImageIcon("logOutIconLight.jpg");
+
+		//initialize info button
+		infoButton = new JButton();
+		infoButton.setIcon(infoIconDark);
+		infoButton.setPreferredSize(new Dimension(50, 40));
+		infoButton.setBorder(new LineBorder(darkGrey));
+		infoButton.setBackground(darkGrey);
+		infoButton.setOpaque(true);
+		infoButton.setForeground(Color.WHITE);
 
 		//initialize single service button
 		singleServicesButton = new JButton();
@@ -150,12 +169,23 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsButton.setOpaque(true);
 		businessDetailsButton.setForeground(Color.WHITE);
 
+		//initialize log out button
+		logOutButton = new JButton();
+		logOutButton.setIcon(logOutIconDark);
+		logOutButton.setPreferredSize(new Dimension(50, 40));
+		logOutButton.setBorder(new LineBorder(darkGrey));
+		logOutButton.setBackground(darkGrey);
+		logOutButton.setOpaque(true);
+		logOutButton.setForeground(Color.WHITE);
+
 		//add buttons to top bar
+		topPanel.add(infoButton);
 		topPanel.add(singleServicesButton);
 		topPanel.add(comboServicesButton);
 		topPanel.add(calendarButton);
 		topPanel.add(businessHoursButton);
 		topPanel.add(businessDetailsButton);
+		topPanel.add(logOutButton);
 
 		//set calendar as initial page
 		previousButton = calendarButton;
@@ -167,15 +197,22 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 0;
 		c.ipady = 40;
-		c.ipadx = 1000;
+		c.ipadx = 1100;
 		getContentPane().add(topPanel, c);
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipady = 570;
-		c.ipadx = 1000;
+		c.ipady = 587;
+		c.ipadx = 1100;
 		getContentPane().add(calendarPanel, c);
 
 		pack();
+
+		//initialize info button listener
+		infoButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				infoButtonActionPerformed(evt);
+			}
+		});
 
 		//initialize single service button listener
 		singleServicesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -212,13 +249,33 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
 
+		//initialize log out button listener
+		logOutButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logOutButtonActionPerformed(evt);
+			}
+		});
+
+	}
+
+	//initialize info panel
+	private void initInfoPanel(){
+		infoPanel = new JPanel();
+		infoLabel = new JLabel("Info Page");
+		infoPanel.setPreferredSize(new Dimension(1100,600));
+		infoPanel.setBackground(Color.WHITE);
+		infoPanel.setOpaque(true);
+		infoPanel.setForeground(Color.WHITE);
+		infoPanel.add(infoLabel);
+
+		//TO DO
 	}
 
 	//initialize single services panel
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
 		singleServicesLabel = new JLabel("Single Service Page");
-		singleServicesPanel.setPreferredSize(new Dimension(1000,600));
+		singleServicesPanel.setPreferredSize(new Dimension(1100,600));
 		singleServicesPanel.setBackground(Color.WHITE);
 		singleServicesPanel.setOpaque(true);
 		singleServicesPanel.setForeground(Color.WHITE);
@@ -231,7 +288,7 @@ public class FlexiBookPage extends JFrame {
 	private void initComboServicesPanel(){
 		comboServicesPanel = new JPanel();
 		comboServicesLabel = new JLabel("Combo Service Page");
-		comboServicesPanel.setPreferredSize(new Dimension(1000,600));
+		comboServicesPanel.setPreferredSize(new Dimension(1100,600));
 		comboServicesPanel.setBackground(Color.WHITE);
 		comboServicesPanel.setOpaque(true);
 		comboServicesPanel.setForeground(Color.WHITE);
@@ -244,7 +301,7 @@ public class FlexiBookPage extends JFrame {
 	private void initCalendarPanel(){
 		calendarPanel = new JPanel();
 		calendarLabel = new JLabel("Calendar Page");
-		calendarPanel.setPreferredSize(new Dimension(1000,600));
+		calendarPanel.setPreferredSize(new Dimension(1100,600));
 		calendarPanel.setBackground(Color.WHITE);
 		calendarPanel.setOpaque(true);
 		calendarPanel.setForeground(Color.WHITE);
@@ -257,7 +314,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
 		businessHoursLabel = new JLabel("Business Hour Page");
-		businessHoursPanel.setPreferredSize(new Dimension(1000,600));
+		businessHoursPanel.setPreferredSize(new Dimension(1100,600));
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
@@ -270,11 +327,24 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessDetailsPanel(){
 		businessDetailsPanel = new JPanel();
 		businessDetailsLabel = new JLabel("Business Detail Page");
-		businessDetailsPanel.setPreferredSize(new Dimension(1000,600));
+		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
 		businessDetailsPanel.setBackground(Color.WHITE);
 		businessDetailsPanel.setOpaque(true);
 		businessDetailsPanel.setForeground(Color.WHITE);
 		businessDetailsPanel.add(businessDetailsLabel);
+
+		//TO DO
+	}
+
+	//initialize log out panel
+	private void initLogOutPanel(){
+		logOutPanel = new JPanel();
+		logOutLabel = new JLabel("Log Out Page");
+		logOutPanel.setPreferredSize(new Dimension(1100,600));
+		logOutPanel.setBackground(Color.WHITE);
+		logOutPanel.setOpaque(true);
+		logOutPanel.setForeground(Color.WHITE);
+		logOutPanel.add(logOutLabel);
 
 		//TO DO
 	}
@@ -286,26 +356,72 @@ public class FlexiBookPage extends JFrame {
 	}
 
 	
-	//method called when single service button pressed
-	private void singleServicesButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear error message and basic input validation
+	//method called when info button pressed
+	private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//set this button to current button pressed
+		previousButton = infoButton;
+		//set this button to white background
+		infoButton.setBorder(new LineBorder(Color.WHITE));
+		infoButton.setIcon(infoIconLight);
+		infoButton.setBackground(Color.WHITE);
+		infoButton.setOpaque(true);
+		infoButton.setForeground(darkGrey);
+		//remove previous panel
+		getContentPane().remove(previousPanel);
+		//set new panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipadx = 1100;
+		c.ipady = 587;
+		getContentPane().add(infoPanel, c);
+		//set this panel as the current panel
+		previousPanel = infoPanel;
+		//refresh page
+		refreshData();
+	}
+
+	//method called when single service button pressed
+	private void singleServicesButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//set this button to current button pressed
 		previousButton = singleServicesButton;
+		//set this button to white background
 		singleServicesButton.setBorder(new LineBorder(Color.WHITE));
 		singleServicesButton.setBackground(Color.WHITE);
 		singleServicesButton.setOpaque(true);
 		singleServicesButton.setForeground(darkGrey);
+		//remove previous panel
 		getContentPane().remove(previousPanel);
+		//set new panel
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipadx = 1000;
-		c.ipady = 570;
+		c.ipadx = 1100;
+		c.ipady = 587;
 		getContentPane().add(singleServicesPanel, c);
+		//set this panel as the current panel
 		previousPanel = singleServicesPanel;
+		//refresh page
 		refreshData();
 	}
 
@@ -316,6 +432,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = comboServicesButton;
 		//set this button to white background
@@ -329,8 +450,8 @@ public class FlexiBookPage extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipadx = 1000;
-		c.ipady = 570;
+		c.ipadx = 1100;
+		c.ipady = 587;
 		getContentPane().add(comboServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = comboServicesPanel;
@@ -345,6 +466,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = calendarButton;
 		//set this button to white background
@@ -358,8 +484,8 @@ public class FlexiBookPage extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipadx = 1000;
-		c.ipady = 570;
+		c.ipadx = 1100;
+		c.ipady = 587;
 		getContentPane().add(calendarPanel, c);
 		//set this panel as the current panel
 		previousPanel = calendarPanel;
@@ -374,6 +500,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = businessHoursButton;
 		//set this button to white background
@@ -387,8 +518,8 @@ public class FlexiBookPage extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipadx = 1000;
-		c.ipady = 570;
+		c.ipadx = 1100;
+		c.ipady = 587;
 		getContentPane().add(businessHoursPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
@@ -403,6 +534,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = businessDetailsButton;
 		//set this button to white background
@@ -416,11 +552,46 @@ public class FlexiBookPage extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipadx = 1000;
-		c.ipady = 570;
+		c.ipadx = 1100;
+		c.ipady = 587;
 		getContentPane().add(businessDetailsPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessDetailsPanel;
+		//refresh page
+		refreshData();
+	}
+
+	//method called when log out button pressed
+	private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//set this button to current button pressed
+		previousButton = logOutButton;
+		//set this button to white background
+		logOutButton.setBorder(new LineBorder(Color.WHITE));
+		logOutButton.setIcon(logOutIconLight);
+		logOutButton.setBackground(Color.WHITE);
+		logOutButton.setOpaque(true);
+		logOutButton.setForeground(darkGrey);
+		//remove previous panel
+		getContentPane().remove(previousPanel);
+		//set new panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipadx = 1100;
+		c.ipady = 587;
+		getContentPane().add(logOutPanel, c);
+		//set this panel as the current panel
+		previousPanel = logOutPanel;
 		//refresh page
 		refreshData();
 	}
