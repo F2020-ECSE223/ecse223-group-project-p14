@@ -361,10 +361,16 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = infoButton;
 		//set this button to white background
 		infoButton.setBorder(new LineBorder(Color.WHITE));
+		infoButton.setIcon(infoIconLight);
 		infoButton.setBackground(Color.WHITE);
 		infoButton.setOpaque(true);
 		infoButton.setForeground(darkGrey);
@@ -390,6 +396,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = singleServicesButton;
 		//set this button to white background
@@ -419,6 +430,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = comboServicesButton;
 		//set this button to white background
@@ -448,6 +464,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = calendarButton;
 		//set this button to white background
@@ -477,6 +498,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = businessHoursButton;
 		//set this button to white background
@@ -506,6 +532,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = businessDetailsButton;
 		//set this button to white background
@@ -535,6 +566,11 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
 		//set this button to current button pressed
 		previousButton = logOutButton;
 		//set this button to white background
