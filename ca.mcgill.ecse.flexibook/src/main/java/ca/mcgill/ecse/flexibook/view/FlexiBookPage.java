@@ -1,5 +1,6 @@
 package ca.mcgill.ecse.flexibook.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -290,49 +291,59 @@ public class FlexiBookPage extends JFrame {
 		infoPanel.setForeground(Color.darkGray);
 		
 		infoLabel = new JLabel("Manage your Account");
-		//infoLabel.setPreferredSize(new Dimension(200, 40));
+		infoLabel.setPreferredSize(new Dimension(200, 40));
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
-		//infoLabel.setBounds(45, 25, 312, 16);
 		
 		usernameLabel = new JLabel("New Username");
 		usernameLabel.setBackground(Color.WHITE);
 		usernameLabel.setOpaque(true);
 		usernameLabel.setForeground(Color.darkGray);
-		//usernameLabel.setPreferredSize(new Dimension(200, 40));
+		usernameLabel.setPreferredSize(new Dimension(200, 40));
 		
 		usernameBox = new JTextField();
 		usernameBox.setColumns(10);
-		//usernameBox.setPreferredSize(new Dimension(200, 40));
+		usernameBox.setPreferredSize(new Dimension(200, 40));
 		
 		passwordLabel = new JLabel("New Password");
 		passwordLabel.setBackground(Color.WHITE);
 		passwordLabel.setOpaque(true);
 		passwordLabel.setForeground(Color.darkGray);
-		//passwordLabel.setPreferredSize(new Dimension(200, 40));
+		passwordLabel.setPreferredSize(new Dimension(200, 40));
 		
 		passwordBox = new JTextField(); 
 		passwordBox.setColumns(10);
-		//passwordBox.setPreferredSize(new Dimension(200, 40));
+		passwordBox.setPreferredSize(new Dimension(200, 40));
 		
 		saveAccountInfo = new JButton("Save");
-		//saveAccountInfo.setPreferredSize(new Dimension(50, 40));
+		saveAccountInfo.setPreferredSize(new Dimension(50, 40));
 		saveAccountInfo.setBorder(new LineBorder(Color.darkGray));
 		saveAccountInfo.setBackground(Color.darkGray);
 		saveAccountInfo.setOpaque(true);
 		saveAccountInfo.setForeground(Color.WHITE);
 		
-		// add elements
-//		infoPanel.add(infoLabel);
-//		infoPanel.add(usernameLabel);
-//		infoPanel.add(passwordLabel);
-//		infoPanel.add(usernameBox);
-//		infoPanel.add(passwordBox);
-//		infoPanel.add(saveAccountInfo);
+		JPanel nested1 = new JPanel(); // first line
+		nested1.add(infoPanel.add(infoLabel));
+		
+		JPanel nested2 = new JPanel(); // second line
+		nested2.add(infoPanel.add(usernameLabel));
+		nested2.add(infoPanel.add(usernameBox));
+		
+		JPanel nested3 = new JPanel(); //third line
+		nested3.add(infoPanel.add(passwordLabel));
+		nested3.add(infoPanel.add(passwordBox));
+		
+		JPanel nested4 = new JPanel(); // fourth line
+		nested3.add(infoPanel.add(saveAccountInfo));
+		  
+		JPanel outer = new JPanel(new BorderLayout());
+		outer.add(nested1, BorderLayout.CENTER);
+		outer.add(nested2, BorderLayout.CENTER);
+		outer.add(nested3, BorderLayout.CENTER);
+		outer.add(nested4, BorderLayout.CENTER);
 
-
-
+		getContentPane().add(outer);
 
 		saveAccountInfo.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -340,41 +351,11 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
 		
-		GroupLayout layout = new GroupLayout(infoPanel);
-		infoPanel.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
-		layout.setHorizontalGroup(
-				
-				layout.createParallelGroup()
-				.addComponent(errorMessage)
-				.addComponent(infoLabel)
-				
-				.addGroup(layout.createSequentialGroup()
-						.addGroup(layout.createParallelGroup()
-								.addComponent(usernameLabel)
-								.addComponent(passwordLabel))
-						.addGroup(layout.createParallelGroup()
-								.addComponent(usernameBox, 200, 200, 400)
-								.addComponent(passwordBox, 200, 200, 400)
-								.addComponent(saveAccountInfo))));
 		
-		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {usernameBox, passwordBox});
-		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {saveAccountInfo, passwordBox});
 		
-		layout.setVerticalGroup(
-				layout.createSequentialGroup()
-				.addComponent(errorMessage)
-				.addComponent(infoLabel)
-				.addGroup(layout.createParallelGroup()
-						.addComponent(usernameLabel)
-						.addComponent(usernameBox, 40, 40, 40))	
-				.addGroup(layout.createParallelGroup()
-						.addComponent(passwordLabel)
-						.addComponent(passwordBox, 40, 40, 40))
-				.addGroup(layout.createParallelGroup()
-						.addComponent(saveAccountInfo)));
-		pack();
+		
+
+
 	}
 
 
