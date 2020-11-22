@@ -13,9 +13,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Properties;
+import java.net.URL;
 
 import javax.swing.border.LineBorder;
 import javax.swing.*;
+import javax.imageio.ImageIO;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
@@ -101,13 +103,7 @@ public class FlexiBookPage extends JFrame {
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
 		setPreferredSize(new Dimension(1100,640));
-		//setResizable(false);
-
-		//initialize top bar layout
-		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
-		topPanel = new JPanel();
-		topPanel.setLayout(topLayout);
-		topPanel.setPreferredSize(new Dimension(1100,40));
+		setResizable(false);
 
 		//initialize info panel
 		initInfoPanel();
@@ -130,12 +126,94 @@ public class FlexiBookPage extends JFrame {
 		//initialize log out panel
 		initLogOutPanel();
 
-		//initialize image icons
-		infoIconDark = new ImageIcon("infoIconDark.jpg");
-		infoIconLight = new ImageIcon("infoIconLight.jpg");
-		logOutIconDark = new ImageIcon("logOutIconDark.jpg");
-		logOutIconLight = new ImageIcon("logOutIconLight.jpg");
+		//initialize top bar
+		initTopBar();
 
+		//add top bar and calendar panel to frame
+		getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 40;
+		c.ipadx = 1100;
+		getContentPane().add(topPanel, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 587;
+		c.ipadx = 1100;
+		getContentPane().add(calendarPanel, c);
+
+		pack();
+
+		//initialize info button listener
+		infoButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				infoButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize single service button listener
+		singleServicesButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				singleServicesButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize combo service button listener
+		comboServicesButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				comboServicesButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize calendar button listener
+		calendarButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				calendarButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize business hours button listener
+		businessHoursButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				businessHoursButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize business details button listener
+		businessDetailsButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				businessDetailsButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize log out button listener
+		logOutButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logOutButtonActionPerformed(evt);
+			}
+		});
+
+	}
+
+	//initialize top bar
+	private void initTopBar(){
+		//initialize top bar layout
+		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+		topPanel = new JPanel();
+		topPanel.setLayout(topLayout);
+		topPanel.setPreferredSize(new Dimension(1100,40));
+
+		//initialize image icons
+		try{
+			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
 		//initialize info button
 		infoButton = new JButton();
 		infoButton.setIcon(infoIconDark);
@@ -211,73 +289,6 @@ public class FlexiBookPage extends JFrame {
 		//set calendar as initial page
 		previousButton = calendarButton;
 		previousPanel = calendarPanel;
-
-		//add top bar to frame
-		getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 40;
-		c.ipadx = 1100;
-		getContentPane().add(topPanel, c);
-		//add calendar panel to frame
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipady = 587;
-		c.ipadx = 1100;
-		getContentPane().add(calendarPanel, c);
-
-
-		pack();
-
-		//initialize info button listener
-		infoButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				infoButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize single service button listener
-		singleServicesButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				singleServicesButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize combo service button listener
-		comboServicesButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				comboServicesButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize calendar button listener
-		calendarButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				calendarButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize business hours button listener
-		businessHoursButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				businessHoursButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize business details button listener
-		businessDetailsButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				businessDetailsButtonActionPerformed(evt);
-			}
-		});
-
-		//initialize log out button listener
-		logOutButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logOutButtonActionPerformed(evt);
-			}
-		});
 
 	}
 

@@ -119,7 +119,7 @@ public class FlexiBookController {
 		if (!FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner")) {
 			throw new InvalidInputException("You are not authorized to perform this operation");
 		}
-
+		
 		for (Appointment appointment:service.getAppointments()) {
 			if (FlexiBookApplication.getCurrentDate(true).before(appointment.getTimeSlot().getStartDate())) {
 				throw new InvalidInputException("The service contains future appointments");
