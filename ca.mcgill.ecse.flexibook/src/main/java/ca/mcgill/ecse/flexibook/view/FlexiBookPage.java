@@ -11,9 +11,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Properties;
+import java.net.URL;
 
 import javax.swing.border.LineBorder;
 import javax.swing.*;
+import javax.imageio.ImageIO;
 
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
@@ -65,6 +67,8 @@ public class FlexiBookPage extends JFrame {
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
 
+	private String error;
+
 
 	/** Creates new form BtmsPage */
 	public FlexiBookPage() {
@@ -110,11 +114,15 @@ public class FlexiBookPage extends JFrame {
 		initLogOutPanel();
 
 		//initialize image icons
-		infoIconDark = new ImageIcon("infoIconDark.jpg");
-		infoIconLight = new ImageIcon("infoIconLight.jpg");
-		logOutIconDark = new ImageIcon("logOutIconDark.jpg");
-		logOutIconLight = new ImageIcon("logOutIconLight.jpg");
-
+		try{
+			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
 		//initialize info button
 		infoButton = new JButton();
 		infoButton.setIcon(infoIconDark);
