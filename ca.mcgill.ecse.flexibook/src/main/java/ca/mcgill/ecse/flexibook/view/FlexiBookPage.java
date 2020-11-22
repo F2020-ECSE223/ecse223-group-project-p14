@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
@@ -15,8 +16,10 @@ import java.util.Properties;
 import javax.swing.border.LineBorder;
 import javax.swing.*;
 
+import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;
 
 public class FlexiBookPage extends JFrame {
@@ -50,13 +53,22 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon logOutIconLight;
 
 	//page labels
-	private JLabel infoLabel;
+
 	private JLabel singleServicesLabel;
 	private JLabel comboServicesLabel;
 	private JLabel calendarLabel;
 	private JLabel businessHoursLabel;
 	private JLabel businessDetailsLabel;
 	private JLabel logOutLabel;
+	
+	//Info panel view
+	private JLabel infoLabel; //manage your account	
+	private JLabel usernameLabel;
+	private JLabel passwordLabel;
+	private JTextField usernameBox; 
+	private JTextField passwordBox; 
+	private JButton saveAccountInfo; //Save button
+	
 
 	//tracking last page
 	private JButton previousButton;
@@ -64,6 +76,10 @@ public class FlexiBookPage extends JFrame {
 
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
+	
+	// Error message 
+	private JLabel errorMessage;
+	private String error = null;
 
 
 	/** Creates new form BtmsPage */
@@ -75,6 +91,10 @@ public class FlexiBookPage extends JFrame {
 	/** This method is called from within the constructor to initialize the form.
 	 */
 	private void initComponents() {
+		
+		// initialize error message
+		errorMessage = new JLabel();
+		errorMessage.setForeground(Color.RED);
 
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -191,7 +211,7 @@ public class FlexiBookPage extends JFrame {
 		previousButton = calendarButton;
 		previousPanel = calendarPanel;
 
-		//add top bar and calendar panel to frame
+		//add top bar to frame
 		getContentPane().setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0;
@@ -199,11 +219,13 @@ public class FlexiBookPage extends JFrame {
 		c.ipady = 40;
 		c.ipadx = 1100;
 		getContentPane().add(topPanel, c);
+		//add calendar panel to frame
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipady = 587;
 		c.ipadx = 1100;
 		getContentPane().add(calendarPanel, c);
+
 
 		pack();
 
@@ -260,16 +282,101 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize info panel
 	private void initInfoPanel(){
+		
 		infoPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
 		infoPanel.setPreferredSize(new Dimension(1100,600));
 		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setOpaque(true);
-		infoPanel.setForeground(Color.WHITE);
-		infoPanel.add(infoLabel);
+		infoPanel.setForeground(Color.darkGray);
+		
+		infoLabel = new JLabel("Manage your Account");
+		//infoLabel.setPreferredSize(new Dimension(200, 40));
+		infoLabel.setBackground(Color.WHITE);
+		infoLabel.setOpaque(true);
+		infoLabel.setForeground(Color.darkGray);
+		//infoLabel.setBounds(45, 25, 312, 16);
+		
+		usernameLabel = new JLabel("New Username");
+		usernameLabel.setBackground(Color.WHITE);
+		usernameLabel.setOpaque(true);
+		usernameLabel.setForeground(Color.darkGray);
+		//usernameLabel.setPreferredSize(new Dimension(200, 40));
+		
+		usernameBox = new JTextField();
+		usernameBox.setColumns(10);
+		//usernameBox.setPreferredSize(new Dimension(200, 40));
+		
+		passwordLabel = new JLabel("New Password");
+		passwordLabel.setBackground(Color.WHITE);
+		passwordLabel.setOpaque(true);
+		passwordLabel.setForeground(Color.darkGray);
+		//passwordLabel.setPreferredSize(new Dimension(200, 40));
+		
+		passwordBox = new JTextField(); 
+		passwordBox.setColumns(10);
+		//passwordBox.setPreferredSize(new Dimension(200, 40));
+		
+		saveAccountInfo = new JButton("Save");
+		//saveAccountInfo.setPreferredSize(new Dimension(50, 40));
+		saveAccountInfo.setBorder(new LineBorder(Color.darkGray));
+		saveAccountInfo.setBackground(Color.darkGray);
+		saveAccountInfo.setOpaque(true);
+		saveAccountInfo.setForeground(Color.WHITE);
+		
+		// add elements
+//		infoPanel.add(infoLabel);
+//		infoPanel.add(usernameLabel);
+//		infoPanel.add(passwordLabel);
+//		infoPanel.add(usernameBox);
+//		infoPanel.add(passwordBox);
+//		infoPanel.add(saveAccountInfo);
 
-		//TO DO
+
+
+
+		saveAccountInfo.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveAccountInfoActionPerformed(evt);
+			}
+		});
+		
+		GroupLayout layout = new GroupLayout(infoPanel);
+		infoPanel.setLayout(layout);
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		layout.setHorizontalGroup(
+				
+				layout.createParallelGroup()
+				.addComponent(errorMessage)
+				.addComponent(infoLabel)
+				
+				.addGroup(layout.createSequentialGroup()
+						.addGroup(layout.createParallelGroup()
+								.addComponent(usernameLabel)
+								.addComponent(passwordLabel))
+						.addGroup(layout.createParallelGroup()
+								.addComponent(usernameBox, 200, 200, 400)
+								.addComponent(passwordBox, 200, 200, 400)
+								.addComponent(saveAccountInfo))));
+		
+		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {usernameBox, passwordBox});
+		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {saveAccountInfo, passwordBox});
+		
+		layout.setVerticalGroup(
+				layout.createSequentialGroup()
+				.addComponent(errorMessage)
+				.addComponent(infoLabel)
+				.addGroup(layout.createParallelGroup()
+						.addComponent(usernameLabel)
+						.addComponent(usernameBox, 40, 40, 40))	
+				.addGroup(layout.createParallelGroup()
+						.addComponent(passwordLabel)
+						.addComponent(passwordBox, 40, 40, 40))
+				.addGroup(layout.createParallelGroup()
+						.addComponent(saveAccountInfo)));
+		pack();
 	}
+
 
 	//initialize single services panel
 	private void initSingleServicesPanel(){
@@ -353,6 +460,8 @@ public class FlexiBookPage extends JFrame {
 	private void refreshData() {
 		pack();
 		repaint();
+		
+		
 	}
 
 	
@@ -594,6 +703,23 @@ public class FlexiBookPage extends JFrame {
 		previousPanel = logOutPanel;
 		//refresh page
 		refreshData();
+	}
+	
+	//method called when save button pressed while editing an account
+	private void saveAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+				
+		// call the controller
+		try {
+			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), usernameBox.getText(), passwordBox.getText());
+				} catch (InvalidInputException e) {
+					error = e.getMessage();
+				}
+		
+		// update visuals
+		refreshData();
+		
 	}
 
 }
