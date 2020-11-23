@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
@@ -128,6 +130,7 @@ public class FlexiBookPage extends JFrame {
 	private JTextField usernameBox; 
 	private JTextField passwordBox; 
 	private JButton saveAccountButton; //Save button
+	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
 
@@ -602,60 +605,59 @@ public class FlexiBookPage extends JFrame {
 	//initialize info panel for owner
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
-		//infoOwnerPanel.setLayout(new BoxLayout(infoOwnerPanel, BoxLayout.Y_AXIS));
-		//infoOwnerPanel.setPreferredSize(new Dimension(1100,500));
-		infoLabel = new JLabel("Info Page");
+		infoOwnerPanel.setLayout(null);
 		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		infoOwnerPanel.setBackground(Color.WHITE);
 		infoOwnerPanel.setOpaque(true);
 		infoOwnerPanel.setForeground(Color.darkGray);
 		
-		infoLabel = new JLabel("Manage your Account");
-		//infoLabel.setSize(100, 30);
-		infoLabel.setAlignmentX(CENTER_ALIGNMENT);
-		infoLabel.setAlignmentY(BOTTOM_ALIGNMENT);
+		infoLabel = new JLabel("Manage Your Account");
+		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoLabel.setBounds(480, 300, 140, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
 		
-//		usernameLabel = new JLabel("Username");
-//		usernameLabel.setBackground(Color.WHITE);
-//		usernameLabel.setOpaque(true);
-//		usernameLabel.setForeground(Color.darkGray);
-//		usernameLabel.setPreferredSize(new Dimension(200, 40));
+		usernameLabel = new JLabel("Username");
+		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBackground(Color.WHITE);
+		usernameLabel.setOpaque(true);
+		usernameLabel.setForeground(Color.darkGray);
+		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField("Owner"); 
+		usernameBox = new JTextField("owner"); //FlexiBookApplication.getCurrentLoginUser().getUsername()
 		usernameBox.setColumns(20);
-		//usernameBox.setSize(100, 30);
-		usernameBox.setAlignmentX(CENTER_ALIGNMENT);
-		usernameBox.setAlignmentY(BOTTOM_ALIGNMENT);
+		usernameBox.setBounds(480, 350, 250, 30);
 		
-//		passwordLabel = new JLabel("New Password");
-//		passwordLabel.setBackground(Color.WHITE);
-//		passwordLabel.setOpaque(true);
-//		passwordLabel.setForeground(Color.darkGray);
-//		passwordLabel.setPreferredSize(new Dimension(200, 40));
+		passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBackground(Color.WHITE);
+		passwordLabel.setOpaque(true);
+		passwordLabel.setForeground(Color.darkGray);
+		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField("Enter New Password"); 
+		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
 		passwordBox.setColumns(20);
-		//passwordBox.setSize(100, 30);
-		passwordBox.setAlignmentX(CENTER_ALIGNMENT);
-		passwordBox.setAlignmentY(BOTTOM_ALIGNMENT);
+		passwordBox.setBounds(480, 400, 250, 30);
 		
 		saveAccountButton = new JButton("Save");
-		//saveAccountButton.setSize(100, 30);
+		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		saveAccountButton.setBounds(500, 450, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
-		saveAccountButton.setAlignmentY(BOTTOM_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
-		//add them all here
 		infoOwnerPanel.add(infoLabel);
-		//infoOwnerPanel.add(usernameLabel);
+		infoOwnerPanel.add(usernameLabel);
 		infoOwnerPanel.add(usernameBox);
-		//infoOwnerPanel.add(passwordLabel);
+		infoOwnerPanel.add(passwordLabel);
 		infoOwnerPanel.add(passwordBox);
 		infoOwnerPanel.add(saveAccountButton);
 		
@@ -669,57 +671,86 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
-
 	//initialize info panel for customer
 	private void initInfoCustomerPanel(){
 		
 		infoCustomerPanel = new JPanel();
-		//infoCustomerPanel.setPreferredSize(new Dimension(1100,600));
-		infoLabel = new JLabel("Info Page");
+		infoCustomerPanel.setLayout(null);
 		infoCustomerPanel.setPreferredSize(new Dimension(1100,700));
 		infoCustomerPanel.setBackground(Color.WHITE);
 		infoCustomerPanel.setOpaque(true);
-		infoCustomerPanel.setForeground(Color.WHITE);
-
-		infoLabel = new JLabel("Manage your Account");
-		infoLabel.setPreferredSize(new Dimension(200, 40));
+		infoCustomerPanel.setForeground(Color.darkGray);
+		
+		infoLabel = new JLabel("Manage Your Account");
+		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoLabel.setBounds(480, 300, 140, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
 		
-		usernameLabel = new JLabel("New Username");
+		usernameLabel = new JLabel("Username");
+		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameLabel.setBounds(350, 350, 80, 30);
 		usernameLabel.setBackground(Color.WHITE);
 		usernameLabel.setOpaque(true);
 		usernameLabel.setForeground(Color.darkGray);
-		usernameLabel.setPreferredSize(new Dimension(200, 40));
+		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField();
-		usernameBox.setColumns(10);
-		usernameBox.setPreferredSize(new Dimension(200, 40));
+		usernameBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getUsername()
+		usernameBox.setColumns(20);
+		usernameBox.setBounds(480, 350, 250, 30);
 		
-		passwordLabel = new JLabel("New Password");
+		passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordLabel.setBounds(350, 400, 80, 30);
 		passwordLabel.setBackground(Color.WHITE);
 		passwordLabel.setOpaque(true);
 		passwordLabel.setForeground(Color.darkGray);
-		passwordLabel.setPreferredSize(new Dimension(200, 40));
+		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(); 
-		passwordBox.setColumns(10);
-		passwordBox.setPreferredSize(new Dimension(200, 40));
+		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
+		passwordBox.setColumns(20);
+		passwordBox.setBounds(480, 400, 250, 30);
 		
 		saveAccountButton = new JButton("Save");
-		saveAccountButton.setPreferredSize(new Dimension(50, 40));
+		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		saveAccountButton.setBounds(500, 450, 100, 30);
+		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
-		//add them all here
+		deleteAccountButton = new JButton("Delete");
+		deleteAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		deleteAccountButton.setBounds(500, 450, 100, 30);
+		deleteAccountButton.setAlignmentX(CENTER_ALIGNMENT);
+		deleteAccountButton.setBorder(new LineBorder(Color.darkGray));
+		deleteAccountButton.setBackground(Color.WHITE);
+		deleteAccountButton.setOpaque(true);
+		deleteAccountButton.setForeground(Color.darkGray);
+		
+		infoCustomerPanel.add(infoLabel);
+		infoCustomerPanel.add(usernameLabel);
+		infoCustomerPanel.add(usernameBox);
+		infoCustomerPanel.add(passwordLabel);
+		infoCustomerPanel.add(passwordBox);
+		infoCustomerPanel.add(saveAccountButton);
+		infoCustomerPanel.add(deleteAccountButton);
 		
 		
 		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				saveAccountInfoActionPerformed(evt);
+			}
+		});
+		
+		deleteAccountButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				deleteAccountInfoActionPerformed(evt);
 			}
 		});
 		
@@ -1629,5 +1660,26 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 		
 	}
+	
+	//method called when delete button pressed while editing an account
+	private void deleteAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+		
+		// @ ToDo 
+		//pop up confirm message
+				
+		// call the controller
+		try {
+			FlexiBookController.deleteCustomerAccount(usernameBox.getText());
+				} catch (InvalidInputException e) {
+					error = e.getMessage();
+				}
+		
+		// update visuals
+		refreshData();
+		
+	}
+
 
 }
