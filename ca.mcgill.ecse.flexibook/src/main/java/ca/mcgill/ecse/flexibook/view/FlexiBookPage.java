@@ -43,6 +43,8 @@ public class FlexiBookPage extends JFrame {
 	private JPanel logOutOwnerPanel;
 	private JPanel logOutCustomerPanel;
 	private JPanel bookAppointmentPanel;
+	//panels for calendar tab
+	private JPanel calendarWeeklyViewPanel;
 	
 	//top bar buttons
 	private JButton infoOwnerButton;
@@ -66,6 +68,8 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon infoIconLight;
 	private ImageIcon logOutIconDark;
 	private ImageIcon logOutIconLight;
+	//calendar page icons
+	private ImageIcon calendarIcon;
 
 	//page labels
 	private JLabel infoLabel;
@@ -100,7 +104,7 @@ public class FlexiBookPage extends JFrame {
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
-		setPreferredSize(new Dimension(1100,640));
+		setPreferredSize(new Dimension(1100,740));
 		setResizable(false);
 
 		//initialize log in page
@@ -427,7 +431,7 @@ public class FlexiBookPage extends JFrame {
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
 		infoLabel = new JLabel("Info Page");
-		infoOwnerPanel.setPreferredSize(new Dimension(1100,600));
+		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		infoOwnerPanel.setBackground(Color.WHITE);
 		infoOwnerPanel.setOpaque(true);
 		infoOwnerPanel.setForeground(Color.WHITE);
@@ -440,7 +444,7 @@ public class FlexiBookPage extends JFrame {
 	private void initInfoCustomerPanel(){
 		infoCustomerPanel = new JPanel();
 		infoLabel = new JLabel("Info Page");
-		infoCustomerPanel.setPreferredSize(new Dimension(1100,600));
+		infoCustomerPanel.setPreferredSize(new Dimension(1100,700));
 		infoCustomerPanel.setBackground(Color.WHITE);
 		infoCustomerPanel.setOpaque(true);
 		infoCustomerPanel.setForeground(Color.WHITE);
@@ -453,7 +457,7 @@ public class FlexiBookPage extends JFrame {
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
 		singleServicesLabel = new JLabel("Single Service Page");
-		singleServicesPanel.setPreferredSize(new Dimension(1100,600));
+		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
 		singleServicesPanel.setBackground(Color.WHITE);
 		singleServicesPanel.setOpaque(true);
 		singleServicesPanel.setForeground(Color.WHITE);
@@ -466,7 +470,7 @@ public class FlexiBookPage extends JFrame {
 	private void initComboServicesPanel(){
 		comboServicesPanel = new JPanel();
 		comboServicesLabel = new JLabel("Combo Service Page");
-		comboServicesPanel.setPreferredSize(new Dimension(1100,600));
+		comboServicesPanel.setPreferredSize(new Dimension(1100,700));
 		comboServicesPanel.setBackground(Color.WHITE);
 		comboServicesPanel.setOpaque(true);
 		comboServicesPanel.setForeground(Color.WHITE);
@@ -477,13 +481,28 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize calendar services panel for owner
 	private void initCalendarOwnerPanel(){
+		//create new JPanel
 		calendarOwnerPanel = new JPanel();
-		calendarLabel = new JLabel("Calendar Page");
-		calendarOwnerPanel.setPreferredSize(new Dimension(1100,600));
+		//set null layout
+		calendarOwnerPanel.setLayout(null);
+		//set size
+		calendarOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		//set background
 		calendarOwnerPanel.setBackground(Color.WHITE);
 		calendarOwnerPanel.setOpaque(true);
 		calendarOwnerPanel.setForeground(Color.WHITE);
-		calendarOwnerPanel.add(calendarLabel);
+		//create calendar image panel
+		calendarWeeklyViewPanel = new JPanel();
+		calendarOwnerPanel.setPreferredSize(new Dimension(900,900));
+		//initialize image icons
+		try{
+			calendarIcon = new ImageIcon(ImageIO.read(new URL("")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		calendarWeeklyViewPanel.add(new JLabel(calendarIcon));
+		calendarOwnerPanel.add(calendarWeeklyViewPanel);
+		calendarWeeklyViewPanel.setBounds(100,100,900,900);
 
 		//TO DO
 	}
@@ -492,7 +511,7 @@ public class FlexiBookPage extends JFrame {
 	private void initCalendarCustomerPanel(){
 		calendarCustomerPanel = new JPanel();
 		calendarLabel = new JLabel("Calendar Page");
-		calendarCustomerPanel.setPreferredSize(new Dimension(1100,600));
+		calendarCustomerPanel.setPreferredSize(new Dimension(1100,700));
 		calendarCustomerPanel.setBackground(Color.WHITE);
 		calendarCustomerPanel.setOpaque(true);
 		calendarCustomerPanel.setForeground(Color.WHITE);
@@ -505,7 +524,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
 		businessHoursLabel = new JLabel("Business Hour Page");
-		businessHoursPanel.setPreferredSize(new Dimension(1100,600));
+		businessHoursPanel.setPreferredSize(new Dimension(1100,700));
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
@@ -518,7 +537,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessDetailsPanel(){
 		businessDetailsPanel = new JPanel();
 		businessDetailsLabel = new JLabel("Business Detail Page");
-		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
+		businessDetailsPanel.setPreferredSize(new Dimension(1100,700));
 		businessDetailsPanel.setBackground(Color.WHITE);
 		businessDetailsPanel.setOpaque(true);
 		businessDetailsPanel.setForeground(Color.WHITE);
@@ -531,7 +550,7 @@ public class FlexiBookPage extends JFrame {
 	private void initLogOutOwnerPanel(){
 		logOutOwnerPanel = new JPanel();
 		logOutLabel = new JLabel("Log Out Page");
-		logOutOwnerPanel.setPreferredSize(new Dimension(1100,600));
+		logOutOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		logOutOwnerPanel.setBackground(Color.WHITE);
 		logOutOwnerPanel.setOpaque(true);
 		logOutOwnerPanel.setForeground(Color.WHITE);
@@ -544,7 +563,7 @@ public class FlexiBookPage extends JFrame {
 	private void initLogOutCustomerPanel(){
 		logOutCustomerPanel = new JPanel();
 		logOutLabel = new JLabel("Log Out Page");
-		logOutCustomerPanel.setPreferredSize(new Dimension(1100,600));
+		logOutCustomerPanel.setPreferredSize(new Dimension(1100,700));
 		logOutCustomerPanel.setBackground(Color.WHITE);
 		logOutCustomerPanel.setOpaque(true);
 		logOutCustomerPanel.setForeground(Color.WHITE);
@@ -557,7 +576,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBookAppointmentPanel(){
 		bookAppointmentPanel = new JPanel();
 		bookAppointmentLabel = new JLabel("Book Appointment Page");
-		bookAppointmentPanel.setPreferredSize(new Dimension(1100,600));
+		bookAppointmentPanel.setPreferredSize(new Dimension(1100,700));
 		bookAppointmentPanel.setBackground(Color.WHITE);
 		bookAppointmentPanel.setOpaque(true);
 		bookAppointmentPanel.setForeground(Color.WHITE);
@@ -586,7 +605,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(topPanelOwner, c);
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipady = 587;
+		c.ipady = 687;
 		c.ipadx = 1100;
 		getContentPane().add(calendarOwnerPanel, c);
 		//set calendar to initial state
@@ -615,7 +634,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(topPanelCustomer, c);
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipady = 587;
+		c.ipady = 687;
 		c.ipadx = 1100;
 		getContentPane().add(calendarCustomerPanel, c);
 		//set calendar to initial state
@@ -657,7 +676,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(infoOwnerPanel, c);
 		//set this panel as the current panel
 		previousPanel = infoOwnerPanel;
@@ -692,7 +711,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(infoCustomerPanel, c);
 		//set this panel as the current panel
 		previousPanel = infoCustomerPanel;
@@ -726,7 +745,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(singleServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = singleServicesPanel;
@@ -760,7 +779,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(comboServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = comboServicesPanel;
@@ -794,7 +813,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(calendarOwnerPanel, c);
 		//set this panel as the current panel
 		previousPanel = calendarOwnerPanel;
@@ -828,7 +847,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(calendarCustomerPanel, c);
 		//set this panel as the current panel
 		previousPanel = calendarCustomerPanel;
@@ -862,7 +881,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(businessHoursPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
@@ -896,7 +915,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(businessDetailsPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessDetailsPanel;
@@ -972,7 +991,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(bookAppointmentPanel, c);
 		//set this panel as the current panel
 		previousPanel = bookAppointmentPanel;
