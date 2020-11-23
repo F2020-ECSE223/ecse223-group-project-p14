@@ -102,7 +102,7 @@ public class FlexiBookPage extends JFrame {
 		initBusinessHoursPanel();
 
 		//initialize business details panel
-		initBusinessDetailsPanel();
+		initBusinessDetailsPanelForUpdate();
 
 		//initialize log out panel
 		initLogOutPanel();
@@ -337,10 +337,40 @@ public class FlexiBookPage extends JFrame {
 
 		//TO DO
 	}
-
-	//initialize business details panel
+	
 	private void initBusinessDetailsPanel(){
 		businessDetailsPanel = new JPanel();
+		businessDetailsPanel.setLayout(null);
+		businessDetailsLabel = new JLabel("Business Detail Page");
+		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
+		businessDetailsPanel.setBackground(Color.WHITE);
+		businessDetailsPanel.setOpaque(true);
+		businessDetailsPanel.setForeground(Color.WHITE);
+		businessDetailsPanel.add(businessDetailsLabel);
+		
+		//Current business details 
+		JLabel businessName = new JLabel("Business name");
+		businessName.setBounds(500, 50, 150, 23);
+		businessDetailsPanel.add(businessName);
+
+		JLabel adress = new JLabel("Address");
+		adress.setBounds(500, 100, 150, 23);
+		businessDetailsPanel.add(adress);
+
+		JLabel phoneNumber  = new JLabel("Phone Number");
+		phoneNumber.setBounds(500, 150, 150, 23);
+		businessDetailsPanel.add(phoneNumber);
+
+		JLabel email = new JLabel("Email");
+		email.setBounds(500, 200, 250, 23);
+		businessDetailsPanel.add(email);
+		
+		
+	}
+	
+	private void initBusinessDetailsPanelForSet(){
+		businessDetailsPanel = new JPanel();
+		businessDetailsPanel.setLayout(null);
 		businessDetailsLabel = new JLabel("Business Detail Page");
 		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
 		businessDetailsPanel.setBackground(Color.WHITE);
@@ -348,7 +378,172 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsPanel.setForeground(Color.WHITE);
 		businessDetailsPanel.add(businessDetailsLabel);
 
-		//TO DO
+		JButton setDetailBtn = new JButton("Set");
+		setDetailBtn.setBounds(500,400,89,23);
+		businessDetailsPanel.add(setDetailBtn);
+		
+		//Setting the UI for setting business information
+		JLabel businessNameSet = new JLabel("Business name");
+		businessNameSet.setBounds(500, 100, 150, 23);
+		businessDetailsPanel.add(businessNameSet);
+
+		JTextField businessNameSetText = new JTextField();
+		businessNameSetText.setBounds(500, 130, 200, 23);
+		businessDetailsPanel.add(businessNameSetText);
+		businessNameSetText.setColumns(10);
+
+		JLabel adressSet = new JLabel("Address");
+		adressSet.setBounds(500, 170, 70, 23);
+		businessDetailsPanel.add(adressSet);
+
+		JTextField textAdressSet= new JTextField();
+		textAdressSet.setText("");
+		textAdressSet.setBounds(500, 200, 200, 23);
+		businessDetailsPanel.add(textAdressSet);
+		textAdressSet.setColumns(10);
+
+		JLabel phoneNumberSet  = new JLabel("Phone Number");
+		phoneNumberSet.setBounds(500, 230, 150, 23);
+		businessDetailsPanel.add(phoneNumberSet);
+
+		JTextField txtPhoneNumberSet = new JTextField();
+		txtPhoneNumberSet.setBounds(500, 260, 200, 23);
+		businessDetailsPanel.add(txtPhoneNumberSet);
+		txtPhoneNumberSet.setColumns(10);
+
+		JLabel emailSet = new JLabel("Email");
+		emailSet.setBounds(500, 290, 200, 23);
+		businessDetailsPanel.add(emailSet);
+
+		JTextField txtEmailSet = new JTextField();
+		txtEmailSet.setBounds(500, 320, 200, 23);
+		businessDetailsPanel.add(txtEmailSet);
+		txtEmailSet.setColumns(10);
+		
+	}
+
+	//initialize business details panel for an owner 
+	private void initBusinessDetailsPanelForUpdate(){
+		businessDetailsPanel = new JPanel();
+		businessDetailsPanel.setLayout(null);
+		businessDetailsLabel = new JLabel("Business Detail Page");
+		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
+		businessDetailsPanel.setBackground(Color.WHITE);
+		businessDetailsPanel.setOpaque(true);
+		businessDetailsPanel.setForeground(Color.WHITE);
+		businessDetailsPanel.add(businessDetailsLabel);
+
+		//initializing the business information page for the owner 
+		
+//		JButton setDetailBtn = new JButton("Set");
+//		setDetailBtn.setBounds(750,340,89,23);
+//		businessDetailsPanel.add(setDetailBtn);
+		
+		JButton updateDetailBtn = new JButton("Update");
+		updateDetailBtn.setBounds(750,440,89,23);
+		businessDetailsPanel.add(updateDetailBtn);
+		
+		
+//		//Setting the information of the business 
+//		JTextPane businessInformationLabel = new JTextPane();
+//		businessInformationLabel.setText("Business Information");
+//		businessInformationLabel.setBounds(549, 11, 200, 23);
+//		businessDetailsPanel.add(businessInformationLabel);
+		
+		//Setting the UI for setting business information
+		JLabel businessNameSet = new JLabel("Business name");
+		businessNameSet.setBounds(700, 100, 150, 23);
+		businessDetailsPanel.add(businessNameSet);
+		
+		JTextField businessNameSetText = new JTextField();
+		businessNameSetText.setBounds(700, 130, 250, 23);
+		businessDetailsPanel.add(businessNameSetText);
+		businessNameSetText.setColumns(10);
+		
+		JLabel adressSet = new JLabel("Address");
+		adressSet.setBounds(700, 160, 100, 23);
+		businessDetailsPanel.add(adressSet);
+		
+		JTextField textAdressSet= new JTextField();
+		textAdressSet.setText("");
+		textAdressSet.setBounds(700, 190, 250, 23);
+		businessDetailsPanel.add(textAdressSet);
+		textAdressSet.setColumns(10);
+		
+		JLabel phoneNumberSet  = new JLabel("Phone Number");
+		phoneNumberSet.setBounds(700, 220, 150, 23);
+		businessDetailsPanel.add(phoneNumberSet);
+		
+		JTextField txtPhoneNumberSet = new JTextField();
+		txtPhoneNumberSet.setBounds(700, 250, 150, 23);
+		businessDetailsPanel.add(txtPhoneNumberSet);
+		txtPhoneNumberSet.setColumns(10);
+		
+		JLabel emailSet = new JLabel("Email");
+		emailSet.setBounds(700, 280, 280, 23);
+		businessDetailsPanel.add(emailSet);
+		
+		JTextField txtEmailSet = new JTextField();
+		txtEmailSet.setBounds(700, 310, 310, 23);
+		businessDetailsPanel.add(txtEmailSet);
+		txtEmailSet.setColumns(10);
+		
+		//Setting the update UI
+//		JLabel businessNameUpdate = new JLabel("Business name");
+//		businessNameUpdate.setBounds(50, 410, 150, 23);
+//		businessDetailsPanel.add(businessNameUpdate);
+//		
+//		JTextField businessNameUpdateText = new JTextField();
+//		businessNameUpdateText.setBounds(50, 440, 150, 23);
+//		businessDetailsPanel.add(businessNameUpdateText);
+//		businessNameUpdateText.setColumns(10);
+//		
+//		JLabel adressUpdate = new JLabel("Address");
+//		adressUpdate.setBounds(230, 410, 100, 23);
+//		businessDetailsPanel.add(adressUpdate);
+//		
+//		JTextField textAdressUpdate= new JTextField();
+//		textAdressUpdate.setText("");
+//		textAdressUpdate.setBounds(230, 440, 100, 23);
+//		businessDetailsPanel.add(textAdressUpdate);
+//		textAdressUpdate.setColumns(10);
+//		
+//		JLabel phoneNumberUpdate  = new JLabel("Phone Number");
+//		phoneNumberUpdate.setBounds(350, 410, 150, 23);
+//		businessDetailsPanel.add(phoneNumberUpdate);
+//		
+//		JTextField txtPhoneNumberUpdate = new JTextField();
+//		txtPhoneNumberUpdate.setBounds(350, 440, 150, 23);
+//		businessDetailsPanel.add(txtPhoneNumberUpdate);
+//		txtPhoneNumberUpdate.setColumns(10);
+//		
+//		JLabel emailUpdate = new JLabel("Email");
+//		emailUpdate.setBounds(520, 410, 200, 23);
+//		businessDetailsPanel.add(emailUpdate);
+//		
+//		JTextField txtEmailUpdate = new JTextField();
+//		txtEmailUpdate.setBounds(520, 440, 200, 23);
+//		businessDetailsPanel.add(txtEmailUpdate);
+//		txtEmailUpdate.setColumns(10);
+
+		//Current business details 
+		JLabel businessName = new JLabel("Business name");
+		businessName.setBounds(50, 50, 150, 23);
+		businessDetailsPanel.add(businessName);
+
+		JLabel adress = new JLabel("Address");
+		adress.setBounds(50, 100, 150, 23);
+		businessDetailsPanel.add(adress);
+
+		JLabel phoneNumber  = new JLabel("Phone Number");
+		phoneNumber.setBounds(50, 150, 150, 23);
+		businessDetailsPanel.add(phoneNumber);
+
+		JLabel email = new JLabel("Email");
+		email.setBounds(50, 200, 250, 23);
+		businessDetailsPanel.add(email);
+
+		
 	}
 
 	//initialize log out panel
