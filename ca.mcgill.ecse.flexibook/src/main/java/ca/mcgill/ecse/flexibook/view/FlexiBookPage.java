@@ -89,7 +89,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel passwordLabel;
 	private JTextField usernameBox; 
 	private JTextField passwordBox; 
-	private JButton saveAccountInfo; //Save button
+	private JButton saveAccountButton; //Save button
 	private JLabel bookAppointmentLabel;
 
 
@@ -448,24 +448,81 @@ public class FlexiBookPage extends JFrame {
 	//initialize info panel for owner
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
-		infoOwnerPanel.setPreferredSize(new Dimension(1100,600));
+		infoOwnerPanel.setLayout(new BoxLayout(infoOwnerPanel, BoxLayout.Y_AXIS));
+		infoOwnerPanel.setPreferredSize(new Dimension(1100,500));
 		infoOwnerPanel.setBackground(Color.WHITE);
 		infoOwnerPanel.setOpaque(true);
-		infoOwnerPanel.setForeground(Color.WHITE);
+		infoOwnerPanel.setForeground(Color.darkGray);
+		
+		infoLabel = new JLabel("Manage your Account");
+		//infoLabel.setSize(100, 30);
+		infoLabel.setAlignmentX(CENTER_ALIGNMENT);
+		infoLabel.setAlignmentY(BOTTOM_ALIGNMENT);
+		infoLabel.setBackground(Color.WHITE);
+		infoLabel.setOpaque(true);
+		infoLabel.setForeground(Color.darkGray);
+		
+//		usernameLabel = new JLabel("Username");
+//		usernameLabel.setBackground(Color.WHITE);
+//		usernameLabel.setOpaque(true);
+//		usernameLabel.setForeground(Color.darkGray);
+//		usernameLabel.setPreferredSize(new Dimension(200, 40));
+		
+		usernameBox = new JTextField("Owner"); 
+		usernameBox.setColumns(20);
+		//usernameBox.setSize(100, 30);
+		usernameBox.setAlignmentX(CENTER_ALIGNMENT);
+		usernameBox.setAlignmentY(BOTTOM_ALIGNMENT);
+		
+//		passwordLabel = new JLabel("New Password");
+//		passwordLabel.setBackground(Color.WHITE);
+//		passwordLabel.setOpaque(true);
+//		passwordLabel.setForeground(Color.darkGray);
+//		passwordLabel.setPreferredSize(new Dimension(200, 40));
+		
+		passwordBox = new JTextField("Enter New Password"); 
+		passwordBox.setColumns(20);
+		//passwordBox.setSize(100, 30);
+		passwordBox.setAlignmentX(CENTER_ALIGNMENT);
+		passwordBox.setAlignmentY(BOTTOM_ALIGNMENT);
+		
+		saveAccountButton = new JButton("Save");
+		//saveAccountButton.setSize(100, 30);
+		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
+		saveAccountButton.setAlignmentY(BOTTOM_ALIGNMENT);
+		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
+		saveAccountButton.setBackground(Color.darkGray);
+		saveAccountButton.setOpaque(true);
+		saveAccountButton.setForeground(Color.WHITE);
+		
+		//add them all here
 		infoOwnerPanel.add(infoLabel);
-
-		//TO DO
+		//infoOwnerPanel.add(usernameLabel);
+		infoOwnerPanel.add(usernameBox);
+		//infoOwnerPanel.add(passwordLabel);
+		infoOwnerPanel.add(passwordBox);
+		infoOwnerPanel.add(saveAccountButton);
+		
+		
+		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveAccountInfoActionPerformed(evt);
+			}
+		});
+		
+		
 	}
-	//initialize info panel
-	private void initInfoPanel(){
+
+
+	//initialize info panel for customer
+	private void initInfoCustomerPanel(){
 		
-		infoPanel = new JPanel();
-		infoPanel.setPreferredSize(new Dimension(1100,600));
-		infoPanel.setBackground(Color.WHITE);
-		infoPanel.setOpaque(true);
-		infoPanel.setForeground(Color.darkGray);
-		
+		infoCustomerPanel = new JPanel();
+		infoCustomerPanel.setPreferredSize(new Dimension(1100,600));
+		infoCustomerPanel.setBackground(Color.WHITE);
+		infoCustomerPanel.setOpaque(true);
+		infoCustomerPanel.setForeground(Color.WHITE);
+
 		infoLabel = new JLabel("Manage your Account");
 		infoLabel.setPreferredSize(new Dimension(200, 40));
 		infoLabel.setBackground(Color.WHITE);
@@ -492,52 +549,22 @@ public class FlexiBookPage extends JFrame {
 		passwordBox.setColumns(10);
 		passwordBox.setPreferredSize(new Dimension(200, 40));
 		
-		saveAccountInfo = new JButton("Save");
-		saveAccountInfo.setPreferredSize(new Dimension(50, 40));
-		saveAccountInfo.setBorder(new LineBorder(Color.darkGray));
-		saveAccountInfo.setBackground(Color.darkGray);
-		saveAccountInfo.setOpaque(true);
-		saveAccountInfo.setForeground(Color.WHITE);
+		saveAccountButton = new JButton("Save");
+		saveAccountButton.setPreferredSize(new Dimension(50, 40));
+		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
+		saveAccountButton.setBackground(Color.darkGray);
+		saveAccountButton.setOpaque(true);
+		saveAccountButton.setForeground(Color.WHITE);
 		
-		JPanel nested1 = new JPanel(); // first line
-		nested1.add(infoPanel.add(infoLabel));
+		//add them all here
 		
-		JPanel nested2 = new JPanel(); // second line
-		nested2.add(infoPanel.add(usernameLabel));
-		nested2.add(infoPanel.add(usernameBox));
 		
-		JPanel nested3 = new JPanel(); //third line
-		nested3.add(infoPanel.add(passwordLabel));
-		nested3.add(infoPanel.add(passwordBox));
-		
-		JPanel nested4 = new JPanel(); // fourth line
-		nested3.add(infoPanel.add(saveAccountInfo));
-		  
-		JPanel outer = new JPanel(new BorderLayout());
-		outer.add(nested1, BorderLayout.CENTER);
-		outer.add(nested2, BorderLayout.CENTER);
-		outer.add(nested3, BorderLayout.CENTER);
-		outer.add(nested4, BorderLayout.CENTER);
-
-		getContentPane().add(outer);
-
-		saveAccountInfo.addActionListener(new java.awt.event.ActionListener() {
+		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				saveAccountInfoActionPerformed(evt);
 			}
 		});
-	}
-
-	//initialize info panel for customer
-	private void initInfoCustomerPanel(){
-		infoCustomerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
-		infoCustomerPanel.setPreferredSize(new Dimension(1100,600));
-		infoCustomerPanel.setBackground(Color.WHITE);
-		infoCustomerPanel.setOpaque(true);
-		infoCustomerPanel.setForeground(Color.WHITE);
-		infoCustomerPanel.add(infoLabel);
-
+		
 
 	}
 
