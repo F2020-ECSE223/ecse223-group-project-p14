@@ -870,7 +870,7 @@ public class FlexiBookPage extends JFrame {
 		txtEmailUpdate.setColumns(10);
 		
 		//Current business details 
-		
+		/*
 		JLabel currentBusinessInfo = new JLabel("Current Business Information");
 		currentBusinessInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
 		currentBusinessInfo.setBounds(700, 25, 300, 25);
@@ -890,7 +890,8 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel email = new JLabel("Email: "+FlexiBookController.getBusinessInfo().getEmail());
 		email.setBounds(700, 160, 250, 23);
-		businessDetailsPanel.add(email);		
+		businessDetailsPanel.add(email);
+		*/		
 	}
 
 	/**
