@@ -654,7 +654,7 @@ public class FlexiBookPage extends JFrame {
 		}
 		calendarWeeklyViewPanel.add(new JLabel(calendarWithTimesIcon));
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(100,100,900,900);
+		calendarWeeklyViewPanel.setBounds(100,0,900,900);
 
 		//TO DO
 	}
@@ -870,7 +870,7 @@ public class FlexiBookPage extends JFrame {
 		txtEmailUpdate.setColumns(10);
 		
 		//Current business details 
-		
+		/*
 		JLabel currentBusinessInfo = new JLabel("Current Business Information");
 		currentBusinessInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
 		currentBusinessInfo.setBounds(700, 25, 300, 25);
@@ -890,7 +890,8 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel email = new JLabel("Email: "+FlexiBookController.getBusinessInfo().getEmail());
 		email.setBounds(700, 160, 250, 23);
-		businessDetailsPanel.add(email);		
+		businessDetailsPanel.add(email);
+		*/		
 	}
 
 	/**
@@ -958,7 +959,7 @@ public class FlexiBookPage extends JFrame {
 			getContentPane().add(topPanelOwner, c);
 			c.gridx = 0;
 			c.gridy = 1;
-			c.ipady = 687;
+			c.ipady = 700;
 			c.ipadx = 1100;
 			getContentPane().add(calendarOwnerPanel, c);
 			//set calendar to initial state
@@ -996,7 +997,7 @@ public class FlexiBookPage extends JFrame {
 			getContentPane().add(topPanelOwner, c);
 			c.gridx = 0;
 			c.gridy = 1;
-			c.ipady = 687;
+			c.ipady = 700;
 			c.ipadx = 1100;
 			getContentPane().add(calendarOwnerPanel, c);
 			//set calendar to initial state
@@ -1030,7 +1031,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(topPanelOwner, c);
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipady = 687;
+		c.ipady = 700;
 		c.ipadx = 1100;
 		getContentPane().add(calendarOwnerPanel, c);
 		//set calendar to initial state
@@ -1063,7 +1064,7 @@ public class FlexiBookPage extends JFrame {
 			getContentPane().add(topPanelCustomer, c);
 			c.gridx = 0;
 			c.gridy = 1;
-			c.ipady = 687;
+			c.ipady = 700;
 			c.ipadx = 1100;
 			getContentPane().add(calendarCustomerPanel, c);
 			//set calendar to initial state
@@ -1093,7 +1094,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(setUpInPanel, c);
 //		c.gridx = 0;
 //		c.gridy = 1;
-//		c.ipady = 687;
+//		c.ipady = 700;
 //		c.ipadx = 1100;
 //		getContentPane().add(calendarOwnerPanel, c);
 		//set calendar to initial state
@@ -1122,7 +1123,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(topPanelCustomer, c);
 		c.gridx = 0;
 		c.gridy = 1;
-		c.ipady = 687;
+		c.ipady = 700;
 		c.ipadx = 1100;
 		getContentPane().add(calendarCustomerPanel, c);
 		//set calendar to initial state
@@ -1164,7 +1165,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(infoOwnerPanel, c);
 		//set this panel as the current panel
 		previousPanel = infoOwnerPanel;
@@ -1199,7 +1200,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(infoCustomerPanel, c);
 		//set this panel as the current panel
 		previousPanel = infoCustomerPanel;
@@ -1233,7 +1234,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(singleServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = singleServicesPanel;
@@ -1267,7 +1268,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(comboServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = comboServicesPanel;
@@ -1301,7 +1302,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(calendarOwnerPanel, c);
 		//set this panel as the current panel
 		previousPanel = calendarOwnerPanel;
@@ -1335,7 +1336,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(calendarCustomerPanel, c);
 		//set this panel as the current panel
 		previousPanel = calendarCustomerPanel;
@@ -1369,7 +1370,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(businessHoursPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
@@ -1403,7 +1404,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(businessDetailsPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessDetailsPanel;
@@ -1479,7 +1480,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 687;
+		c.ipady = 700;
 		getContentPane().add(bookAppointmentPanel, c);
 		//set this panel as the current panel
 		previousPanel = bookAppointmentPanel;
