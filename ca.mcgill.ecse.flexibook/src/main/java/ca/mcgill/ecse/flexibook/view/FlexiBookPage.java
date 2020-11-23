@@ -76,6 +76,7 @@ public class FlexiBookPage extends JFrame {
 	//log in page buttons
 	private JButton logInOwnerButton;
 	private JButton logInCustomerButton;
+	private JButton signUpNewCustomerButton;
 	
 	//set up business information button
 	private JButton setDetailBtn;
@@ -210,9 +211,18 @@ public class FlexiBookPage extends JFrame {
 		logInCustomerButton.setBackground(Color.WHITE);
 		logInCustomerButton.setOpaque(true);
 		logInCustomerButton.setForeground(darkGrey);
+		
+		signUpNewCustomerButton = new JButton();
+		signUpNewCustomerButton.setText("Sign Up");
+		signUpNewCustomerButton.setPreferredSize(new Dimension(200, 40));
+		signUpNewCustomerButton.setBorder(new LineBorder(darkGrey));
+		signUpNewCustomerButton.setBackground(Color.WHITE);
+		signUpNewCustomerButton.setOpaque(true);
+		signUpNewCustomerButton.setForeground(darkGrey);
 
 		logInPanel.add(logInOwnerButton);
 		logInPanel.add(logInCustomerButton);
+		logInPanel.add(signUpNewCustomerButton);
 		
 		//initialize customer log in button listener
 		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
@@ -236,6 +246,12 @@ public class FlexiBookPage extends JFrame {
 				}
 			});		
 		}
+		
+		signUpNewCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				signUpNewCustomerActionPerformed(evt);
+			}
+		});
 
 	}
 	
@@ -1747,6 +1763,7 @@ public class FlexiBookPage extends JFrame {
 					error = e.getMessage();
 				}
 		
+		
 		// update visuals
 		refreshData();
 		
@@ -1767,7 +1784,15 @@ public class FlexiBookPage extends JFrame {
 					error = e.getMessage();
 				}
 		
-		// update visuals
+		if (error == null) { 
+			//remove previous panels
+			getContentPane().remove(previousPanel);
+			getContentPane().remove(topPanelCustomer);
+			//set new panel
+			getContentPane().add(logInPanel);
+
+		}
+		//refresh page
 		refreshData();
 		
 	}
@@ -1776,29 +1801,69 @@ public class FlexiBookPage extends JFrame {
 	private void signUpActionPerformed(java.awt.event.ActionEvent evt) {
 		// clear error message
 		error = null;
-		
-				
+			
 		// call the controller
 		try {
-			FlexiBookController.signUpCustomer(usernameBox.getText(), passwordBox.getText()));
+			FlexiBookController.signUpCustomer(usernameBox.getText(), passwordBox.getText());
 				} catch (InvalidInputException e) {
 					error = e.getMessage();
 				}
 		
-		// update visuals
-		refreshData();
+		if (error == null) {
+			//remove sign up panel
+			getContentPane().remove(customerSignUpPanel);
+			//add customer top bar and calendar panel to frame
+			getContentPane().setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			c.ipady = 40;
+			c.ipadx = 1100;
+			getContentPane().add(topPanelCustomer, c);
+			c.gridx = 0;
+			c.gridy = 1;
+			c.ipady = 700;
+			c.ipadx = 1100;
+			getContentPane().add(calendarCustomerPanel, c);
+			//set calendar to initial state
+			previousPanel = calendarCustomerPanel;
+			previousButton = calendarCustomerButton;
+			//reset calendar button
+			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+			calendarCustomerButton.setBackground(Color.WHITE);
+			calendarCustomerButton.setOpaque(true);
+			calendarCustomerButton.setForeground(darkGrey);
+		}
 		
+		//refresh page
+		refreshData();
 	}
 	
+	// method called when a customer cancels sign up. Brings you back to log in page
 	private void cancelSignUpActionPerformed(java.awt.event.ActionEvent evt) {
 		// clear error message
 		error = null;
 		
-		// todo: go back to log in page
-		
-		
-		// update visuals
+		//remove previous panels
+		getContentPane().remove(previousPanel);
+		//set new panel
+		getContentPane().add(logInPanel);
+		//refresh page
 		refreshData();
+		
+	}
+	
+	//for now, this button brings you to a sign up page
+	private void signUpNewCustomerActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+		//remove previous panels
+		getContentPane().remove(previousPanel);
+		//set new panel
+		getContentPane().add(customerSignUpPanel);
+		//refresh page
+		refreshData();
+
 		
 	}
 
