@@ -142,6 +142,7 @@ public class FlexiBookPage extends JFrame {
 		setTitle("FlexiBook");
 		setPreferredSize(new Dimension(1100,740));
 		setResizable(false);
+		getContentPane().setLayout(null);
 
 		//initialize log in page
 		initLogInPage();
@@ -151,6 +152,7 @@ public class FlexiBookPage extends JFrame {
 
 		//add log in page to the frame
 		getContentPane().add(logInPanel);
+		logInPanel.setBounds(350,360,400,40);
 
 		//refresh page
 		pack();
@@ -644,17 +646,26 @@ public class FlexiBookPage extends JFrame {
 		calendarOwnerPanel.setForeground(Color.WHITE);
 		//create calendar image panel
 		calendarWeeklyViewPanel = new JPanel();
-		calendarOwnerPanel.setPreferredSize(new Dimension(900,900));
 		//initialize image icons
 		try{
-			calendarWithTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_withNumbers.jpeg?token=AHN6XYD2BF76CM4PFQPYJ7C7YQ66A")));
-			calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYCSNWHRW6GPZDKBVEC7YQ66Y")));
+			//calendarWithTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_withNumbers.jpeg?token=AHN6XYDCIITJGZPACHFYUIK7YUNZO")));
+			//calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYA77PUIZ52UCLVXGB27YUNYC")));
+			calendarWithTimesIcon = new ImageIcon("Calendar_withNumbers.jpg");
+			calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYA77PUIZ52UCLVXGB27YUNYC")));
 		} catch(Exception exp) {
 			error += exp.getMessage();
 		}
-		calendarWeeklyViewPanel.add(new JLabel(calendarWithTimesIcon));
+		JLabel temp = new JLabel(calendarWithTimesIcon);
+		temp.setBackground(Color.WHITE);
+		temp.setForeground(Color.WHITE);
+		temp.setOpaque(true);
+		//calendarWeeklyViewPanel.add(temp);
+		calendarWeeklyViewPanel.setBackground(Color.WHITE);
+		calendarWeeklyViewPanel.setOpaque(true);
+		calendarWeeklyViewPanel.setForeground(Color.WHITE);
+		calendarWeeklyViewPanel.setBorder(new LineBorder(darkGrey));
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(100,0,900,900);
+		calendarWeeklyViewPanel.setBounds(390,10,700,680);
 
 		//TO DO
 	}
@@ -950,18 +961,10 @@ public class FlexiBookPage extends JFrame {
 			//remove log in panel
 			getContentPane().remove(setUpInPanel);
 			//add owner top bar and calendar panel to frame
-			getContentPane().setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.gridx = 0;
-			c.gridy = 0;
-			c.ipady = 40;
-			c.ipadx = 1100;
-			getContentPane().add(topPanelOwner, c);
-			c.gridx = 0;
-			c.gridy = 1;
-			c.ipady = 700;
-			c.ipadx = 1100;
-			getContentPane().add(calendarOwnerPanel, c);
+			getContentPane().add(topPanelOwner);
+			topPanelOwner.setBounds(0,0,1100,40);
+			getContentPane().add(calendarOwnerPanel);
+			calendarOwnerPanel.setBounds(0,40,1100,700);
 			//set calendar to initial state
 			previousPanel = calendarOwnerPanel;
 			previousButton = calendarOwnerButton;
@@ -988,18 +991,10 @@ public class FlexiBookPage extends JFrame {
 			//remove log in panel
 			getContentPane().remove(logInPanel);
 			//add owner top bar and calendar panel to frame
-			getContentPane().setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.gridx = 0;
-			c.gridy = 0;
-			c.ipady = 40;
-			c.ipadx = 1100;
-			getContentPane().add(topPanelOwner, c);
-			c.gridx = 0;
-			c.gridy = 1;
-			c.ipady = 700;
-			c.ipadx = 1100;
-			getContentPane().add(calendarOwnerPanel, c);
+			getContentPane().add(topPanelOwner);
+			topPanelOwner.setBounds(0,0,1100,40);
+			getContentPane().add(calendarOwnerPanel);
+			calendarOwnerPanel.setBounds(0,40,1100,700);
 			//set calendar to initial state
 			previousPanel = calendarOwnerPanel;
 			previousButton = calendarOwnerButton;
@@ -1022,18 +1017,10 @@ public class FlexiBookPage extends JFrame {
 		//remove log in panel
 		getContentPane().remove(logInPanel);
 		//add owner top bar and calendar panel to frame
-		getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 40;
-		c.ipadx = 1100;
-		getContentPane().add(topPanelOwner, c);
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipady = 700;
-		c.ipadx = 1100;
-		getContentPane().add(calendarOwnerPanel, c);
+		getContentPane().add(topPanelOwner);
+		topPanelOwner.setBounds(0,0,1100,40);
+		getContentPane().add(calendarOwnerPanel);
+		calendarOwnerPanel.setBounds(0,40,1100,700);
 		//set calendar to initial state
 		previousPanel = calendarOwnerPanel;
 		previousButton = calendarOwnerButton;
@@ -1055,18 +1042,10 @@ public class FlexiBookPage extends JFrame {
 			//remove log in panel
 			getContentPane().remove(logInPanel);
 			//add customer top bar and calendar panel to frame
-			getContentPane().setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.gridx = 0;
-			c.gridy = 0;
-			c.ipady = 40;
-			c.ipadx = 1100;
-			getContentPane().add(topPanelCustomer, c);
-			c.gridx = 0;
-			c.gridy = 1;
-			c.ipady = 700;
-			c.ipadx = 1100;
-			getContentPane().add(calendarCustomerPanel, c);
+			getContentPane().add(topPanelCustomer);
+			topPanelCustomer.setBounds(0,0,1100,40);
+			getContentPane().add(calendarCustomerPanel);
+			calendarCustomerPanel.setBounds(0,40,1100,700);
 			//set calendar to initial state
 			previousPanel = calendarCustomerPanel;
 			previousButton = calendarCustomerButton;
@@ -1085,13 +1064,8 @@ public class FlexiBookPage extends JFrame {
 		//remove log in panel
 		getContentPane().remove(logInPanel);
 		//add owner top bar and calendar panel to frame
-		getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 700;
-		c.ipadx = 1100;
-		getContentPane().add(setUpInPanel, c);
+		getContentPane().add(setUpInPanel);
+		setUpInPanel.setBounds(0,0,1100,700);
 //		c.gridx = 0;
 //		c.gridy = 1;
 //		c.ipady = 700;
@@ -1114,18 +1088,10 @@ public class FlexiBookPage extends JFrame {
 		//remove log in panel
 		getContentPane().remove(logInPanel);
 		//add customer top bar and calendar panel to frame
-		getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 40;
-		c.ipadx = 1100;
-		getContentPane().add(topPanelCustomer, c);
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipady = 700;
-		c.ipadx = 1100;
-		getContentPane().add(calendarCustomerPanel, c);
+		getContentPane().add(topPanelCustomer);
+		topPanelCustomer.setBounds(0,0,1100,40);
+		getContentPane().add(calendarCustomerPanel);
+		calendarCustomerPanel.setBounds(0,40,1100,700);
 		//set calendar to initial state
 		previousPanel = calendarCustomerPanel;
 		previousButton = calendarCustomerButton;
@@ -1161,12 +1127,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(infoOwnerPanel, c);
+		getContentPane().add(infoOwnerPanel);
+		infoOwnerPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = infoOwnerPanel;
 		//refresh page
@@ -1196,12 +1158,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(infoCustomerPanel, c);
+		getContentPane().add(infoCustomerPanel);
+		infoCustomerPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = infoCustomerPanel;
 		//refresh page
@@ -1230,12 +1188,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(singleServicesPanel, c);
+		getContentPane().add(singleServicesPanel);
+		singleServicesPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = singleServicesPanel;
 		//refresh page
@@ -1264,12 +1218,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(comboServicesPanel, c);
+		getContentPane().add(comboServicesPanel);
+		comboServicesPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = comboServicesPanel;
 		//refresh page
@@ -1298,12 +1248,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(calendarOwnerPanel, c);
+		getContentPane().add(calendarOwnerPanel);
+		calendarOwnerPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = calendarOwnerPanel;
 		//refresh page
@@ -1332,12 +1278,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(calendarCustomerPanel, c);
+		getContentPane().add(calendarCustomerPanel);
+		calendarCustomerPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = calendarCustomerPanel;
 		//refresh page
@@ -1366,12 +1308,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(businessHoursPanel, c);
+		getContentPane().add(businessHoursPanel);
+		businessHoursPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
 		//refresh page
@@ -1400,12 +1338,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(businessDetailsPanel, c);
+		getContentPane().add(businessDetailsPanel);
+		businessDetailsPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = businessDetailsPanel;
 		//refresh page
@@ -1429,6 +1363,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(topPanelOwner);
 		//set new panel
 		getContentPane().add(logInPanel);
+		logInPanel.setBounds(350,360,400,40);
 		//refresh page
 		refreshData();
 	}
@@ -1476,12 +1411,8 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipadx = 1100;
-		c.ipady = 700;
-		getContentPane().add(bookAppointmentPanel, c);
+		getContentPane().add(bookAppointmentPanel);
+		bookAppointmentPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
 		previousPanel = bookAppointmentPanel;
 		//refresh page
