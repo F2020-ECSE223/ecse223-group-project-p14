@@ -11,9 +11,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Properties;
+import java.net.URL;
 
 import javax.swing.border.LineBorder;
 import javax.swing.*;
+import javax.imageio.ImageIO;
 
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
@@ -23,31 +25,51 @@ public class FlexiBookPage extends JFrame {
 
 	private static final long serialVersionUID = -4426310869335015542L;
 
-	//top bar
-	private JPanel topPanel;
+	//top bar for owner
+	private JPanel topPanelOwner;
+	//top bar for customer
+	private JPanel topPanelCustomer;
+	//panel for log in
+	private JPanel logInPanel;
 	//panel for each button on top bar
-	private JPanel infoPanel;
+	private JPanel infoOwnerPanel;
+	private JPanel infoCustomerPanel;
 	private JPanel singleServicesPanel;
 	private JPanel comboServicesPanel;
-	private JPanel calendarPanel;
+	private JPanel calendarOwnerPanel;
+	private JPanel calendarCustomerPanel;
 	private JPanel businessHoursPanel;
 	private JPanel businessDetailsPanel;
-	private JPanel logOutPanel;
+	private JPanel logOutOwnerPanel;
+	private JPanel logOutCustomerPanel;
+	private JPanel bookAppointmentPanel;
+	//panels for calendar tab
+	private JPanel calendarWeeklyViewPanel;
 	
 	//top bar buttons
-	private JButton infoButton;
+	private JButton infoOwnerButton;
+	private JButton infoCustomerButton;
 	private JButton singleServicesButton;
 	private JButton comboServicesButton;
-	private JButton calendarButton;
+	private JButton calendarOwnerButton;
+	private JButton calendarCustomerButton;
 	private JButton businessHoursButton;
 	private JButton businessDetailsButton;
-	private JButton logOutButton;
+	private JButton logOutOwnerButton;
+	private JButton logOutCustomerButton;
+	private JButton bookAppointmentButton;
+
+	//log in page buttons
+	private JButton logInOwnerButton;
+	private JButton logInCustomerButton;
 
 	//top bar icons
 	private ImageIcon infoIconDark;
 	private ImageIcon infoIconLight;
 	private ImageIcon logOutIconDark;
 	private ImageIcon logOutIconLight;
+	//calendar page icons
+	private ImageIcon calendarIcon;
 
 	//page labels
 	private JLabel infoLabel;
@@ -57,6 +79,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel businessHoursLabel;
 	private JLabel businessDetailsLabel;
 	private JLabel logOutLabel;
+	private JLabel bookAppointmentLabel;
 
 	//tracking last page
 	private JButton previousButton;
@@ -65,8 +88,10 @@ public class FlexiBookPage extends JFrame {
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
 
+	private String error;
 
-	/** Creates new form BtmsPage */
+
+	/** Creates new form FlexiBookPage */
 	public FlexiBookPage() {
 		initComponents();
 		refreshData();
@@ -79,17 +104,75 @@ public class FlexiBookPage extends JFrame {
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
-		setPreferredSize(new Dimension(1100,640));
-		//setResizable(false);
+		setPreferredSize(new Dimension(1100,740));
+		setResizable(false);
 
+		//initialize log in page
+		initLogInPage();
+		initTopBarOwner();
+		initTopBarCustomer();
+
+		//add log in page to the frame
+		getContentPane().add(logInPanel);
+
+		//refresh page
+		pack();
+
+	}
+
+	//initialize log in page
+	private void initLogInPage(){
+		//initialize log in panel layout
+		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
+		logInPanel = new JPanel();
+		logInPanel.setLayout(logInLayout);
+		logInPanel.setPreferredSize(new Dimension(1100,40));
+		//initialize owner log in button
+		logInOwnerButton = new JButton();
+		logInOwnerButton.setText("Owner Log In");
+		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
+		logInOwnerButton.setBorder(new LineBorder(darkGrey));
+		logInOwnerButton.setBackground(Color.WHITE);
+		logInOwnerButton.setOpaque(true);
+		logInOwnerButton.setForeground(darkGrey);
+		//initialize customer log in button
+		logInCustomerButton = new JButton();
+		logInCustomerButton.setText("Customer Log In");
+		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
+		logInCustomerButton.setBorder(new LineBorder(darkGrey));
+		logInCustomerButton.setBackground(Color.WHITE);
+		logInCustomerButton.setOpaque(true);
+		logInCustomerButton.setForeground(darkGrey);
+
+		logInPanel.add(logInOwnerButton);
+		logInPanel.add(logInCustomerButton);
+
+		//initialize owner log in button listener
+		logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logInOwnerButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize customer log in button listener
+		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logInCustomerButtonActionPerformed(evt);
+			}
+		});
+
+	}
+
+	//initialize top bar for owner
+	private void initTopBarOwner(){
 		//initialize top bar layout
 		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
-		topPanel = new JPanel();
-		topPanel.setLayout(topLayout);
-		topPanel.setPreferredSize(new Dimension(1100,40));
+		topPanelOwner = new JPanel();
+		topPanelOwner.setLayout(topLayout);
+		topPanelOwner.setPreferredSize(new Dimension(1100,40));
 
 		//initialize info panel
-		initInfoPanel();
+		initInfoOwnerPanel();
 
 		//initialize single service panel
 		initSingleServicesPanel();
@@ -98,7 +181,7 @@ public class FlexiBookPage extends JFrame {
 		initComboServicesPanel();
 
 		//initialize calendar panel
-		initCalendarPanel();
+		initCalendarOwnerPanel();
 
 		//initialize business hour panel
 		initBusinessHoursPanel();
@@ -107,22 +190,26 @@ public class FlexiBookPage extends JFrame {
 		initBusinessDetailsPanel();
 
 		//initialize log out panel
-		initLogOutPanel();
+		initLogOutOwnerPanel();
 
 		//initialize image icons
-		infoIconDark = new ImageIcon("infoIconDark.jpg");
-		infoIconLight = new ImageIcon("infoIconLight.jpg");
-		logOutIconDark = new ImageIcon("logOutIconDark.jpg");
-		logOutIconLight = new ImageIcon("logOutIconLight.jpg");
-
+		try{
+			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
 		//initialize info button
-		infoButton = new JButton();
-		infoButton.setIcon(infoIconDark);
-		infoButton.setPreferredSize(new Dimension(50, 40));
-		infoButton.setBorder(new LineBorder(darkGrey));
-		infoButton.setBackground(darkGrey);
-		infoButton.setOpaque(true);
-		infoButton.setForeground(Color.WHITE);
+		infoOwnerButton = new JButton();
+		infoOwnerButton.setIcon(infoIconDark);
+		infoOwnerButton.setPreferredSize(new Dimension(50, 40));
+		infoOwnerButton.setBorder(new LineBorder(darkGrey));
+		infoOwnerButton.setBackground(darkGrey);
+		infoOwnerButton.setOpaque(true);
+		infoOwnerButton.setForeground(Color.WHITE);
 
 		//initialize single service button
 		singleServicesButton = new JButton();
@@ -143,13 +230,13 @@ public class FlexiBookPage extends JFrame {
 		comboServicesButton.setForeground(Color.WHITE);
 
 		//initialize calendar button
-		calendarButton = new JButton();
-		calendarButton.setText("Calendar");
-		calendarButton.setPreferredSize(new Dimension(200, 40));
-		calendarButton.setBorder(new LineBorder(Color.WHITE));
-		calendarButton.setBackground(Color.WHITE);
-		calendarButton.setOpaque(true);
-		calendarButton.setForeground(darkGrey);
+		calendarOwnerButton = new JButton();
+		calendarOwnerButton.setText("Calendar");
+		calendarOwnerButton.setPreferredSize(new Dimension(200, 40));
+		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarOwnerButton.setBackground(Color.WHITE);
+		calendarOwnerButton.setOpaque(true);
+		calendarOwnerButton.setForeground(darkGrey);
 
 		//initialize business hours button
 		businessHoursButton = new JButton();
@@ -170,47 +257,27 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsButton.setForeground(Color.WHITE);
 
 		//initialize log out button
-		logOutButton = new JButton();
-		logOutButton.setIcon(logOutIconDark);
-		logOutButton.setPreferredSize(new Dimension(50, 40));
-		logOutButton.setBorder(new LineBorder(darkGrey));
-		logOutButton.setBackground(darkGrey);
-		logOutButton.setOpaque(true);
-		logOutButton.setForeground(Color.WHITE);
+		logOutOwnerButton = new JButton();
+		logOutOwnerButton.setIcon(logOutIconDark);
+		logOutOwnerButton.setPreferredSize(new Dimension(50, 40));
+		logOutOwnerButton.setBorder(new LineBorder(darkGrey));
+		logOutOwnerButton.setBackground(darkGrey);
+		logOutOwnerButton.setOpaque(true);
+		logOutOwnerButton.setForeground(Color.WHITE);
 
 		//add buttons to top bar
-		topPanel.add(infoButton);
-		topPanel.add(singleServicesButton);
-		topPanel.add(comboServicesButton);
-		topPanel.add(calendarButton);
-		topPanel.add(businessHoursButton);
-		topPanel.add(businessDetailsButton);
-		topPanel.add(logOutButton);
-
-		//set calendar as initial page
-		previousButton = calendarButton;
-		previousPanel = calendarPanel;
-
-		//add top bar and calendar panel to frame
-		getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;
-		c.gridy = 0;
-		c.ipady = 40;
-		c.ipadx = 1100;
-		getContentPane().add(topPanel, c);
-		c.gridx = 0;
-		c.gridy = 1;
-		c.ipady = 587;
-		c.ipadx = 1100;
-		getContentPane().add(calendarPanel, c);
-
-		pack();
+		topPanelOwner.add(infoOwnerButton);
+		topPanelOwner.add(singleServicesButton);
+		topPanelOwner.add(comboServicesButton);
+		topPanelOwner.add(calendarOwnerButton);
+		topPanelOwner.add(businessHoursButton);
+		topPanelOwner.add(businessDetailsButton);
+		topPanelOwner.add(logOutOwnerButton);
 
 		//initialize info button listener
-		infoButton.addActionListener(new java.awt.event.ActionListener() {
+		infoOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				infoButtonActionPerformed(evt);
+				infoOwnerButtonActionPerformed(evt);
 			}
 		});
 
@@ -229,9 +296,9 @@ public class FlexiBookPage extends JFrame {
 		});
 
 		//initialize calendar button listener
-		calendarButton.addActionListener(new java.awt.event.ActionListener() {
+		calendarOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				calendarButtonActionPerformed(evt);
+				calendarOwnerButtonActionPerformed(evt);
 			}
 		});
 
@@ -250,23 +317,138 @@ public class FlexiBookPage extends JFrame {
 		});
 
 		//initialize log out button listener
-		logOutButton.addActionListener(new java.awt.event.ActionListener() {
+		logOutOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logOutButtonActionPerformed(evt);
+				logOutOwnerButtonActionPerformed(evt);
 			}
 		});
 
 	}
 
-	//initialize info panel
-	private void initInfoPanel(){
-		infoPanel = new JPanel();
+	//initialize top bar for customer
+	private void initTopBarCustomer(){
+		//initialize top bar layout
+		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+		topPanelCustomer = new JPanel();
+		topPanelCustomer.setLayout(topLayout);
+		topPanelCustomer.setPreferredSize(new Dimension(1100,40));
+
+		//initialize info panel
+		initInfoCustomerPanel();
+
+		//initialize calendar panel
+		initCalendarCustomerPanel();
+
+		//initialize business details panel
+		initBookAppointmentPanel();
+
+		//initialize log out panel
+		initLogOutCustomerPanel();
+
+		//initialize image icons
+		try{
+			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
+		//initialize info button
+		infoCustomerButton = new JButton();
+		infoCustomerButton.setIcon(infoIconDark);
+		infoCustomerButton.setPreferredSize(new Dimension(50, 40));
+		infoCustomerButton.setBorder(new LineBorder(darkGrey));
+		infoCustomerButton.setBackground(darkGrey);
+		infoCustomerButton.setOpaque(true);
+		infoCustomerButton.setForeground(Color.WHITE);
+
+		//initialize single service button
+		bookAppointmentButton = new JButton();
+		bookAppointmentButton.setText("Book Appointment");
+		bookAppointmentButton.setPreferredSize(new Dimension(500, 40));
+		bookAppointmentButton.setBorder(new LineBorder(darkGrey));
+		bookAppointmentButton.setBackground(darkGrey);
+		bookAppointmentButton.setOpaque(true);
+		bookAppointmentButton.setForeground(Color.WHITE);
+
+		//initialize calendar button
+		calendarCustomerButton = new JButton();
+		calendarCustomerButton.setText("Calendar");
+		calendarCustomerButton.setPreferredSize(new Dimension(500, 40));
+		calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarCustomerButton.setBackground(Color.WHITE);
+		calendarCustomerButton.setOpaque(true);
+		calendarCustomerButton.setForeground(darkGrey);
+
+		//initialize log out button
+		logOutCustomerButton = new JButton();
+		logOutCustomerButton.setIcon(logOutIconDark);
+		logOutCustomerButton.setPreferredSize(new Dimension(50, 40));
+		logOutCustomerButton.setBorder(new LineBorder(darkGrey));
+		logOutCustomerButton.setBackground(darkGrey);
+		logOutCustomerButton.setOpaque(true);
+		logOutCustomerButton.setForeground(Color.WHITE);
+
+		//add buttons to top bar
+		topPanelCustomer.add(infoCustomerButton);
+		topPanelCustomer.add(bookAppointmentButton);
+		topPanelCustomer.add(calendarCustomerButton);
+		topPanelCustomer.add(logOutCustomerButton);
+
+		//initialize info button listener
+		infoCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				infoCustomerButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize book appointment button listener
+		bookAppointmentButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				bookAppointmentButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize calendar button listener
+		calendarCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				calendarCustomerButtonActionPerformed(evt);
+			}
+		});
+
+		//initialize log out button listener
+		logOutCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logOutCustomerButtonActionPerformed(evt);
+			}
+		});
+
+	}
+
+	//initialize info panel for owner
+	private void initInfoOwnerPanel(){
+		infoOwnerPanel = new JPanel();
 		infoLabel = new JLabel("Info Page");
-		infoPanel.setPreferredSize(new Dimension(1100,600));
-		infoPanel.setBackground(Color.WHITE);
-		infoPanel.setOpaque(true);
-		infoPanel.setForeground(Color.WHITE);
-		infoPanel.add(infoLabel);
+		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		infoOwnerPanel.setBackground(Color.WHITE);
+		infoOwnerPanel.setOpaque(true);
+		infoOwnerPanel.setForeground(Color.WHITE);
+		infoOwnerPanel.add(infoLabel);
+
+		//TO DO
+	}
+
+	//initialize info panel for customer
+	private void initInfoCustomerPanel(){
+		infoCustomerPanel = new JPanel();
+		infoLabel = new JLabel("Info Page");
+		infoCustomerPanel.setPreferredSize(new Dimension(1100,700));
+		infoCustomerPanel.setBackground(Color.WHITE);
+		infoCustomerPanel.setOpaque(true);
+		infoCustomerPanel.setForeground(Color.WHITE);
+		infoCustomerPanel.add(infoLabel);
 
 		//TO DO
 	}
@@ -275,7 +457,7 @@ public class FlexiBookPage extends JFrame {
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
 		singleServicesLabel = new JLabel("Single Service Page");
-		singleServicesPanel.setPreferredSize(new Dimension(1100,600));
+		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
 		singleServicesPanel.setBackground(Color.WHITE);
 		singleServicesPanel.setOpaque(true);
 		singleServicesPanel.setForeground(Color.WHITE);
@@ -288,7 +470,7 @@ public class FlexiBookPage extends JFrame {
 	private void initComboServicesPanel(){
 		comboServicesPanel = new JPanel();
 		comboServicesLabel = new JLabel("Combo Service Page");
-		comboServicesPanel.setPreferredSize(new Dimension(1100,600));
+		comboServicesPanel.setPreferredSize(new Dimension(1100,700));
 		comboServicesPanel.setBackground(Color.WHITE);
 		comboServicesPanel.setOpaque(true);
 		comboServicesPanel.setForeground(Color.WHITE);
@@ -297,15 +479,43 @@ public class FlexiBookPage extends JFrame {
 		//TO DO
 	}
 
-	//initialize calendar services panel
-	private void initCalendarPanel(){
-		calendarPanel = new JPanel();
+	//initialize calendar services panel for owner
+	private void initCalendarOwnerPanel(){
+		//create new JPanel
+		calendarOwnerPanel = new JPanel();
+		//set null layout
+		calendarOwnerPanel.setLayout(null);
+		//set size
+		calendarOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		//set background
+		calendarOwnerPanel.setBackground(Color.WHITE);
+		calendarOwnerPanel.setOpaque(true);
+		calendarOwnerPanel.setForeground(Color.WHITE);
+		//create calendar image panel
+		calendarWeeklyViewPanel = new JPanel();
+		calendarOwnerPanel.setPreferredSize(new Dimension(900,900));
+		//initialize image icons
+		try{
+			calendarIcon = new ImageIcon(ImageIO.read(new URL("")));
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		calendarWeeklyViewPanel.add(new JLabel(calendarIcon));
+		calendarOwnerPanel.add(calendarWeeklyViewPanel);
+		calendarWeeklyViewPanel.setBounds(100,100,900,900);
+
+		//TO DO
+	}
+
+	//initialize calendar services panel for customer
+	private void initCalendarCustomerPanel(){
+		calendarCustomerPanel = new JPanel();
 		calendarLabel = new JLabel("Calendar Page");
-		calendarPanel.setPreferredSize(new Dimension(1100,600));
-		calendarPanel.setBackground(Color.WHITE);
-		calendarPanel.setOpaque(true);
-		calendarPanel.setForeground(Color.WHITE);
-		calendarPanel.add(calendarLabel);
+		calendarCustomerPanel.setPreferredSize(new Dimension(1100,700));
+		calendarCustomerPanel.setBackground(Color.WHITE);
+		calendarCustomerPanel.setOpaque(true);
+		calendarCustomerPanel.setForeground(Color.WHITE);
+		calendarCustomerPanel.add(calendarLabel);
 
 		//TO DO
 	}
@@ -314,7 +524,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
 		businessHoursLabel = new JLabel("Business Hour Page");
-		businessHoursPanel.setPreferredSize(new Dimension(1100,600));
+		businessHoursPanel.setPreferredSize(new Dimension(1100,700));
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
@@ -327,7 +537,7 @@ public class FlexiBookPage extends JFrame {
 	private void initBusinessDetailsPanel(){
 		businessDetailsPanel = new JPanel();
 		businessDetailsLabel = new JLabel("Business Detail Page");
-		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
+		businessDetailsPanel.setPreferredSize(new Dimension(1100,700));
 		businessDetailsPanel.setBackground(Color.WHITE);
 		businessDetailsPanel.setOpaque(true);
 		businessDetailsPanel.setForeground(Color.WHITE);
@@ -336,15 +546,41 @@ public class FlexiBookPage extends JFrame {
 		//TO DO
 	}
 
-	//initialize log out panel
-	private void initLogOutPanel(){
-		logOutPanel = new JPanel();
+	//initialize log out panel for owner
+	private void initLogOutOwnerPanel(){
+		logOutOwnerPanel = new JPanel();
 		logOutLabel = new JLabel("Log Out Page");
-		logOutPanel.setPreferredSize(new Dimension(1100,600));
-		logOutPanel.setBackground(Color.WHITE);
-		logOutPanel.setOpaque(true);
-		logOutPanel.setForeground(Color.WHITE);
-		logOutPanel.add(logOutLabel);
+		logOutOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		logOutOwnerPanel.setBackground(Color.WHITE);
+		logOutOwnerPanel.setOpaque(true);
+		logOutOwnerPanel.setForeground(Color.WHITE);
+		logOutOwnerPanel.add(logOutLabel);
+
+		//TO DO
+	}
+
+	//initialize log out panel for customer
+	private void initLogOutCustomerPanel(){
+		logOutCustomerPanel = new JPanel();
+		logOutLabel = new JLabel("Log Out Page");
+		logOutCustomerPanel.setPreferredSize(new Dimension(1100,700));
+		logOutCustomerPanel.setBackground(Color.WHITE);
+		logOutCustomerPanel.setOpaque(true);
+		logOutCustomerPanel.setForeground(Color.WHITE);
+		logOutCustomerPanel.add(logOutLabel);
+
+		//TO DO
+	}
+
+	//initialize business details panel
+	private void initBookAppointmentPanel(){
+		bookAppointmentPanel = new JPanel();
+		bookAppointmentLabel = new JLabel("Book Appointment Page");
+		bookAppointmentPanel.setPreferredSize(new Dimension(1100,700));
+		bookAppointmentPanel.setBackground(Color.WHITE);
+		bookAppointmentPanel.setOpaque(true);
+		bookAppointmentPanel.setForeground(Color.WHITE);
+		bookAppointmentPanel.add(bookAppointmentLabel);
 
 		//TO DO
 	}
@@ -355,27 +591,84 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 	}
 
-	
-	//method called when info button pressed
-	private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	//method called when log in owner button pressed
+	private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//remove log in panel
+		getContentPane().remove(logInPanel);
+		//add owner top bar and calendar panel to frame
+		getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 40;
+		c.ipadx = 1100;
+		getContentPane().add(topPanelOwner, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 687;
+		c.ipadx = 1100;
+		getContentPane().add(calendarOwnerPanel, c);
+		//set calendar to initial state
+		previousPanel = calendarOwnerPanel;
+		previousButton = calendarOwnerButton;
+		//reset calendar button
+		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarOwnerButton.setBackground(Color.WHITE);
+		calendarOwnerButton.setOpaque(true);
+		calendarOwnerButton.setForeground(darkGrey);
+		//refresh page
+		refreshData();
+	}
+
+	//method called when log in customer button pressed
+	private void logInCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//remove log in panel
+		getContentPane().remove(logInPanel);
+		//add customer top bar and calendar panel to frame
+		getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 40;
+		c.ipadx = 1100;
+		getContentPane().add(topPanelCustomer, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 687;
+		c.ipadx = 1100;
+		getContentPane().add(calendarCustomerPanel, c);
+		//set calendar to initial state
+		previousPanel = calendarCustomerPanel;
+		previousButton = calendarCustomerButton;
+		//reset calendar button
+		calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarCustomerButton.setBackground(Color.WHITE);
+		calendarCustomerButton.setOpaque(true);
+		calendarCustomerButton.setForeground(darkGrey);
+		//refresh page
+		refreshData();
+	}
+
+	//method called when owner info button pressed
+	private void infoOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
-		previousButton = infoButton;
+		previousButton = infoOwnerButton;
 		//set this button to white background
-		infoButton.setBorder(new LineBorder(Color.WHITE));
-		infoButton.setIcon(infoIconLight);
-		infoButton.setBackground(Color.WHITE);
-		infoButton.setOpaque(true);
-		infoButton.setForeground(darkGrey);
+		infoOwnerButton.setBorder(new LineBorder(Color.WHITE));
+		infoOwnerButton.setIcon(infoIconLight);
+		infoOwnerButton.setBackground(Color.WHITE);
+		infoOwnerButton.setOpaque(true);
+		infoOwnerButton.setForeground(darkGrey);
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
@@ -383,10 +676,45 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
-		getContentPane().add(infoPanel, c);
+		c.ipady = 687;
+		getContentPane().add(infoOwnerPanel, c);
 		//set this panel as the current panel
-		previousPanel = infoPanel;
+		previousPanel = infoOwnerPanel;
+		//refresh page
+		refreshData();
+	}
+	
+	//method called when customer info button pressed
+	private void infoCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoCustomerButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutCustomerButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//set this button to current button pressed
+		previousButton = infoCustomerButton;
+		//set this button to white background
+		infoCustomerButton.setBorder(new LineBorder(Color.WHITE));
+		infoCustomerButton.setIcon(infoIconLight);
+		infoCustomerButton.setBackground(Color.WHITE);
+		infoCustomerButton.setOpaque(true);
+		infoCustomerButton.setForeground(darkGrey);
+		//remove previous panel
+		getContentPane().remove(previousPanel);
+		//set new panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipadx = 1100;
+		c.ipady = 687;
+		getContentPane().add(infoCustomerPanel, c);
+		//set this panel as the current panel
+		previousPanel = infoCustomerPanel;
 		//refresh page
 		refreshData();
 	}
@@ -398,9 +726,9 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
@@ -417,7 +745,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(singleServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = singleServicesPanel;
@@ -432,9 +760,9 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
@@ -451,7 +779,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(comboServicesPanel, c);
 		//set this panel as the current panel
 		previousPanel = comboServicesPanel;
@@ -459,25 +787,25 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when calendar button pressed
-	private void calendarButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	//method called when owner calendar button pressed
+	private void calendarOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
-		previousButton = calendarButton;
+		previousButton = calendarOwnerButton;
 		//set this button to white background
-		calendarButton.setBorder(new LineBorder(Color.WHITE));
-		calendarButton.setBackground(Color.WHITE);
-		calendarButton.setOpaque(true);
-		calendarButton.setForeground(darkGrey);
+		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarOwnerButton.setBackground(Color.WHITE);
+		calendarOwnerButton.setOpaque(true);
+		calendarOwnerButton.setForeground(darkGrey);
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
@@ -485,10 +813,44 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
-		getContentPane().add(calendarPanel, c);
+		c.ipady = 687;
+		getContentPane().add(calendarOwnerPanel, c);
 		//set this panel as the current panel
-		previousPanel = calendarPanel;
+		previousPanel = calendarOwnerPanel;
+		//refresh page
+		refreshData();
+	}
+
+	//method called when customer calendar button pressed
+	private void calendarCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoCustomerButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutCustomerButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//set this button to current button pressed
+		previousButton = calendarCustomerButton;
+		//set this button to white background
+		calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarCustomerButton.setBackground(Color.WHITE);
+		calendarCustomerButton.setOpaque(true);
+		calendarCustomerButton.setForeground(darkGrey);
+		//remove previous panel
+		getContentPane().remove(previousPanel);
+		//set new panel
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipadx = 1100;
+		c.ipady = 687;
+		getContentPane().add(calendarCustomerPanel, c);
+		//set this panel as the current panel
+		previousPanel = calendarCustomerPanel;
 		//refresh page
 		refreshData();
 	}
@@ -500,9 +862,9 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
@@ -519,7 +881,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(businessHoursPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
@@ -534,9 +896,9 @@ public class FlexiBookPage extends JFrame {
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
@@ -553,7 +915,7 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
+		c.ipady = 687;
 		getContentPane().add(businessDetailsPanel, c);
 		//set this panel as the current panel
 		previousPanel = businessDetailsPanel;
@@ -561,26 +923,67 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when log out button pressed
-	private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	//method called when owner log out button pressed
+	private void logOutOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
 		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoButton)){
+		if(previousButton.equals(infoOwnerButton)){
 			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutButton)){
+		} else if(previousButton.equals(logOutOwnerButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//remove previous panels
+		getContentPane().remove(previousPanel);
+		getContentPane().remove(topPanelOwner);
+		//set new panel
+		getContentPane().add(logInPanel);
+		//refresh page
+		refreshData();
+	}
+
+	//method called when customer log out button pressed
+	private void logOutCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoCustomerButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutCustomerButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//remove previous panels
+		getContentPane().remove(previousPanel);
+		getContentPane().remove(topPanelCustomer);
+		//set new panel
+		getContentPane().add(logInPanel);
+		//refresh page
+		refreshData();
+	}
+
+	//method called when book appointment button pressed
+	private void bookAppointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoCustomerButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutCustomerButton)){
 			previousButton.setIcon(logOutIconDark);
 		}
 		//set this button to current button pressed
-		previousButton = logOutButton;
+		previousButton = bookAppointmentButton;
 		//set this button to white background
-		logOutButton.setBorder(new LineBorder(Color.WHITE));
-		logOutButton.setIcon(logOutIconLight);
-		logOutButton.setBackground(Color.WHITE);
-		logOutButton.setOpaque(true);
-		logOutButton.setForeground(darkGrey);
+		bookAppointmentButton.setBorder(new LineBorder(Color.WHITE));
+		bookAppointmentButton.setBackground(Color.WHITE);
+		bookAppointmentButton.setOpaque(true);
+		bookAppointmentButton.setForeground(darkGrey);
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
@@ -588,10 +991,10 @@ public class FlexiBookPage extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 		c.ipadx = 1100;
-		c.ipady = 587;
-		getContentPane().add(logOutPanel, c);
+		c.ipady = 687;
+		getContentPane().add(bookAppointmentPanel, c);
 		//set this panel as the current panel
-		previousPanel = logOutPanel;
+		previousPanel = bookAppointmentPanel;
 		//refresh page
 		refreshData();
 	}
