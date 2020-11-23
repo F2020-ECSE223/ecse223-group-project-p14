@@ -183,14 +183,7 @@ public class FlexiBookPage extends JFrame {
 
 		logInPanel.add(logInOwnerButton);
 		logInPanel.add(logInCustomerButton);
-
-		//initialize owner log in button listener
-		logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logInOwnerButtonActionPerformed(evt);
-			}
-		});
-
+		
 		//initialize customer log in button listener
 		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,11 +191,27 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
 
+		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+			//initialize owner log in button listener
+			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					logInOwnerButtonToSetUpActionPerformed(evt);
+				}
+			});
+		}
+		else {
+			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					logInOwnerButtonActionPerformed(evt);
+				}
+			});		
+		}
+
 	}
 	
 	//initialize the business information set-up
 	private void initSetBusinessInfo() {
-		
+
 		setUpInPanel = new JPanel();
 		setUpInPanel.setLayout(null);
 		setUpBusinessInfoLabel = new JLabel("Info Page");
@@ -253,16 +262,15 @@ public class FlexiBookPage extends JFrame {
 		txtEmailSet.setBounds(500, 320, 200, 23);
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
-		
-		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				setUpBusinessInformation(evt);
-			}
-		});
-		
+
+			setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
+
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					setUpBusinessInformation(evt);
+				}
+			});
 		
 	}
-	
 
 	//initialize top bar for owner
 	private void initTopBarOwner(){
@@ -917,16 +925,47 @@ public class FlexiBookPage extends JFrame {
 			refreshData();
 			
 			try {
+				if(FlexiBookApplication.getFlexiBook().getBusiness()==null) 
 			FlexiBookController.setUpBusinessInfo(txtBusinessNameSet.getText(), txtAdressSet.getText(), txtPhoneNumberSet.getText(), txtEmailSet.getText());
+				 
 			}
 			catch (InvalidInputException e) {
 			}
 			refreshData();
 		}
+		
+		//method called when set-up info is done 
+		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+			//remove log in panel
+			getContentPane().remove(logInPanel);
+			//add owner top bar and calendar panel to frame
+			getContentPane().setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			c.ipady = 40;
+			c.ipadx = 1100;
+			getContentPane().add(topPanelOwner, c);
+			c.gridx = 0;
+			c.gridy = 1;
+			c.ipady = 687;
+			c.ipadx = 1100;
+			getContentPane().add(calendarOwnerPanel, c);
+			//set calendar to initial state
+			previousPanel = calendarOwnerPanel;
+			previousButton = calendarOwnerButton;
+			//reset calendar button
+			calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+			calendarOwnerButton.setBackground(Color.WHITE);
+			calendarOwnerButton.setOpaque(true);
+			calendarOwnerButton.setForeground(darkGrey);
+			//refresh page
+			refreshData();
+		}
 
 
 	//method called when log in owner button pressed
-	private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	private void logInOwnerButtonToSetUpActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
 		getContentPane().remove(logInPanel);
 		//add owner top bar and calendar panel to frame
