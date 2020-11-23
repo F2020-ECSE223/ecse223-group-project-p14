@@ -56,6 +56,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel logOutOwnerPanel;
 	private JPanel logOutCustomerPanel;
 	private JPanel bookAppointmentPanel;
+	private JPanel customerSignUpPanel;
 	//panels for calendar tab
 	private JPanel calendarWeeklyViewPanel;
 	
@@ -123,7 +124,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel businessDetailsLabel;
 	private JLabel logOutLabel;
 	
-	//Info panel view
+	//Info panels
 	private JLabel infoLabel; //manage your account	
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
@@ -133,6 +134,11 @@ public class FlexiBookPage extends JFrame {
 	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
+	
+	//Customer Sign up panel
+	private JLabel signUpLabel;
+	private JButton signUpButton; //also logs you in
+	private JButton cancelButton; //back to login page
 
 
 	//tracking last page
@@ -601,6 +607,91 @@ public class FlexiBookPage extends JFrame {
 		});
 
 	}
+	
+	//initialize customer sign up page
+	private void initCustomerSignUpPanel() {
+		customerSignUpPanel = new JPanel();
+		customerSignUpPanel.setLayout(null);
+		customerSignUpPanel.setPreferredSize(new Dimension(1100,700));
+		customerSignUpPanel.setBackground(Color.WHITE);
+		customerSignUpPanel.setOpaque(true);
+		customerSignUpPanel.setForeground(Color.darkGray);
+		
+		signUpLabel = new JLabel("Create Your Account");
+		signUpLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		signUpLabel.setBounds(470, 300, 150, 30);
+		signUpLabel.setBackground(Color.WHITE);
+		signUpLabel.setOpaque(true);
+		signUpLabel.setForeground(Color.darkGray);
+		
+		usernameLabel = new JLabel("Username");
+		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBackground(Color.WHITE);
+		usernameLabel.setOpaque(true);
+		usernameLabel.setForeground(Color.darkGray);
+		usernameLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		usernameBox = new JTextField(""); 
+		usernameBox.setColumns(20);
+		usernameBox.setBounds(470, 350, 250, 30);
+		
+		passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBackground(Color.WHITE);
+		passwordLabel.setOpaque(true);
+		passwordLabel.setForeground(Color.darkGray);
+		passwordLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		passwordBox = new JTextField(""); 
+		passwordBox.setColumns(20);
+		passwordBox.setBounds(470, 400, 250, 30);
+		
+		signUpButton = new JButton("Sign Up");
+		signUpButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		signUpButton.setBounds(550, 450, 100, 30);
+		signUpButton.setAlignmentX(CENTER_ALIGNMENT);
+		signUpButton.setBorder(new LineBorder(Color.darkGray));
+		signUpButton.setBackground(Color.darkGray);
+		signUpButton.setOpaque(true);
+		signUpButton.setForeground(Color.WHITE);
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		cancelButton.setBounds(400, 450, 100, 30);
+		cancelButton.setAlignmentX(CENTER_ALIGNMENT);
+		cancelButton.setBorder(new LineBorder(Color.darkGray));
+		cancelButton.setBackground(Color.WHITE);
+		cancelButton.setOpaque(true);
+		cancelButton.setForeground(Color.darkGray);
+		
+		customerSignUpPanel.add(signUpLabel);
+		customerSignUpPanel.add(usernameLabel);
+		customerSignUpPanel.add(usernameBox);
+		customerSignUpPanel.add(passwordLabel);
+		customerSignUpPanel.add(passwordBox);
+		customerSignUpPanel.add(signUpButton);
+		customerSignUpPanel.add(cancelButton);
+		
+		
+		signUpButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				signUpActionPerformed(evt);
+			}
+		});
+		
+		cancelButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				cancelSignUpActionPerformed(evt);
+			}
+		});
+		
+	}
+	
 
 	//initialize info panel for owner
 	private void initInfoOwnerPanel(){
@@ -614,7 +705,7 @@ public class FlexiBookPage extends JFrame {
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(480, 300, 140, 30);
+		infoLabel.setBounds(470, 300, 150, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
@@ -630,7 +721,7 @@ public class FlexiBookPage extends JFrame {
 		
 		usernameBox = new JTextField("owner"); //FlexiBookApplication.getCurrentLoginUser().getUsername()
 		usernameBox.setColumns(20);
-		usernameBox.setBounds(480, 350, 250, 30);
+		usernameBox.setBounds(470, 350, 250, 30);
 		
 		passwordLabel = new JLabel("Password");
 		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
@@ -643,7 +734,7 @@ public class FlexiBookPage extends JFrame {
 		
 		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
 		passwordBox.setColumns(20);
-		passwordBox.setBounds(480, 400, 250, 30);
+		passwordBox.setBounds(470, 400, 250, 30);
 		
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
@@ -684,7 +775,7 @@ public class FlexiBookPage extends JFrame {
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(480, 300, 140, 30);
+		infoLabel.setBounds(470, 300, 150, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
@@ -700,7 +791,7 @@ public class FlexiBookPage extends JFrame {
 		
 		usernameBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getUsername()
 		usernameBox.setColumns(20);
-		usernameBox.setBounds(480, 350, 250, 30);
+		usernameBox.setBounds(470, 350, 250, 30);
 		
 		passwordLabel = new JLabel("Password");
 		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
@@ -713,11 +804,11 @@ public class FlexiBookPage extends JFrame {
 		
 		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
 		passwordBox.setColumns(20);
-		passwordBox.setBounds(480, 400, 250, 30);
+		passwordBox.setBounds(470, 400, 250, 30);
 		
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		saveAccountButton.setBounds(500, 450, 100, 30);
+		saveAccountButton.setBounds(550, 450, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
@@ -726,7 +817,7 @@ public class FlexiBookPage extends JFrame {
 		
 		deleteAccountButton = new JButton("Delete");
 		deleteAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		deleteAccountButton.setBounds(500, 450, 100, 30);
+		deleteAccountButton.setBounds(400, 450, 100, 30);
 		deleteAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		deleteAccountButton.setBorder(new LineBorder(Color.darkGray));
 		deleteAccountButton.setBackground(Color.WHITE);
@@ -1675,6 +1766,36 @@ public class FlexiBookPage extends JFrame {
 				} catch (InvalidInputException e) {
 					error = e.getMessage();
 				}
+		
+		// update visuals
+		refreshData();
+		
+	}
+	
+	//method called when sign up customer button pressed
+	private void signUpActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+		
+				
+		// call the controller
+		try {
+			FlexiBookController.signUpCustomer(usernameBox.getText(), passwordBox.getText()));
+				} catch (InvalidInputException e) {
+					error = e.getMessage();
+				}
+		
+		// update visuals
+		refreshData();
+		
+	}
+	
+	private void cancelSignUpActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+		
+		// todo: go back to log in page
+		
 		
 		// update visuals
 		refreshData();
