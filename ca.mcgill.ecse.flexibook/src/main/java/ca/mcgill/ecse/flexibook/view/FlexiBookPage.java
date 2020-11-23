@@ -69,7 +69,8 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon logOutIconDark;
 	private ImageIcon logOutIconLight;
 	//calendar page icons
-	private ImageIcon calendarIcon;
+	private ImageIcon calendarWithTimesIcon;
+	private ImageIcon calendarWithoutTimesIcon;
 
 	//page labels
 	private JLabel infoLabel;
@@ -496,11 +497,12 @@ public class FlexiBookPage extends JFrame {
 		calendarOwnerPanel.setPreferredSize(new Dimension(900,900));
 		//initialize image icons
 		try{
-			calendarIcon = new ImageIcon(ImageIO.read(new URL("")));
+			calendarWithTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_withNumbers.jpeg?token=AHN6XYD2BF76CM4PFQPYJ7C7YQ66A")));
+			calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYCSNWHRW6GPZDKBVEC7YQ66Y")));
 		} catch(Exception exp) {
 			error += exp.getMessage();
 		}
-		calendarWeeklyViewPanel.add(new JLabel(calendarIcon));
+		calendarWeeklyViewPanel.add(new JLabel(calendarWithTimesIcon));
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
 		calendarWeeklyViewPanel.setBounds(100,100,900,900);
 
