@@ -56,7 +56,7 @@ public class FlexiBookPage extends JFrame {
 	//top bar for customer
 	private JPanel topPanelCustomer;
 	//panel for log in
-	private JPanel contentPane;
+	private JPanel LoginPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
 	//panel for each button on top bar
@@ -76,7 +76,7 @@ public class FlexiBookPage extends JFrame {
 	
 	
 	// initial login panel
-	//private JPanel contentPane;
+	//private JPanel LoginPane;
 	private JTextField textField;
 	private JTextField textField_1;
 	private JPasswordField passwordField;
@@ -220,8 +220,8 @@ public class FlexiBookPage extends JFrame {
 		initTopBarCustomer();
 
 		//add log in page to the frame
-		getContentPane().add(contentPane);
-		contentPane.setBounds(0,0, 1100, 740);
+		getContentPane().add(LoginPane);
+		LoginPane.setBounds(0,0, 1100, 740);
 
 		//refresh page
 		pack();
@@ -232,10 +232,10 @@ public class FlexiBookPage extends JFrame {
 	private void initLogInPage(){
 //		//initialize log in panel layout
 //		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
-//		contentPane = new JPanel();
+//		LoginPane = new JPanel();
 //		
-//		contentPane.setLayout(logInLayout);
-//		contentPane.setPreferredSize(new Dimension(1100,40));
+//		LoginPane.setLayout(logInLayout);
+//		LoginPane.setPreferredSize(new Dimension(1100,40));
 //		//initialize owner log in button
 //		logInOwnerButton = new JButton();
 //		logInOwnerButton.setText("Owner");
@@ -259,19 +259,19 @@ public class FlexiBookPage extends JFrame {
 //		logINTextLable.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 20));
 //		logINTextLable.setBounds(155, 313, 115, 21);
 //		
-//		contentPane.add(logINTextLable);
-//		contentPane.add(logInOwnerButton);
-//		contentPane.add(logInCustomerButton);
-		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		//setContentPane(contentPane);
-		contentPane.setLayout(null);
+//		LoginPane.add(logINTextLable);
+//		LoginPane.add(logInOwnerButton);
+//		LoginPane.add(logInCustomerButton);
+		LoginPane = new JPanel();
+		LoginPane.setBackground(Color.WHITE);
+		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//setContentPane(LoginPane);
+		LoginPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.DARK_GRAY);
 		panel.setBounds(0, 0, 346, 490);
-		contentPane.add(panel);
+		LoginPane.add(panel);
 		panel.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("KeepToo");
@@ -316,41 +316,41 @@ public class FlexiBookPage extends JFrame {
 		logInOwnerButton.setForeground(Color.WHITE);
 		logInOwnerButton.setBackground(new Color(241, 57, 83));
 		logInOwnerButton.setBounds(395, 363, 283, 36);
-		contentPane.add(logInOwnerButton);
+		LoginPane.add(logInOwnerButton);
 		
 		textField = new JTextField();
 		textField.setBounds(395, 83, 283, 36);
-		contentPane.add(textField);
+		LoginPane.add(textField);
 		textField.setColumns(10);
 		
 		JLabel lblUsername = new JLabel("USERNAME");
 		lblUsername.setBounds(395, 58, 114, 14);
-		contentPane.add(lblUsername);
+		LoginPane.add(lblUsername);
 		
 		JLabel lblEmail = new JLabel("EMAIL");
 		lblEmail.setBounds(395, 132, 54, 14);
-		contentPane.add(lblEmail);
+		LoginPane.add(lblEmail);
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
 		textField_1.setBounds(395, 157, 283, 36);
-		contentPane.add(textField_1);
+		LoginPane.add(textField_1);
 		
 		JLabel lblPassword = new JLabel("PASSWORD");
 		lblPassword.setBounds(395, 204, 96, 14);
-		contentPane.add(lblPassword);
+		LoginPane.add(lblPassword);
 		
 		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
 		lblRepeatPassword.setBounds(395, 275, 133, 14);
-		contentPane.add(lblRepeatPassword);
+		LoginPane.add(lblRepeatPassword);
 		
 		passwordField = new JPasswordField();
 		passwordField.setBounds(395, 229, 283, 36);
-		contentPane.add(passwordField);
+		LoginPane.add(passwordField);
 		
 		passwordField_1 = new JPasswordField();
 		passwordField_1.setBounds(395, 293, 283, 36);
-		contentPane.add(passwordField_1);
+		LoginPane.add(passwordField_1);
 		
 		JLabel lbl_close = new JLabel("Back");
 		lbl_close.addMouseListener(new MouseAdapter() {
@@ -364,7 +364,7 @@ public class FlexiBookPage extends JFrame {
 		lbl_close.setForeground(new Color(241, 57, 83));
 		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lbl_close.setBounds(691, 0, 37, 27);
-		contentPane.add(lbl_close);
+		LoginPane.add(lbl_close);
 		// Mike add this end ---
 		
 		
@@ -477,16 +477,16 @@ public class FlexiBookPage extends JFrame {
 ////		setBackground(Color.WHITE);
 ////		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 ////		setBounds(100, 100, 729, 476);
-//		contentPane = new JPanel();
-//		contentPane.setBackground(Color.WHITE);
-//		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-//		setContentPane(contentPane);
-//		contentPane.setLayout(null);
+//		LoginPane = new JPanel();
+//		LoginPane.setBackground(Color.WHITE);
+//		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+//		setContentPane(LoginPane);
+//		LoginPane.setLayout(null);
 //		
 //		JPanel panel = new JPanel();
 //		panel.setBackground(Color.DARK_GRAY);
 //		panel.setBounds(0, 0, 346, 490);
-//		contentPane.add(panel);
+//		LoginPane.add(panel);
 //		panel.setLayout(null);
 //		
 //		JLabel lblNewLabel = new JLabel("KeepToo");
@@ -531,41 +531,41 @@ public class FlexiBookPage extends JFrame {
 //		button.setForeground(Color.WHITE);
 //		button.setBackground(new Color(241, 57, 83));
 //		button.setBounds(395, 363, 283, 36);
-//		contentPane.add(button);
+//		LoginPane.add(button);
 //		
 //		textField = new JTextField();
 //		textField.setBounds(395, 83, 283, 36);
-//		contentPane.add(textField);
+//		LoginPane.add(textField);
 //		textField.setColumns(10);
 //		
 //		JLabel lblUsername = new JLabel("USERNAME");
 //		lblUsername.setBounds(395, 58, 114, 14);
-//		contentPane.add(lblUsername);
+//		LoginPane.add(lblUsername);
 //		
 //		JLabel lblEmail = new JLabel("EMAIL");
 //		lblEmail.setBounds(395, 132, 54, 14);
-//		contentPane.add(lblEmail);
+//		LoginPane.add(lblEmail);
 //		
 //		textField_1 = new JTextField();
 //		textField_1.setColumns(10);
 //		textField_1.setBounds(395, 157, 283, 36);
-//		contentPane.add(textField_1);
+//		LoginPane.add(textField_1);
 //		
 //		JLabel lblPassword = new JLabel("PASSWORD");
 //		lblPassword.setBounds(395, 204, 96, 14);
-//		contentPane.add(lblPassword);
+//		LoginPane.add(lblPassword);
 //		
 //		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
 //		lblRepeatPassword.setBounds(395, 275, 133, 14);
-//		contentPane.add(lblRepeatPassword);
+//		LoginPane.add(lblRepeatPassword);
 //		
 //		passwordField = new JPasswordField();
 //		passwordField.setBounds(395, 229, 283, 36);
-//		contentPane.add(passwordField);
+//		LoginPane.add(passwordField);
 //		
 //		passwordField_1 = new JPasswordField();
 //		passwordField_1.setBounds(395, 293, 283, 36);
-//		contentPane.add(passwordField_1);
+//		LoginPane.add(passwordField_1);
 //		
 //		JLabel lbl_close = new JLabel("Back");
 //		lbl_close.addMouseListener(new MouseAdapter() {
@@ -579,7 +579,7 @@ public class FlexiBookPage extends JFrame {
 //		lbl_close.setForeground(new Color(241, 57, 83));
 //		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
 //		lbl_close.setBounds(691, 0, 37, 27);
-//		contentPane.add(lbl_close);
+//		LoginPane.add(lbl_close);
 //		// Mike add this end ---
 //	}
 	
@@ -1579,7 +1579,7 @@ public class FlexiBookPage extends JFrame {
 		//method called when set-up info is done 
 		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 			//remove log in panel
-			getContentPane().remove(contentPane);
+			getContentPane().remove(LoginPane);
 			//add owner top bar and calendar panel to frame
 			getContentPane().add(topPanelOwner);
 			topPanelOwner.setBounds(0,0,1100,40);
@@ -1598,61 +1598,67 @@ public class FlexiBookPage extends JFrame {
 		}
 
 
-	/**
-	 * @TODO For Mike: After user pressed the Owner button on the login page
-	 * @param evt
-	 */
-	//method called when log in owner button pressed
-	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		//remove log in panel
-		getContentPane().remove(contentPane);
-		//add owner top bar and calendar panel to frame
-		getContentPane().add(topPanelOwner);
-		topPanelOwner.setBounds(0,0,1100,40);
-		getContentPane().add(calendarOwnerPanel);
-		calendarOwnerPanel.setBounds(0,40,1100,700);
-		//set calendar to initial state
-		previousPanel = calendarOwnerPanel;
-		previousButton = calendarOwnerButton;
-		//reset calendar button
-		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
-		calendarOwnerButton.setBackground(Color.WHITE);
-		calendarOwnerButton.setOpaque(true);
-		calendarOwnerButton.setForeground(darkGrey);
-		//refresh page
-		refreshData();
-	}
-	
-	/**
-	 * @TODO For Mike After user pressed the owner button on the intial login page
-	 * @param evt
-	 */
-	//method called when log in customer button pressed
-		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-			//remove log in panel
-			getContentPane().remove(contentPane);
-			//add customer top bar and calendar panel to frame
-			getContentPane().add(topPanelCustomer);
-			topPanelCustomer.setBounds(0,0,1100,40);
-			getContentPane().add(calendarCustomerPanel);
-			calendarCustomerPanel.setBounds(0,40,1100,700);
-			//set calendar to initial state
-			previousPanel = calendarCustomerPanel;
-			previousButton = calendarCustomerButton;
-			//reset calendar button
-			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
-			calendarCustomerButton.setBackground(Color.WHITE);
-			calendarCustomerButton.setOpaque(true);
-			calendarCustomerButton.setForeground(darkGrey);
-			//refresh page
-			refreshData();
-		}
+//	/**
+//	 * @TODO For Mike: After user pressed the Owner button on the login page
+//	 * @param evt
+//	 */
+//	//method called when log in owner button pressed
+//	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//		//remove log in panel
+//		getContentPane().remove(LoginPane);
+//		//add owner top bar and calendar panel to frame
+//		getContentPane().add(topPanelOwner);
+//		topPanelOwner.setBounds(0,0,1100,40);
+//		getContentPane().add(calendarOwnerPanel);
+//		calendarOwnerPanel.setBounds(0,40,1100,700);
+//		//set calendar to initial state
+//		previousPanel = calendarOwnerPanel;
+//		previousButton = calendarOwnerButton;
+//		//reset calendar button
+//		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+//		calendarOwnerButton.setBackground(Color.WHITE);
+//		calendarOwnerButton.setOpaque(true);
+//		calendarOwnerButton.setForeground(darkGrey);
+//		//refresh page
+//		refreshData();
+//	}
+//	
 		
-	
+		
+		
+//	/**
+//	 * @TODO For Mike After user pressed the owner button on the intial login page
+//	 * @param evt
+//	 */
+//	//method called when log in customer button pressed
+//		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//			//remove log in panel
+//			getContentPane().remove(LoginPane);
+//			//add customer top bar and calendar panel to frame
+//			getContentPane().add(topPanelCustomer);
+//			topPanelCustomer.setBounds(0,0,1100,40);
+//			getContentPane().add(calendarCustomerPanel);
+//			calendarCustomerPanel.setBounds(0,40,1100,700);
+//			//set calendar to initial state
+//			previousPanel = calendarCustomerPanel;
+//			previousButton = calendarCustomerButton;
+//			//reset calendar button
+//			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+//			calendarCustomerButton.setBackground(Color.WHITE);
+//			calendarCustomerButton.setOpaque(true);
+//			calendarCustomerButton.setForeground(darkGrey);
+//			//refresh page
+//			refreshData();
+//		}
+//		
+	/**
+	 * @TODO For MIKE merge the logInOwnerButtonToSetUpActionPerformed() with logInCustomerButtonActionPerformed()
+	 * @param evt
+	 */
 	//method called when log in owner button pressed
 	private void logInOwnerButtonToSetUpActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(contentPane);
+		getContentPane().remove(LoginPane);
 		//add owner top bar and calendar panel to frame
 		getContentPane().add(setUpInPanel);
 		setUpInPanel.setBounds(0,0,1100,700);
@@ -1676,7 +1682,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in customer button pressed
 	private void logInCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(contentPane);
+		getContentPane().remove(LoginPane);
 		//add customer top bar and calendar panel to frame
 		getContentPane().add(topPanelCustomer);
 		topPanelCustomer.setBounds(0,0,1100,40);
@@ -1952,8 +1958,8 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelOwner);
 		//set new panel
-		getContentPane().add(contentPane);
-		contentPane.setBounds(0,0,1100,740);
+		getContentPane().add(LoginPane);
+		LoginPane.setBounds(0,0,1100,740);
 		//refresh page
 		refreshData();
 	}
@@ -1974,7 +1980,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelCustomer);
 		//set new panel
-		getContentPane().add(contentPane);
+		getContentPane().add(LoginPane);
 		//refresh page
 		refreshData();
 	}
