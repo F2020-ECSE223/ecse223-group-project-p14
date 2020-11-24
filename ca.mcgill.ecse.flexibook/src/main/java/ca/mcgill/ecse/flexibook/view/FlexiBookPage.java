@@ -266,7 +266,7 @@ public class FlexiBookPage extends JFrame {
 //		LoginPane.add(logInOwnerButton);
 //		LoginPane.add(logInCustomerButton);
 		LoginPane = new JPanel();
-		LoginPane.setBackground(Color.WHITE);
+		LoginPane.setBackground(new Color(66, 135, 245));
 		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		//setContentPane(LoginPane);
 		LoginPane.setLayout(null);
