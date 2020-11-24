@@ -189,6 +189,8 @@ public class FlexiBookPage extends JFrame {
 	private String appSectionError;
 	private JComboBox<String> updateActionComboBox;
 	private JLabel errorMsgLabel;
+	
+	private double initLogInPageScalingFactor = 740/490;
 	/**
 	 * Appointment page end
 	 */
@@ -204,6 +206,7 @@ public class FlexiBookPage extends JFrame {
 	 */
 	private void initComponents() {
 
+		
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
@@ -270,7 +273,7 @@ public class FlexiBookPage extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.DARK_GRAY);
-		panel.setBounds(0, 0, 346, 490);
+		panel.setBounds(0, 0, (int)(346*initLogInPageScalingFactor), (int)(490*initLogInPageScalingFactor));
 		LoginPane.add(panel);
 		panel.setLayout(null);
 		
@@ -278,7 +281,7 @@ public class FlexiBookPage extends JFrame {
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblNewLabel.setForeground(new Color(240, 248, 255));
-		lblNewLabel.setBounds(139, 305, 84, 27);
+		lblNewLabel.setBounds((int)(139*initLogInPageScalingFactor), (int)(305*initLogInPageScalingFactor), (int)(84*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
 		panel.add(lblNewLabel);
 		
 //		JLabel label = new JLabel("");
@@ -309,47 +312,53 @@ public class FlexiBookPage extends JFrame {
 		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWeGotYou.setForeground(new Color(240, 248, 255));
 		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblWeGotYou.setBounds(111, 343, 141, 27);
+		lblWeGotYou.setBounds((int)(111*initLogInPageScalingFactor),(int)(343*initLogInPageScalingFactor), (int)(141*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
 		panel.add(lblWeGotYou);
 		
-		Button logInOwnerButton = new Button("SignUp");
+		Button logInOwnerButton = new Button("Owner");
 		logInOwnerButton.setForeground(Color.WHITE);
 		logInOwnerButton.setBackground(new Color(241, 57, 83));
-		logInOwnerButton.setBounds(395, 363, 283, 36);
+		logInOwnerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(logInOwnerButton);
 		
+		Button logInCustomerButton = new Button("Customer");
+		logInCustomerButton.setForeground(Color.WHITE);
+		logInCustomerButton.setBackground(new Color(241, 57, 83));
+		logInCustomerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor+(int)(36*initLogInPageScalingFactor)+20 ), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(logInCustomerButton);
+		
 		textField = new JTextField();
-		textField.setBounds(395, 83, 283, 36);
+		textField.setBounds((int)(395*initLogInPageScalingFactor), (int)(83*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(textField);
 		textField.setColumns(10);
 		
 		JLabel lblUsername = new JLabel("USERNAME");
-		lblUsername.setBounds(395, 58, 114, 14);
+		lblUsername.setBounds((int)(395*initLogInPageScalingFactor), (int)(132*initLogInPageScalingFactor), (int)(114*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
 		LoginPane.add(lblUsername);
 		
-		JLabel lblEmail = new JLabel("EMAIL");
-		lblEmail.setBounds(395, 132, 54, 14);
-		LoginPane.add(lblEmail);
+//		JLabel lblEmail = new JLabel("EMAIL");
+//		lblEmail.setBounds(395, 132, 54, 14);
+//		LoginPane.add(lblEmail);
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
-		textField_1.setBounds(395, 157, 283, 36);
+		textField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(157*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(textField_1);
 		
 		JLabel lblPassword = new JLabel("PASSWORD");
-		lblPassword.setBounds(395, 204, 96, 14);
+		lblPassword.setBounds((int)(395*initLogInPageScalingFactor),(int)(204*initLogInPageScalingFactor), (int)(96*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
 		LoginPane.add(lblPassword);
 		
 		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
-		lblRepeatPassword.setBounds(395, 275, 133, 14);
+		lblRepeatPassword.setBounds((int)(395*initLogInPageScalingFactor), (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
 		LoginPane.add(lblRepeatPassword);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(395, 229, 283, 36);
+		passwordField.setBounds((int)(395*initLogInPageScalingFactor), (int)(229*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(passwordField);
 		
 		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds(395, 293, 283, 36);
+		passwordField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(293*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(passwordField_1);
 		
 		JLabel lbl_close = new JLabel("Back");
@@ -363,17 +372,17 @@ public class FlexiBookPage extends JFrame {
 		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_close.setForeground(new Color(241, 57, 83));
 		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lbl_close.setBounds(691, 0, 37, 27);
+		lbl_close.setBounds((int)(691*initLogInPageScalingFactor), (int)(0*initLogInPageScalingFactor), (int)(37*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
 		LoginPane.add(lbl_close);
 		// Mike add this end ---
 		
 		
-//		//initialize customer log in button listener
-//		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
-//			public void actionPerformed(java.awt.event.ActionEvent evt) {
-//				logInCustomerButtonActionPerformed(evt);
-//			}
-//		});
+		//initialize customer log in button listener
+		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				logInCustomerButtonActionPerformed(evt);
+			}
+		});
 
 		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
 			//initialize owner log in button listener
