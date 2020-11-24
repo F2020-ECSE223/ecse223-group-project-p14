@@ -25,6 +25,7 @@ import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 
 public class FlexiBookPage extends JFrame {
+	
 
 	private static final long serialVersionUID = -4426310869335015542L;
 
@@ -125,7 +126,7 @@ public class FlexiBookPage extends JFrame {
 	private Color darkGrey = new Color(62,62,62);
 
 	private String error;
-
+	
 
 	/** Creates new form FlexiBookPage */
 	public FlexiBookPage() {
@@ -271,6 +272,48 @@ public class FlexiBookPage extends JFrame {
 			});
 		
 	}
+	
+	/**
+	 * @TODO For Mike Login Owner page
+	 */
+	//initialize Login Owner page
+	private void initLogInOwnerPanel(){
+		infoOwnerPanel = new JPanel();
+		infoLabel = new JLabel("Info Page");
+		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		infoOwnerPanel.setBackground(Color.WHITE);
+		infoOwnerPanel.setOpaque(true);
+		infoOwnerPanel.setForeground(Color.WHITE);
+		infoOwnerPanel.add(infoLabel);
+
+		//TO DO
+	}
+	
+	/**
+	 * @TODO For Mike Login Customer page
+	 */
+	//initialize Login Customer page
+	private void initLogInCustomerPanel(){
+		infoOwnerPanel = new JPanel();
+		infoLabel = new JLabel("Info Page");
+		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+		infoOwnerPanel.setBackground(Color.WHITE);
+		infoOwnerPanel.setOpaque(true);
+		infoOwnerPanel.setForeground(Color.WHITE);
+		infoOwnerPanel.add(infoLabel);
+
+		//TO DO
+	}
+	/**
+	 * @TODO 
+	 * 		- define loginOwnerComfirmeInputButton && Button related action performed method 
+	 * 		- define loginCustomerComfirmeInoutButton && Button related action performed method 
+	 * 		- Relink the ownerbutton pressed in login inital set page to initLogInOwnerPanel()
+	 * 		- Relink the customerbutton pressed in login inital set page to initLogInCustomerPanel()
+	 * 		- Link initLogInOwnerPanel() with initTopBarOwner()
+	 * 		- Link initLogInCustomerPanel() with initTopBarCustomer()
+	 */
+
 
 	//initialize top bar for owner
 	private void initTopBarOwner(){
@@ -851,6 +894,9 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsPanel.add(email);		
 	}
 
+	/**
+	 * @TODO For Mike log out page for owner 
+	 */
 	//initialize log out panel for owner
 	private void initLogOutOwnerPanel(){
 		logOutOwnerPanel = new JPanel();
@@ -864,6 +910,9 @@ public class FlexiBookPage extends JFrame {
 		//TO DO
 	}
 
+	/**
+	 * @TODO For Mike log out page for customer 
+	 */
 	//initialize log out panel for customer
 	private void initLogOutCustomerPanel(){
 		logOutCustomerPanel = new JPanel();
@@ -964,6 +1013,73 @@ public class FlexiBookPage extends JFrame {
 		}
 
 
+	/**
+	 * @TODO For Mike: After user pressed the Owner button on the login page
+	 * @param evt
+	 */
+	//method called when log in owner button pressed
+	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//remove log in panel
+		getContentPane().remove(logInPanel);
+		//add owner top bar and calendar panel to frame
+		getContentPane().setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.ipady = 40;
+		c.ipadx = 1100;
+		getContentPane().add(topPanelOwner, c);
+		c.gridx = 0;
+		c.gridy = 1;
+		c.ipady = 687;
+		c.ipadx = 1100;
+		getContentPane().add(calendarOwnerPanel, c);
+		//set calendar to initial state
+		previousPanel = calendarOwnerPanel;
+		previousButton = calendarOwnerButton;
+		//reset calendar button
+		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+		calendarOwnerButton.setBackground(Color.WHITE);
+		calendarOwnerButton.setOpaque(true);
+		calendarOwnerButton.setForeground(darkGrey);
+		//refresh page
+		refreshData();
+	}
+	
+	/**
+	 * @TODO For Mike After user pressed the owner button on the intial login page
+	 * @param evt
+	 */
+	//method called when log in customer button pressed
+		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+			//remove log in panel
+			getContentPane().remove(logInPanel);
+			//add customer top bar and calendar panel to frame
+			getContentPane().setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			c.ipady = 40;
+			c.ipadx = 1100;
+			getContentPane().add(topPanelCustomer, c);
+			c.gridx = 0;
+			c.gridy = 1;
+			c.ipady = 687;
+			c.ipadx = 1100;
+			getContentPane().add(calendarCustomerPanel, c);
+			//set calendar to initial state
+			previousPanel = calendarCustomerPanel;
+			previousButton = calendarCustomerButton;
+			//reset calendar button
+			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+			calendarCustomerButton.setBackground(Color.WHITE);
+			calendarCustomerButton.setOpaque(true);
+			calendarCustomerButton.setForeground(darkGrey);
+			//refresh page
+			refreshData();
+		}
+		
+	
 	//method called when log in owner button pressed
 	private void logInOwnerButtonToSetUpActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
