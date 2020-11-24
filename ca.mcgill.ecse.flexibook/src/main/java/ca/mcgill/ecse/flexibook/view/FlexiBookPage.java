@@ -153,6 +153,8 @@ public class FlexiBookPage extends JFrame {
 	private JLabel logOutLabel;
 	
 	//Info panels
+	private ImageIcon infoUserIcon;
+	private JLabel infoUserLabel; // holds the icon
 	private JLabel infoLabel; //manage your account	
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
@@ -1007,6 +1009,23 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.setOpaque(true);
 		infoOwnerPanel.setForeground(Color.darkGray);
 		
+		//initialize image icon
+		try{
+			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
+		
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
+		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+		
+		infoUserLabel = new JLabel();
+		infoUserLabel.setIcon(infoUserIcon);
+		infoUserLabel.setBounds(445, 50, 200, 200);
+		infoUserLabel.setOpaque(false);
+		infoUserLabel.setForeground(Color.darkGray);
+		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
+		
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1050,6 +1069,7 @@ public class FlexiBookPage extends JFrame {
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
+		infoOwnerPanel.add(infoUserLabel);
 		infoOwnerPanel.add(infoLabel);
 		infoOwnerPanel.add(usernameLabel);
 		infoOwnerPanel.add(usernameBox);
@@ -1076,6 +1096,23 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.setBackground(Color.WHITE);
 		infoCustomerPanel.setOpaque(true);
 		infoCustomerPanel.setForeground(Color.darkGray);
+		
+		//initialize image icon
+		try{
+			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
+
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+
+		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+
+		infoUserLabel = new JLabel();
+		infoUserLabel.setIcon(infoUserIcon);
+		infoUserLabel.setBounds(445, 50, 200, 200);
+		infoUserLabel.setOpaque(false);
+		infoUserLabel.setForeground(Color.darkGray);
+		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
 		
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
@@ -1129,6 +1166,7 @@ public class FlexiBookPage extends JFrame {
 		deleteAccountButton.setOpaque(true);
 		deleteAccountButton.setForeground(Color.darkGray);
 		
+		infoCustomerPanel.add(infoUserLabel);
 		infoCustomerPanel.add(infoLabel);
 		infoCustomerPanel.add(usernameLabel);
 		infoCustomerPanel.add(usernameBox);
