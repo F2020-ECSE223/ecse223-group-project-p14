@@ -21,9 +21,12 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.net.URL;
 
 import javax.swing.border.EmptyBorder;
@@ -73,6 +76,9 @@ public class FlexiBookPage extends JFrame {
 	private JPanel bookAppointmentPanel;
 	//panels for calendar tab
 	private JPanel calendarWeeklyViewPanel;
+	private JPanel calendarMonthlyViewPanel;
+	private JPanel calendarMonthlyViewGridPanel;
+	private JPanel calendarMonthlyViewTopPanel;
 	
 	
 	// initial login panel
@@ -95,6 +101,15 @@ public class FlexiBookPage extends JFrame {
 	private JButton logOutOwnerButton;
 	private JButton logOutCustomerButton;
 	private JButton bookAppointmentButton;
+	//list of variables for calendar month view
+	private ArrayList<JButton> calendarButtonList = new ArrayList<JButton>();
+	private JButton calendarLeftButton;
+	private JButton calendarRightButton;
+	private JButton previousCalendarButton;
+	private int calendarMonth;
+	private int calendarYear;
+	private int calendarDay;
+	private JLabel monthNameLabel;
 
 	//log in page buttons
 	private JButton logInOwnerButton;
@@ -138,6 +153,8 @@ public class FlexiBookPage extends JFrame {
 	//calendar page icons
 	private ImageIcon calendarWithTimesIcon;
 	private ImageIcon calendarWithoutTimesIcon;
+	private ImageIcon calendarLeftIcon;
+	private ImageIcon calendarRightIcon;
 
 	//page labels
 	private JLabel infoLabel;
@@ -156,6 +173,7 @@ public class FlexiBookPage extends JFrame {
 
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
+	private Color lightBlue = new Color(31,184,252);
 
 	private String error;
 	
@@ -661,6 +679,7 @@ public class FlexiBookPage extends JFrame {
 		//initialize info button
 		infoOwnerButton = new JButton();
 		infoOwnerButton.setIcon(infoIconDark);
+		infoOwnerButton.setBorder(BorderFactory.createEmptyBorder());
 		infoOwnerButton.setPreferredSize(new Dimension(50, 40));
 		infoOwnerButton.setBorder(new LineBorder(darkGrey));
 		infoOwnerButton.setBackground(darkGrey);
@@ -715,6 +734,7 @@ public class FlexiBookPage extends JFrame {
 		//initialize log out button
 		logOutOwnerButton = new JButton();
 		logOutOwnerButton.setIcon(logOutIconDark);
+		logOutOwnerButton.setBorder(BorderFactory.createEmptyBorder());
 		logOutOwnerButton.setPreferredSize(new Dimension(50, 40));
 		logOutOwnerButton.setBorder(new LineBorder(darkGrey));
 		logOutOwnerButton.setBackground(darkGrey);
@@ -813,6 +833,7 @@ public class FlexiBookPage extends JFrame {
 		
 		//initialize info button
 		infoCustomerButton = new JButton();
+		infoCustomerButton.setBorder(BorderFactory.createEmptyBorder());
 		infoCustomerButton.setIcon(infoIconDark);
 		infoCustomerButton.setPreferredSize(new Dimension(50, 40));
 		infoCustomerButton.setBorder(new LineBorder(darkGrey));
@@ -841,6 +862,7 @@ public class FlexiBookPage extends JFrame {
 		//initialize log out button
 		logOutCustomerButton = new JButton();
 		logOutCustomerButton.setIcon(logOutIconDark);
+		logOutCustomerButton.setBorder(BorderFactory.createEmptyBorder());
 		logOutCustomerButton.setPreferredSize(new Dimension(50, 40));
 		logOutCustomerButton.setBorder(new LineBorder(darkGrey));
 		logOutCustomerButton.setBackground(darkGrey);
@@ -937,24 +959,26 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize calendar services panel for owner
 	private void initCalendarOwnerPanel(){
-		//create new JPanel
+		//create calendar owner panel
 		calendarOwnerPanel = new JPanel();
-		//set null layout
 		calendarOwnerPanel.setLayout(null);
-		//set size
 		calendarOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		//set background
 		calendarOwnerPanel.setBackground(Color.WHITE);
 		calendarOwnerPanel.setOpaque(true);
 		calendarOwnerPanel.setForeground(Color.WHITE);
-		//create calendar image panel
+		//create calendar view panel
 		calendarWeeklyViewPanel = new JPanel();
+		calendarWeeklyViewPanel.setLayout(null);
+		calendarWeeklyViewPanel.setPreferredSize(new Dimension(694,656));
 		//initialize image icons
 		try{
 			//calendarWithTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_withNumbers.jpeg?token=AHN6XYDCIITJGZPACHFYUIK7YUNZO")));
 			//calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYA77PUIZ52UCLVXGB27YUNYC")));
 			calendarWithTimesIcon = new ImageIcon("Calendar_withNumbers.jpg");
 			calendarWithoutTimesIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/Calendar_noTimes.jpeg?token=AHN6XYA77PUIZ52UCLVXGB27YUNYC")));
+			calendarLeftIcon = new ImageIcon("Calendar_LeftIcon.jpg");
+			calendarRightIcon = new ImageIcon("Calendar_RightIcon.jpg");
 		} catch(Exception exp) {
 			error += exp.getMessage();
 		}
@@ -962,15 +986,129 @@ public class FlexiBookPage extends JFrame {
 		temp.setBackground(Color.WHITE);
 		temp.setForeground(Color.WHITE);
 		temp.setOpaque(true);
-		//calendarWeeklyViewPanel.add(temp);
+		calendarWeeklyViewPanel.add(temp);
+		temp.setBounds(0,43,650,613);
 		calendarWeeklyViewPanel.setBackground(Color.WHITE);
 		calendarWeeklyViewPanel.setOpaque(true);
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
-		calendarWeeklyViewPanel.setBorder(new LineBorder(darkGrey));
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(390,10,700,680);
+		calendarWeeklyViewPanel.setBounds(406,0,694,656);
 
-		//TO DO
+		//create calendar monthly view panel
+		calendarMonthlyViewPanel = new JPanel();
+		calendarMonthlyViewPanel.setLayout(null);
+		calendarMonthlyViewPanel.setPreferredSize(new Dimension(350,350));
+		//set background
+		calendarMonthlyViewPanel.setBackground(Color.WHITE);
+		calendarMonthlyViewPanel.setOpaque(true);
+		calendarMonthlyViewPanel.setForeground(Color.WHITE);
+		//set month and change month icons
+		calendarMonth = 1;
+		calendarYear = 2020;
+		monthNameLabel = new JLabel(LocalDate.of(calendarYear,calendarMonth,1).getMonth().getDisplayName(TextStyle.FULL,Locale.CANADA) + " " + calendarYear);
+		monthNameLabel.setPreferredSize(new Dimension(50,200));
+		monthNameLabel.setFont(new Font("Roboto", Font.BOLD, 20));
+		calendarMonthlyViewTopPanel = new JPanel();
+		calendarMonthlyViewTopPanel.setLayout(null);
+		//set background
+		calendarMonthlyViewTopPanel.setBackground(Color.WHITE);
+		calendarMonthlyViewTopPanel.setOpaque(true);
+		calendarMonthlyViewTopPanel.setForeground(darkGrey);
+		calendarMonthlyViewTopPanel.setPreferredSize(new Dimension(350,50));
+		//add month and icons
+		calendarMonthlyViewTopPanel.add(monthNameLabel);
+		monthNameLabel.setBounds(13,10,200,50);
+		calendarLeftButton = new JButton();
+		calendarLeftButton.setPreferredSize(new Dimension(30,30));
+		calendarLeftButton.setText("Left");
+		calendarLeftButton.setIcon(calendarLeftIcon);
+		calendarLeftButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarRightButton = new JButton();
+		calendarRightButton.setPreferredSize(new Dimension(30,30));
+		calendarRightButton.setText("Right");
+		calendarRightButton.setIcon(calendarRightIcon);
+		calendarRightButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarMonthlyViewTopPanel.add(calendarLeftButton);
+		calendarLeftButton.setBounds(250,20,30,30);
+		calendarMonthlyViewTopPanel.add(calendarRightButton);
+		calendarRightButton.setBounds(300,20,30,30);
+		//create calendar monthly view grid
+		calendarMonthlyViewGridPanel = new JPanel();
+		calendarMonthlyViewGridPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		calendarMonthlyViewGridPanel.setPreferredSize(new Dimension(350,300));
+		//set background
+		calendarMonthlyViewGridPanel.setBackground(Color.WHITE);
+		calendarMonthlyViewGridPanel.setOpaque(true);
+		calendarMonthlyViewGridPanel.setForeground(Color.WHITE);
+		//add days of month
+		JLabel n = new JLabel("Mo", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("Tu", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("We", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("Th", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("Fr", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("Sa", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		n = new JLabel("Su", SwingConstants.CENTER);
+		n.setPreferredSize(new Dimension(50,50));
+		n.setFont(new Font("Roboto", Font.BOLD, 16));
+		calendarMonthlyViewGridPanel.add(n);
+		ActionListener monthlyCalendarListener = new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				monthlyCalendarButtonActionPerformed(evt);
+			}
+		};
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue(); i++){
+			n = new JLabel("", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,40));
+			calendarMonthlyViewGridPanel.add(n);
+		}
+		JButton b = new JButton();
+		for(int i = 1; i < 32; i++){
+			b = new JButton(Integer.toString(i));
+			b.setPreferredSize(new Dimension(50,40));
+			b.setText(Integer.toString(i));
+			b.setFont(new Font("Roboto", Font.PLAIN, 16));
+			b.setHorizontalAlignment(SwingConstants.CENTER);
+			b.setVerticalAlignment(SwingConstants.CENTER);
+			b.setBorder(BorderFactory.createEmptyBorder());
+			calendarButtonList.add(b);
+			calendarMonthlyViewGridPanel.add(b);
+			b.addActionListener(monthlyCalendarListener);
+		}
+		//add grid to panel
+		calendarMonthlyViewPanel.add(calendarMonthlyViewGridPanel);
+		calendarMonthlyViewGridPanel.setBounds(0,50,350,300);
+		calendarMonthlyViewPanel.add(calendarMonthlyViewTopPanel);
+		calendarMonthlyViewTopPanel.setBounds(0,0,350,50);
+		//add monthly view panel to calendar panel
+		calendarOwnerPanel.add(calendarMonthlyViewPanel);
+		calendarMonthlyViewPanel.setBounds(50,60,350,350);
+
+		ActionListener calendarLeftRightButtonListener = new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				calendarLeftRightButtonActionPerformed(evt);
+			}
+		};
+		calendarLeftButton.addActionListener(calendarLeftRightButtonListener);
+		calendarRightButton.addActionListener(calendarLeftRightButtonListener);
+
 	}
 
 	//initialize calendar services panel for customer
@@ -2095,6 +2233,84 @@ public class FlexiBookPage extends JFrame {
 		
     	
     	
+	}
+
+	private void monthlyCalendarButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		if(previousCalendarButton != null){
+			previousCalendarButton.setBackground(Color.WHITE);
+			previousCalendarButton.setForeground(Color.BLACK);
+		}
+		String numAsString = evt.getActionCommand();
+		int num = Integer.parseInt(numAsString);
+		JButton tempButton = calendarButtonList.get(num-1);
+		tempButton.setBackground(lightBlue);
+		tempButton.setForeground(Color.WHITE);
+		tempButton.setOpaque(true);
+		previousCalendarButton = tempButton;
+		refreshData();
+	}
+
+	private void calendarLeftRightButtonActionPerformed(java.awt.event.ActionEvent evt){
+		if(evt.getActionCommand().equals("Left")){
+			calendarMonth--;
+		} else {
+			calendarMonth++;
+		}
+		if(calendarMonth < 1){
+			calendarMonth = 12;
+			calendarYear--;
+		} else if(calendarMonth > 12){
+			calendarMonth = 1;
+			calendarYear++;
+		}
+		monthNameLabel.setText(LocalDate.of(calendarYear,calendarMonth,1).getMonth().getDisplayName(TextStyle.FULL,Locale.CANADA) + " " + calendarYear);
+		//reset panel
+		calendarMonthlyViewGridPanel.removeAll();
+
+			JLabel n = new JLabel("Mo", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Tu", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("We", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Th", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Fr", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Sa", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Su", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue(); i++){
+			n = new JLabel("", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,40));
+			calendarMonthlyViewGridPanel.add(n);
+		}
+		JButton b = new JButton();
+		for(int i = 1; i < 32; i++){
+			b = calendarButtonList.get(i-1);;
+			calendarMonthlyViewGridPanel.add(b);
+		}
+		if(previousCalendarButton != null){
+			previousCalendarButton.setBackground(Color.WHITE);
+			previousCalendarButton.setForeground(Color.BLACK);
+			previousCalendarButton = null;
+		}
 	}
 	
 	private void addAppSingleServicePerformed(java.awt.event.ActionEvent evt) {
