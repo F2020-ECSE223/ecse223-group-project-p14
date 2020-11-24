@@ -383,7 +383,7 @@ public class FlexiBookPage extends JFrame {
 //		});
 		label.setBounds(0, 0, 1000, 1000);
 		label.setVerticalAlignment(SwingConstants.TOP);
-		label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/bg.jpg")));
+		label.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
 		panel.add(label);
 		
 		
@@ -2312,8 +2312,7 @@ public class FlexiBookPage extends JFrame {
 				
 			refreshLogin();
 			}
-
-
+			
 		}
 		
 		
