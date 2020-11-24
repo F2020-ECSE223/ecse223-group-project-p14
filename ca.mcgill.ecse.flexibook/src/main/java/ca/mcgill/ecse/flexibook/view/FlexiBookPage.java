@@ -187,7 +187,6 @@ public class FlexiBookPage extends JFrame {
 	
 	//Customer Sign up panel
 	private JLabel signUpLabel;
-	private JButton signUpButton; //also logs you in
 	private JButton cancelButton; //back to login page
 
 
@@ -439,22 +438,22 @@ public class FlexiBookPage extends JFrame {
 		
 		successMessageLogInLabel = new JLabel("");
 		successMessageLogInLabel.setForeground(Color.GREEN);
-		successMessageLogInLabel.setBounds(600, 600, 472, 24);
+		successMessageLogInLabel.setBounds(600, 600, 600, 50);
 		LoginPane.add(successMessageLogInLabel);
 
 		errorMessageLogInLabel = new JLabel("");
 		errorMessageLogInLabel.setForeground(Color.RED);
-		errorMessageLogInLabel.setBounds(600, 600, 201, 24);
+		errorMessageLogInLabel.setBounds(600, 600, 600, 50);
 		LoginPane.add(errorMessageLogInLabel);
 		
 		successMessageSignInLabel = new JLabel("");
 		successMessageSignInLabel.setForeground(Color.GREEN);
-		successMessageSignInLabel.setBounds(700, 600, 472, 24);
+		successMessageSignInLabel.setBounds(600, 600, 600, 50);
 		LoginPane.add(successMessageSignInLabel);
 		
 		errorMessageSignInLabel = new JLabel("");
 		errorMessageSignInLabel.setForeground(Color.RED);
-		errorMessageSignInLabel.setBounds(700, 600, 201, 24);
+		errorMessageSignInLabel.setBounds(600, 600, 600, 50);
 		LoginPane.add(errorMessageSignInLabel);
 		
 
@@ -2081,7 +2080,7 @@ public class FlexiBookPage extends JFrame {
 		errorMessageLogInLabel.setText(addLoginError);
 		successMessageSignInLabel.setText(addSignUpSuccess);
 		errorMessageSignInLabel.setText(addSignUpError);
-
+		
 //		deleteServiceComboBox.removeAllItems();
 //		updateServiceComboBox.removeAllItems();
 //		modelAddService.getDataVector().removeAllElements();
@@ -2244,34 +2243,32 @@ public class FlexiBookPage extends JFrame {
 		private void SignUpCustomerButtonPerformed(ActionEvent evt) {
 			addSignUpError = null;
 			addSignUpSuccess = null;
+			addLoginError = null;
+			addLoginSuccess = null;
 			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")||
 					String.valueOf(passwordField_1.getPassword()).equals("")) {
 				addSignUpError = "one of the fields is empty";
 			}else if(!String.valueOf(passwordField.getPassword()).equals(String.valueOf(passwordField_1.getPassword()))) {
-				addSignUpError = "two passwaord inputted does not match, please try again.";
+				addSignUpError = "two passwaord inputs does not match, please try again.";
 			}
 			else {
-				if (textField_1.getText() != "owner") {
+				if (!textField_1.getText().equals("owner")) {
 					try {
 						FlexiBookController.signUpCustomer(textField_1.getText(), String.valueOf(passwordField.getPassword()));
 						addSignUpSuccess = "Success!";
+						logInCustomerButtonActionPerformed(evt);
 					}  catch (InvalidInputException e) {
 						String errorMessageCatched = e.getMessage();
 							addSignUpError = errorMessageCatched;
-					}
-					if (addSignUpSuccess == "Success!") {
-						logInCustomerButtonActionPerformed(evt);
 					}
 				}else {
 					try {
 						FlexiBookController.signUpOwner(textField_1.getText(), String.valueOf(passwordField.getPassword()));
 						addSignUpSuccess = "Success!";
+						logInOwnerButtonActionPerformed(evt);
 					}  catch (InvalidInputException e) {
 						String errorMessageCatched = e.getMessage();
 							addSignUpError = errorMessageCatched;
-					}
-					if (addSignUpSuccess == "Success!") {
-						logInOwnerButtonActionPerformed(evt);
 					}
 				}
 			}
@@ -2285,6 +2282,8 @@ public class FlexiBookPage extends JFrame {
 		private void loginUserButtonPerformed(ActionEvent evt) {
 			addLoginError = null;
 			addLoginSuccess = null;
+			addSignUpError = null;
+			addSignUpSuccess = null;
 			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")) {
 				addLoginError = "one of the fields is empty";
 				
@@ -2293,25 +2292,26 @@ public class FlexiBookPage extends JFrame {
 				try {
 					FlexiBookController.logIn(textField_1.getText(), String.valueOf(passwordField.getPassword()));
 					addLoginSuccess = "Success!";
+					if(textField_1.getText().equals("owner")) {
+						if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+							logInOwnerButtonToSetUpActionPerformed(evt);
+						}
+						else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+							logInOwnerButtonActionPerformed(evt);
+						}
+					}
+					else {
+						logInCustomerButtonActionPerformed(evt);
+					}
 				}  catch (InvalidInputException e) {
 					String errorMessageCatched = e.getMessage();
-					if (errorMessageCatched == "Username/password not found")
-						addLoginError = "Username/password not found, please try again. If you don't have an account, please try sign up";
+					if (errorMessageCatched.equals("Username/password not found")) {
+						addLoginError = "<html>Username/password not found, please try again. <br/>If you don't have an account, please try sign up</html>";
+					}
 				}
-			}
-			if (addLoginSuccess == "Success!") {
-				if ((FlexiBookApplication.getCurrentLoginUser() instanceof Owner) && FlexiBookApplication.getFlexiBook().getBusiness()==null) {
-					logInOwnerButtonToSetUpActionPerformed(evt);
-				}
-				else if ((FlexiBookApplication.getCurrentLoginUser() instanceof Owner) && FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
-					logInOwnerButtonActionPerformed(evt);
-				}
-				else {
-					logInCustomerButtonActionPerformed(evt);
-				}
-			}
 				
 			refreshLogin();
+			}
 
 
 		}
