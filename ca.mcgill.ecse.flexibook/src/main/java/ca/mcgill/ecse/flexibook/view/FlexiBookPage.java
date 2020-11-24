@@ -265,8 +265,18 @@ public class FlexiBookPage extends JFrame {
 
 	/** Creates new form FlexiBookPage */
 	public FlexiBookPage() {
+		// this manually overides the look and feel of the UI. If we can't fix an OS issue, we can use this 
+//		try {
+//			UIManager.setLookAndFeel( "javax.swing.plaf.metal.MetalLookAndFeel"); 	// change to "com.sun.java.swing.plaf.motif.MotifLookAndFeel"
+//																					// change to "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
+//			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//			| UnsupportedLookAndFeelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			}
 		initComponents();
 		refreshData();
+		
 	}
 
 	/** This method is called from within the constructor to initialize the form.
