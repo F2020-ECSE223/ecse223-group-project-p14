@@ -435,13 +435,20 @@ public class FlexiBookController {
 	public static boolean updateAppointmentTime(String serviceName, Date date, Time time, Date newDate ,Time newStartTime) throws InvalidInputException {
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName, date, time);
-
+		
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
+		
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
 			throw new InvalidInputException("Error: An owner cannot update a customer's appointment");
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
+		
+
 		
 		boolean ret = appInSystem.updateAppointmentTime(newDate, newStartTime, FlexiBookApplication.getCurrentDate(true),FlexiBookApplication.getCurrentTime(true));
 		try {
@@ -469,6 +476,11 @@ public class FlexiBookController {
 		
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
+		
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
 
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
@@ -1571,6 +1583,24 @@ public class FlexiBookController {
 		return appointments;
 
 	}
+	
+	/**
+	 * Add in the last iteration
+	 * 
+	 * @return
+	 * @author AntoineW
+	 */
+	public static List<TOAppointment> getTOAppointmentForCurrentCustomer(){
+		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
+		List<TOAppointment> Allappointments = getTOAppointment();
+		for(TOAppointment toApp: Allappointments) {
+			if(toApp.getCustomerName().equals(FlexiBookApplication.getCurrentLoginUser().getUsername())) {
+				appointments.add(toApp);
+			}
+		}
+		return appointments;
+		
+	}
 
 
 	/**
@@ -1628,11 +1658,11 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static TOBusiness getBusinessInfo(){
-		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
-				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
-		return business;
-	}
+//	public static TOBusiness getBusinessInfo(){
+//		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
+//				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
+//		return business;
+//	}
 
 	/**
 	 * This is a query method which returns all Service Combos as TOServiceCombo objects
