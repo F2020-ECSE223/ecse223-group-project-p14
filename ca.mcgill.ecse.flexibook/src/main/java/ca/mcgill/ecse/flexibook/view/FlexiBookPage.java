@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.net.URL;
 
@@ -44,12 +45,16 @@ import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 import ca.mcgill.ecse.flexibook.model.Service;
+import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOService;
 
 public class FlexiBookPage extends JFrame {
 
 	private static final long serialVersionUID = -4426310869335015542L;
+	
+	
 
 	//top bar for owner
 	private JPanel topPanelOwner;
@@ -101,8 +106,15 @@ public class FlexiBookPage extends JFrame {
 	private JButton logInCustomerButton;
 	private JLabel logINTextLable;
 	
+	//string for errors
+	private String addBHError;
+	private String deleteBHError;
+	private String updateBHError ;
+	private String deleteBHSuccess ;
+	
 	//set up business information button
 	private JButton setDetailBtn;
+	
 	//set up business information JLabels and text
 	private JLabel toSelect;
 	private JLabel startTimeLabel;
@@ -119,7 +131,6 @@ public class FlexiBookPage extends JFrame {
 	
 	
 	//update business information JLabels and text
-	
 	private JTextField txtBusinessNameSet;
 	private JTextField txtAdressSet;
 	private JTextField txtPhoneNumberSet;
@@ -128,7 +139,19 @@ public class FlexiBookPage extends JFrame {
 	//update and remove business information JButton 
 	private JButton updateBusinessHour;
 	private JButton removeBusinessHour;
-
+	
+	//BusinessHour Components
+	private JLabel successMessageBusinessHourLabel;
+	private JTable existingBusHoursTable;
+	private JComboBox<Integer> deleteBusinessHourBox;
+	private JComboBox<Integer> updateBusinessHourBox;
+	private JComboBox<String> addDayOfWeek;
+	private JComboBox<String> updateDayOfWeek;
+	private JSpinner addStartTimeSpin;
+	private JSpinner addEndTimeSpin;
+	private JSpinner updateStartTimeSpin;
+	private JSpinner updateEndTimeSpin;
+	
 	//top bar icons
 	private ImageIcon infoIconDark;
 	private ImageIcon infoIconLight;
@@ -383,26 +406,36 @@ public class FlexiBookPage extends JFrame {
 				logInCustomerButtonActionPerformed(evt);
 			}
 		});
-
-		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
-			//initialize owner log in button listener
-			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					//logInCustomerButtonActionPerformed(evt);
-					logInOwnerButtonToSetUpActionPerformed(evt);
-					
-				}
-			});
-		}
 		
-		else {
-			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
+		logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if(!FlexiBookApplication.getFlexiBook().hasBusiness()) {
+				logInOwnerButtonToSetUpActionPerformed(evt);
+				}else {
 					logInOwnerButtonActionPerformed(evt);
-					//logInCustomerButtonActionPerformed(evt);
 				}
-			});		
-		}
+			}
+			});
+		
+		//To remove once the code is done 
+//		if(!FlexiBookApplication.getFlexiBook().hasBusiness()) {
+//			//initialize owner log in button listener
+//			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//				public void actionPerformed(java.awt.event.ActionEvent evt) {
+//					logInOwnerButtonToSetUpActionPerformed(evt);
+//					
+//				}
+//			});
+//		}
+//		
+//		else {
+//			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//				public void actionPerformed(java.awt.event.ActionEvent evt) {
+//					logInOwnerButtonActionPerformed(evt);
+//					//logInCustomerButtonActionPerformed(evt);
+//				}
+//			});		
+//		}
 
 	}
 	
@@ -460,7 +493,7 @@ public class FlexiBookPage extends JFrame {
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
 
-			setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
+		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					setUpBusinessInformation(evt);
@@ -989,14 +1022,207 @@ public class FlexiBookPage extends JFrame {
 	//initialize business hours services panel
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
-		businessHoursLabel = new JLabel("Business Hour Page");
+		businessHoursPanel.setLayout(null);
 		businessHoursPanel.setPreferredSize(new Dimension(1100,700));
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
-		businessHoursPanel.add(businessHoursLabel);
 
-		//TO DO
+		JLabel addBusinessHourLabel = new JLabel("Add a Business Hour");
+		addBusinessHourLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		addBusinessHourLabel.setBounds(200, 350, 200, 21);
+		businessHoursPanel.add(addBusinessHourLabel);
+
+		JLabel lblNewLabel_1 = new JLabel("Day of the Week");
+		lblNewLabel_1.setBounds(25, 400, 134, 16);
+		businessHoursPanel.add(lblNewLabel_1);
+
+		JLabel lblNewLabel_1_1 = new JLabel("Start Time");
+		lblNewLabel_1_1.setBounds(25, 450, 212, 21);
+		businessHoursPanel.add(lblNewLabel_1_1);
+
+		JLabel lblNewLabel_1_1_1 = new JLabel("End Time");
+		lblNewLabel_1_1_1.setBounds(25, 500, 212, 21);
+		businessHoursPanel.add(lblNewLabel_1_1_1);
+
+		JButton confirmAddBusinessHour= new JButton("Add");
+		confirmAddBusinessHour.setBounds(50, 550, 117, 30);
+		businessHoursPanel.add(confirmAddBusinessHour);
+		
+		JLabel updateDayOfWeekLabel = new JLabel("Update the selected business hour");
+		updateDayOfWeekLabel.setBounds(700, 50, 300, 30);
+		businessHoursPanel.add(updateDayOfWeekLabel);
+		
+		JLabel removeDayOfWeekLabel = new JLabel("Remove the selected business hour");
+		removeDayOfWeekLabel.setBounds(700, 450, 300, 30);
+		businessHoursPanel.add(removeDayOfWeekLabel);
+		
+		JLabel updateDayLabel = new JLabel("New day");
+		updateDayLabel.setBounds(700, 150, 250, 21);
+		businessHoursPanel.add(updateDayLabel);
+		
+		JLabel updateStartTimeLabel = new JLabel("New start time");
+		updateStartTimeLabel.setBounds(700, 200, 250, 21);
+		businessHoursPanel.add(updateStartTimeLabel);
+
+		JLabel updateEndTimeLabel = new JLabel("New end time");
+		updateEndTimeLabel.setBounds(700, 250, 250, 21);
+		businessHoursPanel.add(updateEndTimeLabel);
+		
+		JButton confirmUpdateBusinessHour = new JButton("Update");
+		confirmUpdateBusinessHour.setBounds(700, 300, 150, 29);
+		businessHoursPanel.add(confirmUpdateBusinessHour);
+		
+		JButton confirmRemoveBusinessHour = new JButton("Remove");
+		confirmRemoveBusinessHour.setBounds(700, 550, 117, 29);
+		businessHoursPanel.add(confirmRemoveBusinessHour);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(43, 42, 594, 259);
+		businessHoursPanel.add(scrollPane);
+
+		existingBusHoursTable = new JTable();
+		DefaultTableModel modelBusHour = new DefaultTableModel();
+		Object[] col = {"Index","Day of the Week","Start Time","End Time"};
+		Object row = new Object[0];
+		modelBusHour.setColumnIdentifiers(col);
+		existingBusHoursTable.setModel(modelBusHour);
+		scrollPane.setViewportView(existingBusHoursTable);
+		
+		if (!FlexiBookApplication.getFlexiBook().getHours().isEmpty()) {
+			List<TOBusinessHour> bhList = FlexiBookController.getTOBusinessHour();
+			for (TOBusinessHour bh : bhList) {
+				int index = bhList.indexOf(bh);//FlexiBookApplication.getFlexiBook().indexOfHour(bh);
+				String dayOfWeek = bh.getDayOfWeek().toString();
+				String startTime = bh.getStartTime().toString();
+				String endTime = bh.getEndTime().toString();
+				Object[] obj = {index ,dayOfWeek, startTime, endTime};
+				modelBusHour.addRow(obj);
+			}
+		}
+		
+		JLabel lblNewLabel_2 = new JLabel("Existing Business Hours");
+		lblNewLabel_2.setBounds(50, 15, 200, 16);
+		businessHoursPanel.add(lblNewLabel_2);
+
+		JLabel successMessageBusinessHourLabel = new JLabel("");
+		successMessageBusinessHourLabel.setForeground(Color.RED);
+		successMessageBusinessHourLabel.setBounds(168, 15, 472, 24);
+		businessHoursPanel.add(successMessageBusinessHourLabel);
+
+		JLabel errorMessageBusinessHourLabel = new JLabel("");
+		errorMessageBusinessHourLabel.setForeground(Color.GREEN);
+		errorMessageBusinessHourLabel.setBounds(412, 437, 201, 16);
+		businessHoursPanel.add(errorMessageBusinessHourLabel);
+		
+		updateBusinessHourBox = new JComboBox<Integer>();
+		updateBusinessHourBox.setBounds(700, 100, 250, 30);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOBusinessHour bh: FlexiBookController.getTOBusinessHour()) {
+				updateBusinessHourBox.addItem(FlexiBookController.getTOBusinessHour().indexOf(bh));
+			}
+		}
+				
+		deleteBusinessHourBox = new JComboBox<Integer>();
+		deleteBusinessHourBox.setBounds(700, 500, 250, 30);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOBusinessHour bh: FlexiBookController.getTOBusinessHour()) {
+				deleteBusinessHourBox.addItem(FlexiBookController.getTOBusinessHour().indexOf(bh));
+			}
+		}
+		
+		businessHoursPanel.add(updateBusinessHourBox);
+		businessHoursPanel.add(deleteBusinessHourBox);
+		
+		addDayOfWeek = new JComboBox<String>();
+		addDayOfWeek.setBounds(150, 400, 262, 25);
+		addDayOfWeek.addItem("Monday");
+		addDayOfWeek.addItem("Tuesday");
+		addDayOfWeek.addItem("Wednesday");
+		addDayOfWeek.addItem("Thursday");
+		addDayOfWeek.addItem("Friday");
+		addDayOfWeek.addItem("Saturday");
+		addDayOfWeek.addItem("Sunday");
+		businessHoursPanel.add(addDayOfWeek);
+		
+		updateDayOfWeek = new JComboBox<String>();
+		updateDayOfWeek.setBounds(775, 150, 150, 25);
+		updateDayOfWeek.addItem("Monday");
+		updateDayOfWeek.addItem("Tuesday");
+		updateDayOfWeek.addItem("Wednesday");
+		updateDayOfWeek.addItem("Thursday");
+		updateDayOfWeek.addItem("Friday");
+		updateDayOfWeek.addItem("Saturday");
+		updateDayOfWeek.addItem("Sunday");
+		businessHoursPanel.add(updateDayOfWeek);
+		
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24); 
+        calendar.set(Calendar.MINUTE, 0);
+
+        SpinnerDateModel addStartTime = new SpinnerDateModel();
+        addStartTime.setValue(calendar.getTime());
+        addStartTimeSpin = new JSpinner(addStartTime);
+        JSpinner.DateEditor editorAddStartTime = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatterAddStartTime = (DateFormatter)editorAddStartTime.getTextField().getFormatter();
+        formatterAddStartTime.setAllowsInvalid(false); // this makes what you want
+        formatterAddStartTime.setOverwriteMode(true);
+        addStartTimeSpin.setEditor(editorAddStartTime);
+        businessHoursPanel.add(addStartTimeSpin);
+        addStartTimeSpin.setBounds(100, 450, 86, 20);
+        
+        SpinnerDateModel addEndTime = new SpinnerDateModel();
+        addEndTime.setValue(calendar.getTime());
+        addEndTimeSpin = new JSpinner(addEndTime);
+        JSpinner.DateEditor editorAddEndTime = new JSpinner.DateEditor(addEndTimeSpin, "HH:mm");
+        DateFormatter formatterAddEndTime = (DateFormatter)editorAddEndTime.getTextField().getFormatter();
+        formatterAddEndTime.setAllowsInvalid(false); // this makes what you want
+        formatterAddEndTime.setOverwriteMode(true);
+        addEndTimeSpin.setEditor(editorAddEndTime);
+        businessHoursPanel.add(addEndTimeSpin);
+        addEndTimeSpin.setBounds(100, 500, 86, 20);
+        
+        SpinnerDateModel updateStartTime = new SpinnerDateModel();
+        updateStartTime.setValue(calendar.getTime());
+        updateStartTimeSpin = new JSpinner(updateStartTime);
+        JSpinner.DateEditor editorUpdateStartTime = new JSpinner.DateEditor(updateStartTimeSpin, "HH:mm");
+        DateFormatter formatterUpdateStartTime = (DateFormatter)editorUpdateStartTime.getTextField().getFormatter();
+        formatterUpdateStartTime.setAllowsInvalid(false); // this makes what you want
+        formatterUpdateStartTime.setOverwriteMode(true);
+        updateStartTimeSpin.setEditor(editorUpdateStartTime);
+        businessHoursPanel.add(updateStartTimeSpin);
+        updateStartTimeSpin.setBounds(850, 200, 86, 20);
+        
+        SpinnerDateModel updateEndTime = new SpinnerDateModel();
+        updateEndTime.setValue(calendar.getTime());
+        updateEndTimeSpin = new JSpinner(updateEndTime);
+        JSpinner.DateEditor editorUpdateEndTime = new JSpinner.DateEditor(updateEndTimeSpin, "HH:mm");
+        DateFormatter formatterUpdateEndTime = (DateFormatter)editorUpdateEndTime.getTextField().getFormatter();
+        formatterUpdateEndTime.setAllowsInvalid(false); // this makes what you want
+        formatterUpdateEndTime.setOverwriteMode(true);
+        updateEndTimeSpin.setEditor(editorAddEndTime);
+        businessHoursPanel.add(updateEndTimeSpin);
+        updateEndTimeSpin.setBounds(850, 250, 86, 20);
+        
+        
+
+		confirmAddBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					addBusinessHourActionPerformed(evt);			
+			}		
+		});
+		
+		confirmUpdateBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					updateBusinessHourActionPerformed(evt);			
+			}		
+		});
+		
+		confirmRemoveBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				removeBusinessHourActionPerformed(evt);			
+		}		
+	});
 	}
 	
 	//initialize business information for customer
@@ -1555,6 +1781,109 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 	}
 	
+	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		DayOfWeek dw = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (addDayOfWeek.getSelectedItem().equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String startTimeString = "";
+        String endTimeString = "";
+		try {
+			startTimeString = formatter.valueToString(addStartTimeSpin.getValue());
+			endTimeString = formatter.valueToString(addEndTimeSpin.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		
+		try {
+			FlexiBookController.setUpBusinessHours(stringToTime(startTimeString), stringToTime(endTimeString), dw);
+			//addBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			addBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+	
+	
+	private void removeBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		try {
+			FlexiBookController.removeBusinessHour(FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getStartTime()
+					);
+			//deleteService((String)deleteServiceComboBox.getSelectedItem());
+			deleteBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			deleteBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+	
+	private void updateBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		DayOfWeek dw = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String startTimeString = "";
+        String endTimeString = "";
+		try {
+			startTimeString = formatter.valueToString(updateStartTimeSpin.getValue());
+			endTimeString = formatter.valueToString(updateEndTimeSpin.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		
+		try {
+			FlexiBookController.updateBusinessHour(
+					FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getStartTime(),dw,
+					stringToTime(startTimeString), stringToTime(endTimeString));
+			//addBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			addBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+
 	//method called when set-up info is done 
 		private void setUpBusinessInformation(java.awt.event.ActionEvent evt) {
 			//remove log in panel
@@ -1572,16 +1901,15 @@ public class FlexiBookPage extends JFrame {
 			calendarOwnerButton.setBackground(Color.WHITE);
 			calendarOwnerButton.setOpaque(true);
 			calendarOwnerButton.setForeground(darkGrey);
-			//refresh page
-			refreshData();
-			
-			try {
+			//create business
+			try {//Need to add the errors here 
 				if(FlexiBookApplication.getFlexiBook().getBusiness()==null) 
 			FlexiBookController.setUpBusinessInfo(txtBusinessNameSet.getText(), txtAdressSet.getText(), txtPhoneNumberSet.getText(), txtEmailSet.getText());
 				 
 			}
 			catch (InvalidInputException e) {
 			}
+			//refresh page
 			refreshData();
 		}
 		
@@ -2094,7 +2422,7 @@ public class FlexiBookPage extends JFrame {
 		refreshAppointmentPage();
 		
     	
-    	
+ 	
 	}
 	
 	private void addAppSingleServicePerformed(java.awt.event.ActionEvent evt) {
