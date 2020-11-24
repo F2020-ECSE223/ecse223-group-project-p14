@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 51 "../../../../../FlexiBookPersistence.ump"
-// line 84 "../../../../../FlexiBook.ump"
+// line 85 "../../../../../FlexiBook.ump"
 public class ComboItem implements Serializable
 {
 

@@ -629,7 +629,7 @@ public class CucumberStepDefinitions {
 	@Given ("the following customers exist in the system:")
 	public void the_Following_Customers_Exist(List<Map<String, String>> datatable){
 		for(Map<String, String> map : datatable) {
-			Customer c = new Customer(map.get("username"), map.get("password"), 0, flexiBook);
+			Customer c = new Customer(map.get("username"), map.get("password"), 0, 0, flexiBook);
 			flexiBook.addCustomer(c);
 		}
 	}
@@ -1232,7 +1232,7 @@ public class CucumberStepDefinitions {
 				flexiBook.setOwner(owner);
 			}
 			else {
-				flexiBook.addCustomer(username, "password", 0);
+				flexiBook.addCustomer(username, "password", 0, 0);
 				customerCount++;
 			}
 		}	
@@ -2083,7 +2083,7 @@ public class CucumberStepDefinitions {
 		if(findCustomer(username) !=null) {
 			findCustomer(username).setNoShowCount(noShowCount);	
 		}else{
-			new Customer(username, "password", noShowCount, FlexiBookApplication.getFlexiBook());
+			new Customer(username, "password", noShowCount, 0, FlexiBookApplication.getFlexiBook());
 		}
 	}
 	/**

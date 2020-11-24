@@ -562,6 +562,9 @@ public class FlexiBookController {
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
+		else if (username == "owner") {
+			throw new InvalidInputException("username 'owner' is an reserved word, please use another name.");
+		}
 		else if (username == null || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
@@ -572,7 +575,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("The username already exists");
 		}
 		else {
-			Customer aCustomer = new Customer(username, password, 0, flexiBook);
+			Customer aCustomer = new Customer(username, password, 0, 0, flexiBook);
 			flexiBook.addCustomer(aCustomer); 		
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 			try {
@@ -677,16 +680,33 @@ public class FlexiBookController {
 		Owner ThisOwner2 = findOwner(username);
 
 		if (currentUser == null) {
-			if (ThisOwner2 != null && ThisOwner2.getPassword().equals(password)) {
-				FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
+			if (username.equals("owner")) {
+				if (ThisOwner2 != null && ThisOwner2.getPassword().equals(password)) {
+					FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
+					//add by Mike start --- 
+					try {
+						FlexiBookPersistence.save(flexiBook);
+					} catch(RuntimeException e) {
+						throw new InvalidInputException(e.getMessage());
+					}
+					//add by Mike end ---	
 				}
-				//add by Mike end ---	
+				else if(ThisOwner2 != null && !ThisOwner2.getPassword().equals(password)) {
+					throw new InvalidInputException("Username/password not found");
+				}
+				else if(ThisOwner2 == null){
+					signUpOwner(username, password);
+					//add by Mike start --- 
+					try {
+						FlexiBookPersistence.save(flexiBook);
+					} catch(RuntimeException e) {
+						throw new InvalidInputException(e.getMessage());
+					}
+					//add by Mike end ---	
+				}
+				
 			}
+			
 			else if (ThisCustomer != null && ThisCustomer.getPassword().equals(password)) {
 				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
 				//add by Mike start --- 
@@ -697,17 +717,11 @@ public class FlexiBookController {
 				}
 				//add by Mike end ---	
 			}
-			else if(ThisOwner2 == null && username.equals("owner")){
-				signUpOwner(username, password);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
-				}
-				//add by Mike end ---	
+			
+			else if ((ThisCustomer != null && !ThisCustomer.getPassword().equals(password))){
+				throw new InvalidInputException("Username/password not found");
 			}
-			else {
+			else if (ThisCustomer == null) {
 				throw new InvalidInputException("Username/password not found");
 			}
 		}
@@ -1352,6 +1366,7 @@ public class FlexiBookController {
 		}
 		return Customers;
 	}
+
 
 
 
@@ -2060,7 +2075,7 @@ public class FlexiBookController {
 	 */
 	private static Owner findOwner(String userName) {
 		Owner foundOwner = null;
-		if (userName == "owner") {
+		if (userName.equals("owner")) {
 			foundOwner = FlexiBookApplication.getFlexiBook().getOwner();
 		}
 		return foundOwner;

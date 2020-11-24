@@ -9,7 +9,7 @@ import java.sql.Time;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 44 "../../../../../FlexiBookPersistence.ump"
-// line 49 "../../../../../FlexiBook.ump"
+// line 50 "../../../../../FlexiBook.ump"
 public class BusinessHour implements Serializable
 {
 
