@@ -1661,11 +1661,11 @@ public class FlexiBookController {
 	 * @return
 	 * @author jedla
 	 */
-	public static TOBusiness getBusinessInfo(){
-		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
-				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
-		return business;
-	}
+//	public static TOBusiness getBusinessInfo(){
+//		TOBusiness business = new TOBusiness(FlexiBookApplication.getFlexiBook().getBusiness().getName(), FlexiBookApplication.getFlexiBook().getBusiness().getAddress(), 
+//				FlexiBookApplication.getFlexiBook().getBusiness().getPhoneNumber(), FlexiBookApplication.getFlexiBook().getBusiness().getEmail());
+//		return business;
+//	}
 
 	/**
 	 * This is a query method which returns all Service Combos as TOServiceCombo objects
