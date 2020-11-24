@@ -56,7 +56,7 @@ public class FlexiBookPage extends JFrame {
 	//top bar for customer
 	private JPanel topPanelCustomer;
 	//panel for log in
-	private JPanel logInPanel;
+	private JPanel contentPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
 	//panel for each button on top bar
@@ -76,7 +76,7 @@ public class FlexiBookPage extends JFrame {
 	
 	
 	// initial login panel
-	private JPanel contentPane;
+	//private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
 	private JPasswordField passwordField;
@@ -213,15 +213,15 @@ public class FlexiBookPage extends JFrame {
 
 		//initialize log in page
 		initLogInPage();
-		// initLogInOwnerPanel();
+		//initLogInOwnerPanel();
 		
 		initSetBusinessInfo();
 		initTopBarOwner();
 		initTopBarCustomer();
 
 		//add log in page to the frame
-		getContentPane().add(logInPanel);
-		logInPanel.setBounds(350,360,400,40);
+		getContentPane().add(contentPane);
+		contentPane.setBounds(0,0, 1100, 740);
 
 		//refresh page
 		pack();
@@ -230,50 +230,156 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize log in page
 	private void initLogInPage(){
-		//initialize log in panel layout
-		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
-		logInPanel = new JPanel();
+//		//initialize log in panel layout
+//		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
+//		contentPane = new JPanel();
+//		
+//		contentPane.setLayout(logInLayout);
+//		contentPane.setPreferredSize(new Dimension(1100,40));
+//		//initialize owner log in button
+//		logInOwnerButton = new JButton();
+//		logInOwnerButton.setText("Owner");
+//		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
+//		logInOwnerButton.setBorder(new LineBorder(darkGrey));
+//		logInOwnerButton.setBackground(Color.WHITE);
+//		logInOwnerButton.setOpaque(true);
+//		logInOwnerButton.setForeground(darkGrey);
+//		//initialize customer log in button
+//		logInCustomerButton = new JButton();
+//		logInCustomerButton.setText("Customer");
+//		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
+//		logInCustomerButton.setBorder(new LineBorder(darkGrey));
+//		logInCustomerButton.setBackground(Color.WHITE);
+//		logInCustomerButton.setOpaque(true);
+//		logInCustomerButton.setForeground(darkGrey);
+//		
+//		//initialize Text JLabel 
+//		logINTextLable = new JLabel("I'm A/An:  ");
+//		logINTextLable.setHorizontalAlignment(SwingConstants.LEFT);
+//		logINTextLable.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 20));
+//		logINTextLable.setBounds(155, 313, 115, 21);
+//		
+//		contentPane.add(logINTextLable);
+//		contentPane.add(logInOwnerButton);
+//		contentPane.add(logInCustomerButton);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.WHITE);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//setContentPane(contentPane);
+		contentPane.setLayout(null);
 		
-		logInPanel.setLayout(logInLayout);
-		logInPanel.setPreferredSize(new Dimension(1100,40));
-		//initialize owner log in button
-		logInOwnerButton = new JButton();
-		logInOwnerButton.setText("Owner");
-		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
-		logInOwnerButton.setBorder(new LineBorder(darkGrey));
-		logInOwnerButton.setBackground(Color.WHITE);
-		logInOwnerButton.setOpaque(true);
-		logInOwnerButton.setForeground(darkGrey);
-		//initialize customer log in button
-		logInCustomerButton = new JButton();
-		logInCustomerButton.setText("Customer");
-		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
-		logInCustomerButton.setBorder(new LineBorder(darkGrey));
-		logInCustomerButton.setBackground(Color.WHITE);
-		logInCustomerButton.setOpaque(true);
-		logInCustomerButton.setForeground(darkGrey);
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.DARK_GRAY);
+		panel.setBounds(0, 0, 346, 490);
+		contentPane.add(panel);
+		panel.setLayout(null);
 		
-		//initialize Text JLabel 
-		logINTextLable = new JLabel("I'm A/An:  ");
-		logINTextLable.setHorizontalAlignment(SwingConstants.LEFT);
-		logINTextLable.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 20));
-		logINTextLable.setBounds(155, 313, 115, 21);
+		JLabel lblNewLabel = new JLabel("KeepToo");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel.setForeground(new Color(240, 248, 255));
+		lblNewLabel.setBounds(139, 305, 84, 27);
+		panel.add(lblNewLabel);
 		
-		logInPanel.add(logINTextLable);
-		logInPanel.add(logInOwnerButton);
-		logInPanel.add(logInCustomerButton);
+//		JLabel label = new JLabel("");
+//		
+//		label.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				
+//				 xx = e.getX();
+//			     xy = e.getY();
+//			}
+//		});
+//		label.addMouseMotionListener(new MouseMotionAdapter() {
+//			@Override
+//			public void mouseDragged(MouseEvent arg0) {
+//				
+//				int x = arg0.getXOnScreen();
+//	            int y = arg0.getYOnScreen();
+//	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
+//			}
+//		});
+//		label.setBounds(-38, 0, 420, 275);
+//		label.setVerticalAlignment(SwingConstants.TOP);
+//		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
+//		panel.add(label);
 		
-		//initialize customer log in button listener
-		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logInCustomerButtonActionPerformed(evt);
+		JLabel lblWeGotYou = new JLabel("....We got you....");
+		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWeGotYou.setForeground(new Color(240, 248, 255));
+		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblWeGotYou.setBounds(111, 343, 141, 27);
+		panel.add(lblWeGotYou);
+		
+		Button logInOwnerButton = new Button("SignUp");
+		logInOwnerButton.setForeground(Color.WHITE);
+		logInOwnerButton.setBackground(new Color(241, 57, 83));
+		logInOwnerButton.setBounds(395, 363, 283, 36);
+		contentPane.add(logInOwnerButton);
+		
+		textField = new JTextField();
+		textField.setBounds(395, 83, 283, 36);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblUsername = new JLabel("USERNAME");
+		lblUsername.setBounds(395, 58, 114, 14);
+		contentPane.add(lblUsername);
+		
+		JLabel lblEmail = new JLabel("EMAIL");
+		lblEmail.setBounds(395, 132, 54, 14);
+		contentPane.add(lblEmail);
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		textField_1.setBounds(395, 157, 283, 36);
+		contentPane.add(textField_1);
+		
+		JLabel lblPassword = new JLabel("PASSWORD");
+		lblPassword.setBounds(395, 204, 96, 14);
+		contentPane.add(lblPassword);
+		
+		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
+		lblRepeatPassword.setBounds(395, 275, 133, 14);
+		contentPane.add(lblRepeatPassword);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(395, 229, 283, 36);
+		contentPane.add(passwordField);
+		
+		passwordField_1 = new JPasswordField();
+		passwordField_1.setBounds(395, 293, 283, 36);
+		contentPane.add(passwordField_1);
+		
+		JLabel lbl_close = new JLabel("Back");
+		lbl_close.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				System.exit(0);
 			}
 		});
+		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_close.setForeground(new Color(241, 57, 83));
+		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lbl_close.setBounds(691, 0, 37, 27);
+		contentPane.add(lbl_close);
+		// Mike add this end ---
+		
+		
+//		//initialize customer log in button listener
+//		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+//			public void actionPerformed(java.awt.event.ActionEvent evt) {
+//				logInCustomerButtonActionPerformed(evt);
+//			}
+//		});
 
 		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
 			//initialize owner log in button listener
 			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					//logInCustomerButtonActionPerformed(evt);
 					logInOwnerButtonToSetUpActionPerformed(evt);
 					
 				}
@@ -284,6 +390,7 @@ public class FlexiBookPage extends JFrame {
 			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					logInOwnerButtonActionPerformed(evt);
+					//logInCustomerButtonActionPerformed(evt);
 				}
 			});		
 		}
@@ -353,128 +460,128 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
-	/**
-	 * @TODO For Mike Login Owner page
-	 */
-	//initialize Login Owner page
-	private void initLogInOwnerPanel(){
-//		infoOwnerPanel = new JPanel();
-//		infoLabel = new JLabel("Info Page");
-//		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
-//		infoOwnerPanel.setBackground(Color.WHITE);
-//		infoOwnerPanel.setOpaque(true);
-//		infoOwnerPanel.setForeground(Color.WHITE);
-//		infoOwnerPanel.add(infoLabel);
-		
-		// Mike add this start --- 
-//		setBackground(Color.WHITE);
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		setBounds(100, 100, 729, 476);
-		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.DARK_GRAY);
-		panel.setBounds(0, 0, 346, 490);
-		contentPane.add(panel);
-		panel.setLayout(null);
-		
-		JLabel lblNewLabel = new JLabel("KeepToo");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblNewLabel.setForeground(new Color(240, 248, 255));
-		lblNewLabel.setBounds(139, 305, 84, 27);
-		panel.add(lblNewLabel);
-		
-//		JLabel label = new JLabel("");
+//	/**
+//	 * @TODO For Mike Login Owner page
+//	 */
+//	//initialize Login Owner page
+//	private void initLogInOwnerPanel(){
+////		infoOwnerPanel = new JPanel();
+////		infoLabel = new JLabel("Info Page");
+////		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+////		infoOwnerPanel.setBackground(Color.WHITE);
+////		infoOwnerPanel.setOpaque(true);
+////		infoOwnerPanel.setForeground(Color.WHITE);
+////		infoOwnerPanel.add(infoLabel);
 //		
-//		label.addMouseListener(new MouseAdapter() {
+//		// Mike add this start --- 
+////		setBackground(Color.WHITE);
+////		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+////		setBounds(100, 100, 729, 476);
+//		contentPane = new JPanel();
+//		contentPane.setBackground(Color.WHITE);
+//		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+//		setContentPane(contentPane);
+//		contentPane.setLayout(null);
+//		
+//		JPanel panel = new JPanel();
+//		panel.setBackground(Color.DARK_GRAY);
+//		panel.setBounds(0, 0, 346, 490);
+//		contentPane.add(panel);
+//		panel.setLayout(null);
+//		
+//		JLabel lblNewLabel = new JLabel("KeepToo");
+//		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//		lblNewLabel.setForeground(new Color(240, 248, 255));
+//		lblNewLabel.setBounds(139, 305, 84, 27);
+//		panel.add(lblNewLabel);
+//		
+////		JLabel label = new JLabel("");
+////		
+////		label.addMouseListener(new MouseAdapter() {
+////			@Override
+////			public void mousePressed(MouseEvent e) {
+////				
+////				 xx = e.getX();
+////			     xy = e.getY();
+////			}
+////		});
+////		label.addMouseMotionListener(new MouseMotionAdapter() {
+////			@Override
+////			public void mouseDragged(MouseEvent arg0) {
+////				
+////				int x = arg0.getXOnScreen();
+////	            int y = arg0.getYOnScreen();
+////	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
+////			}
+////		});
+////		label.setBounds(-38, 0, 420, 275);
+////		label.setVerticalAlignment(SwingConstants.TOP);
+////		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
+////		panel.add(label);
+//		
+//		JLabel lblWeGotYou = new JLabel("....We got you....");
+//		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblWeGotYou.setForeground(new Color(240, 248, 255));
+//		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
+//		lblWeGotYou.setBounds(111, 343, 141, 27);
+//		panel.add(lblWeGotYou);
+//		
+//		Button button = new Button("SignUp");
+//		button.setForeground(Color.WHITE);
+//		button.setBackground(new Color(241, 57, 83));
+//		button.setBounds(395, 363, 283, 36);
+//		contentPane.add(button);
+//		
+//		textField = new JTextField();
+//		textField.setBounds(395, 83, 283, 36);
+//		contentPane.add(textField);
+//		textField.setColumns(10);
+//		
+//		JLabel lblUsername = new JLabel("USERNAME");
+//		lblUsername.setBounds(395, 58, 114, 14);
+//		contentPane.add(lblUsername);
+//		
+//		JLabel lblEmail = new JLabel("EMAIL");
+//		lblEmail.setBounds(395, 132, 54, 14);
+//		contentPane.add(lblEmail);
+//		
+//		textField_1 = new JTextField();
+//		textField_1.setColumns(10);
+//		textField_1.setBounds(395, 157, 283, 36);
+//		contentPane.add(textField_1);
+//		
+//		JLabel lblPassword = new JLabel("PASSWORD");
+//		lblPassword.setBounds(395, 204, 96, 14);
+//		contentPane.add(lblPassword);
+//		
+//		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
+//		lblRepeatPassword.setBounds(395, 275, 133, 14);
+//		contentPane.add(lblRepeatPassword);
+//		
+//		passwordField = new JPasswordField();
+//		passwordField.setBounds(395, 229, 283, 36);
+//		contentPane.add(passwordField);
+//		
+//		passwordField_1 = new JPasswordField();
+//		passwordField_1.setBounds(395, 293, 283, 36);
+//		contentPane.add(passwordField_1);
+//		
+//		JLabel lbl_close = new JLabel("Back");
+//		lbl_close.addMouseListener(new MouseAdapter() {
 //			@Override
-//			public void mousePressed(MouseEvent e) {
+//			public void mouseClicked(MouseEvent arg0) {
 //				
-//				 xx = e.getX();
-//			     xy = e.getY();
+//				System.exit(0);
 //			}
 //		});
-//		label.addMouseMotionListener(new MouseMotionAdapter() {
-//			@Override
-//			public void mouseDragged(MouseEvent arg0) {
-//				
-//				int x = arg0.getXOnScreen();
-//	            int y = arg0.getYOnScreen();
-//	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
-//			}
-//		});
-//		label.setBounds(-38, 0, 420, 275);
-//		label.setVerticalAlignment(SwingConstants.TOP);
-//		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
-//		panel.add(label);
-		
-		JLabel lblWeGotYou = new JLabel("....We got you....");
-		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWeGotYou.setForeground(new Color(240, 248, 255));
-		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblWeGotYou.setBounds(111, 343, 141, 27);
-		panel.add(lblWeGotYou);
-		
-		Button button = new Button("SignUp");
-		button.setForeground(Color.WHITE);
-		button.setBackground(new Color(241, 57, 83));
-		button.setBounds(395, 363, 283, 36);
-		contentPane.add(button);
-		
-		textField = new JTextField();
-		textField.setBounds(395, 83, 283, 36);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
-		JLabel lblUsername = new JLabel("USERNAME");
-		lblUsername.setBounds(395, 58, 114, 14);
-		contentPane.add(lblUsername);
-		
-		JLabel lblEmail = new JLabel("EMAIL");
-		lblEmail.setBounds(395, 132, 54, 14);
-		contentPane.add(lblEmail);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(395, 157, 283, 36);
-		contentPane.add(textField_1);
-		
-		JLabel lblPassword = new JLabel("PASSWORD");
-		lblPassword.setBounds(395, 204, 96, 14);
-		contentPane.add(lblPassword);
-		
-		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
-		lblRepeatPassword.setBounds(395, 275, 133, 14);
-		contentPane.add(lblRepeatPassword);
-		
-		passwordField = new JPasswordField();
-		passwordField.setBounds(395, 229, 283, 36);
-		contentPane.add(passwordField);
-		
-		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds(395, 293, 283, 36);
-		contentPane.add(passwordField_1);
-		
-		JLabel lbl_close = new JLabel("Back");
-		lbl_close.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-				System.exit(0);
-			}
-		});
-		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_close.setForeground(new Color(241, 57, 83));
-		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lbl_close.setBounds(691, 0, 37, 27);
-		contentPane.add(lbl_close);
-		// Mike add this end ---
-	}
+//		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
+//		lbl_close.setForeground(new Color(241, 57, 83));
+//		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//		lbl_close.setBounds(691, 0, 37, 27);
+//		contentPane.add(lbl_close);
+//		// Mike add this end ---
+//	}
 	
 	
 	/**
@@ -1472,7 +1579,7 @@ public class FlexiBookPage extends JFrame {
 		//method called when set-up info is done 
 		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 			//remove log in panel
-			getContentPane().remove(logInPanel);
+			getContentPane().remove(contentPane);
 			//add owner top bar and calendar panel to frame
 			getContentPane().add(topPanelOwner);
 			topPanelOwner.setBounds(0,0,1100,40);
@@ -1498,7 +1605,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in owner button pressed
 	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(logInPanel);
+		getContentPane().remove(contentPane);
 		//add owner top bar and calendar panel to frame
 		getContentPane().add(topPanelOwner);
 		topPanelOwner.setBounds(0,0,1100,40);
@@ -1523,7 +1630,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in customer button pressed
 		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 			//remove log in panel
-			getContentPane().remove(logInPanel);
+			getContentPane().remove(contentPane);
 			//add customer top bar and calendar panel to frame
 			getContentPane().add(topPanelCustomer);
 			topPanelCustomer.setBounds(0,0,1100,40);
@@ -1545,7 +1652,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in owner button pressed
 	private void logInOwnerButtonToSetUpActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(logInPanel);
+		getContentPane().remove(contentPane);
 		//add owner top bar and calendar panel to frame
 		getContentPane().add(setUpInPanel);
 		setUpInPanel.setBounds(0,0,1100,700);
@@ -1569,7 +1676,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in customer button pressed
 	private void logInCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(logInPanel);
+		getContentPane().remove(contentPane);
 		//add customer top bar and calendar panel to frame
 		getContentPane().add(topPanelCustomer);
 		topPanelCustomer.setBounds(0,0,1100,40);
@@ -1845,8 +1952,8 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelOwner);
 		//set new panel
-		getContentPane().add(logInPanel);
-		logInPanel.setBounds(350,360,400,40);
+		getContentPane().add(contentPane);
+		contentPane.setBounds(0,0,1100,740);
 		//refresh page
 		refreshData();
 	}
@@ -1867,7 +1974,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelCustomer);
 		//set new panel
-		getContentPane().add(logInPanel);
+		getContentPane().add(contentPane);
 		//refresh page
 		refreshData();
 	}
