@@ -562,6 +562,9 @@ public class FlexiBookController {
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
+		else if (username == "owner") {
+			throw new InvalidInputException("username 'owner' is an reserved word, please use another name.");
+		}
 		else if (username == null || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
