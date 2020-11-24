@@ -201,6 +201,7 @@ public class FlexiBookPage extends JFrame {
 	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
+	private JLabel updateSuccessful; 
 	
 	//Customer Sign up panel
 	private JLabel signUpLabel;
@@ -1012,90 +1013,6 @@ public class FlexiBookPage extends JFrame {
 		});
 
 	}
-//	
-//	//initialize customer sign up page
-//	private void initCustomerSignUpPanel() {
-//		customerSignUpPanel = new JPanel();
-//		customerSignUpPanel.setLayout(null);
-//		customerSignUpPanel.setPreferredSize(new Dimension(1100,700));
-//		customerSignUpPanel.setBackground(Color.WHITE);
-//		customerSignUpPanel.setOpaque(true);
-//		customerSignUpPanel.setForeground(Color.darkGray);
-//		
-//		signUpLabel = new JLabel("Create Your Account");
-//		signUpLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-//		signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//		signUpLabel.setBounds(470, 300, 150, 30);
-//		signUpLabel.setBackground(Color.WHITE);
-//		signUpLabel.setOpaque(true);
-//		signUpLabel.setForeground(Color.darkGray);
-//		
-//		usernameLabel = new JLabel("Username");
-//		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-//		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-//		usernameLabel.setBounds(350, 350, 80, 30);
-//		usernameLabel.setBackground(Color.WHITE);
-//		usernameLabel.setOpaque(true);
-//		usernameLabel.setForeground(Color.darkGray);
-//		usernameLabel.setAlignmentX(SwingConstants.CENTER);
-//		
-//		usernameBox = new JTextField(""); 
-//		usernameBox.setColumns(20);
-//		usernameBox.setBounds(470, 350, 250, 30);
-//		
-//		passwordLabel = new JLabel("Password");
-//		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-//		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-//		passwordLabel.setBounds(350, 400, 80, 30);
-//		passwordLabel.setBackground(Color.WHITE);
-//		passwordLabel.setOpaque(true);
-//		passwordLabel.setForeground(Color.darkGray);
-//		passwordLabel.setAlignmentX(SwingConstants.CENTER);
-//		
-//		passwordBox = new JTextField(""); 
-//		passwordBox.setColumns(20);
-//		passwordBox.setBounds(470, 400, 250, 30);
-//		
-//		signUpButton = new JButton("Sign Up");
-//		signUpButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-//		signUpButton.setBounds(550, 450, 100, 30);
-//		signUpButton.setAlignmentX(CENTER_ALIGNMENT);
-//		signUpButton.setBorder(new LineBorder(Color.darkGray));
-//		signUpButton.setBackground(Color.darkGray);
-//		signUpButton.setOpaque(true);
-//		signUpButton.setForeground(Color.WHITE);
-//		
-//		cancelButton = new JButton("Cancel");
-//		cancelButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-//		cancelButton.setBounds(400, 450, 100, 30);
-//		cancelButton.setAlignmentX(CENTER_ALIGNMENT);
-//		cancelButton.setBorder(new LineBorder(Color.darkGray));
-//		cancelButton.setBackground(Color.WHITE);
-//		cancelButton.setOpaque(true);
-//		cancelButton.setForeground(Color.darkGray);
-//		
-//		customerSignUpPanel.add(signUpLabel);
-//		customerSignUpPanel.add(usernameLabel);
-//		customerSignUpPanel.add(usernameBox);
-//		customerSignUpPanel.add(passwordLabel);
-//		customerSignUpPanel.add(passwordBox);
-//		customerSignUpPanel.add(signUpButton);
-//		customerSignUpPanel.add(cancelButton);
-//		
-//		
-//		signUpButton.addActionListener(new java.awt.event.ActionListener() {
-//			public void actionPerformed(java.awt.event.ActionEvent evt) {
-//				signUpActionPerformed(evt);
-//			}
-//		});
-//		
-//		cancelButton.addActionListener(new java.awt.event.ActionListener() {
-//			public void actionPerformed(java.awt.event.ActionEvent evt) {
-//				cancelSignUpActionPerformed(evt);
-//			}
-//		});
-//		
-//	}
 	
 
 	//initialize info panel for owner
@@ -1112,7 +1029,7 @@ public class FlexiBookPage extends JFrame {
 			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
 		
 		} catch(Exception exp) {
-			error += exp.getMessage();
+			error = exp.getMessage();
 		}
 		
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
@@ -1141,7 +1058,9 @@ public class FlexiBookPage extends JFrame {
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField("owner"); //FlexiBookApplication.getCurrentLoginUser().getUsername()
+		usernameBox = new JTextField(); 
+		if (FlexiBookApplication.getCurrentLoginUser().getUsername() != null) {
+		usernameBox.setText(FlexiBookApplication.getCurrentLoginUser().getUsername());}
 		usernameBox.setColumns(20);
 		usernameBox.setBounds(470, 350, 250, 30);
 		
@@ -1154,7 +1073,7 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
+		passwordBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getPassword());
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
@@ -1167,6 +1086,18 @@ public class FlexiBookPage extends JFrame {
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
+		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
+		errorMessage.setBounds(470, 500, 200, 30);
+		errorMessage.setAlignmentX(CENTER_ALIGNMENT);
+		
+		updateSuccessful = new JLabel();
+		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		updateSuccessful.setForeground(Color.GREEN);
+		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
+		updateSuccessful.setBounds(470, 500, 200, 30);
+		updateSuccessful.setAlignmentX(CENTER_ALIGNMENT);
+		
 		infoOwnerPanel.add(infoUserLabel);
 		infoOwnerPanel.add(infoLabel);
 		infoOwnerPanel.add(usernameLabel);
@@ -1174,6 +1105,8 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.add(passwordLabel);
 		infoOwnerPanel.add(passwordBox);
 		infoOwnerPanel.add(saveAccountButton);
+		infoOwnerPanel.add(errorMessage);
+		infoOwnerPanel.add(updateSuccessful);
 		
 		
 		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1229,7 +1162,7 @@ public class FlexiBookPage extends JFrame {
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getUsername()
+		usernameBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getUsername()); 
 		usernameBox.setColumns(20);
 		usernameBox.setBounds(470, 350, 250, 30);
 		
@@ -1242,7 +1175,7 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
+		passwordBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getPassword()); 
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
@@ -1264,6 +1197,16 @@ public class FlexiBookPage extends JFrame {
 		deleteAccountButton.setOpaque(true);
 		deleteAccountButton.setForeground(Color.darkGray);
 		
+		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
+		errorMessage.setBounds(SwingConstants.CENTER, 500, errorMessage.getText().length(), 30);
+		
+		updateSuccessful = new JLabel();
+		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		updateSuccessful.setForeground(Color.GREEN);
+		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
+		updateSuccessful.setBounds(SwingConstants.CENTER, 500, updateSuccessful.getText().length(), 30);
+		
 		infoCustomerPanel.add(infoUserLabel);
 		infoCustomerPanel.add(infoLabel);
 		infoCustomerPanel.add(usernameLabel);
@@ -1272,6 +1215,8 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.add(passwordBox);
 		infoCustomerPanel.add(saveAccountButton);
 		infoCustomerPanel.add(deleteAccountButton);
+		infoOwnerPanel.add(errorMessage);
+		infoOwnerPanel.add(updateSuccessful);
 		
 		
 		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
@@ -2402,9 +2347,9 @@ public class FlexiBookPage extends JFrame {
 			addLoginSuccess = null;
 			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")||
 					String.valueOf(passwordField_1.getPassword()).equals("")) {
-				addSignUpError = "one of the fields is empty";
+				addSignUpError = "One of the fields is empty";
 			}else if(!String.valueOf(passwordField.getPassword()).equals(String.valueOf(passwordField_1.getPassword()))) {
-				addSignUpError = "two passwaord inputs does not match, please try again.";
+				addSignUpError = "The two password inputs do not match. Please try again.";
 			}
 			else {
 				if (!textField_1.getText().equals("owner")) {
@@ -2997,19 +2942,19 @@ public class FlexiBookPage extends JFrame {
 	private void saveAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
 		// clear error message
 		error = null;
-				
-//		// call the controller
-//		try {
-//			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), usernameBox.getText(), passwordBox.getText());
-//				} catch (InvalidInputException e) {
-//					error = e.getMessage();
-//				}
-		
-		// @ TODO success indication
-		
+
+		// call the controller
+		try {
+			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), usernameBox.getText(), passwordBox.getText());
+			updateSuccessful.setText("Success!");
+		} catch (InvalidInputException e) {
+			error = e.getMessage();
+			errorMessage.setText(error);
+		}
+
 		// update visuals
 		refreshData();
-		
+
 	}
 	
 	//method called when delete button pressed while editing an account
@@ -3017,105 +2962,39 @@ public class FlexiBookPage extends JFrame {
 		// clear error message
 		error = null;
 		
-		// @ ToDo 
-		//pop up confirm message
+		//pop up confirm message?
 				
 //		// call the controller
-//		try {
-//			FlexiBookController.deleteCustomerAccount(usernameBox.getText());
-//				} catch (InvalidInputException e) {
-//					error = e.getMessage();
-//				}
-//		
-//		
-		
-		//reset previous button to dark grey background
-		previousButton.setBorder(new LineBorder(darkGrey));
-		previousButton.setBackground(darkGrey);
-		previousButton.setOpaque(true);
-		previousButton.setForeground(Color.WHITE);
-		if(previousButton.equals(infoCustomerButton)){
-			previousButton.setIcon(infoIconDark);
-		} else if(previousButton.equals(logOutCustomerButton)){
-			previousButton.setIcon(logOutIconDark);
-		}
-		//remove previous panels
-		getContentPane().remove(previousPanel);
-		getContentPane().remove(topPanelCustomer);
-		//set new panel
-		getContentPane().add(LoginPane);
-		//refresh page
-		refreshData();
-		
-	}
-	
-	//method called when sign up customer button pressed
-	private void signUpActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear error message
-		error = null;
+		try {
+			FlexiBookController.deleteCustomerAccount(usernameBox.getText());
+			// log out panel
+			//reset previous button to dark grey background
+			previousButton.setBorder(new LineBorder(darkGrey));
+			previousButton.setBackground(darkGrey);
+			previousButton.setOpaque(true);
+			previousButton.setForeground(Color.WHITE);
+			if(previousButton.equals(infoCustomerButton)){
+				previousButton.setIcon(infoIconDark);
+			} else if(previousButton.equals(logOutCustomerButton)){
+				previousButton.setIcon(logOutIconDark);
+			}
+			//remove previous panels
+			getContentPane().remove(previousPanel);
+			getContentPane().remove(topPanelCustomer);
+			//set new panel
+			getContentPane().add(LoginPane);
 			
-//		// call the controller
-//		try {
-//			FlexiBookController.signUpCustomer(usernameBox.getText(), passwordBox.getText());
-//				} catch (InvalidInputException e) {
-//					error = e.getMessage();
-//				}
-		
-		if (error == null) {
-			//remove sign up panel
-			getContentPane().remove(customerSignUpPanel);
-			//add customer top bar and calendar panel to frame
-			getContentPane().setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.gridx = 0;
-			c.gridy = 0;
-			c.ipady = 40;
-			c.ipadx = 1100;
-			getContentPane().add(topPanelCustomer, c);
-			c.gridx = 0;
-			c.gridy = 1;
-			c.ipady = 700;
-			c.ipadx = 1100;
-			getContentPane().add(calendarCustomerPanel, c);
-			//set calendar to initial state
-			previousPanel = calendarCustomerPanel;
-			previousButton = calendarCustomerButton;
-			//reset calendar button
-			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
-			calendarCustomerButton.setBackground(Color.WHITE);
-			calendarCustomerButton.setOpaque(true);
-			calendarCustomerButton.setForeground(darkGrey);
-		}
+				} catch (InvalidInputException e) {
+					error = e.getMessage();
+					//display error message
+				}
 		
 		//refresh page
 		refreshData();
+		
 	}
 	
-//	// method called when a customer cancels sign up. Brings you back to log in page
-//	private void cancelSignUpActionPerformed(java.awt.event.ActionEvent evt) {
-//		//remove previous panels
-//		getContentPane().remove(previousPanel);
-//		//set new panel
-//		getContentPane().add(LoginPane);
-//		//refresh page
-//		refreshData();
-//		
-//	}
-//	
-//	//for now, this button brings you to a sign up page
-//	private void signUpNewCustomerActionPerformed(java.awt.event.ActionEvent evt) {
-//		
-//		getContentPane().remove(previousPanel);
-//		//set new panel
-//		getContentPane().add(infoOwnerPanel);
-//		infoOwnerPanel.setBounds(0,40,1100,700);
-//		//set this panel as the current panel
-//		previousPanel = infoOwnerPanel;
-//		//refresh page
-//		refreshData();
-//
-//		
-//	}
+
 	
 	//--------------------------- Add Appointment part ----------------
 	private void updateAppointmentContentActionPerformed(java.awt.event.ActionEvent evt) {
