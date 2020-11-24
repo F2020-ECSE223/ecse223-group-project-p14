@@ -284,14 +284,14 @@ public class FlexiBookPage extends JFrame {
 	/** Creates new form FlexiBookPage */
 	public FlexiBookPage() {
 		// this manually overides the look and feel of the UI. If we can't fix an OS issue, we can use this 
-//		try {
-//			UIManager.setLookAndFeel( "javax.swing.plaf.metal.MetalLookAndFeel"); 	// change to "com.sun.java.swing.plaf.motif.MotifLookAndFeel"
-//																					// change to "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
-//			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-//			| UnsupportedLookAndFeelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			}
+		try {
+			UIManager.setLookAndFeel( "javax.swing.plaf.metal.MetalLookAndFeel"); 	// change to "com.sun.java.swing.plaf.motif.MotifLookAndFeel"
+																					// change to "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+			| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
 		initComponents();
 		refreshData();
 		
@@ -1548,11 +1548,17 @@ public class FlexiBookPage extends JFrame {
 		calendarLeftButton.setText("Left");
 		calendarLeftButton.setIcon(calendarLeftIcon);
 		calendarLeftButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarLeftButton.setBackground(Color.WHITE);
+		calendarLeftButton.setOpaque(true);
+		calendarLeftButton.setForeground(Color.WHITE);
 		calendarRightButton = new JButton();
 		calendarRightButton.setPreferredSize(new Dimension(30,30));
 		calendarRightButton.setText("Right");
 		calendarRightButton.setIcon(calendarRightIcon);
 		calendarRightButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarRightButton.setBackground(Color.WHITE);
+		calendarRightButton.setOpaque(true);
+		calendarRightButton.setForeground(Color.WHITE);
 		calendarMonthlyViewTopPanel.add(calendarLeftButton);
 		calendarLeftButton.setBounds(250,20,30,30);
 		calendarMonthlyViewTopPanel.add(calendarRightButton);
@@ -1613,6 +1619,7 @@ public class FlexiBookPage extends JFrame {
 			b.setHorizontalAlignment(SwingConstants.CENTER);
 			b.setVerticalAlignment(SwingConstants.CENTER);
 			b.setBorder(BorderFactory.createEmptyBorder());
+			b.setBackground(Color.WHITE);
 			calendarButtonList.add(b);
 			calendarMonthlyViewGridPanel.add(b);
 			b.addActionListener(monthlyCalendarListener);
