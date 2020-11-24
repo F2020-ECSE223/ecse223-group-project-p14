@@ -10,7 +10,7 @@ import java.sql.Time;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 86 "../../../../../FlexiBookPersistence.ump"
-// line 56 "../../../../../FlexiBook.ump"
+// line 57 "../../../../../FlexiBook.ump"
 public class TimeSlot implements Serializable
 {
 
