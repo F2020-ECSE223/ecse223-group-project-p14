@@ -162,7 +162,7 @@ public class FlexiBookPage extends JFrame {
 
 		//initialize log in page
 		initLogInPage();
-		initLogInOwnerPanel();
+		// initLogInOwnerPanel();
 		
 		initSetBusinessInfo();
 		initTopBarOwner();

@@ -123,9 +123,9 @@ public class Home extends JFrame {
 		lblUsername.setBounds(395, 58, 114, 14);
 		contentPane.add(lblUsername);
 		
-		JLabel lblEmail = new JLabel("EMAIL");
-		lblEmail.setBounds(395, 132, 54, 14);
-		contentPane.add(lblEmail);
+//		JLabel lblEmail = new JLabel("EMAIL");
+//		lblEmail.setBounds(395, 132, 54, 14);
+//		contentPane.add(lblEmail);
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
