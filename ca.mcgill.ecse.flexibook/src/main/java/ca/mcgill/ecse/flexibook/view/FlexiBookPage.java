@@ -1,25 +1,48 @@
 package ca.mcgill.ecse.flexibook.view;
 
+import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Properties;
 import java.net.URL;
 
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.text.DateFormatter;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.SqlDateModel;
+
 import javax.swing.*;
 import javax.imageio.ImageIO;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 import ca.mcgill.ecse.flexibook.model.Service;
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
@@ -33,7 +56,7 @@ public class FlexiBookPage extends JFrame {
 	//top bar for customer
 	private JPanel topPanelCustomer;
 	//panel for log in
-	private JPanel logInPanel;
+	private JPanel LoginPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
 	//panel for each button on top bar
@@ -51,6 +74,15 @@ public class FlexiBookPage extends JFrame {
 	//panels for calendar tab
 	private JPanel calendarWeeklyViewPanel;
 	
+	
+	// initial login panel
+	//private JPanel LoginPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JPasswordField passwordField;
+	private JPasswordField passwordField_1;
+	int xx,xy;
+	
 	//top bar buttons
 	private JButton infoOwnerButton;
 	private JButton infoCustomerButton;
@@ -67,6 +99,7 @@ public class FlexiBookPage extends JFrame {
 	//log in page buttons
 	private JButton logInOwnerButton;
 	private JButton logInCustomerButton;
+	private JLabel logINTextLable;
 	
 	//set up business information button
 	private JButton setDetailBtn;
@@ -125,6 +158,42 @@ public class FlexiBookPage extends JFrame {
 	private Color darkGrey = new Color(62,62,62);
 
 	private String error;
+	
+	
+	/**
+	 * Appointment page
+	 */
+	private JTextField newAppTimeT;
+	private JTextField newAppDateT;
+	private JTextField optionalServiceNamesT; // optional service name
+	private JTextField serviceNameT; // service Name
+	private JTextField selectedAppTimeT;
+	private JTextField selectedAppDateT;
+	private JTextField newUpdateAppDateT;
+	private JTextField newUpdateAppTimeT;
+	private JTextField updateComboItemNameL;
+	private JTable viewAppForCurCustomerTable;
+	private JScrollPane  viewAppForCurCustomerScrollPane;
+	private DefaultTableModel vAFCCTableModel;
+	private String vAFCCTableColumnNames[] = {"Service Name", " start at", "Downtimes", "end at"} ;
+	private JDatePickerImpl newDatePicker;
+	private JDatePickerImpl registerDatePicker;
+	private JDatePickerImpl selectDatePicker;
+	private JSpinner registerTimeSpinner;
+	private JSpinner newTimeSpinner;
+	private JSpinner selectTimeSpinner;
+	private JButton updateContentB;
+	private JButton updateTimeB;
+	private JButton addAppForSingleServiceB;
+	private JButton addAppForComboB;
+	private String appSectionError;
+	private JComboBox<String> updateActionComboBox;
+	private JLabel errorMsgLabel;
+	
+	private double initLogInPageScalingFactor = 740/490;
+	/**
+	 * Appointment page end
+	 */
 
 
 	/** Creates new form FlexiBookPage */
@@ -137,6 +206,7 @@ public class FlexiBookPage extends JFrame {
 	 */
 	private void initComponents() {
 
+		
 		//initialize frame
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("FlexiBook");
@@ -146,13 +216,15 @@ public class FlexiBookPage extends JFrame {
 
 		//initialize log in page
 		initLogInPage();
+		//initLogInOwnerPanel();
+		
 		initSetBusinessInfo();
 		initTopBarOwner();
 		initTopBarCustomer();
 
 		//add log in page to the frame
-		getContentPane().add(logInPanel);
-		logInPanel.setBounds(350,360,400,40);
+		getContentPane().add(LoginPane);
+		LoginPane.setBounds(0,0, 1100, 740);
 
 		//refresh page
 		pack();
@@ -161,30 +233,149 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize log in page
 	private void initLogInPage(){
-		//initialize log in panel layout
-		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
-		logInPanel = new JPanel();
-		logInPanel.setLayout(logInLayout);
-		logInPanel.setPreferredSize(new Dimension(1100,40));
-		//initialize owner log in button
-		logInOwnerButton = new JButton();
-		logInOwnerButton.setText("Owner Log In");
-		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
-		logInOwnerButton.setBorder(new LineBorder(darkGrey));
-		logInOwnerButton.setBackground(Color.WHITE);
-		logInOwnerButton.setOpaque(true);
-		logInOwnerButton.setForeground(darkGrey);
-		//initialize customer log in button
-		logInCustomerButton = new JButton();
-		logInCustomerButton.setText("Customer Log In");
-		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
-		logInCustomerButton.setBorder(new LineBorder(darkGrey));
-		logInCustomerButton.setBackground(Color.WHITE);
-		logInCustomerButton.setOpaque(true);
-		logInCustomerButton.setForeground(darkGrey);
-
-		logInPanel.add(logInOwnerButton);
-		logInPanel.add(logInCustomerButton);
+//		//initialize log in panel layout
+//		FlowLayout logInLayout = new FlowLayout(FlowLayout.CENTER, 0, 0);
+//		LoginPane = new JPanel();
+//		
+//		LoginPane.setLayout(logInLayout);
+//		LoginPane.setPreferredSize(new Dimension(1100,40));
+//		//initialize owner log in button
+//		logInOwnerButton = new JButton();
+//		logInOwnerButton.setText("Owner");
+//		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
+//		logInOwnerButton.setBorder(new LineBorder(darkGrey));
+//		logInOwnerButton.setBackground(Color.WHITE);
+//		logInOwnerButton.setOpaque(true);
+//		logInOwnerButton.setForeground(darkGrey);
+//		//initialize customer log in button
+//		logInCustomerButton = new JButton();
+//		logInCustomerButton.setText("Customer");
+//		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
+//		logInCustomerButton.setBorder(new LineBorder(darkGrey));
+//		logInCustomerButton.setBackground(Color.WHITE);
+//		logInCustomerButton.setOpaque(true);
+//		logInCustomerButton.setForeground(darkGrey);
+//		
+//		//initialize Text JLabel 
+//		logINTextLable = new JLabel("I'm A/An:  ");
+//		logINTextLable.setHorizontalAlignment(SwingConstants.LEFT);
+//		logINTextLable.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 20));
+//		logINTextLable.setBounds(155, 313, 115, 21);
+//		
+//		LoginPane.add(logINTextLable);
+//		LoginPane.add(logInOwnerButton);
+//		LoginPane.add(logInCustomerButton);
+		LoginPane = new JPanel();
+		LoginPane.setBackground(new Color(66, 135, 245));
+		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//setContentPane(LoginPane);
+		LoginPane.setLayout(null);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.DARK_GRAY);
+		panel.setBounds(0, 0, (int)(346*initLogInPageScalingFactor), (int)(490*initLogInPageScalingFactor));
+		LoginPane.add(panel);
+		panel.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("KeepToo");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel.setForeground(new Color(240, 248, 255));
+		lblNewLabel.setBounds((int)(139*initLogInPageScalingFactor), (int)(305*initLogInPageScalingFactor), (int)(84*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
+		panel.add(lblNewLabel);
+		
+//		JLabel label = new JLabel("");
+//		
+//		label.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				
+//				 xx = e.getX();
+//			     xy = e.getY();
+//			}
+//		});
+//		label.addMouseMotionListener(new MouseMotionAdapter() {
+//			@Override
+//			public void mouseDragged(MouseEvent arg0) {
+//				
+//				int x = arg0.getXOnScreen();
+//	            int y = arg0.getYOnScreen();
+//	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
+//			}
+//		});
+//		label.setBounds(-38, 0, 420, 275);
+//		label.setVerticalAlignment(SwingConstants.TOP);
+//		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
+//		panel.add(label);
+		
+		JLabel lblWeGotYou = new JLabel("....We got you....");
+		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWeGotYou.setForeground(new Color(240, 248, 255));
+		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblWeGotYou.setBounds((int)(111*initLogInPageScalingFactor),(int)(343*initLogInPageScalingFactor), (int)(141*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
+		panel.add(lblWeGotYou);
+		
+		Button logInOwnerButton = new Button("Owner");
+		logInOwnerButton.setForeground(Color.WHITE);
+		logInOwnerButton.setBackground(new Color(241, 57, 83));
+		logInOwnerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(logInOwnerButton);
+		
+		Button logInCustomerButton = new Button("Customer");
+		logInCustomerButton.setForeground(Color.WHITE);
+		logInCustomerButton.setBackground(new Color(241, 57, 83));
+		logInCustomerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor+(int)(36*initLogInPageScalingFactor)+20 ), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(logInCustomerButton);
+		
+		textField = new JTextField();
+		textField.setBounds((int)(395*initLogInPageScalingFactor), (int)(83*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblUsername = new JLabel("USERNAME");
+		lblUsername.setBounds((int)(395*initLogInPageScalingFactor), (int)(132*initLogInPageScalingFactor), (int)(114*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		LoginPane.add(lblUsername);
+		
+//		JLabel lblEmail = new JLabel("EMAIL");
+//		lblEmail.setBounds(395, 132, 54, 14);
+//		LoginPane.add(lblEmail);
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		textField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(157*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(textField_1);
+		
+		JLabel lblPassword = new JLabel("PASSWORD");
+		lblPassword.setBounds((int)(395*initLogInPageScalingFactor),(int)(204*initLogInPageScalingFactor), (int)(96*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		LoginPane.add(lblPassword);
+		
+		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
+		lblRepeatPassword.setBounds((int)(395*initLogInPageScalingFactor), (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		LoginPane.add(lblRepeatPassword);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds((int)(395*initLogInPageScalingFactor), (int)(229*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(passwordField);
+		
+		passwordField_1 = new JPasswordField();
+		passwordField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(293*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(passwordField_1);
+		
+		JLabel lbl_close = new JLabel("Back");
+		lbl_close.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				System.exit(0);
+			}
+		});
+		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
+		lbl_close.setForeground(new Color(241, 57, 83));
+		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lbl_close.setBounds((int)(691*initLogInPageScalingFactor), (int)(0*initLogInPageScalingFactor), (int)(37*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
+		LoginPane.add(lbl_close);
+		// Mike add this end ---
+		
 		
 		//initialize customer log in button listener
 		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
@@ -197,14 +388,18 @@ public class FlexiBookPage extends JFrame {
 			//initialize owner log in button listener
 			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
+					//logInCustomerButtonActionPerformed(evt);
 					logInOwnerButtonToSetUpActionPerformed(evt);
+					
 				}
 			});
 		}
+		
 		else {
 			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					logInOwnerButtonActionPerformed(evt);
+					//logInCustomerButtonActionPerformed(evt);
 				}
 			});		
 		}
@@ -274,21 +469,129 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
-	/**
-	 * @TODO For Mike Login Owner page
-	 */
-	//initialize Login Owner page
-	private void initLogInOwnerPanel(){
-		infoOwnerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
-		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
-		infoOwnerPanel.setBackground(Color.WHITE);
-		infoOwnerPanel.setOpaque(true);
-		infoOwnerPanel.setForeground(Color.WHITE);
-		infoOwnerPanel.add(infoLabel);
-
-		//TO DO
-	}
+//	/**
+//	 * @TODO For Mike Login Owner page
+//	 */
+//	//initialize Login Owner page
+//	private void initLogInOwnerPanel(){
+////		infoOwnerPanel = new JPanel();
+////		infoLabel = new JLabel("Info Page");
+////		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+////		infoOwnerPanel.setBackground(Color.WHITE);
+////		infoOwnerPanel.setOpaque(true);
+////		infoOwnerPanel.setForeground(Color.WHITE);
+////		infoOwnerPanel.add(infoLabel);
+//		
+//		// Mike add this start --- 
+////		setBackground(Color.WHITE);
+////		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+////		setBounds(100, 100, 729, 476);
+//		LoginPane = new JPanel();
+//		LoginPane.setBackground(Color.WHITE);
+//		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+//		setContentPane(LoginPane);
+//		LoginPane.setLayout(null);
+//		
+//		JPanel panel = new JPanel();
+//		panel.setBackground(Color.DARK_GRAY);
+//		panel.setBounds(0, 0, 346, 490);
+//		LoginPane.add(panel);
+//		panel.setLayout(null);
+//		
+//		JLabel lblNewLabel = new JLabel("KeepToo");
+//		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//		lblNewLabel.setForeground(new Color(240, 248, 255));
+//		lblNewLabel.setBounds(139, 305, 84, 27);
+//		panel.add(lblNewLabel);
+//		
+////		JLabel label = new JLabel("");
+////		
+////		label.addMouseListener(new MouseAdapter() {
+////			@Override
+////			public void mousePressed(MouseEvent e) {
+////				
+////				 xx = e.getX();
+////			     xy = e.getY();
+////			}
+////		});
+////		label.addMouseMotionListener(new MouseMotionAdapter() {
+////			@Override
+////			public void mouseDragged(MouseEvent arg0) {
+////				
+////				int x = arg0.getXOnScreen();
+////	            int y = arg0.getYOnScreen();
+////	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
+////			}
+////		});
+////		label.setBounds(-38, 0, 420, 275);
+////		label.setVerticalAlignment(SwingConstants.TOP);
+////		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
+////		panel.add(label);
+//		
+//		JLabel lblWeGotYou = new JLabel("....We got you....");
+//		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblWeGotYou.setForeground(new Color(240, 248, 255));
+//		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
+//		lblWeGotYou.setBounds(111, 343, 141, 27);
+//		panel.add(lblWeGotYou);
+//		
+//		Button button = new Button("SignUp");
+//		button.setForeground(Color.WHITE);
+//		button.setBackground(new Color(241, 57, 83));
+//		button.setBounds(395, 363, 283, 36);
+//		LoginPane.add(button);
+//		
+//		textField = new JTextField();
+//		textField.setBounds(395, 83, 283, 36);
+//		LoginPane.add(textField);
+//		textField.setColumns(10);
+//		
+//		JLabel lblUsername = new JLabel("USERNAME");
+//		lblUsername.setBounds(395, 58, 114, 14);
+//		LoginPane.add(lblUsername);
+//		
+//		JLabel lblEmail = new JLabel("EMAIL");
+//		lblEmail.setBounds(395, 132, 54, 14);
+//		LoginPane.add(lblEmail);
+//		
+//		textField_1 = new JTextField();
+//		textField_1.setColumns(10);
+//		textField_1.setBounds(395, 157, 283, 36);
+//		LoginPane.add(textField_1);
+//		
+//		JLabel lblPassword = new JLabel("PASSWORD");
+//		lblPassword.setBounds(395, 204, 96, 14);
+//		LoginPane.add(lblPassword);
+//		
+//		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
+//		lblRepeatPassword.setBounds(395, 275, 133, 14);
+//		LoginPane.add(lblRepeatPassword);
+//		
+//		passwordField = new JPasswordField();
+//		passwordField.setBounds(395, 229, 283, 36);
+//		LoginPane.add(passwordField);
+//		
+//		passwordField_1 = new JPasswordField();
+//		passwordField_1.setBounds(395, 293, 283, 36);
+//		LoginPane.add(passwordField_1);
+//		
+//		JLabel lbl_close = new JLabel("Back");
+//		lbl_close.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {
+//				
+//				System.exit(0);
+//			}
+//		});
+//		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
+//		lbl_close.setForeground(new Color(241, 57, 83));
+//		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//		lbl_close.setBounds(691, 0, 37, 27);
+//		LoginPane.add(lbl_close);
+//		// Mike add this end ---
+//	}
+	
 	
 	/**
 	 * @TODO For Mike Login Customer page
@@ -881,7 +1184,7 @@ public class FlexiBookPage extends JFrame {
 		txtEmailUpdate.setColumns(10);
 		
 		//Current business details 
-		/*
+		
 		JLabel currentBusinessInfo = new JLabel("Current Business Information");
 		currentBusinessInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
 		currentBusinessInfo.setBounds(700, 25, 300, 25);
@@ -901,8 +1204,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel email = new JLabel("Email: "+FlexiBookController.getBusinessInfo().getEmail());
 		email.setBounds(700, 160, 250, 23);
-		businessDetailsPanel.add(email);
-		*/		
+		businessDetailsPanel.add(email);		
 	}
 
 	/**
@@ -939,6 +1241,9 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize business details panel
 	private void initBookAppointmentPanel(){
+		
+		appSectionError = " ";
+		
 		bookAppointmentPanel = new JPanel();
 		bookAppointmentLabel = new JLabel("Book Appointment Page");
 		bookAppointmentPanel.setPreferredSize(new Dimension(1100,700));
@@ -946,8 +1251,302 @@ public class FlexiBookPage extends JFrame {
 		bookAppointmentPanel.setOpaque(true);
 		bookAppointmentPanel.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(bookAppointmentLabel);
+		
+		bookAppointmentPanel.setLayout(null);
+		
+		
+//		newAppTimeT = new JTextField();
+//		newAppTimeT.setBounds(174, 145, 86, 20);
+//		newAppTimeT.setText("HH:MM");
+//		newAppTimeT.setColumns(10);
+		//bookAppointmentPanel.add(newAppTimeT);
+		
+		JLabel registerTime = new JLabel("Time of New Appointment");
+		registerTime.setBounds(22, 148, 150, 14);
+		bookAppointmentPanel.add(registerTime);
+		
+		newAppDateT = new JTextField();
+		newAppDateT.setBounds(174, 120, 86, 20);
+		newAppDateT.setText("YYYY-MM-DD");
+		newAppDateT.setColumns(10);
+		bookAppointmentPanel.add(newAppDateT);
+		
+		addAppForSingleServiceB = new JButton("Add new appointment (Single Service)");
+		addAppForSingleServiceB.setBounds(22, 186, 250, 23);
+		bookAppointmentPanel.add(addAppForSingleServiceB);
+		
+		JLabel comboAppPanelLabel = new JLabel("Select optional combo items");
+		comboAppPanelLabel.setBounds(415, 79, 250, 17);
+		comboAppPanelLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bookAppointmentPanel.add(comboAppPanelLabel);
+		
+		JLabel optionalServiceNamesLabel = new JLabel("Optional Service Names");
+		optionalServiceNamesLabel.setBounds(415, 123, 150, 14);
+		bookAppointmentPanel.add(optionalServiceNamesLabel);
+		
+		optionalServiceNamesT = new JTextField();
+		optionalServiceNamesT.setBounds(564, 120, 86, 20);
+		optionalServiceNamesT.setColumns(10);
+		bookAppointmentPanel.add(optionalServiceNamesT);
+		
+		addAppForComboB = new JButton("Add new appointment (Combo)");
+		addAppForComboB.setBounds(415, 186, 250, 23);
+		bookAppointmentPanel.add(addAppForComboB);
+		
+		serviceNameT = new JTextField();
+		serviceNameT.setColumns(10);
+		serviceNameT.setBounds(113, 12, 120, 27);
+		bookAppointmentPanel.add(serviceNameT);
+		
+		JLabel selectedServiceNameLabel = new JLabel("Service Name");
+		selectedServiceNameLabel.setBounds(22, 0, 81, 50);
+		bookAppointmentPanel.add(selectedServiceNameLabel);
+		
+		errorMsgLabel = new JLabel();
+		errorMsgLabel.setBounds(339, 18, 546, 14);
+		errorMsgLabel.setFont(new Font("Tahoma", Font.BOLD, 11));
+		bookAppointmentPanel.add(errorMsgLabel);
+		
+		JLabel registerDate = new JLabel("Date of New Appointment");
+		registerDate.setBounds(22, 123, 150, 14);
+		bookAppointmentPanel.add(registerDate);
+		
+		JLabel singleAppPanelLabel = new JLabel("Select time for new appointment");
+		singleAppPanelLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		singleAppPanelLabel.setBounds(22, 79, 227, 17);
+		bookAppointmentPanel.add(singleAppPanelLabel);
+		
+		JLabel updateAppLabel = new JLabel("Update an existing appointment");
+		updateAppLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		updateAppLabel.setBounds(22, 279, 253, 17);
+		bookAppointmentPanel.add(updateAppLabel);
+		
+		JLabel oldDate = new JLabel("Date of the Appointment");
+		oldDate.setBounds(277, 307, 190, 14);
+		bookAppointmentPanel.add(oldDate);
+		
+//		selectedAppTimeT = new JTextField();
+//		selectedAppTimeT.setText("HH:MM");
+//		selectedAppTimeT.setColumns(10);
+//		selectedAppTimeT.setBounds(447, 332, 86, 20);
+		//bookAppointmentPanel.add(selectedAppTimeT);
+		
+		selectedAppDateT = new JTextField();
+		selectedAppDateT.setText("YYYY-MM-DD");
+		selectedAppDateT.setColumns(10);
+		selectedAppDateT.setBounds(447, 304, 86, 20);
+		bookAppointmentPanel.add(selectedAppDateT);
+		
+		JLabel oldTime = new JLabel("Time of the Appointment");
+		oldTime.setBounds(277, 335, 150, 14);
+		bookAppointmentPanel.add(oldTime);
+		
+		JLabel newDateLabel = new JLabel("New Date");
+		newDateLabel.setBounds(19, 385, 160, 14);
+		bookAppointmentPanel.add(newDateLabel);
+		
+		newUpdateAppDateT = new JTextField();
+		newUpdateAppDateT.setText("YYYY-MM-DD");
+		newUpdateAppDateT.setColumns(10);
+		newUpdateAppDateT.setBounds(174, 382, 86, 20);
+		bookAppointmentPanel.add(newUpdateAppDateT);
+		
+//		newUpdateAppTimeT = new JTextField();
+//		newUpdateAppTimeT.setText("HH:MM");
+//		newUpdateAppTimeT.setColumns(10);
+//		newUpdateAppTimeT.setBounds(174, 410, 86, 20);
+		//bookAppointmentPanel.add(newUpdateAppTimeT);
+		
+		JLabel newTimeLabel = new JLabel("New Time");
+		newTimeLabel.setBounds(19, 413, 123, 14);
+		bookAppointmentPanel.add(newTimeLabel);
+		
+		updateTimeB = new JButton("Update to new time");
+		updateTimeB.setBounds(18, 456, 215, 23);
+		bookAppointmentPanel.add(updateTimeB);
+		
+		updateActionComboBox = new JComboBox<String>();
+		updateActionComboBox.setToolTipText("Select an action");
+		updateActionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"add ", "remove"}));
+		updateActionComboBox.setSelectedIndex(0);
+		updateActionComboBox.setMaximumRowCount(2);
+		updateActionComboBox.setBounds(564, 384, 70, 17);
+		bookAppointmentPanel.add(updateActionComboBox);
+		
+		JLabel updateActionLabel = new JLabel("Update action");
+		updateActionLabel.setLabelFor(updateActionComboBox);
+		updateActionLabel.setBounds(415, 385, 160, 14);
+		bookAppointmentPanel.add(updateActionLabel);
+		
+		JLabel chosenComboItemL = new JLabel("Choose a combo item:");
+		chosenComboItemL.setBounds(415, 413, 150, 14);
+		bookAppointmentPanel.add(chosenComboItemL);
+		
+		updateComboItemNameL = new JTextField();
+		updateComboItemNameL.setColumns(10);
+		updateComboItemNameL.setBounds(564, 410, 86, 20);
+		bookAppointmentPanel.add(updateComboItemNameL);
+		
+		updateContentB = new JButton("Update to new service content");
+		updateContentB.setBounds(415, 456, 215, 23);
+		bookAppointmentPanel.add(updateContentB);
+		
+		//----------------------- table--------------
+		viewAppForCurCustomerTable = new JTable() {
+			private static final long serialVersionUID = 3493726593135015542L;
 
-		//TO DO
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component c = super.prepareRenderer(renderer, row, column);
+				if (!c.getBackground().equals(getSelectionBackground())) {
+					Object obj = getModel().getValueAt(row, column);
+					if (obj instanceof java.lang.String) {
+						//String str = (String)obj;
+						c.setBackground(Color.GRAY);
+					}
+				}
+				return c;
+			}
+		};
+		viewAppForCurCustomerTable.setBounds(700, 10, 350, 550);
+		//bookAppointmentPanel.add(viewAppForCurCustomerTable);
+		
+		viewAppForCurCustomerScrollPane = new JScrollPane(viewAppForCurCustomerTable);
+		bookAppointmentPanel.add(viewAppForCurCustomerScrollPane);
+		//this.add(viewAppForCurCustomerScrollPane);
+		//Dimension d = viewAppForCurCustomerTable.getPreferredSize();
+		viewAppForCurCustomerScrollPane.setPreferredSize(new Dimension(10, 400));
+		viewAppForCurCustomerScrollPane.setBounds(1050, 50, 20, 400);
+		viewAppForCurCustomerScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+//		vAFCCTableModel = new DefaultTableModel(0, 0);
+//		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
+//		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
+		
+		//---------------------- date picker little calendars ---------- 
+		SqlDateModel newdateModel = new SqlDateModel();
+		LocalDate now = LocalDate.now();
+		newdateModel.setDate(now.getYear(), now.getMonthValue() - 1, now.getDayOfMonth());
+		newdateModel.setSelected(true);
+		Properties pO = new Properties();
+		pO.put("text.today", "Today");
+		pO.put("text.month", "Month");
+		pO.put("text.year", "Year");
+		JDatePanelImpl newDatePanel = new JDatePanelImpl(newdateModel, pO);
+		newDatePicker = new JDatePickerImpl(newDatePanel, new DateLabelFormatter());
+		bookAppointmentPanel.add(newDatePicker);
+		newDatePicker.setBounds(260, 382, 40, 20);
+		
+		SqlDateModel registerdateModel = new SqlDateModel();
+		now = LocalDate.now();
+		registerdateModel.setDate(now.getYear(), now.getMonthValue() - 1, now.getDayOfMonth());
+		registerdateModel.setSelected(true);
+		JDatePanelImpl registerDatePanel = new JDatePanelImpl(registerdateModel, pO);
+		registerDatePicker = new JDatePickerImpl(registerDatePanel, new DateLabelFormatter());
+		bookAppointmentPanel.add(registerDatePicker);
+		registerDatePicker.setBounds(260, 120, 40, 20);
+
+		SqlDateModel selectdateModel = new SqlDateModel();
+		now = LocalDate.now();
+		selectdateModel.setDate(now.getYear(), now.getMonthValue() - 1, now.getDayOfMonth());
+		selectdateModel.setSelected(true);
+		JDatePanelImpl selectDatePanel = new JDatePanelImpl(selectdateModel, pO);
+		selectDatePicker = new JDatePickerImpl(selectDatePanel, new DateLabelFormatter());
+		bookAppointmentPanel.add(selectDatePicker);
+		selectDatePicker.setBounds(533, 304, 40, 20);
+		
+		//--------------------------- Time scroll
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24); // 24 == 12 PM == 00:00:00
+        calendar.set(Calendar.MINUTE, 0);
+        //calendar.set(Calendar.SECOND, 0);
+
+        SpinnerDateModel model = new SpinnerDateModel();
+        model.setValue(calendar.getTime());
+        registerTimeSpinner = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(registerTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        formatter.setAllowsInvalid(false); // this makes what you want
+        formatter.setOverwriteMode(true);
+        registerTimeSpinner.setEditor(editor);
+        bookAppointmentPanel.add(registerTimeSpinner);
+        registerTimeSpinner.setBounds(174, 145, 86, 20);
+        
+        SpinnerDateModel smodel = new SpinnerDateModel();
+        smodel.setValue(calendar.getTime());
+        selectTimeSpinner = new JSpinner(smodel);
+        JSpinner.DateEditor selecteditor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter selectformatter = (DateFormatter)selecteditor.getTextField().getFormatter();
+        selectformatter.setAllowsInvalid(false); // this makes what you want
+        selectformatter.setOverwriteMode(true);
+        selectTimeSpinner.setEditor(selecteditor);
+        bookAppointmentPanel.add(selectTimeSpinner);
+        selectTimeSpinner.setBounds(447, 332, 86, 20);
+        
+        SpinnerDateModel nmodel = new SpinnerDateModel();
+        nmodel.setValue(calendar.getTime());
+        newTimeSpinner = new JSpinner(nmodel);
+        JSpinner.DateEditor neweditor = new JSpinner.DateEditor(newTimeSpinner, "HH:mm");
+        DateFormatter newformatter = (DateFormatter)neweditor.getTextField().getFormatter();
+        newformatter.setAllowsInvalid(false); // this makes what you want
+        newformatter.setOverwriteMode(true);
+        newTimeSpinner.setEditor(neweditor);
+        bookAppointmentPanel.add(newTimeSpinner);
+        newTimeSpinner.setBounds(174, 410, 86, 20);
+        
+//    	private JButton updateContentB;
+//    	private JButton updateTimeB;
+//    	private JButton addAppForSingleServiceB;
+//    	private JButton addAppForComboB;
+//    	private JDatePickerImpl newDatePicker;
+//    	private JDatePickerImpl registerDatePicker;
+//    	private JDatePickerImpl selectDatePicker;
+        
+        updateContentB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				updateAppointmentContentActionPerformed(evt);
+			}
+		});
+        updateTimeB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				updateAppointmentTimeActionPerformed(evt);
+			}
+		});
+        addAppForSingleServiceB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				addAppSingleServicePerformed(evt);
+			}
+		});
+        addAppForComboB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				addAppServiceComboPerformed(evt);
+			}
+		});
+        
+        newDatePicker.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				pickNewDateForUpdatePerformed(evt);
+			}
+		});
+        registerDatePicker.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				pickDateForAddAppPerformed(evt);
+			}
+		});
+        selectDatePicker.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				pickDateForSelectAppPerformed(evt);
+			}
+		});
+        // will be using this later
+//        try {
+//			System.out.println(newformatter.valueToString(newTimeSpinner.getValue()));
+//		} catch (ParseException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+
 	}
 
 	//refresh frame
@@ -989,7 +1588,7 @@ public class FlexiBookPage extends JFrame {
 		//method called when set-up info is done 
 		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 			//remove log in panel
-			getContentPane().remove(logInPanel);
+			getContentPane().remove(LoginPane);
 			//add owner top bar and calendar panel to frame
 			getContentPane().add(topPanelOwner);
 			topPanelOwner.setBounds(0,0,1100,40);
@@ -1008,67 +1607,73 @@ public class FlexiBookPage extends JFrame {
 		}
 
 
-	/**
-	 * @TODO For Mike: After user pressed the Owner button on the login page
-	 * @param evt
-	 */
-	//method called when log in owner button pressed
-	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		//remove log in panel
-		getContentPane().remove(logInPanel);
-		//add owner top bar and calendar panel to frame
-		getContentPane().add(topPanelOwner);
-		topPanelOwner.setBounds(0,0,1100,40);
-		getContentPane().add(calendarOwnerPanel);
-		calendarOwnerPanel.setBounds(0,40,1100,700);
-		//set calendar to initial state
-		previousPanel = calendarOwnerPanel;
-		previousButton = calendarOwnerButton;
-		//reset calendar button
-		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
-		calendarOwnerButton.setBackground(Color.WHITE);
-		calendarOwnerButton.setOpaque(true);
-		calendarOwnerButton.setForeground(darkGrey);
-		//refresh page
-		refreshData();
-	}
-	
-	/**
-	 * @TODO For Mike After user pressed the owner button on the intial login page
-	 * @param evt
-	 */
-	//method called when log in customer button pressed
-		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-			//remove log in panel
-			getContentPane().remove(logInPanel);
-			//add customer top bar and calendar panel to frame
-			getContentPane().add(topPanelCustomer);
-			topPanelCustomer.setBounds(0,0,1100,40);
-			getContentPane().add(calendarCustomerPanel);
-			calendarCustomerPanel.setBounds(0,40,1100,700);
-			//set calendar to initial state
-			previousPanel = calendarCustomerPanel;
-			previousButton = calendarCustomerButton;
-			//reset calendar button
-			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
-			calendarCustomerButton.setBackground(Color.WHITE);
-			calendarCustomerButton.setOpaque(true);
-			calendarCustomerButton.setForeground(darkGrey);
-			//refresh page
-			refreshData();
-		}
+//	/**
+//	 * @TODO For Mike: After user pressed the Owner button on the login page
+//	 * @param evt
+//	 */
+//	//method called when log in owner button pressed
+//	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//		//remove log in panel
+//		getContentPane().remove(LoginPane);
+//		//add owner top bar and calendar panel to frame
+//		getContentPane().add(topPanelOwner);
+//		topPanelOwner.setBounds(0,0,1100,40);
+//		getContentPane().add(calendarOwnerPanel);
+//		calendarOwnerPanel.setBounds(0,40,1100,700);
+//		//set calendar to initial state
+//		previousPanel = calendarOwnerPanel;
+//		previousButton = calendarOwnerButton;
+//		//reset calendar button
+//		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
+//		calendarOwnerButton.setBackground(Color.WHITE);
+//		calendarOwnerButton.setOpaque(true);
+//		calendarOwnerButton.setForeground(darkGrey);
+//		//refresh page
+//		refreshData();
+//	}
+//	
 		
-	
+		
+		
+//	/**
+//	 * @TODO For Mike After user pressed the owner button on the intial login page
+//	 * @param evt
+//	 */
+//	//method called when log in customer button pressed
+//		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+//			//remove log in panel
+//			getContentPane().remove(LoginPane);
+//			//add customer top bar and calendar panel to frame
+//			getContentPane().add(topPanelCustomer);
+//			topPanelCustomer.setBounds(0,0,1100,40);
+//			getContentPane().add(calendarCustomerPanel);
+//			calendarCustomerPanel.setBounds(0,40,1100,700);
+//			//set calendar to initial state
+//			previousPanel = calendarCustomerPanel;
+//			previousButton = calendarCustomerButton;
+//			//reset calendar button
+//			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+//			calendarCustomerButton.setBackground(Color.WHITE);
+//			calendarCustomerButton.setOpaque(true);
+//			calendarCustomerButton.setForeground(darkGrey);
+//			//refresh page
+//			refreshData();
+//		}
+//		
+	/**
+	 * @TODO For MIKE merge the logInOwnerButtonToSetUpActionPerformed() with logInCustomerButtonActionPerformed()
+	 * @param evt
+	 */
 	//method called when log in owner button pressed
 	private void logInOwnerButtonToSetUpActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(logInPanel);
+		getContentPane().remove(LoginPane);
 		//add owner top bar and calendar panel to frame
 		getContentPane().add(setUpInPanel);
 		setUpInPanel.setBounds(0,0,1100,700);
 //		c.gridx = 0;
 //		c.gridy = 1;
-//		c.ipady = 700;
+//		c.ipady = 687;
 //		c.ipadx = 1100;
 //		getContentPane().add(calendarOwnerPanel, c);
 		//set calendar to initial state
@@ -1086,7 +1691,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when log in customer button pressed
 	private void logInCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
-		getContentPane().remove(logInPanel);
+		getContentPane().remove(LoginPane);
 		//add customer top bar and calendar panel to frame
 		getContentPane().add(topPanelCustomer);
 		topPanelCustomer.setBounds(0,0,1100,40);
@@ -1362,8 +1967,8 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelOwner);
 		//set new panel
-		getContentPane().add(logInPanel);
-		logInPanel.setBounds(350,360,400,40);
+		getContentPane().add(LoginPane);
+		LoginPane.setBounds(0,0,1100,740);
 		//refresh page
 		refreshData();
 	}
@@ -1384,7 +1989,7 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().remove(previousPanel);
 		getContentPane().remove(topPanelCustomer);
 		//set new panel
-		getContentPane().add(logInPanel);
+		getContentPane().add(LoginPane);
 		//refresh page
 		refreshData();
 	}
@@ -1418,5 +2023,225 @@ public class FlexiBookPage extends JFrame {
 		//refresh page
 		refreshData();
 	}
+	
+	
+	//--------------------------- Add Appointment part ----------------
+	private void updateAppointmentContentActionPerformed(java.awt.event.ActionEvent evt) {
+		String serviceName =  serviceNameT.getText();
+		String optservicename = updateComboItemNameL.getText();
+		String action = (String)updateActionComboBox.getSelectedItem();
+		
+		Date date = stringToDate(selectedAppDateT.getText());
+		
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+		try {
+			timeString = formatter.valueToString(selectTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		Time time = stringToTime(timeString);
+		
+		try {
+			FlexiBookController.updateAppointmentContent(serviceName, date, time, action, optservicename);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+		
+		System.out.println(serviceName);
+		System.out.println(date);
+		System.out.println(time);
+		System.out.println(action);
+		System.out.println(optservicename);
+		refreshAppointmentPage();
+		
+		
+	}
+	private void updateAppointmentTimeActionPerformed(java.awt.event.ActionEvent evt) {
+		
+		String serviceName =  serviceNameT.getText();
+		Date date = stringToDate(selectedAppDateT.getText());
+		Date newDate = stringToDate(newUpdateAppDateT.getText());
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+        String newtimeString = "";
+    	try {
+			timeString = formatter.valueToString(selectTimeSpinner.getValue());
+			newtimeString = formatter.valueToString(newTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+    	
+    	Time time = stringToTime(timeString);
+    	Time newtime = stringToTime(newtimeString);
+    	
+    	try {
+			FlexiBookController.updateAppointmentTime(serviceName, date, time, newDate, newtime);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+    	
+    	
+		System.out.println(serviceName);
+		System.out.println(date);
+		System.out.println(time);
+		System.out.println(newDate);
+		System.out.println(newtime);
+		refreshAppointmentPage();
+		
+    	
+    	
+	}
+	
+	private void addAppSingleServicePerformed(java.awt.event.ActionEvent evt) {
+		
+		String serviceName = serviceNameT.getText();
+		Date date = stringToDate(newAppDateT.getText());
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(registerTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+		try {
+			timeString = formatter.valueToString(registerTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		Time time = stringToTime(timeString);
+		
+		
+		try {
+			FlexiBookController.addAppointmentForService(serviceName, date, time);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+		
+		refreshAppointmentPage();
+
+		
+	}
+	
+	private void addAppServiceComboPerformed(java.awt.event.ActionEvent evt) {
+		
+		String serviceName = serviceNameT.getText();
+		String optServices = optionalServiceNamesT.getText();
+		Date date = stringToDate(newAppDateT.getText());
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(registerTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+		try {
+			timeString = formatter.valueToString(registerTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		Time time = stringToTime(timeString);
+		
+		
+		try {
+			FlexiBookController.addAppointmentForComboService(serviceName, optServices, date, time);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+		
+		refreshAppointmentPage();
+		System.out.println(serviceName);
+		System.out.println(date);
+		System.out.println(time);
+		System.out.println(optServices);
+		
+
+		
+	}
+	
+	private void pickNewDateForUpdatePerformed(java.awt.event.ActionEvent evt) {
+		if (newDatePicker.getModel().getValue() != null) {
+			newUpdateAppDateT.setText(newDatePicker.getModel().getValue().toString());
+		}
+	}
+
+	private void pickDateForAddAppPerformed(java.awt.event.ActionEvent evt) {
+		if (registerDatePicker.getModel().getValue() != null) {
+			newAppDateT.setText(registerDatePicker.getModel().getValue().toString());
+		}
+		
+	}
+	private void pickDateForSelectAppPerformed(java.awt.event.ActionEvent evt) {
+		if (selectDatePicker.getModel().getValue() != null) {
+			selectedAppDateT.setText(selectDatePicker.getModel().getValue().toString());
+		}
+	}
+
+	private static Date stringToDate(String str) {
+		return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
+	}
+
+	private static Time stringToTime(String str) {
+		if (str.charAt(2) != ':') {
+			str = "0" + str;
+		}
+		return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
+	}
+	
+	private void refreshAppointmentPage() {
+		vAFCCTableModel = new DefaultTableModel(0, 0);
+		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
+		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
+		
+		for(TOAppointment appto: FlexiBookController.getTOAppointmentForCurrentCustomer()) {
+			String name = appto.getServiceName();
+			String startAt = appto.getTimeSlot().getStartDate().toString() + " " + appto.getTimeSlot().getStartTime().toString();
+			String downTime = "-";
+			if(appto.getDownTimeTimeSlot().size() != 0) {
+				downTime = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime() + "->"
+						+ appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+			}
+			String endAt = appto.getTimeSlot().getEndDate().toString() + " " + appto.getTimeSlot().getEndTime().toString();
+			
+			Object[] obj = {name, startAt, downTime, endAt};
+			vAFCCTableModel.addRow(obj);
+			
+		}
+		
+		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
+		viewAppForCurCustomerScrollPane.setPreferredSize(new Dimension(d.width, 550));
+		
+		
+		// Show error Message
+		errorMsgLabel.setText(appSectionError);
+		appSectionError = " ";
+		
+
+//			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {
+//				String busText = item.getLicencePlate();
+//				String shiftText = "---";
+//				String driverText = "---";
+//				if (item.isInRepairShop()) {
+//					busText = busText + " (in repair)";
+//				}
+//				if (item.getShift() != null) {
+//					shiftText = item.getShift();
+//				}
+//				if (item.getName() != null) {
+//					driverText = "#" + item.getId() + " " + item.getName();
+//					if (item.isSick()) {
+//						driverText = driverText + " (sick)";
+//					}
+//				}
+//				Object[] obj = {item.getNumber(), busText, shiftText, driverText};
+//				overviewDtm.addRow(obj);
+//			}
+		
+		
+		
+//		Dimension d = overviewTable.getPreferredSize();
+//		overviewScrollPane.setPreferredSize(new Dimension(d.width, HEIGHT_OVERVIEW_TABLE));
+		
+	
+	}
+	
 
 }
