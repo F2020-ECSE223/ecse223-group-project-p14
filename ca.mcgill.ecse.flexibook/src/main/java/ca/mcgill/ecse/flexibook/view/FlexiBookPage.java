@@ -4042,9 +4042,9 @@ public class FlexiBookPage extends JFrame {
 		errorMsgLabel.setText(appSectionError);
 		appSectionError = " ";
 		
-//		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-//			System.out.println(ts);
-//		}
+		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+			System.out.println(ts);
+		}
 		
 
 //			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {

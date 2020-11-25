@@ -473,8 +473,9 @@ public class Appointment implements Serializable
 		int durationMinutes = (int) d.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, getFlexiBook());
-		oldTimeSlot.delete();
+		
 		setTimeSlot(timeSlot);
+		oldTimeSlot.delete();
   }
 
 
@@ -560,6 +561,7 @@ public class Appointment implements Serializable
 					newEndTime, getFlexiBook());
 			
 			setTimeSlot(timeSlot);
+			oldTimeSlot.delete();
 
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
@@ -646,10 +648,11 @@ public class Appointment implements Serializable
 		int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
 
 		if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
-			getFlexiBook().removeTimeSlot(timeSlot);
+			//getFlexiBook().removeTimeSlot(timeSlot);
 			timeSlot.delete();
 			return false;
 		}
+		timeSlot.delete();
 
 	   
     //--------------------------------- Implemented by Mike Wang & -----------------------------------------------------------------
@@ -806,11 +809,11 @@ public class Appointment implements Serializable
 			int index = getFlexiBook().indexOfTimeSlot(timeSlot);
 			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
 			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
-				getFlexiBook().removeTimeSlot(timeSlot);
+				//getFlexiBook().removeTimeSlot(timeSlot);
 				timeSlot.delete();
 				return false;
 			}
-			
+			timeSlot.delete();
 		}else {
 
 			int addOrMinusTime = 1;
@@ -827,7 +830,7 @@ public class Appointment implements Serializable
 			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
 			
 			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
-				getFlexiBook().removeTimeSlot(timeSlot);
+				//getFlexiBook().removeTimeSlot(timeSlot);
 				timeSlot.delete();
 				// remove all newly added service since the time is not good
 				// update fails, later return false
@@ -838,6 +841,7 @@ public class Appointment implements Serializable
 				}
 				return false;
 			}
+			timeSlot.delete();
 
 		}
 		
