@@ -273,6 +273,7 @@ public class FlexiBookPage extends JFrame {
 	private String appSectionError;
 	private JComboBox<String> updateActionComboBox;
 	private JLabel errorMsgLabel;
+	private JButton cancelAppB;
 	
 	private double initLogInPageScalingFactor = 740/490;
 	/**
@@ -2398,6 +2399,10 @@ public class FlexiBookPage extends JFrame {
 		updateTimeB.setBounds(18, 456, 215, 23);
 		bookAppointmentPanel.add(updateTimeB);
 		
+		updateTimeB = new JButton("Update to new time");
+		updateTimeB.setBounds(18, 456, 215, 23);
+		bookAppointmentPanel.add(updateTimeB);
+		
 		updateActionComboBox = new JComboBox<String>();
 		updateActionComboBox.setToolTipText("Select an action");
 		updateActionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"add ", "remove"}));
@@ -2423,6 +2428,10 @@ public class FlexiBookPage extends JFrame {
 		updateContentB = new JButton("Update to new service content");
 		updateContentB.setBounds(415, 456, 215, 23);
 		bookAppointmentPanel.add(updateContentB);
+		
+		cancelAppB = new JButton("Cancel");
+		cancelAppB.setBounds(700, 456, 100, 23);
+		bookAppointmentPanel.add(cancelAppB);
 		
 		//----------------------- table--------------
 		viewAppForCurCustomerTable = new JTable() {
@@ -2556,6 +2565,12 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
         
+        cancelAppB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				cancelAppPerformed(evt);
+			}
+		});
+        
         newDatePicker.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				pickNewDateForUpdatePerformed(evt);
@@ -2646,7 +2661,7 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 		refreshSingleServiceData();
-
+		refreshAppointmentPage();
 	}
 	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
@@ -3612,7 +3627,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(action);
 		System.out.println(optservicename);
-		refreshAppointmentPage();
+		refreshData();
 		
 		
 	}
@@ -3648,7 +3663,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(newDate);
 		System.out.println(newtime);
-		refreshAppointmentPage();
+		refreshData();
 		
     	
  	
@@ -3804,7 +3819,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 
 		
 	}
@@ -3832,7 +3847,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 		System.out.println(serviceName);
 		System.out.println(date);
 		System.out.println(time);
@@ -3842,6 +3857,31 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	
+	private void cancelAppPerformed(java.awt.event.ActionEvent evt) {
+		String serviceName = serviceNameT.getText();
+		Date date = stringToDate(selectedAppDateT.getText());
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+    	try {
+			timeString = formatter.valueToString(selectTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+    	
+    	Time time = stringToTime(timeString);
+    	
+    	try {
+			FlexiBookController.cancelAppointment(serviceName, date, time);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+    	refreshData();
+    	
+		
+		
+	}
 	
 	
 	private void pickNewDateForUpdatePerformed(java.awt.event.ActionEvent evt) {
