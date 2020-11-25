@@ -184,6 +184,7 @@ public class FlexiBookPage extends JFrame {
 	//update and remove business information JButton 
 	private JButton updateBusinessHour;
 	private JButton removeBusinessHour;
+	DefaultTableModel modelBusHour;
 	
 	//BusinessHour Components
 	private JLabel successMessageBusinessHourLabel;
@@ -1922,7 +1923,7 @@ public class FlexiBookPage extends JFrame {
 		businessHoursPanel.add(scrollPane);
 
 		existingBusHoursTable = new JTable();
-		DefaultTableModel modelBusHour = new DefaultTableModel();
+		modelBusHour = new DefaultTableModel();
 		Object[] col = {"Index","Day of the Week","Start Time","End Time"};
 		Object row = new Object[0];
 		modelBusHour.setColumnIdentifiers(col);
@@ -2040,7 +2041,7 @@ public class FlexiBookPage extends JFrame {
         DateFormatter formatterUpdateEndTime = (DateFormatter)editorUpdateEndTime.getTextField().getFormatter();
         formatterUpdateEndTime.setAllowsInvalid(false); // this makes what you want
         formatterUpdateEndTime.setOverwriteMode(true);
-        updateEndTimeSpin.setEditor(editorAddEndTime);
+        updateEndTimeSpin.setEditor(editorUpdateEndTime);
         businessHoursPanel.add(updateEndTimeSpin);
         updateEndTimeSpin.setBounds(850, 250, 86, 20);
         
@@ -2704,6 +2705,8 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 		refreshSingleServiceData();
 		refreshAppointmentPage();
+		refreshBusinessHourData();
+
 	}
 	
 	private void refreshSignOut() {
@@ -2726,6 +2729,47 @@ public class FlexiBookPage extends JFrame {
 		else {
 			initInfoCustomerPanel();
 		}
+	}
+	
+	private void refreshBusinessHourData() {
+		//SuccessLabel.setText(deleteSuccess);
+		//errorLabel.setText(errorBHMessage);
+		deleteBusinessHourBox.removeAllItems();
+		updateBusinessHourBox.removeAllItems();
+		modelBusHour.getDataVector().removeAllElements();
+		if (!FlexiBookController.getTOBusinessHour().isEmpty()) {
+			List<TOBusinessHour> toBusinessHour = FlexiBookController.getTOBusinessHour();
+			for (TOBusinessHour bh : toBusinessHour) {
+				int index = toBusinessHour.indexOf(bh);
+				String dayOfWeek = bh.getDayOfWeek().toString();
+				String startTime = bh.getStartTime().toString();
+				String endTime = bh.getEndTime().toString();
+				Object[] newBH = {index, dayOfWeek, startTime, endTime};
+				modelBusHour.addRow(newBH);
+			}
+		}
+
+		if (!FlexiBookController.getTOBusinessHour().isEmpty()) {
+			List<TOBusinessHour> toBusinessHour = FlexiBookController.getTOBusinessHour();
+			for (TOBusinessHour bh : toBusinessHour) {
+				updateBusinessHourBox.addItem((Integer) toBusinessHour.indexOf(bh));
+				deleteBusinessHourBox.addItem((Integer) toBusinessHour.indexOf(bh));
+			}
+		}
+
+		if(FlexiBookController.getTOBusinessHour().isEmpty()) {
+			deleteBusinessHourBox.removeAllItems();
+			updateBusinessHourBox.removeAllItems();
+			modelModifySingleService.getDataVector().removeAllElements();
+		}
+//		
+//		if (errorMessageSingleService == null || errorMessageSingleService.length() == 0) {
+//			newServiceDowntimeDurationTextField.setText("");
+//			newServiceDowntimeStartTextField.setText("");
+//			newServiceDurationTextField.setText("");
+//			newServiceNameTextField.setText("");		
+//		}
+//				
 	}
 	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
