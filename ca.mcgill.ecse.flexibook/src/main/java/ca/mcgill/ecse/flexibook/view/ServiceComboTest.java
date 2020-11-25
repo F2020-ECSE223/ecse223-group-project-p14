@@ -16,10 +16,23 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import org.checkerframework.checker.formatter.qual.Format;
+import org.checkerframework.common.value.qual.StringVal;
+
+import com.jgoodies.forms.builder.ListViewBuilder;
+
+import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
+import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
+import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOService;
+import ca.mcgill.ecse.flexibook.controller.TOServiceCombo;
+import ca.mcgill.ecse.flexibook.model.ComboItem;
+
 import javax.swing.JList;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.*;
 
 public class ServiceComboTest {
 	
@@ -30,26 +43,28 @@ public class ServiceComboTest {
 	private JTextField updateServiceDurationTextField;
 	private JTextField updateDowntimeDurationTextField;
 	private JTextField updateDowntimeStartTextField;
-	private String errorMessageSingleService = null;
+	private String errorMessageServiceCombo = null;
 	private JLabel deleteSuccessLabel;
-	private JLabel addSuccessLabel;
+	private JLabel defineServiceComboSuccessLabel;
 	private JLabel errorMessageServiceComboLabel; 
-	private String addSuccess = null;
-	private String deleteSuccess = null;
-	private String updateSuccess = null;
+	private String defineComboSuccess = null;
+	private String deleteComboSuccess = null;
+	private String updateComboSuccess = null;
 	Object[] row;
 	private JTable existingServiceComboTable;
 	JComboBox<String> updateServiceComboBox;
 	JLabel updateErrorLabel;
 	JLabel updateSuccessLabel;
-	DefaultTableModel modelModifySingleService;
+	DefaultTableModel modelModifySingleServiceCombo;
 	JList<String> newComboItemList;
 	JComboBox<String> MainServiceComboBox;
 	JList<String> newMandatoryList;
 	DefaultListModel<String> newComboListModel;
-
+	DefaultListModel<String> newMandatoryComboItemListModel;
 	private JFrame frame;
-
+	private JScrollPane scrollPane;
+	private JScrollPane scrollPane_1;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -101,43 +116,43 @@ public class ServiceComboTest {
 		serviceComboPanel.add(errorMessageServiceComboLabel);
 		
 		existingServiceComboTable = new JTable();
-		modelModifySingleService = new DefaultTableModel();
-		Object[] col = {"Name","Duration","DowntimeDuration","DowntimeStart"};
-		row = new Object[0];
-		modelModifySingleService.setColumnIdentifiers(col);
-		existingServiceComboTable.setModel(modelModifySingleService);
+		modelModifySingleServiceCombo = new DefaultTableModel();
+		Object[] col = {"Name","MainService","ComboItem","isMandatory"};
+		modelModifySingleServiceCombo.setColumnIdentifiers(col);
+		existingServiceComboTable.setModel(modelModifySingleServiceCombo);
+		
 		serviceComboScrollPane.setViewportView(existingServiceComboTable);
 		
 		
 		newServiceComboNameTextField = new JTextField();
 		newServiceComboNameTextField.setColumns(10);
-		newServiceComboNameTextField.setBounds(254, 139, 130, 26);
+		newServiceComboNameTextField.setBounds(254, 78, 130, 26);
 		serviceComboPanel.add(newServiceComboNameTextField);
 
 		JLabel newMainServiceLabel = new JLabel("New Main Service");
-		newMainServiceLabel.setBounds(39, 175, 134, 16);
+		newMainServiceLabel.setBounds(35, 111, 134, 16);
 		serviceComboPanel.add(newMainServiceLabel);
 
 		JLabel newComboItemLabel = new JLabel("New Combo Items");
-		newComboItemLabel.setBounds(39, 203, 202, 16);
+		newComboItemLabel.setBounds(35, 139, 202, 16);
 		serviceComboPanel.add(newComboItemLabel);
 
 		JLabel newMandatoryLabel = new JLabel("New Mandatory Combo Items");
-		newMandatoryLabel.setBounds(39, 231, 202, 16);
+		newMandatoryLabel.setBounds(35, 231, 202, 16);
 		serviceComboPanel.add(newMandatoryLabel);
 
 		JButton confirmDefineServiceComboButton = new JButton("Confirm");
-		confirmDefineServiceComboButton.setBounds(171, 264, 95, 29);
+		confirmDefineServiceComboButton.setBounds(163, 314, 95, 29);
 		serviceComboPanel.add(confirmDefineServiceComboButton);
 		
 		JLabel newServiceComboNameLabel = new JLabel("New Service Combo Name");
-		newServiceComboNameLabel.setBounds(39, 144, 176, 16);
+		newServiceComboNameLabel.setBounds(35, 83, 176, 16);
 		serviceComboPanel.add(newServiceComboNameLabel);
 		
-		addSuccessLabel = new JLabel("");
-		addSuccessLabel.setForeground(Color.GREEN);
-		addSuccessLabel.setBounds(278, 277, 157, 16);
-		serviceComboPanel.add(addSuccessLabel);
+		defineServiceComboSuccessLabel = new JLabel("");
+		defineServiceComboSuccessLabel.setForeground(Color.GREEN);
+		defineServiceComboSuccessLabel.setBounds(256, 327, 157, 16);
+		serviceComboPanel.add(defineServiceComboSuccessLabel);
 		
 		deleteServiceComboBox = new JComboBox<String>();
 		deleteServiceComboBox.setBounds(674, 545, 262, 48);
@@ -223,7 +238,7 @@ public class ServiceComboTest {
 		JLabel defineServiceComboIcon = new JLabel("Define Service Combo");
 		defineServiceComboIcon.setForeground(Color.BLUE);
 		defineServiceComboIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
-		defineServiceComboIcon.setBounds(128, 101, 235, 26);
+		defineServiceComboIcon.setBounds(106, 45, 235, 26);
 		serviceComboPanel.add(defineServiceComboIcon);
 		
 		JLabel updateServiceCombo = new JLabel("Update Service Combo");
@@ -244,19 +259,109 @@ public class ServiceComboTest {
 				newComboListModel.addElement(service.getName());
 			}
 		}
-		newComboItemList = new JList<String>(newComboListModel);
-		newComboItemList.setBackground(Color.WHITE);
-		newComboItemList.setBounds(254, 203, 120, 16);
-		serviceComboPanel.add(newComboItemList);
 		
 		
 		MainServiceComboBox = new JComboBox<String>();
-		MainServiceComboBox.setBounds(254, 171, 133, 26);
+		MainServiceComboBox.setBounds(254, 107, 133, 26);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				MainServiceComboBox.addItem(service.getName());
+			}
+		}
+		
 		serviceComboPanel.add(MainServiceComboBox);
 		
-		newMandatoryList = new JList<String>();
-		newMandatoryList.setBounds(265, 231, 119, 16);
-		serviceComboPanel.add(newMandatoryList);
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(254, 231, 130, 62);
+		serviceComboPanel.add(scrollPane_1);
+		
+		newMandatoryComboItemListModel = new DefaultListModel<String>();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				newMandatoryComboItemListModel.addElement(service.getName());
+			}
+		}
+		newMandatoryList = new JList<String>(newMandatoryComboItemListModel);
+		scrollPane_1.setViewportView(newMandatoryList);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(254, 143, 130, 55);
+		serviceComboPanel.add(scrollPane);
+		newComboItemList = new JList<String>(newComboListModel);
+		scrollPane.setViewportView(newComboItemList);
+		newComboItemList.setBackground(Color.WHITE);
+		
+		confirmDefineServiceComboButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					defineServiceComboButtonActionPerformed(evt);			
+			}		
+		});
+		
+		refreshServiceComboData();
 
+	}
+	
+	public void defineServiceComboButtonActionPerformed(ActionEvent evt) {
+		errorMessageServiceCombo = null;
+		defineComboSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		List<Boolean> isMandatory = new ArrayList<Boolean>();
+		for (String comboItem:newComboItemList.getSelectedValuesList()) {
+			if (newComboItemList.getSelectedValuesList().contains(comboItem)) {
+				isMandatory.add(true);
+			}
+			else {
+				isMandatory.add(false);
+			}
+		}
+		try {
+			FlexiBookController.defineServiceCombo(newServiceComboNameTextField.getText(), 
+					(String) MainServiceComboBox.getSelectedItem(), newComboItemList.getSelectedValuesList()
+					, isMandatory);
+			defineComboSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			errorMessageServiceCombo = e.getMessage();
+		}
+		
+		refreshServiceComboData();
+	}
+	
+	
+	public void refreshServiceComboData() {
+		errorMessageServiceComboLabel.setText(errorMessageServiceCombo);
+		defineServiceComboSuccessLabel.setText(defineComboSuccess);
+		MainServiceComboBox.removeAllItems();
+		modelModifySingleServiceCombo.getDataVector().removeAllElements();
+		String comboItemString = null;
+		String isMandatoryString = null;
+		if (!FlexiBookController.getTOServiceCombos().isEmpty()) {
+			for (TOServiceCombo serviceCombo : FlexiBookController.getTOServiceCombos()) {
+				String name = serviceCombo.getName();
+				String mainService = serviceCombo.getMainService().getServiceName();
+				for (TOComboItem comboItem:serviceCombo.getServices()) {
+					comboItemString = comboItemString + "," + comboItem.getServiceName();
+					if (comboItem.getIsMandatory() == true) {
+						isMandatoryString = isMandatoryString + "," + "ture";
+					}
+					else {
+						isMandatoryString = isMandatoryString + "," + "false";
+					}
+				}
+
+				Object[] obj = {name, mainService, comboItemString, isMandatoryString};
+				modelModifySingleServiceCombo.addRow(obj);
+			
+			}
+		}
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				MainServiceComboBox.addItem(service.getName());
+			}
+		}
+		
+		
+		
+		
 	}
 }

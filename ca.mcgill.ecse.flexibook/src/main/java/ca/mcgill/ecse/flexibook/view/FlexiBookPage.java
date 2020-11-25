@@ -143,12 +143,16 @@ public class FlexiBookPage extends JFrame {
 	private JLabel errorMessageLogInLabel;
 	private JLabel successMessageSignInLabel;
 	private JLabel errorMessageSignInLabel;
+	private JLabel successMessageSetUpLabel;
+	private JLabel errorMessageSetUpLabel;
 	
 	//string for errors
 	private String addBHError;
 	private String deleteBHError;
 	private String updateBHError ;
 	private String deleteBHSuccess ;
+	private String addSetUpSuccess; 
+	private String addSetUpError;
 	
 	//set up business information button
 	private JButton setDetailBtn;
@@ -468,6 +472,7 @@ public class FlexiBookPage extends JFrame {
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
 		textField_1.setBounds(600, (int)(157*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		
 		LoginPane.add(textField_1);
 		
 		JLabel lblPassword = new JLabel("PASSWORD");
@@ -478,7 +483,9 @@ public class FlexiBookPage extends JFrame {
 		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
 		lblRepeatPassword.setBounds(600, (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
 		lblRepeatPassword.setForeground(new Color(240, 248, 255));
+		lblRepeatPassword.setText("");
 		LoginPane.add(lblRepeatPassword);
+		
 		
 		passwordField = new JPasswordField();
 		passwordField.setBounds(600, (int)(229*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
@@ -668,11 +675,31 @@ public class FlexiBookPage extends JFrame {
 		txtEmailSet.setBounds(500, 320, 200, 23);
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
+		
+		successMessageSetUpLabel = new JLabel("");
+		successMessageSetUpLabel.setForeground(Color.GREEN);
+		successMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		setUpInPanel.add(successMessageSetUpLabel);
+		
+		errorMessageSetUpLabel = new JLabel("");
+		errorMessageSetUpLabel.setForeground(Color.RED);
+		errorMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		setUpInPanel.add(errorMessageSetUpLabel);
 
 		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					setUpBusinessInformation(evt);
+					addSetUpSuccess = null; 
+					addSetUpError = null;
+					if (txtBusinessNameSet.getText().equals("") || txtAdressSet.getText().equals("")
+							|| txtPhoneNumberSet.getText().equals("") || txtEmailSet.getText().equals("")) {
+						addSetUpError = "One of above field is empty";
+					} else {
+						addSetUpSuccess = "Success!";
+						setUpBusinessInformation(evt);
+					}
+					refreshBusinessSetUp();
+					
 				}
 			});
 		
@@ -2652,10 +2679,13 @@ public class FlexiBookPage extends JFrame {
 //	private String logOutSuccessMessage; 
 	
 	private void refreshLogin() {
+		
 		successMessageLogInLabel.setText(addLoginSuccess);
 		errorMessageLogInLabel.setText(addLoginError);
 		successMessageSignInLabel.setText(addSignUpSuccess);
 		errorMessageSignInLabel.setText(addSignUpError);
+		pack();
+		repaint();
 		
 //		deleteServiceComboBox.removeAllItems();
 //		updateServiceComboBox.removeAllItems();
@@ -2699,6 +2729,12 @@ public class FlexiBookPage extends JFrame {
 //		}
 	}
 	
+	private void refreshBusinessSetUp() {
+		successMessageSetUpLabel.setText(addSetUpSuccess);
+		errorMessageSetUpLabel.setText(addSetUpError);
+		pack();
+		repaint();
+	}
 	
 	//refresh frame
 	private void refreshData() {
@@ -2707,6 +2743,13 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 		refreshSingleServiceData();
 		refreshAppointmentPage();
+	}
+	
+	private void refreshSignOut() {
+		initComponents();
+		refreshData();
+//		textField.setText("");
+//		textField.setText("");
 	}
 	
 	private void refreshAccount() {
@@ -2942,14 +2985,23 @@ public class FlexiBookPage extends JFrame {
 			addLoginSuccess = null;
 			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")||
 					String.valueOf(passwordField_1.getPassword()).equals("")) {
+				textField_1.setText("");
+				passwordField.setText("");
+				passwordField_1.setText("");
 				addSignUpError = "One of the fields is empty";
 			}else if(!String.valueOf(passwordField.getPassword()).equals(String.valueOf(passwordField_1.getPassword()))) {
+				textField_1.setText("");
+				passwordField.setText("");
+				passwordField_1.setText("");
 				addSignUpError = "The two password inputs do not match. Please try again.";
 			}
 			else {
 				if (!textField_1.getText().equals("owner")) {
 					try {
 						FlexiBookController.signUpCustomer(textField_1.getText(), String.valueOf(passwordField.getPassword()));
+						textField_1.setText("");
+						passwordField.setText("");
+						passwordField_1.setText("");
 						addSignUpSuccess = "Success!";
 						logInCustomerButtonActionPerformed(evt);
 					}  catch (InvalidInputException e) {
@@ -2962,9 +3014,15 @@ public class FlexiBookPage extends JFrame {
 						addSignUpSuccess = "Success!";
 						if(textField_1.getText().equals("owner")) {
 							if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+								textField_1.setText("");
+								passwordField.setText("");
+								passwordField_1.setText("");
 								logInOwnerButtonToSetUpActionPerformed(evt);
 							}
 							else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+								textField_1.setText("");
+								passwordField.setText("");
+								passwordField_1.setText("");
 								logInOwnerButtonActionPerformed(evt);
 							}
 						}
@@ -2986,9 +3044,10 @@ public class FlexiBookPage extends JFrame {
 			addLoginSuccess = null;
 			addSignUpError = null;
 			addSignUpSuccess = null;
-			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")) {
+			if (textField_1.getText().equals("") || String.valueOf(passwordField.getPassword()).equals("")) {
 				addLoginError = "one of the fields is empty";
-				
+				textField_1.setText("");
+				passwordField.setText("");
 			} 
 			else {
 				try {
@@ -2996,13 +3055,19 @@ public class FlexiBookPage extends JFrame {
 					addLoginSuccess = "Success!";
 					if(textField_1.getText().equals("owner")) {
 						if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+							textField_1.setText("");
+							passwordField.setText("");
 							logInOwnerButtonToSetUpActionPerformed(evt);
 						}
 						else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+							textField_1.setText("");
+							passwordField.setText("");
 							logInOwnerButtonActionPerformed(evt);
 						}
 					}
 					else {
+						textField_1.setText("");
+						passwordField.setText("");
 						logInCustomerButtonActionPerformed(evt);
 					}
 				}  catch (InvalidInputException e) {
@@ -3217,7 +3282,6 @@ public class FlexiBookPage extends JFrame {
 	private void deleteSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null; 
 		deleteSuccess = null;
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
 		try {
 			FlexiBookController.deleteService((String)deleteServiceComboBox.getSelectedItem());
 			deleteSuccess = "Success!";
@@ -3231,7 +3295,6 @@ public class FlexiBookPage extends JFrame {
 	private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		addSuccess = null;
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
 		if (newServiceDowntimeDurationTextField.getText().equals("")||
 				newServiceDowntimeStartTextField.getText().equals("")||
 				newServiceDurationTextField.getText().equals("")||
@@ -3258,7 +3321,6 @@ public class FlexiBookPage extends JFrame {
 	private void updateSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		updateSuccess = null;
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
 		if (updateDowntimeDurationTextField.getText().equals("")||
 				updateDowntimeStartTextField.getText().equals("")||
 				updateServiceDurationTextField.getText().equals("")||
@@ -3477,7 +3539,8 @@ public class FlexiBookPage extends JFrame {
 		getContentPane().add(LoginPane);
 		LoginPane.setBounds(0,0,1100,740);
 		//refresh page
-		refreshData();
+		refreshSignOut();
+		//refreshData();
 	}
 
 	//method called when customer log out button pressed
@@ -3507,7 +3570,8 @@ public class FlexiBookPage extends JFrame {
 		//set new panel
 		getContentPane().add(LoginPane);
 		//refresh page
-		refreshData();
+		refreshSignOut();
+		//refreshData();
 	}
 
 	//method called when book appointment button pressed
