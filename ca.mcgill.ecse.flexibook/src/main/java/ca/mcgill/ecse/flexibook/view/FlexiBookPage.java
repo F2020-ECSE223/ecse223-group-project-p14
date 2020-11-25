@@ -2953,7 +2953,14 @@ public class FlexiBookPage extends JFrame {
 					try {
 						FlexiBookController.signUpOwner(textField_1.getText(), String.valueOf(passwordField.getPassword()));
 						addSignUpSuccess = "Success!";
-						logInOwnerButtonActionPerformed(evt);
+						if(textField_1.getText().equals("owner")) {
+							if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+								logInOwnerButtonToSetUpActionPerformed(evt);
+							}
+							else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+								logInOwnerButtonActionPerformed(evt);
+							}
+						}
 					}  catch (InvalidInputException e) {
 						String errorMessageCatched = e.getMessage();
 							addSignUpError = errorMessageCatched;
