@@ -27,6 +27,7 @@ import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOComboItem;
+import ca.mcgill.ecse.flexibook.controller.TOServiceCombo;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 import ca.mcgill.ecse.flexibook.model.Appointment;
 import ca.mcgill.ecse.flexibook.model.Appointment.AppointmentStatus;
@@ -3007,7 +3008,7 @@ public class CucumberStepDefinitions {
 		//@ TODO
 		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
 		for (ComboItem comboitems: appointment.getChosenItems()) {
-			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
+			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName(), new TOServiceCombo(appointment.getBookableService().getName()));
 			comboItems.add(toComboItem);
 		}
 		return comboItems;
