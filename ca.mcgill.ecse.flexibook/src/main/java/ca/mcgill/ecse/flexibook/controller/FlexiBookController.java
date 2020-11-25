@@ -1599,7 +1599,7 @@ public class FlexiBookController {
 	 */
 	public static List<TOBusinessHour> getTOBusinessHour(){
 		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
-		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours()) {
+		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getHours()) {
 			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
 			businessHours.add(BusinessHour);
 		}
@@ -2378,12 +2378,15 @@ public class FlexiBookController {
 	 */
 	private static boolean isOverlappingWithBusinessHours(DayOfWeek day, Time startTime, Time endTime, BusinessHour notToInclude) {
 
-		boolean isOverlapping = false;
+		boolean isOverlapping = true;
 		Business business = FlexiBookApplication.getFlexiBook().getBusiness();
 		List<BusinessHour> hoursList = business.getBusinessHours();
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
 
+		if(hoursList.size() == 0){
+			isOverlapping = false;
+		}
 
 		for(BusinessHour x: hoursList) {
 			// check weekday
