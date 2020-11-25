@@ -143,12 +143,16 @@ public class FlexiBookPage extends JFrame {
 	private JLabel errorMessageLogInLabel;
 	private JLabel successMessageSignInLabel;
 	private JLabel errorMessageSignInLabel;
+	private JLabel successMessageSetUpLabel;
+	private JLabel errorMessageSetUpLabel;
 	
 	//string for errors
 	private String addBHError;
 	private String deleteBHError;
 	private String updateBHError ;
 	private String deleteBHSuccess ;
+	private String addSetUpSuccess; 
+	private String addSetUpError;
 	
 	//set up business information button
 	private JButton setDetailBtn;
@@ -668,11 +672,31 @@ public class FlexiBookPage extends JFrame {
 		txtEmailSet.setBounds(500, 320, 200, 23);
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
+		
+		successMessageSetUpLabel = new JLabel("");
+		successMessageSetUpLabel.setForeground(Color.GREEN);
+		successMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		setUpInPanel.add(successMessageSetUpLabel);
+		
+		errorMessageSetUpLabel = new JLabel("");
+		errorMessageSetUpLabel.setForeground(Color.RED);
+		errorMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		setUpInPanel.add(errorMessageSetUpLabel);
 
 		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					setUpBusinessInformation(evt);
+					addSetUpSuccess = null; 
+					addSetUpError = null;
+					if (txtBusinessNameSet.getText().equals("") || txtAdressSet.getText().equals("")
+							|| txtPhoneNumberSet.getText().equals("") || txtEmailSet.getText().equals("")) {
+						addSetUpError = "One of above field is empty";
+					} else {
+						addSetUpSuccess = "Success!";
+						setUpBusinessInformation(evt);
+					}
+					refreshBusinessSetUp();
+					
 				}
 			});
 		
@@ -2634,10 +2658,12 @@ public class FlexiBookPage extends JFrame {
 //	private String logOutSuccessMessage; 
 	
 	private void refreshLogin() {
+		
 		successMessageLogInLabel.setText(addLoginSuccess);
 		errorMessageLogInLabel.setText(addLoginError);
 		successMessageSignInLabel.setText(addSignUpSuccess);
 		errorMessageSignInLabel.setText(addSignUpError);
+		
 		
 //		deleteServiceComboBox.removeAllItems();
 //		updateServiceComboBox.removeAllItems();
@@ -2681,6 +2707,10 @@ public class FlexiBookPage extends JFrame {
 //		}
 	}
 	
+	private void refreshBusinessSetUp() {
+		successMessageSetUpLabel.setText(addSetUpSuccess);
+		errorMessageSetUpLabel.setText(addSetUpError);
+	}
 	
 	//refresh frame
 	private void refreshData() {
