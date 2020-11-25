@@ -72,6 +72,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel LoginPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
+	private JPanel backgroundPanel;
 	//panel for each button on top bar
 	private JPanel infoOwnerPanel;
 	private JPanel infoCustomerPanel;
@@ -158,6 +159,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel endTimeLabel;
 	private JLabel or;
 	private JLabel updateBusinessHours;
+
 	
 	private JTextField startTime;
 	private JTextField endTime;
@@ -586,23 +588,48 @@ public class FlexiBookPage extends JFrame {
 	
 	//initialize the business information set-up
 	private void initSetBusinessInfo() {
-
+		
+		//JLayeredPane lpane = new JLayeredPane();
+		//backgroundPanel = new JPanel();
+		//lpane.setBounds(0,0,1100,740);
+		//backgroundPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//backgroundPanel.setLayout(null);
+		// backgroundPanel.setPreferredSize(new Dimension(1100,740));
+		//backgroundPanel.setBounds(0, 0, 1100, 740);
+		
+//		JLabel initSetBusinesslabel = new JLabel("");
+//		initSetBusinesslabel.setBounds(0, 0, 1100, 740);
+//		initSetBusinesslabel.setVerticalAlignment(SwingConstants.TOP);
+//		initSetBusinesslabel.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
+		//backgroundPanel.add(initSetBusinesslabel);
+		//backgroundPanel.setOpaque(true);
+		
 		setUpInPanel = new JPanel();
+		setUpInPanel.setBackground(Color.DARK_GRAY);
+		setUpInPanel.setBorder (new EmptyBorder(5, 5, 5, 5));
 		setUpInPanel.setLayout(null);
 		setUpBusinessInfoLabel = new JLabel("Info Page");
-		setUpInPanel.setPreferredSize(new Dimension(1100,700));
-		setUpInPanel.setBackground(Color.WHITE);
-		setUpInPanel.setOpaque(true);
-		setUpInPanel.setForeground(Color.WHITE);
+		
+		//setUpInPanel.setBounds(400,200,400,700);
+
+		//setUpInPanel.setOpaque(true);
 		setUpInPanel.add(setUpBusinessInfoLabel);
 
 		setDetailBtn = new JButton("Set");
 		setDetailBtn.setBounds(500,400,89,23);
+		setDetailBtn.setBackground(Color.GREEN);
+		setDetailBtn.setForeground(Color.DARK_GRAY);
 		setUpInPanel.add(setDetailBtn);
+		//backgroundPanel.add(setUpInPanel,BorderLayout.CENTER);
 
+
+		//lpane.add(backgroundPanel, 0, 0);
+		//lpane.add(setUpInPanel, 1, 0);
+		
 		//Setting the UI for setting business information
 		JLabel businessNameSet = new JLabel("Business name");
 		businessNameSet.setBounds(500, 100, 150, 23);
+		businessNameSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(businessNameSet);
 
 		txtBusinessNameSet = new JTextField();
@@ -612,6 +639,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel adressSet = new JLabel("Address");
 		adressSet.setBounds(500, 170, 70, 23);
+		adressSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(adressSet);
 
 		txtAdressSet= new JTextField();
@@ -622,6 +650,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel phoneNumberSet  = new JLabel("Phone Number");
 		phoneNumberSet.setBounds(500, 230, 150, 23);
+		phoneNumberSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(phoneNumberSet);
 
 		txtPhoneNumberSet = new JTextField();
@@ -631,6 +660,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel emailSet = new JLabel("Email");
 		emailSet.setBounds(500, 290, 200, 23);
+		emailSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(emailSet);
 
 		txtEmailSet = new JTextField();
@@ -644,6 +674,7 @@ public class FlexiBookPage extends JFrame {
 					setUpBusinessInformation(evt);
 				}
 			});
+		
 		
 	}
 	
