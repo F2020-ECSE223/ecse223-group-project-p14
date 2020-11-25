@@ -1046,7 +1046,7 @@ public class FlexiBookPage extends JFrame {
 			error += exp.getMessage();
 		}
 		
-		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+//		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 		
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
@@ -1221,7 +1221,11 @@ public class FlexiBookPage extends JFrame {
 	}
 
 
-	//initialize single services panel
+	/**
+	 * @author chengchen
+	 * initialize single services panel
+	 */
+	
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
 		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
@@ -2310,7 +2314,10 @@ public class FlexiBookPage extends JFrame {
 		//refresh page
 		refreshData();
 	}
-	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	private void deleteSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null; 
 		deleteSuccess = null;
@@ -2324,7 +2331,10 @@ public class FlexiBookPage extends JFrame {
 		
 		refreshData();
 	}
-	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		addSuccess = null;
@@ -2351,7 +2361,10 @@ public class FlexiBookPage extends JFrame {
 
 
 	}
-	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	private void updateSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		updateSuccess = null;
@@ -2381,6 +2394,9 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	/**
+	 * @author chengchen
+	 */
 	private void refreshSingleServiceData() {
 		errorMessageSingleServiceLabel.setText(errorMessageSingleService);
 		addSuccessLabel.setText(addSuccess);
