@@ -19,6 +19,7 @@ public class Customer extends User implements Serializable
 
   //Customer Attributes
   private int noShowCount;
+  private int showCount;
 
   //Customer Associations
   private FlexiBook flexiBook;
@@ -28,10 +29,11 @@ public class Customer extends User implements Serializable
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(String aUsername, String aPassword, int aNoShowCount, FlexiBook aFlexiBook)
+  public Customer(String aUsername, String aPassword, int aNoShowCount, int aShowCount, FlexiBook aFlexiBook)
   {
     super(aUsername, aPassword);
     noShowCount = aNoShowCount;
+    showCount = aShowCount;
     boolean didAddFlexiBook = setFlexiBook(aFlexiBook);
     if (!didAddFlexiBook)
     {
@@ -52,9 +54,22 @@ public class Customer extends User implements Serializable
     return wasSet;
   }
 
+  public boolean setShowCount(int aShowCount)
+  {
+    boolean wasSet = false;
+    showCount = aShowCount;
+    wasSet = true;
+    return wasSet;
+  }
+
   public int getNoShowCount()
   {
     return noShowCount;
+  }
+
+  public int getShowCount()
+  {
+    return showCount;
   }
   /* Code from template association_GetOne */
   public FlexiBook getFlexiBook()
@@ -203,7 +218,8 @@ public class Customer extends User implements Serializable
   public String toString()
   {
     return super.toString() + "["+
-            "noShowCount" + ":" + getNoShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
+            "noShowCount" + ":" + getNoShowCount()+ "," +
+            "showCount" + ":" + getShowCount()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "flexiBook = "+(getFlexiBook()!=null?Integer.toHexString(System.identityHashCode(getFlexiBook())):"null");
   }  
   //------------------------

@@ -512,6 +512,10 @@ public class FlexiBookController {
 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
 
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
@@ -543,6 +547,42 @@ public class FlexiBookController {
 		return ret;
 
 	}
+	 /**
+	  * added in the last iteration
+	  * @param serviceName
+	  * @param date
+	  * @param time
+	  * @return
+	  * @throws InvalidInputException
+	  */
+	public static void registerNoShowForApp(String serviceName, Date date, Time time) throws InvalidInputException{
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		Appointment appInSystem = findAppointment(serviceName,date, time);
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
+		
+		TimeSlot timeSlot = appInSystem.getTimeSlot();
+		LocalDateTime current = ControllerUtils.combineDateAndTime(FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
+		LocalDateTime appStartAt = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+		
+		if(current.isBefore(appStartAt)) {
+			throw new InvalidInputException("Error: Please wait for appointment with name " + serviceName + " to start at " + date.toString() + time.toString());
+		}
+		
+		appInSystem.registeredNoShow();
+		
+		//add by Mike start --- 
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		//add by Mike end ---	
+
+		
+	}
 
 
 	/**
@@ -562,6 +602,9 @@ public class FlexiBookController {
 				throw new InvalidInputException("You must log out of the owner account before creating a customer account");
 			}
 		}
+		else if (username == "owner") {
+			throw new InvalidInputException("username 'owner' is an reserved word, please use another name.");
+		}
 		else if (username == null || username.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The user name cannot be empty");
 		}
@@ -572,7 +615,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("The username already exists");
 		}
 		else {
-			Customer aCustomer = new Customer(username, password, 0, flexiBook);
+			Customer aCustomer = new Customer(username, password, 0, 0, flexiBook);
 			flexiBook.addCustomer(aCustomer); 		
 			FlexiBookApplication.setCurrentLoginUser(aCustomer); 
 			try {
@@ -677,16 +720,33 @@ public class FlexiBookController {
 		Owner ThisOwner2 = findOwner(username);
 
 		if (currentUser == null) {
-			if (ThisOwner2 != null && ThisOwner2.getPassword().equals(password)) {
-				FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
+			if (username.equals("owner")) {
+				if (ThisOwner2 != null && ThisOwner2.getPassword().equals(password)) {
+					FlexiBookApplication.setCurrentLoginUser(ThisOwner2);
+					//add by Mike start --- 
+					try {
+						FlexiBookPersistence.save(flexiBook);
+					} catch(RuntimeException e) {
+						throw new InvalidInputException(e.getMessage());
+					}
+					//add by Mike end ---	
 				}
-				//add by Mike end ---	
+				else if(ThisOwner2 != null && !ThisOwner2.getPassword().equals(password)) {
+					throw new InvalidInputException("Username/password not found");
+				}
+				else if(ThisOwner2 == null){
+					signUpOwner(username, password);
+					//add by Mike start --- 
+					try {
+						FlexiBookPersistence.save(flexiBook);
+					} catch(RuntimeException e) {
+						throw new InvalidInputException(e.getMessage());
+					}
+					//add by Mike end ---	
+				}
+				
 			}
+			
 			else if (ThisCustomer != null && ThisCustomer.getPassword().equals(password)) {
 				FlexiBookApplication.setCurrentLoginUser(ThisCustomer);
 				//add by Mike start --- 
@@ -697,17 +757,11 @@ public class FlexiBookController {
 				}
 				//add by Mike end ---	
 			}
-			else if(ThisOwner2 == null && username.equals("owner")){
-				signUpOwner(username, password);
-				//add by Mike start --- 
-				try {
-					FlexiBookPersistence.save(flexiBook);
-				} catch(RuntimeException e) {
-					throw new InvalidInputException(e.getMessage());
-				}
-				//add by Mike end ---	
+			
+			else if ((ThisCustomer != null && !ThisCustomer.getPassword().equals(password))){
+				throw new InvalidInputException("Username/password not found");
 			}
-			else {
+			else if (ThisCustomer == null) {
 				throw new InvalidInputException("Username/password not found");
 			}
 		}
@@ -1355,6 +1409,7 @@ public class FlexiBookController {
 
 
 
+
 	/**
 	 * This is a method which returns a boolean if the time input is available
 	 * TODO: missing features of showing available times, also we don't need to show the service name and the name of the customer 
@@ -1583,6 +1638,7 @@ public class FlexiBookController {
 		return appointments;
 
 	}
+	
 	
 	/**
 	 * Add in the last iteration
@@ -2060,7 +2116,7 @@ public class FlexiBookController {
 	 */
 	private static Owner findOwner(String userName) {
 		Owner foundOwner = null;
-		if (userName == "owner") {
+		if (userName.equals("owner")) {
 			foundOwner = FlexiBookApplication.getFlexiBook().getOwner();
 		}
 		return foundOwner;
@@ -2130,6 +2186,21 @@ public class FlexiBookController {
 			signUpSuccessful = true;
 		}
 		return signUpSuccessful;
+	}
+	
+	/**
+	 * Simple wrapper method to get the current user's username. 
+	 * Used for the view in place of a Transfer Object since only one thing is needed.
+	 * 
+	 * @return String current user's username
+	 */
+	public static String getCurrentLogInUsername() {
+		if (FlexiBookApplication.getCurrentLoginUser() == null) {
+			return "";
+		}
+		else {
+			return FlexiBookApplication.getCurrentLoginUser().getUsername();
+		}
 	}
 
 

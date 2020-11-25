@@ -18,7 +18,7 @@ import java.util.*;
  */
 // line 1 "../../../../../FlexiBookStateMachine.ump"
 // line 17 "../../../../../FlexiBookPersistence.ump"
-// line 89 "../../../../../FlexiBook.ump"
+// line 90 "../../../../../FlexiBook.ump"
 public class Appointment implements Serializable
 {
 
@@ -202,7 +202,24 @@ public class Appointment implements Serializable
 
     return wasEventProcessed;
   }
-
+  
+  // Added by Mike start bonus-------
+  public boolean registerShow() {
+	boolean wasEventProcessed = false; 
+	AppointmentStatus aAppointmentStatus = appointmentStatus;
+	switch (aAppointmentStatus)
+	{
+	  case Booked:
+	    incremmentShow();
+	    wasEventProcessed = true;
+	    break;
+	  default:
+	    
+	}
+	  return wasEventProcessed; 
+  }
+  //Added by Mike end bonus-------
+  
   public boolean finishedAppointment()
   {
     boolean wasEventProcessed = false;
@@ -580,7 +597,21 @@ public class Appointment implements Serializable
 		noShowCount++;
 		this.getCustomer().setNoShowCount(noShowCount);
   }
-
+   
+   
+// Added by Mike start bonus-------
+   /**
+    * Increments the ShowCount of the customer assciated to the account
+    * 
+    * @author mikewang
+    */
+   
+   public void incremmentShow() {
+	   int showCount = this.getCustomer().getShowCount();
+	   showCount++;
+	   this.getCustomer().setShowCount(showCount);
+   }
+// Added by Mike end bonus-------
 
   /**
    * 
