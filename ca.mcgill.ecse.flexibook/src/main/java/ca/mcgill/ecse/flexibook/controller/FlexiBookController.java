@@ -2146,6 +2146,21 @@ public class FlexiBookController {
 		}
 		return signUpSuccessful;
 	}
+	
+	/**
+	 * Simple wrapper method to get the current user's username. 
+	 * Used for the view in place of a Transfer Object since only one thing is needed.
+	 * 
+	 * @return String current user's username
+	 */
+	public static String getCurrentLogInUsername() {
+		if (FlexiBookApplication.getCurrentLoginUser() == null) {
+			return "";
+		}
+		else {
+			return FlexiBookApplication.getCurrentLoginUser().getUsername();
+		}
+	}
 
 
 	/**

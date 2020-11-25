@@ -223,11 +223,6 @@ public class FlexiBookPage extends JFrame {
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
 	private JLabel updateSuccessful; 
-	
-	//Customer Sign up panel
-	private JLabel signUpLabel;
-	private JButton cancelButton; //back to login page
-
 
 	//tracking last page
 	private JButton previousButton;
@@ -241,6 +236,7 @@ public class FlexiBookPage extends JFrame {
 	// Error message 
 	private JLabel errorMessage;
 	private String error = null;
+	
 	
 
 	/**
@@ -1110,9 +1106,7 @@ public class FlexiBookPage extends JFrame {
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField(); 
-		if (FlexiBookApplication.getCurrentLoginUser().getUsername() != null) {
-		usernameBox.setText(FlexiBookApplication.getCurrentLoginUser().getUsername());}
+		usernameBox = new JTextField(FlexiBookController.getCurrentLogInUsername());
 		usernameBox.setColumns(20);
 		usernameBox.setBounds(470, 350, 250, 30);
 		
@@ -1125,7 +1119,7 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getPassword());
+		passwordBox = new JTextField(FlexiBookController.getCurrentLogInUsername());
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
@@ -1214,7 +1208,7 @@ public class FlexiBookPage extends JFrame {
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getUsername()); 
+		usernameBox = new JTextField(FlexiBookController.getCurrentLogInUsername()); 
 		usernameBox.setColumns(20);
 		usernameBox.setBounds(470, 350, 250, 30);
 		
@@ -1227,7 +1221,7 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(FlexiBookApplication.getCurrentLoginUser().getPassword()); 
+		passwordBox = new JTextField(FlexiBookController.getCurrentLogInUsername()); 
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
