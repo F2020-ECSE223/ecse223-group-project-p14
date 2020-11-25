@@ -1046,7 +1046,7 @@ public class FlexiBookPage extends JFrame {
 			error += exp.getMessage();
 		}
 		
-//		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 		
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
