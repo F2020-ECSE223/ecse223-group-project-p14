@@ -2378,12 +2378,15 @@ public class FlexiBookController {
 	 */
 	private static boolean isOverlappingWithBusinessHours(DayOfWeek day, Time startTime, Time endTime, BusinessHour notToInclude) {
 
-		boolean isOverlapping = false;
+		boolean isOverlapping = true;
 		Business business = FlexiBookApplication.getFlexiBook().getBusiness();
 		List<BusinessHour> hoursList = business.getBusinessHours();
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
 
+		if(hoursList.size() == 0){
+			isOverlapping = false;
+		}
 
 		for(BusinessHour x: hoursList) {
 			// check weekday
