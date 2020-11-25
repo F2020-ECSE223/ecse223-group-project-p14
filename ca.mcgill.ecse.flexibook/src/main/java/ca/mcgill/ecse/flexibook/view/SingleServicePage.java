@@ -184,6 +184,7 @@ public class SingleServicePage {
 		modelDeleteService = new DefaultTableModel();
 		modelDeleteService.setColumnIdentifiers(col);
 
+		
 
 		JPanel deleteServicePane = new JPanel();
 		deleteServicePane.setLayout(null);

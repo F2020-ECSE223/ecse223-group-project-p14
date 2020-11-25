@@ -4,7 +4,8 @@
 package ca.mcgill.ecse.flexibook.controller;
 import java.util.*;
 
-// line 38 "../../../../../FlexiBookTransferObjects.ump"
+// line 39 "../../../../../../model.ump"
+// line 100 "../../../../../../model.ump"
 public class TOServiceCombo
 {
 
@@ -23,15 +24,10 @@ public class TOServiceCombo
   // CONSTRUCTOR
   //------------------------
 
-  public TOServiceCombo(String aName, TOComboItem... allServices)
+  public TOServiceCombo(String aName)
   {
     name = aName;
     services = new ArrayList<TOComboItem>();
-    boolean didAddServices = setServices(allServices);
-    if (!didAddServices)
-    {
-      throw new RuntimeException("Unable to create TOServiceCombo, must have at least 2 services. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
   }
 
   //------------------------
@@ -91,17 +87,43 @@ public class TOServiceCombo
     boolean has = mainService != null;
     return has;
   }
+  /* Code from template association_IsNumberOfValidMethod */
+  public boolean isNumberOfServicesValid()
+  {
+    boolean isValid = numberOfServices() >= minimumNumberOfServices();
+    return isValid;
+  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfServices()
   {
     return 2;
   }
-  /* Code from template association_AddUnidirectionalMStar */
+  /* Code from template association_AddMandatoryManyToOne */
+  public TOComboItem addService(boolean aIsMandatory, String aServiceName)
+  {
+    TOComboItem aNewService = new TOComboItem(aIsMandatory, aServiceName, this);
+    return aNewService;
+  }
+
   public boolean addService(TOComboItem aService)
   {
     boolean wasAdded = false;
     if (services.contains(aService)) { return false; }
-    services.add(aService);
+    TOServiceCombo existingTOServiceCombo = aService.getTOServiceCombo();
+    boolean isNewTOServiceCombo = existingTOServiceCombo != null && !this.equals(existingTOServiceCombo);
+
+    if (isNewTOServiceCombo && existingTOServiceCombo.numberOfServices() <= minimumNumberOfServices())
+    {
+      return wasAdded;
+    }
+    if (isNewTOServiceCombo)
+    {
+      aService.setTOServiceCombo(this);
+    }
+    else
+    {
+      services.add(aService);
+    }
     wasAdded = true;
     return wasAdded;
   }
@@ -109,11 +131,13 @@ public class TOServiceCombo
   public boolean removeService(TOComboItem aService)
   {
     boolean wasRemoved = false;
-    if (!services.contains(aService))
+    //Unable to remove aService, as it must always have a tOServiceCombo
+    if (this.equals(aService.getTOServiceCombo()))
     {
       return wasRemoved;
     }
 
+    //tOServiceCombo already at minimum (2)
     if (numberOfServices() <= minimumNumberOfServices())
     {
       return wasRemoved;
@@ -122,30 +146,6 @@ public class TOServiceCombo
     services.remove(aService);
     wasRemoved = true;
     return wasRemoved;
-  }
-  /* Code from template association_SetUnidirectionalMStar */
-  public boolean setServices(TOComboItem... newServices)
-  {
-    boolean wasSet = false;
-    ArrayList<TOComboItem> verifiedServices = new ArrayList<TOComboItem>();
-    for (TOComboItem aService : newServices)
-    {
-      if (verifiedServices.contains(aService))
-      {
-        continue;
-      }
-      verifiedServices.add(aService);
-    }
-
-    if (verifiedServices.size() != newServices.length || verifiedServices.size() < minimumNumberOfServices())
-    {
-      return wasSet;
-    }
-
-    services.clear();
-    services.addAll(verifiedServices);
-    wasSet = true;
-    return wasSet;
   }
   /* Code from template association_AddIndexControlFunctions */
   public boolean addServiceAt(TOComboItem aService, int index)
@@ -190,7 +190,13 @@ public class TOServiceCombo
 
   public void delete()
   {
-    services.clear();
+    while (services.size() > 0)
+    {
+      TOComboItem aService = services.get(services.size() - 1);
+      aService.delete();
+      services.remove(aService);
+    }
+    
     mainService = null;
   }
 
