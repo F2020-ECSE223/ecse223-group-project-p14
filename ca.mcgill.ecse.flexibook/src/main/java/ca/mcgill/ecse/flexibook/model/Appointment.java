@@ -473,6 +473,7 @@ public class Appointment implements Serializable
 		int durationMinutes = (int) d.toMinutes();
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, getFlexiBook());
+		oldTimeSlot.delete();
 		setTimeSlot(timeSlot);
   }
 
@@ -646,6 +647,7 @@ public class Appointment implements Serializable
 
 		if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 			getFlexiBook().removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			return false;
 		}
 
@@ -805,6 +807,7 @@ public class Appointment implements Serializable
 			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
 			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 				getFlexiBook().removeTimeSlot(timeSlot);
+				timeSlot.delete();
 				return false;
 			}
 			
@@ -825,6 +828,7 @@ public class Appointment implements Serializable
 			
 			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 				getFlexiBook().removeTimeSlot(timeSlot);
+				timeSlot.delete();
 				// remove all newly added service since the time is not good
 				// update fails, later return false
 				for(ComboItem item: findServiceCombo(this.getBookableService().getName()).getServices()) {
