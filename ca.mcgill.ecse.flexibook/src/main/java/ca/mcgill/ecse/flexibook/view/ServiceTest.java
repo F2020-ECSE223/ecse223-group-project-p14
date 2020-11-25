@@ -76,7 +76,7 @@ public class ServiceTest {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setPreferredSize(new Dimension(1100,700));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		singleServicesPanel = new JPanel();
 		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
