@@ -512,6 +512,10 @@ public class FlexiBookController {
 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
 
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
