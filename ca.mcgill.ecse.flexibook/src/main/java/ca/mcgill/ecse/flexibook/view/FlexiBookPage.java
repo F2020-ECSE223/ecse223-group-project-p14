@@ -2494,20 +2494,21 @@ public class FlexiBookPage extends JFrame {
 				return c;
 			}
 		};
+		
+		bookAppointmentPanel.add(viewAppForCurCustomerTable);
+		vAFCCTableModel = new DefaultTableModel(0, 0);
+		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
+		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
 		viewAppForCurCustomerTable.setBounds(700, 10, 350, 550);
-		//bookAppointmentPanel.add(viewAppForCurCustomerTable);
 		
 		viewAppForCurCustomerScrollPane = new JScrollPane(viewAppForCurCustomerTable);
 		bookAppointmentPanel.add(viewAppForCurCustomerScrollPane);
-		//this.add(viewAppForCurCustomerScrollPane);
-		//Dimension d = viewAppForCurCustomerTable.getPreferredSize();
-		viewAppForCurCustomerScrollPane.setPreferredSize(new Dimension(10, 400));
-		viewAppForCurCustomerScrollPane.setBounds(1050, 50, 20, 400);
+//		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
+//		viewAppForCurCustomerScrollPane.setPreferredSize(d);
+		viewAppForCurCustomerScrollPane.setBounds(700, 50, 400, 400);
 		viewAppForCurCustomerScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
-//		vAFCCTableModel = new DefaultTableModel(0, 0);
-//		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
-//		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
+
 		
 		//---------------------- date picker little calendars ---------- 
 		SqlDateModel newdateModel = new SqlDateModel();
@@ -2715,7 +2716,7 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 		refreshSingleServiceData();
-		refreshAppointmentPage();
+		//refreshAppointmentPage();
 		refreshBusinessHourData();
 
 	}
@@ -3720,6 +3721,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(action);
 		System.out.println(optservicename);
 		refreshData();
+		refreshAppointmentPage();
 		
 		
 	}
@@ -3756,6 +3758,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(newDate);
 		System.out.println(newtime);
 		refreshData();
+		refreshAppointmentPage();
 		
     	
  	
@@ -3912,6 +3915,7 @@ public class FlexiBookPage extends JFrame {
 		}
 		
 		refreshData();
+		refreshAppointmentPage();
 
 		
 	}
@@ -3940,6 +3944,7 @@ public class FlexiBookPage extends JFrame {
 		}
 		
 		refreshData();
+		refreshAppointmentPage();
 		System.out.println(serviceName);
 		System.out.println(date);
 		System.out.println(time);
@@ -3970,6 +3975,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
     	refreshData();
+    	refreshAppointmentPage();
     	
 		
 		
@@ -4006,9 +4012,6 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 	private void refreshAppointmentPage() {
-		vAFCCTableModel = new DefaultTableModel(0, 0);
-		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
-		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
 		
 		for(TOAppointment appto: FlexiBookController.getTOAppointmentForCurrentCustomer()) {
 			String name = appto.getServiceName();
@@ -4026,7 +4029,7 @@ public class FlexiBookPage extends JFrame {
 		}
 		
 		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
-		viewAppForCurCustomerScrollPane.setPreferredSize(new Dimension(d.width, 550));
+		viewAppForCurCustomerScrollPane.setPreferredSize(d);
 		
 		
 		// Show error Message
