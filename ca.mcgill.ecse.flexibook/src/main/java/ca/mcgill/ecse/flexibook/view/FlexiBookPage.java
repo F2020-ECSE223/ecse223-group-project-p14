@@ -1380,13 +1380,13 @@ public class FlexiBookPage extends JFrame {
 		singleServicesPanel.setLayout(null);
 		
 		JScrollPane serviceScrollPane = new JScrollPane();
-		serviceScrollPane.setBounds(310, 6, 524, 404);
+		serviceScrollPane.setBounds(479, 6, 524, 404);
 		singleServicesPanel.add(serviceScrollPane);
 		
 		
 		errorMessageSingleServiceLabel = new JLabel("");
 		errorMessageSingleServiceLabel.setForeground(Color.RED);
-		errorMessageSingleServiceLabel.setBounds(335, 433, 509, 16);
+		errorMessageSingleServiceLabel.setBounds(47, 17, 366, 16);
 		singleServicesPanel.add(errorMessageSingleServiceLabel);
 		
 		existingServiceTable = new JTable();
@@ -1400,51 +1400,51 @@ public class FlexiBookPage extends JFrame {
 		
 		newServiceNameTextField = new JTextField();
 		newServiceNameTextField.setColumns(10);
-		newServiceNameTextField.setBounds(239, 508, 130, 26);
+		newServiceNameTextField.setBounds(254, 139, 130, 26);
 		singleServicesPanel.add(newServiceNameTextField);
 
 		JLabel newServiceDurationLabel = new JLabel("New Service Duration");
-		newServiceDurationLabel.setBounds(24, 539, 134, 16);
+		newServiceDurationLabel.setBounds(39, 170, 134, 16);
 		singleServicesPanel.add(newServiceDurationLabel);
 
 		newServiceDurationTextField = new JTextField();
 		newServiceDurationTextField.setColumns(10);
-		newServiceDurationTextField.setBounds(239, 534, 130, 26);
+		newServiceDurationTextField.setBounds(254, 165, 130, 26);
 		singleServicesPanel.add(newServiceDurationTextField);
 
 		JLabel newServiceDowntimeDurationLabel = new JLabel("New Service Downtime Duration");
-		newServiceDowntimeDurationLabel.setBounds(24, 572, 202, 16);
+		newServiceDowntimeDurationLabel.setBounds(39, 203, 202, 16);
 		singleServicesPanel.add(newServiceDowntimeDurationLabel);
 
 		newServiceDowntimeDurationTextField = new JTextField();
 		newServiceDowntimeDurationTextField.setColumns(10);
-		newServiceDowntimeDurationTextField.setBounds(239, 567, 130, 26);
+		newServiceDowntimeDurationTextField.setBounds(254, 198, 130, 26);
 		singleServicesPanel.add(newServiceDowntimeDurationTextField);
 
 		JLabel newSearviceDowntimeStartLabel = new JLabel("New Service Downtime Start");
-		newSearviceDowntimeStartLabel.setBounds(24, 600, 176, 16);
+		newSearviceDowntimeStartLabel.setBounds(39, 231, 176, 16);
 		singleServicesPanel.add(newSearviceDowntimeStartLabel);
 
 		newServiceDowntimeStartTextField = new JTextField();
 		newServiceDowntimeStartTextField.setColumns(10);
-		newServiceDowntimeStartTextField.setBounds(239, 595, 130, 26);
+		newServiceDowntimeStartTextField.setBounds(254, 226, 130, 26);
 		singleServicesPanel.add(newServiceDowntimeStartTextField);
 
 		JButton confirmAddServiceButton = new JButton("Confirm");
-		confirmAddServiceButton.setBounds(156, 633, 95, 29);
+		confirmAddServiceButton.setBounds(171, 264, 95, 29);
 		singleServicesPanel.add(confirmAddServiceButton);
 		
 		JLabel newServiceNameLabel = new JLabel("New Service Name");
-		newServiceNameLabel.setBounds(24, 513, 122, 16);
+		newServiceNameLabel.setBounds(39, 144, 122, 16);
 		singleServicesPanel.add(newServiceNameLabel);
 		
 		addSuccessLabel = new JLabel("");
 		addSuccessLabel.setForeground(Color.GREEN);
-		addSuccessLabel.setBounds(261, 646, 157, 16);
+		addSuccessLabel.setBounds(278, 277, 157, 16);
 		singleServicesPanel.add(addSuccessLabel);
 		
 		deleteServiceComboBox = new JComboBox<String>();
-		deleteServiceComboBox.setBounds(410, 557, 262, 48);
+		deleteServiceComboBox.setBounds(674, 545, 262, 48);
 		if (!FlexiBookController.getTOServices().isEmpty()) {
 			for (TOService service:FlexiBookController.getTOServices()) {
 				deleteServiceComboBox.addItem(service.getName());
@@ -1453,20 +1453,20 @@ public class FlexiBookPage extends JFrame {
 		singleServicesPanel.add(deleteServiceComboBox);
 		
 		JLabel selectDeleteServiceLabel = new JLabel("Select the service you want to delete:");
-		selectDeleteServiceLabel.setBounds(422, 502, 252, 38);
+		selectDeleteServiceLabel.setBounds(684, 500, 252, 38);
 		singleServicesPanel.add(selectDeleteServiceLabel);
 		
 		JButton confirmDeleteServiceButton = new JButton("Confirm");
-		confirmDeleteServiceButton.setBounds(495, 633, 95, 29);
+		confirmDeleteServiceButton.setBounds(750, 625, 95, 29);
 		singleServicesPanel.add(confirmDeleteServiceButton);
 		
 		deleteSuccessLabel = new JLabel("");
 		deleteSuccessLabel.setForeground(Color.GREEN);
-		deleteSuccessLabel.setBounds(591, 633, 150, 16);
+		deleteSuccessLabel.setBounds(853, 638, 150, 16);
 		singleServicesPanel.add(deleteSuccessLabel);
 		
 		updateServiceComboBox = new JComboBox<String>();
-		updateServiceComboBox.setBounds(800, 501, 235, 27);
+		updateServiceComboBox.setBounds(106, 479, 235, 27);
 		if (!FlexiBookController.getTOServices().isEmpty()) {
 			for (TOService service:FlexiBookController.getTOServices()) {
 				updateServiceComboBox.addItem(service.getName());
@@ -1475,55 +1475,72 @@ public class FlexiBookPage extends JFrame {
 		singleServicesPanel.add(updateServiceComboBox);
 		
 		JLabel selectServiceUpdateLabel = new JLabel("Select the service you want to update:");
-		selectServiceUpdateLabel.setBounds(745, 473, 312, 16);
+		selectServiceUpdateLabel.setBounds(51, 451, 312, 16);
 		singleServicesPanel.add(selectServiceUpdateLabel);
 		
 		JLabel updateServiceNameLabel = new JLabel("New Service Name");
 		updateServiceNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		updateServiceNameLabel.setBounds(740, 543, 115, 21);
+		updateServiceNameLabel.setBounds(46, 521, 115, 21);
 		singleServicesPanel.add(updateServiceNameLabel);
 		
 		updateServiceNameTextField = new JTextField();
 		updateServiceNameTextField.setColumns(10);
-		updateServiceNameTextField.setBounds(964, 547, 130, 26);
+		updateServiceNameTextField.setBounds(270, 525, 130, 26);
 		singleServicesPanel.add(updateServiceNameTextField);
 		
 		JLabel updateServiceDurationLabel = new JLabel("New Service Duration");
-		updateServiceDurationLabel.setBounds(740, 571, 134, 16);
+		updateServiceDurationLabel.setBounds(46, 549, 134, 16);
 		singleServicesPanel.add(updateServiceDurationLabel);
 		
 		updateServiceDurationTextField = new JTextField();
 		updateServiceDurationTextField.setColumns(10);
-		updateServiceDurationTextField.setBounds(964, 573, 130, 26);
+		updateServiceDurationTextField.setBounds(270, 551, 130, 26);
 		singleServicesPanel.add(updateServiceDurationTextField);
 		
 		JLabel updateServiceDowntimeDurationLabel = new JLabel("New Service Downtime Duration");
-		updateServiceDowntimeDurationLabel.setBounds(740, 594, 212, 21);
+		updateServiceDowntimeDurationLabel.setBounds(46, 572, 212, 21);
 		singleServicesPanel.add(updateServiceDowntimeDurationLabel);
 		
 		updateDowntimeDurationTextField = new JTextField();
 		updateDowntimeDurationTextField.setColumns(10);
-		updateDowntimeDurationTextField.setBounds(964, 598, 130, 26);
+		updateDowntimeDurationTextField.setBounds(270, 576, 130, 26);
 		singleServicesPanel.add(updateDowntimeDurationTextField);
 		
 		JLabel updateServiceDowntimeStartLabel = new JLabel("New Service Downtime Start");
-		updateServiceDowntimeStartLabel.setBounds(740, 619, 212, 21);
+		updateServiceDowntimeStartLabel.setBounds(46, 597, 212, 21);
 		singleServicesPanel.add(updateServiceDowntimeStartLabel);
 		
 		updateDowntimeStartTextField = new JTextField();
 		updateDowntimeStartTextField.setColumns(10);
-		updateDowntimeStartTextField.setBounds(964, 623, 130, 26);
+		updateDowntimeStartTextField.setBounds(270, 601, 130, 26);
 		singleServicesPanel.add(updateDowntimeStartTextField);
 		
 		JButton confirmUpdateServiceButton = new JButton("Confirm");
-		confirmUpdateServiceButton.setBounds(860, 647, 117, 29);
+		confirmUpdateServiceButton.setBounds(166, 625, 117, 29);
 		singleServicesPanel.add(confirmUpdateServiceButton);
 		
 		updateSuccessLabel = new JLabel("");
 		updateSuccessLabel.setForeground(Color.GREEN);
-		updateSuccessLabel.setBounds(974, 660, 104, 16);
+		updateSuccessLabel.setBounds(296, 638, 104, 16);
 		singleServicesPanel.add(updateSuccessLabel);
-
+		
+		JLabel addServiceIcon = new JLabel("Add Service");
+		addServiceIcon.setForeground(Color.BLUE);
+		addServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
+		addServiceIcon.setBounds(166, 101, 134, 26);
+		singleServicesPanel.add(addServiceIcon);
+		
+		JLabel updateServiceIcon = new JLabel("Update Service");
+		updateServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
+		updateServiceIcon.setForeground(Color.BLUE);
+		updateServiceIcon.setBounds(150, 394, 207, 45);
+		singleServicesPanel.add(updateServiceIcon);
+		
+		JLabel deleteServiceIcon = new JLabel("Delete Service");
+		deleteServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
+		deleteServiceIcon.setForeground(Color.BLUE);
+		deleteServiceIcon.setBounds(732, 451, 176, 38);
+		singleServicesPanel.add(deleteServiceIcon);
 		
 		confirmAddServiceButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1548,6 +1565,7 @@ public class FlexiBookPage extends JFrame {
 		});
 
 	}
+	
 
 	//initialize combo services panel
 	private void initComboServicesPanel(){
