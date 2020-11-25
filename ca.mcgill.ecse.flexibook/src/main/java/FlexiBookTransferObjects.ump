@@ -37,7 +37,7 @@ class TOBusiness{
 
 class TOServiceCombo{
 	String name;
-	0..1 -> 2..* TOComboItem services;
+	1 <@>- 2..* TOComboItem services;
 	* -> 0..1 TOComboItem mainService;
 }
 

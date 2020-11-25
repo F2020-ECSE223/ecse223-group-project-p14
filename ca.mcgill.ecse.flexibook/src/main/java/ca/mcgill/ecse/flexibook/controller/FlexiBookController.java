@@ -1703,7 +1703,7 @@ public class FlexiBookController {
 		//gtjarvis end
 		ArrayList<TOComboItem> comboItems = new ArrayList<TOComboItem>();
 		for (ComboItem comboitems: appointment.getChosenItems()) {
-			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName());
+			TOComboItem toComboItem = new TOComboItem(comboitems.getMandatory(), comboitems.getService().getName(), new TOServiceCombo(comboitems.getServiceCombo().getName()));
 			comboItems.add(toComboItem);
 		}
 		return comboItems;
@@ -1729,13 +1729,16 @@ public class FlexiBookController {
 		List<ServiceCombo> serviceCombos = getServiceCombos();
 		List<TOServiceCombo> serviceCombosTO = new ArrayList<TOServiceCombo>();
 		List<ComboItem> comboItems;
+		TOServiceCombo sc;
 		for(ServiceCombo s: serviceCombos){
-			TOServiceCombo sc = new TOServiceCombo(s.getName());
 			comboItems = s.getServices();
+			sc = new TOServiceCombo(s.getName());
 			for(ComboItem c: comboItems){
-				TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName());
+				TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName(), sc);
 				sc.addService(comboItemTO);
 			}
+			ComboItem mainService = s.getMainService();
+			sc.setMainService(new TOComboItem(mainService.getMandatory(), mainService.getService().getName(), sc));
 			serviceCombosTO.add(sc);
 		}
 		return serviceCombosTO;
@@ -2360,7 +2363,7 @@ public class FlexiBookController {
 	 */
 	private static boolean isOverlappingWithBusinessHours(DayOfWeek day, Time startTime, Time endTime, BusinessHour notToInclude) {
 
-		boolean isOverlapping = true;
+		boolean isOverlapping = false;
 		Business business = FlexiBookApplication.getFlexiBook().getBusiness();
 		List<BusinessHour> hoursList = business.getBusinessHours();
 		LocalTime newStartTime = startTime.toLocalTime();

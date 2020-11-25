@@ -3,7 +3,8 @@
 
 package ca.mcgill.ecse.flexibook.controller;
 
-// line 21 "../../../../../FlexiBookTransferObjects.ump"
+// line 22 "../../../../../../model.ump"
+// line 90 "../../../../../../model.ump"
 public class TOComboItem
 {
 
@@ -15,14 +16,22 @@ public class TOComboItem
   private boolean isMandatory;
   private String serviceName;
 
+  //TOComboItem Associations
+  private TOServiceCombo tOServiceCombo;
+
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public TOComboItem(boolean aIsMandatory, String aServiceName)
+  public TOComboItem(boolean aIsMandatory, String aServiceName, TOServiceCombo aTOServiceCombo)
   {
     isMandatory = aIsMandatory;
     serviceName = aServiceName;
+    boolean didAddTOServiceCombo = setTOServiceCombo(aTOServiceCombo);
+    if (!didAddTOServiceCombo)
+    {
+      throw new RuntimeException("Unable to create service due to tOServiceCombo. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
   }
 
   //------------------------
@@ -59,15 +68,58 @@ public class TOComboItem
   {
     return isMandatory;
   }
+  /* Code from template association_GetOne */
+  public TOServiceCombo getTOServiceCombo()
+  {
+    return tOServiceCombo;
+  }
+  /* Code from template association_SetOneToMandatoryMany */
+  public boolean setTOServiceCombo(TOServiceCombo aTOServiceCombo)
+  {
+    boolean wasSet = false;
+    //Must provide tOServiceCombo to service
+    if (aTOServiceCombo == null)
+    {
+      return wasSet;
+    }
+
+    if (tOServiceCombo != null && tOServiceCombo.numberOfServices() <= TOServiceCombo.minimumNumberOfServices())
+    {
+      return wasSet;
+    }
+
+    TOServiceCombo existingTOServiceCombo = tOServiceCombo;
+    tOServiceCombo = aTOServiceCombo;
+    if (existingTOServiceCombo != null && !existingTOServiceCombo.equals(aTOServiceCombo))
+    {
+      boolean didRemove = existingTOServiceCombo.removeService(this);
+      if (!didRemove)
+      {
+        tOServiceCombo = existingTOServiceCombo;
+        return wasSet;
+      }
+    }
+    tOServiceCombo.addService(this);
+    wasSet = true;
+    return wasSet;
+  }
 
   public void delete()
-  {}
+  {
+    TOServiceCombo placeholderTOServiceCombo = tOServiceCombo;
+    this.tOServiceCombo = null;
+    if(placeholderTOServiceCombo != null)
+    {
+      placeholderTOServiceCombo.removeService(this);
+    }
+  }
 
 
   public String toString()
   {
     return super.toString() + "["+
             "isMandatory" + ":" + getIsMandatory()+ "," +
-            "serviceName" + ":" + getServiceName()+ "]";
+            "serviceName" + ":" + getServiceName()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "tOServiceCombo = "+(getTOServiceCombo()!=null?Integer.toHexString(System.identityHashCode(getTOServiceCombo())):"null");
   }
 }
