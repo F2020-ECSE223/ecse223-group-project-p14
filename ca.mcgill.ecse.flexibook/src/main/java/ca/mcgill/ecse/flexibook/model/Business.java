@@ -9,7 +9,7 @@ import java.util.*;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 37 "../../../../../FlexiBookPersistence.ump"
-// line 32 "../../../../../FlexiBook.ump"
+// line 33 "../../../../../FlexiBook.ump"
 public class Business implements Serializable
 {
 

@@ -1,6 +1,7 @@
 package ca.mcgill.ecse.flexibook.view;
 
 import java.awt.BorderLayout;
+
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -46,13 +48,21 @@ import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
+
 import ca.mcgill.ecse.flexibook.model.Service;
+import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+import ca.mcgill.ecse.flexibook.model.Owner;
+import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOService;
 
 public class FlexiBookPage extends JFrame {
+	
 
 	private static final long serialVersionUID = -4426310869335015542L;
+	
+	
 
 	//top bar for owner
 	private JPanel topPanelOwner;
@@ -62,6 +72,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel LoginPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
+	private JPanel backgroundPanel;
 	//panel for each button on top bar
 	private JPanel infoOwnerPanel;
 	private JPanel infoCustomerPanel;
@@ -74,6 +85,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel logOutOwnerPanel;
 	private JPanel logOutCustomerPanel;
 	private JPanel bookAppointmentPanel;
+	private JPanel customerSignUpPanel;
 	//panels for calendar tab
 	private JPanel calendarWeeklyViewPanel;
 	private JPanel calendarMonthlyViewPanel;
@@ -83,6 +95,12 @@ public class FlexiBookPage extends JFrame {
 	
 	// initial login panel
 	//private JPanel LoginPane;
+	private String addLoginError;
+	private String addLoginSuccess;
+	private String addSignUpError;
+	private String addSignUpSuccess;
+	private String logOutErrorMessage; 
+	private String logOutSuccessMessage; 
 	private JTextField textField;
 	private JTextField textField_1;
 	private JPasswordField passwordField;
@@ -113,18 +131,35 @@ public class FlexiBookPage extends JFrame {
 	private ArrayList<JLabel> dayLabelList = new ArrayList<JLabel>();
 
 	//log in page buttons
+
+	private JButton signUpButton;
+	private JButton LogInButton;
 	private JButton logInOwnerButton;
 	private JButton logInCustomerButton;
+	private JButton signUpNewCustomerButton; //may be unnecessary
+
 	private JLabel logINTextLable;
+	private JLabel successMessageLogInLabel;
+	private JLabel errorMessageLogInLabel;
+	private JLabel successMessageSignInLabel;
+	private JLabel errorMessageSignInLabel;
+	
+	//string for errors
+	private String addBHError;
+	private String deleteBHError;
+	private String updateBHError ;
+	private String deleteBHSuccess ;
 	
 	//set up business information button
 	private JButton setDetailBtn;
+	
 	//set up business information JLabels and text
 	private JLabel toSelect;
 	private JLabel startTimeLabel;
 	private JLabel endTimeLabel;
 	private JLabel or;
 	private JLabel updateBusinessHours;
+
 	
 	private JTextField startTime;
 	private JTextField endTime;
@@ -135,7 +170,6 @@ public class FlexiBookPage extends JFrame {
 	
 	
 	//update business information JLabels and text
-	
 	private JTextField txtBusinessNameSet;
 	private JTextField txtAdressSet;
 	private JTextField txtPhoneNumberSet;
@@ -144,7 +178,19 @@ public class FlexiBookPage extends JFrame {
 	//update and remove business information JButton 
 	private JButton updateBusinessHour;
 	private JButton removeBusinessHour;
-
+	
+	//BusinessHour Components
+	private JLabel successMessageBusinessHourLabel;
+	private JTable existingBusHoursTable;
+	private JComboBox<Integer> deleteBusinessHourBox;
+	private JComboBox<Integer> updateBusinessHourBox;
+	private JComboBox<String> addDayOfWeek;
+	private JComboBox<String> updateDayOfWeek;
+	private JSpinner addStartTimeSpin;
+	private JSpinner addEndTimeSpin;
+	private JSpinner updateStartTimeSpin;
+	private JSpinner updateEndTimeSpin;
+	
 	//top bar icons
 	private ImageIcon infoIconDark;
 	private ImageIcon infoIconLight;
@@ -158,15 +204,31 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon calendarRightIcon;
 
 	//page labels
-	private JLabel infoLabel;
+
 	private JLabel singleServicesLabel;
 	private JLabel comboServicesLabel;
 	private JLabel calendarLabel;
 	private JLabel businessHoursLabel;
 	private JLabel businessDetailsLabel;
 	private JLabel logOutLabel;
+	
+	//Info panels
+	private ImageIcon infoUserIcon;
+	private JLabel infoUserLabel; // holds the icon
+	private JLabel infoLabel; //manage your account	
+	private JLabel usernameLabel;
+	private JLabel passwordLabel;
+	private JTextField usernameBox; 
+	private JTextField passwordBox; 
+	private JButton saveAccountButton; //Save button
+	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
+	
+	//Customer Sign up panel
+	private JLabel signUpLabel;
+	private JButton cancelButton; //back to login page
+
 
 	//tracking last page
 	private JButton previousButton;
@@ -175,10 +237,13 @@ public class FlexiBookPage extends JFrame {
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
 	private Color lightBlue = new Color(31,184,252);
+	
 
-	private String error;
+	// Error message 
+	private JLabel errorMessage;
+	private String error = null;
 	
-	
+
 	/**
 	 * Appointment page
 	 */
@@ -208,22 +273,61 @@ public class FlexiBookPage extends JFrame {
 	private String appSectionError;
 	private JComboBox<String> updateActionComboBox;
 	private JLabel errorMsgLabel;
+	private JButton cancelAppB;
 	
 	private double initLogInPageScalingFactor = 740/490;
 	/**
 	 * Appointment page end
 	 */
-
+	
+	// singe service page 
+	private JTextField newServiceNameTextField;
+	private JTextField newServiceDurationTextField;
+	private JTextField newServiceDowntimeDurationTextField;
+	private JTextField newServiceDowntimeStartTextField;
+	private JComboBox<String> deleteServiceComboBox;
+	private JTextField updateServiceNameTextField;
+	private JTextField updateServiceDurationTextField;
+	private JTextField updateDowntimeDurationTextField;
+	private JTextField updateDowntimeStartTextField;
+	private String errorMessageSingleService = null;
+	private JLabel deleteSuccessLabel;
+	private JLabel addSuccessLabel;
+	private JLabel errorMessageSingleServiceLabel; 
+	private String addSuccess = null;
+	private String deleteSuccess = null;
+	private String updateSuccess = null;
+	Object[] row;
+	private JTable existingServiceTable;
+	JComboBox<String> updateServiceComboBox;
+	JLabel updateErrorLabel;
+	JLabel updateSuccessLabel;
+	DefaultTableModel modelModifySingleService;
+	
 
 	/** Creates new form FlexiBookPage */
 	public FlexiBookPage() {
+		// this manually overides the look and feel of the UI. If we can't fix an OS issue, we can use this 
+		try {
+			UIManager.setLookAndFeel( "javax.swing.plaf.metal.MetalLookAndFeel"); 	// change to "com.sun.java.swing.plaf.motif.MotifLookAndFeel"
+																					// change to "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+			| UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
 		initComponents();
 		refreshData();
+		
 	}
 
 	/** This method is called from within the constructor to initialize the form.
 	 */
 	private void initComponents() {
+		
+		// initialize error message
+		errorMessage = new JLabel();
+		errorMessage.setForeground(Color.RED);
 
 		
 		//initialize frame
@@ -259,21 +363,21 @@ public class FlexiBookPage extends JFrame {
 //		LoginPane.setLayout(logInLayout);
 //		LoginPane.setPreferredSize(new Dimension(1100,40));
 //		//initialize owner log in button
-//		logInOwnerButton = new JButton();
-//		logInOwnerButton.setText("Owner");
-//		logInOwnerButton.setPreferredSize(new Dimension(200, 40));
-//		logInOwnerButton.setBorder(new LineBorder(darkGrey));
-//		logInOwnerButton.setBackground(Color.WHITE);
-//		logInOwnerButton.setOpaque(true);
-//		logInOwnerButton.setForeground(darkGrey);
+//		signUpButton = new JButton();
+//		signUpButton.setText("Owner");
+//		signUpButton.setPreferredSize(new Dimension(200, 40));
+//		signUpButton.setBorder(new LineBorder(darkGrey));
+//		signUpButton.setBackground(Color.WHITE);
+//		signUpButton.setOpaque(true);
+//		signUpButton.setForeground(darkGrey);
 //		//initialize customer log in button
-//		logInCustomerButton = new JButton();
-//		logInCustomerButton.setText("Customer");
-//		logInCustomerButton.setPreferredSize(new Dimension(200, 40));
-//		logInCustomerButton.setBorder(new LineBorder(darkGrey));
-//		logInCustomerButton.setBackground(Color.WHITE);
-//		logInCustomerButton.setOpaque(true);
-//		logInCustomerButton.setForeground(darkGrey);
+//		LogInButton = new JButton();
+//		LogInButton.setText("Customer");
+//		LogInButton.setPreferredSize(new Dimension(200, 40));
+//		LogInButton.setBorder(new LineBorder(darkGrey));
+//		LogInButton.setBackground(Color.WHITE);
+//		LogInButton.setOpaque(true);
+//		LogInButton.setForeground(darkGrey);
 //		
 //		//initialize Text JLabel 
 //		logINTextLable = new JLabel("I'm A/An:  ");
@@ -282,28 +386,35 @@ public class FlexiBookPage extends JFrame {
 //		logINTextLable.setBounds(155, 313, 115, 21);
 //		
 //		LoginPane.add(logINTextLable);
-//		LoginPane.add(logInOwnerButton);
-//		LoginPane.add(logInCustomerButton);
+//		LoginPane.add(signUpButton);
+//		LoginPane.add(LogInButton);
 		LoginPane = new JPanel();
-		LoginPane.setBackground(new Color(66, 135, 245));
+		LoginPane.setBackground(Color.DARK_GRAY);
 		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		//setContentPane(LoginPane);
 		LoginPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.DARK_GRAY);
-		panel.setBounds(0, 0, (int)(346*initLogInPageScalingFactor), (int)(490*initLogInPageScalingFactor));
+		panel.setBounds(0, 0, 500, 740);
 		LoginPane.add(panel);
 		panel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("KeepToo");
+		JLabel lblNewLabel = new JLabel("Hi,");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		lblNewLabel.setForeground(new Color(240, 248, 255));
 		lblNewLabel.setBounds((int)(139*initLogInPageScalingFactor), (int)(305*initLogInPageScalingFactor), (int)(84*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
 		panel.add(lblNewLabel);
 		
-//		JLabel label = new JLabel("");
+//		JLabel lblWeGotYou = new JLabel("Thanks for choosing us!");
+//		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblWeGotYou.setForeground(new Color(240, 248, 255));
+//		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
+//		lblWeGotYou.setBounds((int)(111*initLogInPageScalingFactor),(int)(343*initLogInPageScalingFactor), (int)(141*initLogInPageScalingFactor), 50);
+//		panel.add(lblWeGotYou);
+		
+		JLabel label = new JLabel("");
 //		
 //		label.addMouseListener(new MouseAdapter() {
 //			@Override
@@ -322,37 +433,32 @@ public class FlexiBookPage extends JFrame {
 //	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
 //			}
 //		});
-//		label.setBounds(-38, 0, 420, 275);
-//		label.setVerticalAlignment(SwingConstants.TOP);
-//		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
-//		panel.add(label);
+		label.setBounds(0, 0, 1000, 1000);
+		label.setVerticalAlignment(SwingConstants.TOP);
+		label.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
+		panel.add(label);
 		
-		JLabel lblWeGotYou = new JLabel("....We got you....");
-		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWeGotYou.setForeground(new Color(240, 248, 255));
-		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblWeGotYou.setBounds((int)(111*initLogInPageScalingFactor),(int)(343*initLogInPageScalingFactor), (int)(141*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
-		panel.add(lblWeGotYou);
 		
-		Button logInOwnerButton = new Button("Owner");
-		logInOwnerButton.setForeground(Color.WHITE);
-		logInOwnerButton.setBackground(new Color(241, 57, 83));
-		logInOwnerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
-		LoginPane.add(logInOwnerButton);
+		Button signUpButton = new Button("SignUp");
+		signUpButton.setForeground(Color.WHITE);
+		signUpButton.setBackground(new Color(241, 57, 83));
+		signUpButton.setBounds(600, (int)(363*initLogInPageScalingFactor), (int)(100*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(signUpButton);
 		
-		Button logInCustomerButton = new Button("Customer");
-		logInCustomerButton.setForeground(Color.WHITE);
-		logInCustomerButton.setBackground(new Color(241, 57, 83));
-		logInCustomerButton.setBounds((int)(395*initLogInPageScalingFactor), (int)(363*initLogInPageScalingFactor+(int)(36*initLogInPageScalingFactor)+20 ), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
-		LoginPane.add(logInCustomerButton);
+		Button LogInButton = new Button("Login");
+		LogInButton.setForeground(Color.WHITE);
+		LogInButton.setBackground(new Color(29, 209, 152));
+		LogInButton.setBounds(600+(int)(100*initLogInPageScalingFactor+20), (int)(363*initLogInPageScalingFactor), (int)(100*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		LoginPane.add(LogInButton);
 		
-		textField = new JTextField();
-		textField.setBounds((int)(395*initLogInPageScalingFactor), (int)(83*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
-		LoginPane.add(textField);
-		textField.setColumns(10);
+//		textField = new JTextField();
+//		textField.setBounds(600, (int)(83*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+//		LoginPane.add(textField);
+//		textField.setColumns(10);
 		
 		JLabel lblUsername = new JLabel("USERNAME");
-		lblUsername.setBounds((int)(395*initLogInPageScalingFactor), (int)(132*initLogInPageScalingFactor), (int)(114*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblUsername.setBounds(600, (int)(132*initLogInPageScalingFactor), (int)(114*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblUsername.setForeground(new Color(240, 248, 255));
 		LoginPane.add(lblUsername);
 		
 //		JLabel lblEmail = new JLabel("EMAIL");
@@ -361,89 +467,170 @@ public class FlexiBookPage extends JFrame {
 		
 		textField_1 = new JTextField();
 		textField_1.setColumns(10);
-		textField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(157*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		textField_1.setBounds(600, (int)(157*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(textField_1);
 		
 		JLabel lblPassword = new JLabel("PASSWORD");
-		lblPassword.setBounds((int)(395*initLogInPageScalingFactor),(int)(204*initLogInPageScalingFactor), (int)(96*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblPassword.setBounds(600,(int)(204*initLogInPageScalingFactor), (int)(96*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblPassword.setForeground(new Color(240, 248, 255));
 		LoginPane.add(lblPassword);
 		
 		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
-		lblRepeatPassword.setBounds((int)(395*initLogInPageScalingFactor), (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblRepeatPassword.setBounds(600, (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
+		lblRepeatPassword.setForeground(new Color(240, 248, 255));
 		LoginPane.add(lblRepeatPassword);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds((int)(395*initLogInPageScalingFactor), (int)(229*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		passwordField.setBounds(600, (int)(229*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(passwordField);
 		
 		passwordField_1 = new JPasswordField();
-		passwordField_1.setBounds((int)(395*initLogInPageScalingFactor), (int)(293*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
+		passwordField_1.setBounds(600, (int)(293*initLogInPageScalingFactor), (int)(283*initLogInPageScalingFactor), (int)(36*initLogInPageScalingFactor));
 		LoginPane.add(passwordField_1);
 		
-		JLabel lbl_close = new JLabel("Back");
-		lbl_close.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-				System.exit(0);
-			}
-		});
-		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
-		lbl_close.setForeground(new Color(241, 57, 83));
-		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lbl_close.setBounds((int)(691*initLogInPageScalingFactor), (int)(0*initLogInPageScalingFactor), (int)(37*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
-		LoginPane.add(lbl_close);
-		// Mike add this end ---
+		successMessageLogInLabel = new JLabel("");
+		successMessageLogInLabel.setForeground(Color.GREEN);
+		successMessageLogInLabel.setBounds(600, 600, 600, 50);
+		LoginPane.add(successMessageLogInLabel);
+
+		errorMessageLogInLabel = new JLabel("");
+		errorMessageLogInLabel.setForeground(Color.RED);
+		errorMessageLogInLabel.setBounds(600, 600, 600, 50);
+		LoginPane.add(errorMessageLogInLabel);
+		
+		successMessageSignInLabel = new JLabel("");
+		successMessageSignInLabel.setForeground(Color.GREEN);
+		successMessageSignInLabel.setBounds(600, 600, 600, 50);
+		LoginPane.add(successMessageSignInLabel);
+		
+		errorMessageSignInLabel = new JLabel("");
+		errorMessageSignInLabel.setForeground(Color.RED);
+		errorMessageSignInLabel.setBounds(600, 600, 600, 50);
+		LoginPane.add(errorMessageSignInLabel);
+		
+
+//		JLabel lbl_close = new JLabel("Back");
+//		lbl_close.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {
+//				
+//				System.exit(0);
+//			}
+//		});
+//		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
+//		lbl_close.setForeground(new Color(241, 57, 83));
+//		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
+//		lbl_close.setBounds(900, (int)(0*initLogInPageScalingFactor), (int)(37*initLogInPageScalingFactor), (int)(27*initLogInPageScalingFactor));
+//		LoginPane.add(lbl_close);
+//		// Mike add this end ---
 		
 		
 		//initialize customer log in button listener
-		logInCustomerButton.addActionListener(new java.awt.event.ActionListener() {
+		LogInButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				logInCustomerButtonActionPerformed(evt);
+				loginUserButtonPerformed(evt);
 			}
 		});
-
-		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
-			//initialize owner log in button listener
-			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					//logInCustomerButtonActionPerformed(evt);
-					logInOwnerButtonToSetUpActionPerformed(evt);
-					
-				}
-			});
-		}
 		
-		else {
-			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//		logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//			public void actionPerformed(java.awt.event.ActionEvent evt) {
+//				if(!FlexiBookApplication.getFlexiBook().hasBusiness()) {
+//				logInOwnerButtonToSetUpActionPerformed(evt);
+//				}else {
+//					logInOwnerButtonActionPerformed(evt);
+//				}
+//			}
+//			});
+		
+		//To remove once the code is done 
+//		if(!FlexiBookApplication.getFlexiBook().hasBusiness()) {
+//			//initialize owner log in button listener
+//			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//				public void actionPerformed(java.awt.event.ActionEvent evt) {
+//					logInOwnerButtonToSetUpActionPerformed(evt);
+//					
+//				}
+//			});
+//		}
+//		
+//		else {
+//			logInOwnerButton.addActionListener(new java.awt.event.ActionListener() {
+//				public void actionPerformed(java.awt.event.ActionEvent evt) {
+//					logInOwnerButtonActionPerformed(evt);
+//					//logInCustomerButtonActionPerformed(evt);
+//				}
+//			});		
+//		}
+
+//		if(FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+//			//initialize owner log in button listener
+//			signUpButton.addActionListener(new java.awt.event.ActionListener() {
+//				public void actionPerformed(java.awt.event.ActionEvent evt) {
+//					//logInCustomerButtonActionPerformed(evt);
+//					
+//					
+//				}
+//			});
+//		}
+		
+//		else {
+			signUpButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
-					logInOwnerButtonActionPerformed(evt);
+					SignUpCustomerButtonPerformed(evt);
 					//logInCustomerButtonActionPerformed(evt);
 				}
 			});		
-		}
+
+//		}
+
+
 
 	}
 	
 	//initialize the business information set-up
 	private void initSetBusinessInfo() {
-
+		
+		//JLayeredPane lpane = new JLayeredPane();
+		//backgroundPanel = new JPanel();
+		//lpane.setBounds(0,0,1100,740);
+		//backgroundPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//backgroundPanel.setLayout(null);
+		// backgroundPanel.setPreferredSize(new Dimension(1100,740));
+		//backgroundPanel.setBounds(0, 0, 1100, 740);
+		
+//		JLabel initSetBusinesslabel = new JLabel("");
+//		initSetBusinesslabel.setBounds(0, 0, 1100, 740);
+//		initSetBusinesslabel.setVerticalAlignment(SwingConstants.TOP);
+//		initSetBusinesslabel.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
+		//backgroundPanel.add(initSetBusinesslabel);
+		//backgroundPanel.setOpaque(true);
+		
 		setUpInPanel = new JPanel();
+		setUpInPanel.setBackground(Color.DARK_GRAY);
+		setUpInPanel.setBorder (new EmptyBorder(5, 5, 5, 5));
 		setUpInPanel.setLayout(null);
 		setUpBusinessInfoLabel = new JLabel("Info Page");
-		setUpInPanel.setPreferredSize(new Dimension(1100,700));
-		setUpInPanel.setBackground(Color.WHITE);
-		setUpInPanel.setOpaque(true);
-		setUpInPanel.setForeground(Color.WHITE);
+		
+		//setUpInPanel.setBounds(400,200,400,700);
+
+		//setUpInPanel.setOpaque(true);
 		setUpInPanel.add(setUpBusinessInfoLabel);
 
 		setDetailBtn = new JButton("Set");
 		setDetailBtn.setBounds(500,400,89,23);
+		setDetailBtn.setBackground(Color.GREEN);
+		setDetailBtn.setForeground(Color.DARK_GRAY);
 		setUpInPanel.add(setDetailBtn);
+		//backgroundPanel.add(setUpInPanel,BorderLayout.CENTER);
 
+
+		//lpane.add(backgroundPanel, 0, 0);
+		//lpane.add(setUpInPanel, 1, 0);
+		
 		//Setting the UI for setting business information
 		JLabel businessNameSet = new JLabel("Business name");
 		businessNameSet.setBounds(500, 100, 150, 23);
+		businessNameSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(businessNameSet);
 
 		txtBusinessNameSet = new JTextField();
@@ -453,6 +640,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel adressSet = new JLabel("Address");
 		adressSet.setBounds(500, 170, 70, 23);
+		adressSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(adressSet);
 
 		txtAdressSet= new JTextField();
@@ -463,6 +651,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel phoneNumberSet  = new JLabel("Phone Number");
 		phoneNumberSet.setBounds(500, 230, 150, 23);
+		phoneNumberSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(phoneNumberSet);
 
 		txtPhoneNumberSet = new JTextField();
@@ -472,6 +661,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel emailSet = new JLabel("Email");
 		emailSet.setBounds(500, 290, 200, 23);
+		emailSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(emailSet);
 
 		txtEmailSet = new JTextField();
@@ -479,12 +669,13 @@ public class FlexiBookPage extends JFrame {
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
 
-			setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
+		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 					setUpBusinessInformation(evt);
 				}
 			});
+		
 		
 	}
 	
@@ -612,21 +803,21 @@ public class FlexiBookPage extends JFrame {
 //	}
 	
 	
-	/**
-	 * @TODO For Mike Login Customer page
-	 */
-	//initialize Login Customer page
-	private void initLogInCustomerPanel(){
-		infoOwnerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
-		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
-		infoOwnerPanel.setBackground(Color.WHITE);
-		infoOwnerPanel.setOpaque(true);
-		infoOwnerPanel.setForeground(Color.WHITE);
-		infoOwnerPanel.add(infoLabel);
-
-		//TO DO
-	}
+//	/**
+//	 * @TODO For Mike Login Customer page
+//	 */
+//	//initialize Login Customer page
+//	private void initLogInCustomerPanel(){
+//		infoOwnerPanel = new JPanel();
+//		infoLabel = new JLabel("Info Page");
+//		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
+//		infoOwnerPanel.setBackground(Color.WHITE);
+//		infoOwnerPanel.setOpaque(true);
+//		infoOwnerPanel.setForeground(Color.WHITE);
+//		infoOwnerPanel.add(infoLabel);
+//
+//		//TO DO
+//	}
 	/**
 	 * @TODO 
 	 * 		- define loginOwnerComfirmeInputButton && Button related action performed method 
@@ -905,44 +1096,461 @@ public class FlexiBookPage extends JFrame {
 		});
 
 	}
+//	
+//	//initialize customer sign up page
+//	private void initCustomerSignUpPanel() {
+//		customerSignUpPanel = new JPanel();
+//		customerSignUpPanel.setLayout(null);
+//		customerSignUpPanel.setPreferredSize(new Dimension(1100,700));
+//		customerSignUpPanel.setBackground(Color.WHITE);
+//		customerSignUpPanel.setOpaque(true);
+//		customerSignUpPanel.setForeground(Color.darkGray);
+//		
+//		signUpLabel = new JLabel("Create Your Account");
+//		signUpLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+//		signUpLabel.setHorizontalAlignment(SwingConstants.CENTER);
+//		signUpLabel.setBounds(470, 300, 150, 30);
+//		signUpLabel.setBackground(Color.WHITE);
+//		signUpLabel.setOpaque(true);
+//		signUpLabel.setForeground(Color.darkGray);
+//		
+//		usernameLabel = new JLabel("Username");
+//		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+//		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+//		usernameLabel.setBounds(350, 350, 80, 30);
+//		usernameLabel.setBackground(Color.WHITE);
+//		usernameLabel.setOpaque(true);
+//		usernameLabel.setForeground(Color.darkGray);
+//		usernameLabel.setAlignmentX(SwingConstants.CENTER);
+//		
+//		usernameBox = new JTextField(""); 
+//		usernameBox.setColumns(20);
+//		usernameBox.setBounds(470, 350, 250, 30);
+//		
+//		passwordLabel = new JLabel("Password");
+//		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+//		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+//		passwordLabel.setBounds(350, 400, 80, 30);
+//		passwordLabel.setBackground(Color.WHITE);
+//		passwordLabel.setOpaque(true);
+//		passwordLabel.setForeground(Color.darkGray);
+//		passwordLabel.setAlignmentX(SwingConstants.CENTER);
+//		
+//		passwordBox = new JTextField(""); 
+//		passwordBox.setColumns(20);
+//		passwordBox.setBounds(470, 400, 250, 30);
+//		
+//		signUpButton = new JButton("Sign Up");
+//		signUpButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+//		signUpButton.setBounds(550, 450, 100, 30);
+//		signUpButton.setAlignmentX(CENTER_ALIGNMENT);
+//		signUpButton.setBorder(new LineBorder(Color.darkGray));
+//		signUpButton.setBackground(Color.darkGray);
+//		signUpButton.setOpaque(true);
+//		signUpButton.setForeground(Color.WHITE);
+//		
+//		cancelButton = new JButton("Cancel");
+//		cancelButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+//		cancelButton.setBounds(400, 450, 100, 30);
+//		cancelButton.setAlignmentX(CENTER_ALIGNMENT);
+//		cancelButton.setBorder(new LineBorder(Color.darkGray));
+//		cancelButton.setBackground(Color.WHITE);
+//		cancelButton.setOpaque(true);
+//		cancelButton.setForeground(Color.darkGray);
+//		
+//		customerSignUpPanel.add(signUpLabel);
+//		customerSignUpPanel.add(usernameLabel);
+//		customerSignUpPanel.add(usernameBox);
+//		customerSignUpPanel.add(passwordLabel);
+//		customerSignUpPanel.add(passwordBox);
+//		customerSignUpPanel.add(signUpButton);
+//		customerSignUpPanel.add(cancelButton);
+//		
+//		
+//		signUpButton.addActionListener(new java.awt.event.ActionListener() {
+//			public void actionPerformed(java.awt.event.ActionEvent evt) {
+//				signUpActionPerformed(evt);
+//			}
+//		});
+//		
+//		cancelButton.addActionListener(new java.awt.event.ActionListener() {
+//			public void actionPerformed(java.awt.event.ActionEvent evt) {
+//				cancelSignUpActionPerformed(evt);
+//			}
+//		});
+//		
+//	}
+	
 
 	//initialize info panel for owner
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
+		infoOwnerPanel.setLayout(null);
 		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		infoOwnerPanel.setBackground(Color.WHITE);
 		infoOwnerPanel.setOpaque(true);
-		infoOwnerPanel.setForeground(Color.WHITE);
+		infoOwnerPanel.setForeground(Color.darkGray);
+		
+		//initialize image icon
+		try{
+			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
+		
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+		
+		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+		
+		infoUserLabel = new JLabel();
+		infoUserLabel.setIcon(infoUserIcon);
+		infoUserLabel.setBounds(445, 50, 200, 200);
+		infoUserLabel.setOpaque(false);
+		infoUserLabel.setForeground(Color.darkGray);
+		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		infoLabel = new JLabel("Manage Your Account");
+		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoLabel.setBounds(470, 300, 150, 30);
+		infoLabel.setBackground(Color.WHITE);
+		infoLabel.setOpaque(true);
+		infoLabel.setForeground(Color.darkGray);
+		
+		usernameLabel = new JLabel("Username");
+		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBackground(Color.WHITE);
+		usernameLabel.setOpaque(true);
+		usernameLabel.setForeground(Color.darkGray);
+		usernameLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		usernameBox = new JTextField("owner"); //FlexiBookApplication.getCurrentLoginUser().getUsername()
+		usernameBox.setColumns(20);
+		usernameBox.setBounds(470, 350, 250, 30);
+		
+		passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBackground(Color.WHITE);
+		passwordLabel.setOpaque(true);
+		passwordLabel.setForeground(Color.darkGray);
+		passwordLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
+		passwordBox.setColumns(20);
+		passwordBox.setBounds(470, 400, 250, 30);
+		
+		saveAccountButton = new JButton("Save");
+		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		saveAccountButton.setBounds(500, 450, 100, 30);
+		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
+		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
+		saveAccountButton.setBackground(Color.darkGray);
+		saveAccountButton.setOpaque(true);
+		saveAccountButton.setForeground(Color.WHITE);
+		
+		infoOwnerPanel.add(infoUserLabel);
 		infoOwnerPanel.add(infoLabel);
-
-		//TO DO
+		infoOwnerPanel.add(usernameLabel);
+		infoOwnerPanel.add(usernameBox);
+		infoOwnerPanel.add(passwordLabel);
+		infoOwnerPanel.add(passwordBox);
+		infoOwnerPanel.add(saveAccountButton);
+		
+		
+		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveAccountInfoActionPerformed(evt);
+			}
+		});
+		
+		
 	}
 
 	//initialize info panel for customer
 	private void initInfoCustomerPanel(){
+		
 		infoCustomerPanel = new JPanel();
-		infoLabel = new JLabel("Info Page");
+		infoCustomerPanel.setLayout(null);
 		infoCustomerPanel.setPreferredSize(new Dimension(1100,700));
 		infoCustomerPanel.setBackground(Color.WHITE);
 		infoCustomerPanel.setOpaque(true);
-		infoCustomerPanel.setForeground(Color.WHITE);
-		infoCustomerPanel.add(infoLabel);
+		infoCustomerPanel.setForeground(Color.darkGray);
+		
+		//initialize image icon
+		try{
+			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
 
-		//TO DO
+		} catch(Exception exp) {
+			error += exp.getMessage();
+		}
+
+		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+
+		infoUserLabel = new JLabel();
+		infoUserLabel.setIcon(infoUserIcon);
+		infoUserLabel.setBounds(445, 50, 200, 200);
+		infoUserLabel.setOpaque(false);
+		infoUserLabel.setForeground(Color.darkGray);
+		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		infoLabel = new JLabel("Manage Your Account");
+		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoLabel.setBounds(470, 300, 150, 30);
+		infoLabel.setBackground(Color.WHITE);
+		infoLabel.setOpaque(true);
+		infoLabel.setForeground(Color.darkGray);
+		
+		usernameLabel = new JLabel("Username");
+		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBackground(Color.WHITE);
+		usernameLabel.setOpaque(true);
+		usernameLabel.setForeground(Color.darkGray);
+		usernameLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		usernameBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getUsername()
+		usernameBox.setColumns(20);
+		usernameBox.setBounds(470, 350, 250, 30);
+		
+		passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBackground(Color.WHITE);
+		passwordLabel.setOpaque(true);
+		passwordLabel.setForeground(Color.darkGray);
+		passwordLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		passwordBox = new JTextField(""); //FlexiBookApplication.getCurrentLoginUser().getPassword()
+		passwordBox.setColumns(20);
+		passwordBox.setBounds(470, 400, 250, 30);
+		
+		saveAccountButton = new JButton("Save");
+		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		saveAccountButton.setBounds(550, 450, 100, 30);
+		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
+		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
+		saveAccountButton.setBackground(Color.darkGray);
+		saveAccountButton.setOpaque(true);
+		saveAccountButton.setForeground(Color.WHITE);
+		
+		deleteAccountButton = new JButton("Delete");
+		deleteAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		deleteAccountButton.setBounds(400, 450, 100, 30);
+		deleteAccountButton.setAlignmentX(CENTER_ALIGNMENT);
+		deleteAccountButton.setBorder(new LineBorder(Color.darkGray));
+		deleteAccountButton.setBackground(Color.WHITE);
+		deleteAccountButton.setOpaque(true);
+		deleteAccountButton.setForeground(Color.darkGray);
+		
+		infoCustomerPanel.add(infoUserLabel);
+		infoCustomerPanel.add(infoLabel);
+		infoCustomerPanel.add(usernameLabel);
+		infoCustomerPanel.add(usernameBox);
+		infoCustomerPanel.add(passwordLabel);
+		infoCustomerPanel.add(passwordBox);
+		infoCustomerPanel.add(saveAccountButton);
+		infoCustomerPanel.add(deleteAccountButton);
+		
+		
+		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveAccountInfoActionPerformed(evt);
+			}
+		});
+		
+		deleteAccountButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				deleteAccountInfoActionPerformed(evt);
+			}
+		});
+		
+
 	}
+
 
 	//initialize single services panel
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
-		singleServicesLabel = new JLabel("Single Service Page");
 		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
 		singleServicesPanel.setBackground(Color.WHITE);
 		singleServicesPanel.setOpaque(true);
 		singleServicesPanel.setForeground(Color.WHITE);
-		singleServicesPanel.add(singleServicesLabel);
+		singleServicesPanel.setLayout(null);
+		
+		JScrollPane serviceScrollPane = new JScrollPane();
+		serviceScrollPane.setBounds(310, 6, 524, 404);
+		singleServicesPanel.add(serviceScrollPane);
+		
+		
+		errorMessageSingleServiceLabel = new JLabel("");
+		errorMessageSingleServiceLabel.setForeground(Color.RED);
+		errorMessageSingleServiceLabel.setBounds(335, 433, 509, 16);
+		singleServicesPanel.add(errorMessageSingleServiceLabel);
+		
+		existingServiceTable = new JTable();
+		modelModifySingleService = new DefaultTableModel();
+		Object[] col = {"Name","Duration","DowntimeDuration","DowntimeStart"};
+		row = new Object[0];
+		modelModifySingleService.setColumnIdentifiers(col);
+		existingServiceTable.setModel(modelModifySingleService);
+		serviceScrollPane.setViewportView(existingServiceTable);
+		
+		
+		newServiceNameTextField = new JTextField();
+		newServiceNameTextField.setColumns(10);
+		newServiceNameTextField.setBounds(239, 508, 130, 26);
+		singleServicesPanel.add(newServiceNameTextField);
 
-		//TO DO
+		JLabel newServiceDurationLabel = new JLabel("New Service Duration");
+		newServiceDurationLabel.setBounds(24, 539, 134, 16);
+		singleServicesPanel.add(newServiceDurationLabel);
+
+		newServiceDurationTextField = new JTextField();
+		newServiceDurationTextField.setColumns(10);
+		newServiceDurationTextField.setBounds(239, 534, 130, 26);
+		singleServicesPanel.add(newServiceDurationTextField);
+
+		JLabel newServiceDowntimeDurationLabel = new JLabel("New Service Downtime Duration");
+		newServiceDowntimeDurationLabel.setBounds(24, 572, 202, 16);
+		singleServicesPanel.add(newServiceDowntimeDurationLabel);
+
+		newServiceDowntimeDurationTextField = new JTextField();
+		newServiceDowntimeDurationTextField.setColumns(10);
+		newServiceDowntimeDurationTextField.setBounds(239, 567, 130, 26);
+		singleServicesPanel.add(newServiceDowntimeDurationTextField);
+
+		JLabel newSearviceDowntimeStartLabel = new JLabel("New Service Downtime Start");
+		newSearviceDowntimeStartLabel.setBounds(24, 600, 176, 16);
+		singleServicesPanel.add(newSearviceDowntimeStartLabel);
+
+		newServiceDowntimeStartTextField = new JTextField();
+		newServiceDowntimeStartTextField.setColumns(10);
+		newServiceDowntimeStartTextField.setBounds(239, 595, 130, 26);
+		singleServicesPanel.add(newServiceDowntimeStartTextField);
+
+		JButton confirmAddServiceButton = new JButton("Confirm");
+		confirmAddServiceButton.setBounds(156, 633, 95, 29);
+		singleServicesPanel.add(confirmAddServiceButton);
+		
+		JLabel newServiceNameLabel = new JLabel("New Service Name");
+		newServiceNameLabel.setBounds(24, 513, 122, 16);
+		singleServicesPanel.add(newServiceNameLabel);
+		
+		addSuccessLabel = new JLabel("");
+		addSuccessLabel.setForeground(Color.GREEN);
+		addSuccessLabel.setBounds(261, 646, 157, 16);
+		singleServicesPanel.add(addSuccessLabel);
+		
+		deleteServiceComboBox = new JComboBox<String>();
+		deleteServiceComboBox.setBounds(410, 557, 262, 48);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				deleteServiceComboBox.addItem(service.getName());
+			}
+		}
+		singleServicesPanel.add(deleteServiceComboBox);
+		
+		JLabel selectDeleteServiceLabel = new JLabel("Select the service you want to delete:");
+		selectDeleteServiceLabel.setBounds(422, 502, 252, 38);
+		singleServicesPanel.add(selectDeleteServiceLabel);
+		
+		JButton confirmDeleteServiceButton = new JButton("Confirm");
+		confirmDeleteServiceButton.setBounds(495, 633, 95, 29);
+		singleServicesPanel.add(confirmDeleteServiceButton);
+		
+		deleteSuccessLabel = new JLabel("");
+		deleteSuccessLabel.setForeground(Color.GREEN);
+		deleteSuccessLabel.setBounds(591, 633, 150, 16);
+		singleServicesPanel.add(deleteSuccessLabel);
+		
+		updateServiceComboBox = new JComboBox<String>();
+		updateServiceComboBox.setBounds(800, 501, 235, 27);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				updateServiceComboBox.addItem(service.getName());
+			}
+		}
+		singleServicesPanel.add(updateServiceComboBox);
+		
+		JLabel selectServiceUpdateLabel = new JLabel("Select the service you want to update:");
+		selectServiceUpdateLabel.setBounds(745, 473, 312, 16);
+		singleServicesPanel.add(selectServiceUpdateLabel);
+		
+		JLabel updateServiceNameLabel = new JLabel("New Service Name");
+		updateServiceNameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		updateServiceNameLabel.setBounds(740, 543, 115, 21);
+		singleServicesPanel.add(updateServiceNameLabel);
+		
+		updateServiceNameTextField = new JTextField();
+		updateServiceNameTextField.setColumns(10);
+		updateServiceNameTextField.setBounds(964, 547, 130, 26);
+		singleServicesPanel.add(updateServiceNameTextField);
+		
+		JLabel updateServiceDurationLabel = new JLabel("New Service Duration");
+		updateServiceDurationLabel.setBounds(740, 571, 134, 16);
+		singleServicesPanel.add(updateServiceDurationLabel);
+		
+		updateServiceDurationTextField = new JTextField();
+		updateServiceDurationTextField.setColumns(10);
+		updateServiceDurationTextField.setBounds(964, 573, 130, 26);
+		singleServicesPanel.add(updateServiceDurationTextField);
+		
+		JLabel updateServiceDowntimeDurationLabel = new JLabel("New Service Downtime Duration");
+		updateServiceDowntimeDurationLabel.setBounds(740, 594, 212, 21);
+		singleServicesPanel.add(updateServiceDowntimeDurationLabel);
+		
+		updateDowntimeDurationTextField = new JTextField();
+		updateDowntimeDurationTextField.setColumns(10);
+		updateDowntimeDurationTextField.setBounds(964, 598, 130, 26);
+		singleServicesPanel.add(updateDowntimeDurationTextField);
+		
+		JLabel updateServiceDowntimeStartLabel = new JLabel("New Service Downtime Start");
+		updateServiceDowntimeStartLabel.setBounds(740, 619, 212, 21);
+		singleServicesPanel.add(updateServiceDowntimeStartLabel);
+		
+		updateDowntimeStartTextField = new JTextField();
+		updateDowntimeStartTextField.setColumns(10);
+		updateDowntimeStartTextField.setBounds(964, 623, 130, 26);
+		singleServicesPanel.add(updateDowntimeStartTextField);
+		
+		JButton confirmUpdateServiceButton = new JButton("Confirm");
+		confirmUpdateServiceButton.setBounds(860, 647, 117, 29);
+		singleServicesPanel.add(confirmUpdateServiceButton);
+		
+		updateSuccessLabel = new JLabel("");
+		updateSuccessLabel.setForeground(Color.GREEN);
+		updateSuccessLabel.setBounds(974, 660, 104, 16);
+		singleServicesPanel.add(updateSuccessLabel);
+
+		
+		confirmAddServiceButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					addSingleServicesButtonActionPerformed(evt);			
+			}		
+		});
+		
+		confirmDeleteServiceButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if (!FlexiBookController.getTOServices().isEmpty()) {
+					deleteSingleServicesButtonActionPerformed(evt);
+				}
+			}		
+		});
+		
+		confirmUpdateServiceButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				if (!FlexiBookController.getTOServices().isEmpty()) {
+					updateSingleServicesButtonActionPerformed(evt);
+				}
+			}		
+		});
+
 	}
 
 	//initialize combo services panel
@@ -955,7 +1563,7 @@ public class FlexiBookPage extends JFrame {
 		comboServicesPanel.setForeground(Color.WHITE);
 		comboServicesPanel.add(comboServicesLabel);
 
-		//TO DO
+
 	}
 
 	//initialize calendar services panel for owner
@@ -1162,11 +1770,17 @@ public class FlexiBookPage extends JFrame {
 		calendarLeftButton.setText("Left");
 		calendarLeftButton.setIcon(calendarLeftIcon);
 		calendarLeftButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarLeftButton.setBackground(Color.WHITE);
+		calendarLeftButton.setOpaque(true);
+		calendarLeftButton.setForeground(Color.WHITE);
 		calendarRightButton = new JButton();
 		calendarRightButton.setPreferredSize(new Dimension(30,30));
 		calendarRightButton.setText("Right");
 		calendarRightButton.setIcon(calendarRightIcon);
 		calendarRightButton.setBorder(BorderFactory.createEmptyBorder());
+		calendarRightButton.setBackground(Color.WHITE);
+		calendarRightButton.setOpaque(true);
+		calendarRightButton.setForeground(Color.WHITE);
 		calendarMonthlyViewTopPanel.add(calendarLeftButton);
 		calendarLeftButton.setBounds(250,20,30,30);
 		calendarMonthlyViewTopPanel.add(calendarRightButton);
@@ -1227,6 +1841,7 @@ public class FlexiBookPage extends JFrame {
 			b.setHorizontalAlignment(SwingConstants.CENTER);
 			b.setVerticalAlignment(SwingConstants.CENTER);
 			b.setBorder(BorderFactory.createEmptyBorder());
+			b.setBackground(Color.WHITE);
 			calendarButtonList.add(b);
 			if(i < LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()+1){
 				calendarMonthlyViewGridPanel.add(b);
@@ -1268,14 +1883,207 @@ public class FlexiBookPage extends JFrame {
 	//initialize business hours services panel
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
-		businessHoursLabel = new JLabel("Business Hour Page");
+		businessHoursPanel.setLayout(null);
 		businessHoursPanel.setPreferredSize(new Dimension(1100,700));
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
-		businessHoursPanel.add(businessHoursLabel);
 
-		//TO DO
+		JLabel addBusinessHourLabel = new JLabel("Add a Business Hour");
+		addBusinessHourLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		addBusinessHourLabel.setBounds(200, 350, 200, 21);
+		businessHoursPanel.add(addBusinessHourLabel);
+
+		JLabel lblNewLabel_1 = new JLabel("Day of the Week");
+		lblNewLabel_1.setBounds(25, 400, 134, 16);
+		businessHoursPanel.add(lblNewLabel_1);
+
+		JLabel lblNewLabel_1_1 = new JLabel("Start Time");
+		lblNewLabel_1_1.setBounds(25, 450, 212, 21);
+		businessHoursPanel.add(lblNewLabel_1_1);
+
+		JLabel lblNewLabel_1_1_1 = new JLabel("End Time");
+		lblNewLabel_1_1_1.setBounds(25, 500, 212, 21);
+		businessHoursPanel.add(lblNewLabel_1_1_1);
+
+		JButton confirmAddBusinessHour= new JButton("Add");
+		confirmAddBusinessHour.setBounds(50, 550, 117, 30);
+		businessHoursPanel.add(confirmAddBusinessHour);
+		
+		JLabel updateDayOfWeekLabel = new JLabel("Update the selected business hour");
+		updateDayOfWeekLabel.setBounds(700, 50, 300, 30);
+		businessHoursPanel.add(updateDayOfWeekLabel);
+		
+		JLabel removeDayOfWeekLabel = new JLabel("Remove the selected business hour");
+		removeDayOfWeekLabel.setBounds(700, 450, 300, 30);
+		businessHoursPanel.add(removeDayOfWeekLabel);
+		
+		JLabel updateDayLabel = new JLabel("New day");
+		updateDayLabel.setBounds(700, 150, 250, 21);
+		businessHoursPanel.add(updateDayLabel);
+		
+		JLabel updateStartTimeLabel = new JLabel("New start time");
+		updateStartTimeLabel.setBounds(700, 200, 250, 21);
+		businessHoursPanel.add(updateStartTimeLabel);
+
+		JLabel updateEndTimeLabel = new JLabel("New end time");
+		updateEndTimeLabel.setBounds(700, 250, 250, 21);
+		businessHoursPanel.add(updateEndTimeLabel);
+		
+		JButton confirmUpdateBusinessHour = new JButton("Update");
+		confirmUpdateBusinessHour.setBounds(700, 300, 150, 29);
+		businessHoursPanel.add(confirmUpdateBusinessHour);
+		
+		JButton confirmRemoveBusinessHour = new JButton("Remove");
+		confirmRemoveBusinessHour.setBounds(700, 550, 117, 29);
+		businessHoursPanel.add(confirmRemoveBusinessHour);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(43, 42, 594, 259);
+		businessHoursPanel.add(scrollPane);
+
+		existingBusHoursTable = new JTable();
+		DefaultTableModel modelBusHour = new DefaultTableModel();
+		Object[] col = {"Index","Day of the Week","Start Time","End Time"};
+		Object row = new Object[0];
+		modelBusHour.setColumnIdentifiers(col);
+		existingBusHoursTable.setModel(modelBusHour);
+		scrollPane.setViewportView(existingBusHoursTable);
+		
+		if (!FlexiBookApplication.getFlexiBook().getHours().isEmpty()) {
+			List<TOBusinessHour> bhList = FlexiBookController.getTOBusinessHour();
+			for (TOBusinessHour bh : bhList) {
+				int index = bhList.indexOf(bh);//FlexiBookApplication.getFlexiBook().indexOfHour(bh);
+				String dayOfWeek = bh.getDayOfWeek().toString();
+				String startTime = bh.getStartTime().toString();
+				String endTime = bh.getEndTime().toString();
+				Object[] obj = {index ,dayOfWeek, startTime, endTime};
+				modelBusHour.addRow(obj);
+			}
+		}
+		
+		JLabel lblNewLabel_2 = new JLabel("Existing Business Hours");
+		lblNewLabel_2.setBounds(50, 15, 200, 16);
+		businessHoursPanel.add(lblNewLabel_2);
+
+		JLabel successMessageBusinessHourLabel = new JLabel("");
+		successMessageBusinessHourLabel.setForeground(Color.RED);
+		successMessageBusinessHourLabel.setBounds(168, 15, 472, 24);
+		businessHoursPanel.add(successMessageBusinessHourLabel);
+
+		JLabel errorMessageBusinessHourLabel = new JLabel("");
+		errorMessageBusinessHourLabel.setForeground(Color.GREEN);
+		errorMessageBusinessHourLabel.setBounds(412, 437, 201, 16);
+		businessHoursPanel.add(errorMessageBusinessHourLabel);
+		
+		updateBusinessHourBox = new JComboBox<Integer>();
+		updateBusinessHourBox.setBounds(700, 100, 250, 30);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOBusinessHour bh: FlexiBookController.getTOBusinessHour()) {
+				updateBusinessHourBox.addItem(FlexiBookController.getTOBusinessHour().indexOf(bh));
+			}
+		}
+				
+		deleteBusinessHourBox = new JComboBox<Integer>();
+		deleteBusinessHourBox.setBounds(700, 500, 250, 30);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOBusinessHour bh: FlexiBookController.getTOBusinessHour()) {
+				deleteBusinessHourBox.addItem(FlexiBookController.getTOBusinessHour().indexOf(bh));
+			}
+		}
+		
+		businessHoursPanel.add(updateBusinessHourBox);
+		businessHoursPanel.add(deleteBusinessHourBox);
+		
+		addDayOfWeek = new JComboBox<String>();
+		addDayOfWeek.setBounds(150, 400, 262, 25);
+		addDayOfWeek.addItem("Monday");
+		addDayOfWeek.addItem("Tuesday");
+		addDayOfWeek.addItem("Wednesday");
+		addDayOfWeek.addItem("Thursday");
+		addDayOfWeek.addItem("Friday");
+		addDayOfWeek.addItem("Saturday");
+		addDayOfWeek.addItem("Sunday");
+		businessHoursPanel.add(addDayOfWeek);
+		
+		updateDayOfWeek = new JComboBox<String>();
+		updateDayOfWeek.setBounds(775, 150, 150, 25);
+		updateDayOfWeek.addItem("Monday");
+		updateDayOfWeek.addItem("Tuesday");
+		updateDayOfWeek.addItem("Wednesday");
+		updateDayOfWeek.addItem("Thursday");
+		updateDayOfWeek.addItem("Friday");
+		updateDayOfWeek.addItem("Saturday");
+		updateDayOfWeek.addItem("Sunday");
+		businessHoursPanel.add(updateDayOfWeek);
+		
+		Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24); 
+        calendar.set(Calendar.MINUTE, 0);
+
+        SpinnerDateModel addStartTime = new SpinnerDateModel();
+        addStartTime.setValue(calendar.getTime());
+        addStartTimeSpin = new JSpinner(addStartTime);
+        JSpinner.DateEditor editorAddStartTime = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatterAddStartTime = (DateFormatter)editorAddStartTime.getTextField().getFormatter();
+        formatterAddStartTime.setAllowsInvalid(false); // this makes what you want
+        formatterAddStartTime.setOverwriteMode(true);
+        addStartTimeSpin.setEditor(editorAddStartTime);
+        businessHoursPanel.add(addStartTimeSpin);
+        addStartTimeSpin.setBounds(100, 450, 86, 20);
+        
+        SpinnerDateModel addEndTime = new SpinnerDateModel();
+        addEndTime.setValue(calendar.getTime());
+        addEndTimeSpin = new JSpinner(addEndTime);
+        JSpinner.DateEditor editorAddEndTime = new JSpinner.DateEditor(addEndTimeSpin, "HH:mm");
+        DateFormatter formatterAddEndTime = (DateFormatter)editorAddEndTime.getTextField().getFormatter();
+        formatterAddEndTime.setAllowsInvalid(false); // this makes what you want
+        formatterAddEndTime.setOverwriteMode(true);
+        addEndTimeSpin.setEditor(editorAddEndTime);
+        businessHoursPanel.add(addEndTimeSpin);
+        addEndTimeSpin.setBounds(100, 500, 86, 20);
+        
+        SpinnerDateModel updateStartTime = new SpinnerDateModel();
+        updateStartTime.setValue(calendar.getTime());
+        updateStartTimeSpin = new JSpinner(updateStartTime);
+        JSpinner.DateEditor editorUpdateStartTime = new JSpinner.DateEditor(updateStartTimeSpin, "HH:mm");
+        DateFormatter formatterUpdateStartTime = (DateFormatter)editorUpdateStartTime.getTextField().getFormatter();
+        formatterUpdateStartTime.setAllowsInvalid(false); // this makes what you want
+        formatterUpdateStartTime.setOverwriteMode(true);
+        updateStartTimeSpin.setEditor(editorUpdateStartTime);
+        businessHoursPanel.add(updateStartTimeSpin);
+        updateStartTimeSpin.setBounds(850, 200, 86, 20);
+        
+        SpinnerDateModel updateEndTime = new SpinnerDateModel();
+        updateEndTime.setValue(calendar.getTime());
+        updateEndTimeSpin = new JSpinner(updateEndTime);
+        JSpinner.DateEditor editorUpdateEndTime = new JSpinner.DateEditor(updateEndTimeSpin, "HH:mm");
+        DateFormatter formatterUpdateEndTime = (DateFormatter)editorUpdateEndTime.getTextField().getFormatter();
+        formatterUpdateEndTime.setAllowsInvalid(false); // this makes what you want
+        formatterUpdateEndTime.setOverwriteMode(true);
+        updateEndTimeSpin.setEditor(editorAddEndTime);
+        businessHoursPanel.add(updateEndTimeSpin);
+        updateEndTimeSpin.setBounds(850, 250, 86, 20);
+        
+        
+
+		confirmAddBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					addBusinessHourActionPerformed(evt);			
+			}		
+		});
+		
+		confirmUpdateBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					updateBusinessHourActionPerformed(evt);			
+			}		
+		});
+		
+		confirmRemoveBusinessHour.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				removeBusinessHourActionPerformed(evt);			
+		}		
+	});
 	}
 	
 	//initialize business information for customer
@@ -1372,7 +2180,7 @@ public class FlexiBookPage extends JFrame {
 		
 		//current the business hours of the business
 		
-		 updateBusinessHours = new JLabel("Current Business Hours");
+		updateBusinessHours = new JLabel("Current Business Hours");
 		updateBusinessHours.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
 		updateBusinessHours.setBounds(100, 50, 300, 25);
 		businessDetailsPanel.add(updateBusinessHours);
@@ -1469,21 +2277,21 @@ public class FlexiBookPage extends JFrame {
 		currentBusinessInfo.setBounds(700, 25, 300, 25);
 		businessDetailsPanel.add(currentBusinessInfo);
 		
-		JLabel businessName = new JLabel("Business name: "+ FlexiBookController.getBusinessInfo().getName());
-		businessName.setBounds(700, 70, 150, 23);
-		businessDetailsPanel.add(businessName);
-
-		JLabel adress =  new JLabel("Address: "+ FlexiBookController.getBusinessInfo().getAdress());
-		adress.setBounds(700, 100, 150, 23);
-		businessDetailsPanel.add(adress);
-
-		JLabel phoneNumber  = new JLabel("Phone Number: "+FlexiBookController.getBusinessInfo().getPhoneNumber());
-		phoneNumber.setBounds(700, 130, 150, 23);
-		businessDetailsPanel.add(phoneNumber);
-
-		JLabel email = new JLabel("Email: "+FlexiBookController.getBusinessInfo().getEmail());
-		email.setBounds(700, 160, 250, 23);
-		businessDetailsPanel.add(email);		
+//		JLabel businessName = new JLabel("Business name: "+ FlexiBookController.getBusinessInfo().getName());
+//		businessName.setBounds(700, 70, 150, 23);
+//		businessDetailsPanel.add(businessName);
+//
+//		JLabel adress =  new JLabel("Address: "+ FlexiBookController.getBusinessInfo().getAdress());
+//		adress.setBounds(700, 100, 150, 23);
+//		businessDetailsPanel.add(adress);
+//
+//		JLabel phoneNumber  = new JLabel("Phone Number: "+FlexiBookController.getBusinessInfo().getPhoneNumber());
+//		phoneNumber.setBounds(700, 130, 150, 23);
+//		businessDetailsPanel.add(phoneNumber);
+//
+//		JLabel email = new JLabel("Email: "+FlexiBookController.getBusinessInfo().getEmail());
+//		email.setBounds(700, 160, 250, 23);
+//		businessDetailsPanel.add(email);		
 	}
 
 	/**
@@ -1644,6 +2452,10 @@ public class FlexiBookPage extends JFrame {
 		updateTimeB.setBounds(18, 456, 215, 23);
 		bookAppointmentPanel.add(updateTimeB);
 		
+		updateTimeB = new JButton("Update to new time");
+		updateTimeB.setBounds(18, 456, 215, 23);
+		bookAppointmentPanel.add(updateTimeB);
+		
 		updateActionComboBox = new JComboBox<String>();
 		updateActionComboBox.setToolTipText("Select an action");
 		updateActionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"add ", "remove"}));
@@ -1669,6 +2481,10 @@ public class FlexiBookPage extends JFrame {
 		updateContentB = new JButton("Update to new service content");
 		updateContentB.setBounds(415, 456, 215, 23);
 		bookAppointmentPanel.add(updateContentB);
+		
+		cancelAppB = new JButton("Cancel");
+		cancelAppB.setBounds(700, 456, 100, 23);
+		bookAppointmentPanel.add(cancelAppB);
 		
 		//----------------------- table--------------
 		viewAppForCurCustomerTable = new JTable() {
@@ -1802,6 +2618,12 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
         
+        cancelAppB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				cancelAppPerformed(evt);
+			}
+		});
+        
         newDatePicker.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				pickNewDateForUpdatePerformed(evt);
@@ -1828,12 +2650,176 @@ public class FlexiBookPage extends JFrame {
 
 	}
 
+//	private JLabel successMessageLogInLabel;
+//	private JLabel errorMessageLogInLabel;
+//	private JLabel successMessageSignInLabel;
+//	private JLabel errorMessageSignInLabel;
+//	private String addLoginError;
+//	private String addLoginSuccess;
+//	private String addSignUpError;
+//	private String addSignUpSuccess;
+//	private String logOutErrorMessage; 
+//	private String logOutSuccessMessage; 
+	
+	private void refreshLogin() {
+		successMessageLogInLabel.setText(addLoginSuccess);
+		errorMessageLogInLabel.setText(addLoginError);
+		successMessageSignInLabel.setText(addSignUpSuccess);
+		errorMessageSignInLabel.setText(addSignUpError);
+		
+//		deleteServiceComboBox.removeAllItems();
+//		updateServiceComboBox.removeAllItems();
+//		modelAddService.getDataVector().removeAllElements();
+//		modelDeleteService.getDataVector().removeAllElements();
+//		modelUpdateService.getDataVector().removeAllElements();
+//		if (!FlexiBookController.getTOServices().isEmpty()) {
+//			List<TOService> toServices = FlexiBookController.getTOServices();
+//			for (TOService service : toServices) {
+//				String name = service.getName();
+//				String duration = Integer.toString(service.getDuration());
+//				String downtimeDuration = Integer.toString(service.getDowntimeDuration());
+//				String downtimeStart = Integer.toString(service.getDowntimeStart());
+//				Object[] obj = {name, duration, downtimeDuration, downtimeStart};
+//				modelAddService.addRow(obj);
+//				modelDeleteService.addRow(obj);
+//				modelUpdateService.addRow(obj);
+//			}
+//		}
+//		if (!FlexiBookController.getTOServices().isEmpty()) {
+//			for (TOService service:FlexiBookController.getTOServices()) {
+//				deleteServiceComboBox.addItem(service.getName());
+//				updateServiceComboBox.addItem(service.getName());
+//			}
+//		}
+//		
+//		
+//		if (addError == null || addError.length() == 0) {
+//			newServiceDowntimeDurationTextField.setText("");
+//			newServiceDowntimeStartTextField.setText("");
+//			newServiceDurationTextField.setText("");
+//			newServiceNameTextField.setText("");		
+//		}
+//		
+//		if(FlexiBookController.getTOServices().isEmpty()) {
+//			deleteServiceComboBox.removeAllItems();
+//			updateServiceComboBox.removeAllItems();
+//			modelAddService.getDataVector().removeAllElements();
+//			modelDeleteService.getDataVector().removeAllElements();
+//			modelUpdateService.getDataVector().removeAllElements();
+//		}
+	}
 	//refresh frame
 	private void refreshData() {
+		
 		pack();
 		repaint();
+		refreshSingleServiceData();
+		refreshAppointmentPage();
 	}
 	
+	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		DayOfWeek dw = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (addDayOfWeek.getSelectedItem().equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String startTimeString = "";
+        String endTimeString = "";
+		try {
+			startTimeString = formatter.valueToString(addStartTimeSpin.getValue());
+			endTimeString = formatter.valueToString(addEndTimeSpin.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		
+		try {
+			FlexiBookController.setUpBusinessHours(stringToTime(startTimeString), stringToTime(endTimeString), dw);
+			//addBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			addBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+	
+	
+	private void removeBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		try {
+			FlexiBookController.removeBusinessHour(FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getStartTime()
+					);
+			//deleteService((String)deleteServiceComboBox.getSelectedItem());
+			deleteBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			deleteBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+	
+	private void updateBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
+		deleteBHError = null; 
+		deleteBHSuccess = null;
+		DayOfWeek dw = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String startTimeString = "";
+        String endTimeString = "";
+		try {
+			startTimeString = formatter.valueToString(updateStartTimeSpin.getValue());
+			endTimeString = formatter.valueToString(updateEndTimeSpin.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+		
+		try {
+			FlexiBookController.updateBusinessHour(
+					FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getStartTime(),dw,
+					stringToTime(startTimeString), stringToTime(endTimeString));
+			//addBHSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			addBHError = e.getMessage();
+		}
+		
+		refreshData();
+	}
+
 	//method called when set-up info is done 
 		private void setUpBusinessInformation(java.awt.event.ActionEvent evt) {
 			//remove log in panel
@@ -1851,18 +2837,18 @@ public class FlexiBookPage extends JFrame {
 			calendarOwnerButton.setBackground(Color.WHITE);
 			calendarOwnerButton.setOpaque(true);
 			calendarOwnerButton.setForeground(darkGrey);
-			//refresh page
-			refreshData();
-			
-			try {
+			//create business
+			try {//Need to add the errors here 
 				if(FlexiBookApplication.getFlexiBook().getBusiness()==null) 
 			FlexiBookController.setUpBusinessInfo(txtBusinessNameSet.getText(), txtAdressSet.getText(), txtPhoneNumberSet.getText(), txtEmailSet.getText());
 				 
 			}
 			catch (InvalidInputException e) {
 			}
+			//refresh page
 			refreshData();
 		}
+		
 		
 		//method called when set-up info is done 
 		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1912,6 +2898,117 @@ public class FlexiBookPage extends JFrame {
 //	}
 //	
 		
+		
+		
+//		private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
+//			addError = null;
+//			addSuccess = null;
+//			FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+//			if (newServiceDowntimeDurationTextField.getText().equals("")||
+//					newServiceDowntimeStartTextField.getText().equals("")||
+//					newServiceDurationTextField.getText().equals("")||
+//					newServiceNameTextField.getText().equals("")) {
+//				addError = "one of the fields is empty";
+//				
+//			}
+//			else {
+//				try {
+//					FlexiBookController.addService(newServiceNameTextField.getText(), Integer.parseInt(newServiceDurationTextField.getText()), 
+//							Integer.parseInt(newServiceDowntimeStartTextField.getText()), 
+//							Integer.parseInt(newServiceDowntimeDurationTextField.getText()));
+//					addSuccess = "Success!";
+//				}  catch (InvalidInputException e) {
+//					addError = e.getMessage();
+//				}
+//			}
+//				
+//			refreshData();
+//
+//
+//		}
+		
+		// When signUp button is pressed 
+		private void SignUpCustomerButtonPerformed(ActionEvent evt) {
+			addSignUpError = null;
+			addSignUpSuccess = null;
+			addLoginError = null;
+			addLoginSuccess = null;
+			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")||
+					String.valueOf(passwordField_1.getPassword()).equals("")) {
+				addSignUpError = "one of the fields is empty";
+			}else if(!String.valueOf(passwordField.getPassword()).equals(String.valueOf(passwordField_1.getPassword()))) {
+				addSignUpError = "two passwaord inputs does not match, please try again.";
+			}
+			else {
+				if (!textField_1.getText().equals("owner")) {
+					try {
+						FlexiBookController.signUpCustomer(textField_1.getText(), String.valueOf(passwordField.getPassword()));
+						addSignUpSuccess = "Success!";
+						logInCustomerButtonActionPerformed(evt);
+					}  catch (InvalidInputException e) {
+						String errorMessageCatched = e.getMessage();
+							addSignUpError = errorMessageCatched;
+					}
+				}else {
+					try {
+						FlexiBookController.signUpOwner(textField_1.getText(), String.valueOf(passwordField.getPassword()));
+						addSignUpSuccess = "Success!";
+						if(textField_1.getText().equals("owner")) {
+							if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+								logInOwnerButtonToSetUpActionPerformed(evt);
+							}
+							else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+								logInOwnerButtonActionPerformed(evt);
+							}
+						}
+					}  catch (InvalidInputException e) {
+						String errorMessageCatched = e.getMessage();
+							addSignUpError = errorMessageCatched;
+					}
+				}
+			}
+
+			refreshLogin();
+
+
+		}
+		
+		
+		private void loginUserButtonPerformed(ActionEvent evt) {
+			addLoginError = null;
+			addLoginSuccess = null;
+			addSignUpError = null;
+			addSignUpSuccess = null;
+			if (textField_1.getText().equals("")||String.valueOf(passwordField.getPassword()).equals("")) {
+				addLoginError = "one of the fields is empty";
+				
+			} 
+			else {
+				try {
+					FlexiBookController.logIn(textField_1.getText(), String.valueOf(passwordField.getPassword()));
+					addLoginSuccess = "Success!";
+					if(textField_1.getText().equals("owner")) {
+						if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+							logInOwnerButtonToSetUpActionPerformed(evt);
+						}
+						else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+							logInOwnerButtonActionPerformed(evt);
+						}
+					}
+					else {
+						logInCustomerButtonActionPerformed(evt);
+					}
+				}  catch (InvalidInputException e) {
+					String errorMessageCatched = e.getMessage();
+					if (errorMessageCatched.equals("Username/password not found")) {
+						addLoginError = "<html>Username/password not found, please try again. <br/>If you don't have an account, please try sign up</html>";
+					}
+				}
+				
+			refreshLogin();
+			}
+			
+		}
 		
 		
 //	/**
@@ -2109,6 +3206,121 @@ public class FlexiBookPage extends JFrame {
 		//refresh page
 		refreshData();
 	}
+	
+	private void deleteSingleServicesButtonActionPerformed(ActionEvent evt) {
+		errorMessageSingleService = null; 
+		deleteSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		try {
+			FlexiBookController.deleteService((String)deleteServiceComboBox.getSelectedItem());
+			deleteSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			errorMessageSingleService = e.getMessage();
+		}
+		
+		refreshData();
+	}
+	
+	private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
+		errorMessageSingleService = null;
+		addSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (newServiceDowntimeDurationTextField.getText().equals("")||
+				newServiceDowntimeStartTextField.getText().equals("")||
+				newServiceDurationTextField.getText().equals("")||
+				newServiceNameTextField.getText().equals("")) {
+			errorMessageSingleService = "one of the fields is empty";
+			
+		}
+		else {
+			try {
+				FlexiBookController.addService(newServiceNameTextField.getText(), Integer.parseInt(newServiceDurationTextField.getText()), 
+						Integer.parseInt(newServiceDowntimeStartTextField.getText()), 
+						Integer.parseInt(newServiceDowntimeDurationTextField.getText()));
+				addSuccess = "Success!";
+			}  catch (InvalidInputException e) {
+				errorMessageSingleService = e.getMessage();
+			}
+		}
+			
+		refreshData();
+
+
+	}
+	
+	private void updateSingleServicesButtonActionPerformed(ActionEvent evt) {
+		errorMessageSingleService = null;
+		updateSuccess = null;
+		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
+		if (updateDowntimeDurationTextField.getText().equals("")||
+				updateDowntimeStartTextField.getText().equals("")||
+				updateServiceDurationTextField.getText().equals("")||
+				updateServiceNameTextField.getText().equals("")) {
+			errorMessageSingleService = "one of the fields is empty";
+			
+		}
+		else {
+			try {
+				FlexiBookController.updateService((String)updateServiceComboBox.getSelectedItem(), 
+						updateServiceNameTextField.getText(), Integer.parseInt(updateServiceDurationTextField.getText()), 
+						Integer.parseInt(updateDowntimeDurationTextField.getText()), 
+						Integer.parseInt(updateDowntimeStartTextField.getText()));
+				updateSuccess = "Success!";
+			}catch (InvalidInputException e) {
+				errorMessageSingleService = e.getMessage();
+			}
+		}
+		
+		
+		
+		refreshData();
+		
+	}
+	
+	private void refreshSingleServiceData() {
+		errorMessageSingleServiceLabel.setText(errorMessageSingleService);
+		addSuccessLabel.setText(addSuccess);
+		deleteSuccessLabel.setText(deleteSuccess);
+		updateSuccessLabel.setText(updateSuccess);
+		deleteServiceComboBox.removeAllItems();
+		updateServiceComboBox.removeAllItems();
+		modelModifySingleService.getDataVector().removeAllElements();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			List<TOService> toServices = FlexiBookController.getTOServices();
+			for (TOService service : toServices) {
+				String name = service.getName();
+				String duration = Integer.toString(service.getDuration());
+				String downtimeDuration = Integer.toString(service.getDowntimeDuration());
+				String downtimeStart = Integer.toString(service.getDowntimeStart());
+				Object[] obj = {name, duration, downtimeDuration, downtimeStart};
+				modelModifySingleService.addRow(obj);
+				
+			}
+		}
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				deleteServiceComboBox.addItem(service.getName());
+				updateServiceComboBox.addItem(service.getName());
+			}
+		}
+		
+		
+		if (errorMessageSingleService == null || errorMessageSingleService.length() == 0) {
+			newServiceDowntimeDurationTextField.setText("");
+			newServiceDowntimeStartTextField.setText("");
+			newServiceDurationTextField.setText("");
+			newServiceNameTextField.setText("");		
+		}
+		
+		if(FlexiBookController.getTOServices().isEmpty()) {
+			deleteServiceComboBox.removeAllItems();
+			updateServiceComboBox.removeAllItems();
+			modelModifySingleService.getDataVector().removeAllElements();
+		}
+		
+		
+	}
+	
 
 	//method called when owner calendar button pressed
 	private void calendarOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2232,6 +3444,15 @@ public class FlexiBookPage extends JFrame {
 
 	//method called when owner log out button pressed
 	private void logOutOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		logOutErrorMessage = null; 
+		logOutSuccessMessage = null; 
+		try{
+			FlexiBookController.logOut();
+			logOutSuccessMessage = "Logout Success!";
+		}catch (InvalidInputException e){
+			String errorMessage = e.getMessage();
+			logOutErrorMessage = errorMessage; 
+		}
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
@@ -2255,6 +3476,15 @@ public class FlexiBookPage extends JFrame {
 	//method called when customer log out button pressed
 	private void logOutCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
+		logOutErrorMessage = null; 
+		logOutSuccessMessage = null; 
+		try{
+			FlexiBookController.logOut();
+			logOutSuccessMessage = "Logout Success!";
+		}catch (InvalidInputException e){
+			String errorMessage = e.getMessage();
+			logOutErrorMessage = errorMessage; 
+		}
 		previousButton.setBorder(new LineBorder(darkGrey));
 		previousButton.setBackground(darkGrey);
 		previousButton.setOpaque(true);
@@ -2303,6 +3533,129 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	//method called when save button pressed while editing an account
+	private void saveAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+				
+//		// call the controller
+//		try {
+//			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), usernameBox.getText(), passwordBox.getText());
+//				} catch (InvalidInputException e) {
+//					error = e.getMessage();
+//				}
+		
+		// @ TODO success indication
+		
+		// update visuals
+		refreshData();
+		
+	}
+	
+	//method called when delete button pressed while editing an account
+	private void deleteAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+		
+		// @ ToDo 
+		//pop up confirm message
+				
+//		// call the controller
+//		try {
+//			FlexiBookController.deleteCustomerAccount(usernameBox.getText());
+//				} catch (InvalidInputException e) {
+//					error = e.getMessage();
+//				}
+//		
+//		
+		
+		//reset previous button to dark grey background
+		previousButton.setBorder(new LineBorder(darkGrey));
+		previousButton.setBackground(darkGrey);
+		previousButton.setOpaque(true);
+		previousButton.setForeground(Color.WHITE);
+		if(previousButton.equals(infoCustomerButton)){
+			previousButton.setIcon(infoIconDark);
+		} else if(previousButton.equals(logOutCustomerButton)){
+			previousButton.setIcon(logOutIconDark);
+		}
+		//remove previous panels
+		getContentPane().remove(previousPanel);
+		getContentPane().remove(topPanelCustomer);
+		//set new panel
+		getContentPane().add(LoginPane);
+		//refresh page
+		refreshData();
+		
+	}
+	
+	//method called when sign up customer button pressed
+	private void signUpActionPerformed(java.awt.event.ActionEvent evt) {
+		// clear error message
+		error = null;
+			
+//		// call the controller
+//		try {
+//			FlexiBookController.signUpCustomer(usernameBox.getText(), passwordBox.getText());
+//				} catch (InvalidInputException e) {
+//					error = e.getMessage();
+//				}
+		
+		if (error == null) {
+			//remove sign up panel
+			getContentPane().remove(customerSignUpPanel);
+			//add customer top bar and calendar panel to frame
+			getContentPane().setLayout(new GridBagLayout());
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridx = 0;
+			c.gridy = 0;
+			c.ipady = 40;
+			c.ipadx = 1100;
+			getContentPane().add(topPanelCustomer, c);
+			c.gridx = 0;
+			c.gridy = 1;
+			c.ipady = 700;
+			c.ipadx = 1100;
+			getContentPane().add(calendarCustomerPanel, c);
+			//set calendar to initial state
+			previousPanel = calendarCustomerPanel;
+			previousButton = calendarCustomerButton;
+			//reset calendar button
+			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
+			calendarCustomerButton.setBackground(Color.WHITE);
+			calendarCustomerButton.setOpaque(true);
+			calendarCustomerButton.setForeground(darkGrey);
+		}
+		
+		//refresh page
+		refreshData();
+	}
+	
+//	// method called when a customer cancels sign up. Brings you back to log in page
+//	private void cancelSignUpActionPerformed(java.awt.event.ActionEvent evt) {
+//		//remove previous panels
+//		getContentPane().remove(previousPanel);
+//		//set new panel
+//		getContentPane().add(LoginPane);
+//		//refresh page
+//		refreshData();
+//		
+//	}
+//	
+//	//for now, this button brings you to a sign up page
+//	private void signUpNewCustomerActionPerformed(java.awt.event.ActionEvent evt) {
+//		
+//		getContentPane().remove(previousPanel);
+//		//set new panel
+//		getContentPane().add(infoOwnerPanel);
+//		infoOwnerPanel.setBounds(0,40,1100,700);
+//		//set this panel as the current panel
+//		previousPanel = infoOwnerPanel;
+//		//refresh page
+//		refreshData();
+//
+//		
+//	}
 	
 	//--------------------------- Add Appointment part ----------------
 	private void updateAppointmentContentActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2334,7 +3687,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(action);
 		System.out.println(optservicename);
-		refreshAppointmentPage();
+		refreshData();
 		
 		
 	}
@@ -2370,10 +3723,10 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(newDate);
 		System.out.println(newtime);
-		refreshAppointmentPage();
+		refreshData();
 		
     	
-    	
+ 	
 	}
 
 	private void monthlyCalendarButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2526,7 +3879,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 
 		
 	}
@@ -2554,7 +3907,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 		System.out.println(serviceName);
 		System.out.println(date);
 		System.out.println(time);
@@ -2563,6 +3916,33 @@ public class FlexiBookPage extends JFrame {
 
 		
 	}
+	
+	
+	private void cancelAppPerformed(java.awt.event.ActionEvent evt) {
+		String serviceName = serviceNameT.getText();
+		Date date = stringToDate(selectedAppDateT.getText());
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+    	try {
+			timeString = formatter.valueToString(selectTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+    	
+    	Time time = stringToTime(timeString);
+    	
+    	try {
+			FlexiBookController.cancelAppointment(serviceName, date, time);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+    	refreshData();
+    	
+		
+		
+	}
+	
 	
 	private void pickNewDateForUpdatePerformed(java.awt.event.ActionEvent evt) {
 		if (newDatePicker.getModel().getValue() != null) {

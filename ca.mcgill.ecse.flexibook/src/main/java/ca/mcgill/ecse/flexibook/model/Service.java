@@ -9,7 +9,7 @@ import java.util.*;
  * @author: Catherine, jedla, gtjarvis, mikewang, chengchen, AntoineW
  */
 // line 72 "../../../../../FlexiBookPersistence.ump"
-// line 68 "../../../../../FlexiBook.ump"
+// line 69 "../../../../../FlexiBook.ump"
 public class Service extends BookableService implements Serializable
 {
 
