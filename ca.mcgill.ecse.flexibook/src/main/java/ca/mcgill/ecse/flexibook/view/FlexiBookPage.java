@@ -50,6 +50,7 @@ import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 
 import ca.mcgill.ecse.flexibook.model.Service;
+import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
@@ -2439,9 +2440,9 @@ public class FlexiBookPage extends JFrame {
 		newTimeLabel.setBounds(19, 413, 123, 14);
 		bookAppointmentPanel.add(newTimeLabel);
 		
-		updateTimeB = new JButton("Update to new time");
-		updateTimeB.setBounds(18, 456, 215, 23);
-		bookAppointmentPanel.add(updateTimeB);
+//		updateTimeB = new JButton("Update to new time");
+//		updateTimeB.setBounds(18, 456, 215, 23);
+//		bookAppointmentPanel.add(updateTimeB);
 		
 		updateTimeB = new JButton("Update to new time");
 		updateTimeB.setBounds(18, 456, 215, 23);
@@ -3726,7 +3727,7 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	private void updateAppointmentTimeActionPerformed(java.awt.event.ActionEvent evt) {
-		
+		System.out.println("here");
 		String serviceName =  serviceNameT.getText();
 		Date date = stringToDate(selectedAppDateT.getText());
 		Date newDate = stringToDate(newUpdateAppDateT.getText());
@@ -3746,12 +3747,15 @@ public class FlexiBookPage extends JFrame {
     	Time newtime = stringToTime(newtimeString);
     	
     	try {
-			FlexiBookController.updateAppointmentTime(serviceName, date, time, newDate, newtime);
+			Boolean ret = FlexiBookController.updateAppointmentTime(serviceName, date, time, newDate, newtime);
+			if(ret == false) {
+	    		appSectionError = appSectionError + "Failed!";
+	    	}
 		} catch (InvalidInputException e) {
 			appSectionError = appSectionError + e.getMessage();
 		}
     	
-    	
+    
 		System.out.println(serviceName);
 		System.out.println(date);
 		System.out.println(time);
@@ -4012,6 +4016,9 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 	private void refreshAppointmentPage() {
+		vAFCCTableModel = new DefaultTableModel(0, 0);
+		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
+		vAFCCTableModel.setColumnIdentifiers(vAFCCTableColumnNames);
 		
 		for(TOAppointment appto: FlexiBookController.getTOAppointmentForCurrentCustomer()) {
 			String name = appto.getServiceName();
@@ -4035,6 +4042,10 @@ public class FlexiBookPage extends JFrame {
 		// Show error Message
 		errorMsgLabel.setText(appSectionError);
 		appSectionError = " ";
+		
+		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+			System.out.println(ts);
+		}
 		
 
 //			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {

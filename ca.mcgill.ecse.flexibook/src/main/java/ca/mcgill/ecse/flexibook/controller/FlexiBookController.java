@@ -306,6 +306,7 @@ public class FlexiBookController {
 		if(!isInGoodTiming(timeSlot, index,-1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			flexiBook.removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
 				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + timeStr);
@@ -376,6 +377,7 @@ public class FlexiBookController {
 		if(!isInGoodTiming(timeSlot,index, -1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			flexiBook.removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			// tweak format to pass tests
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
