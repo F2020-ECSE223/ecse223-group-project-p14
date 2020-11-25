@@ -93,6 +93,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel calendarMonthlyViewGridPanel;
 	private JPanel calendarMonthlyViewTopPanel;
 	private JPanel calendarTimes;
+	private JPanel calendarBusinessSlots;
 	
 	
 	// initial login panel
@@ -1604,6 +1605,16 @@ public class FlexiBookPage extends JFrame {
 		calendarWeeklyViewPanel = new JPanel();
 		calendarWeeklyViewPanel.setLayout(null);
 		calendarWeeklyViewPanel.setPreferredSize(new Dimension(700,700));
+		//create calendar business slot panel
+		calendarBusinessSlots = new JPanel();
+		calendarBusinessSlots.setLayout(null);
+		calendarBusinessSlots.setOpaque(false);
+		calendarBusinessSlots.setPreferredSize(new Dimension(700,700));
+
+		calendarTimes = new JPanel();
+		calendarTimes.setLayout(null);
+		calendarTimes.setPreferredSize(new Dimension(40,520));
+		calendarTimes.setBackground(Color.WHITE);
 		//initialize image icons
 		try{
 			calendarLeftIcon = new ImageIcon("Calendar_LeftIcon.jpg");
@@ -4057,6 +4068,8 @@ public class FlexiBookPage extends JFrame {
 			int maxHour = 0;
 			int minute = 0;
 			int hour = 0;
+			calendarTimes.removeAll();
+			calendarBusinessSlots.removeAll();
 			List<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
 			if(businessHourList.size() != 0){
 				Time minStartTime = businessHourList.get(0).getStartTime();
@@ -4069,10 +4082,6 @@ public class FlexiBookPage extends JFrame {
 						maxEndTime = b.getEndTime();
 					}
 				}
-				calendarTimes = new JPanel();
-				calendarTimes.setLayout(null);
-				calendarTimes.setPreferredSize(new Dimension(40,520));
-				calendarTimes.setBackground(Color.WHITE);
 				minHour = minStartTime.getHours();
 				maxHour = maxEndTime.getHours();;
 				hour = minStartTime.getHours();
@@ -4130,7 +4139,7 @@ public class FlexiBookPage extends JFrame {
 				p.setOpaque(true);
 				p.setForeground(new Color(230,230,230));
 				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(bh.getStartTime().getHours()-minHour))));
-				calendarWeeklyViewPanel.add(p);
+				calendarBusinessSlots.add(p);
 				p.setBounds(n*90+50,35+80,90,(int)Math.round(deltaY*2*(bh.getStartTime().getHours()-minHour)));
 
 				p = new JLabel("I");
@@ -4138,7 +4147,7 @@ public class FlexiBookPage extends JFrame {
 				p.setOpaque(true);
 				p.setForeground(new Color(230,230,230));
 				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours()))));
-				calendarWeeklyViewPanel.add(p);
+				calendarBusinessSlots.add(p);
 				p.setBounds(n*90+50,35+80+520-(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())),90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())));
 			}
 			for(int i = 0; i < 7; i++){
@@ -4148,10 +4157,12 @@ public class FlexiBookPage extends JFrame {
 					p.setOpaque(true);
 					p.setForeground(new Color(230,230,230));
 					p.setPreferredSize(new Dimension(90,520));
-					calendarWeeklyViewPanel.add(p);
+					calendarBusinessSlots.add(p);
 					p.setBounds(i*90+50,35+80,90,520);
 				}
 			}
+			calendarWeeklyViewPanel.add(calendarBusinessSlots);
+			calendarBusinessSlots.setBounds(0,0,700,700);
 			//add customer appointments
 			int actualDay = calendarDay;
 			int actualMonth = calendarMonth;
