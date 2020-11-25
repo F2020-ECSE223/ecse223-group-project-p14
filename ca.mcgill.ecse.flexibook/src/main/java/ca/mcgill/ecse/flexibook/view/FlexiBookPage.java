@@ -3727,7 +3727,6 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	private void updateAppointmentTimeActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println("here");
 		String serviceName =  serviceNameT.getText();
 		Date date = stringToDate(selectedAppDateT.getText());
 		Date newDate = stringToDate(newUpdateAppDateT.getText());
@@ -4043,9 +4042,9 @@ public class FlexiBookPage extends JFrame {
 		errorMsgLabel.setText(appSectionError);
 		appSectionError = " ";
 		
-		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-			System.out.println(ts);
-		}
+//		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+//			System.out.println(ts);
+//		}
 		
 
 //			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {
