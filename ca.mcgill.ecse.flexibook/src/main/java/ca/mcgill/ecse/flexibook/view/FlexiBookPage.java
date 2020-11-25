@@ -91,6 +91,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel calendarMonthlyViewPanel;
 	private JPanel calendarMonthlyViewGridPanel;
 	private JPanel calendarMonthlyViewTopPanel;
+	private JPanel calendarTimes;
 	
 	
 	// initial login panel
@@ -1658,52 +1659,6 @@ public class FlexiBookPage extends JFrame {
 		p.setOpaque(true);
 		calendarWeeklyViewPanel.add(p);
 		p.setBounds(50,80+35,630,1);
-		//time bar
-		/*
-		ArrayList<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
-		Time minStartTime;
-		Time maxEndTime;
-		for(TOBusinessHour b: businessHourList){
-			if(minStartTime == null){
-				minStartTime = b.getStartTime();
-				maxStartTime = b.getEndTime();
-			}
-			if(b.getStartTime().before(minStartTime)){
-				minStartTime = b.getStartTime();
-			}
-			if(b.getEndTime().after(maxStartTime){
-				maxStartTime = b.getEndTime();
-			}
-		}
-		*/
-		JPanel calendarTimes = new JPanel();
-		calendarTimes.setLayout(null);
-		calendarTimes.setPreferredSize(new Dimension(40,520));
-		calendarTimes.setBackground(Color.WHITE);
-		int minHour = 9;
-		int maxHour = 17;
-		int minute = 0;
-		int hour = 9;
-		double deltaY = 520.0/((maxHour-minHour)*2+1);
-		for(int i = 0; i < (maxHour-minHour)*2+1; i++){
-			p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
-			if(minute < 10){
-				p = new JLabel(hour + ":0" + minute, SwingConstants.RIGHT);
-			}
-			p.setPreferredSize(new Dimension(40,(int)Math.round(deltaY)));
-			calendarTimes.add(p);
-			p.setBounds(0,(int)Math.round(i*deltaY),40,(int)Math.round(deltaY));
-			minute += 30;
-			if(minute > 59){
-				hour ++;
-				minute -= 60;
-			}
-			if(hour > 12){
-				hour -= 12;
-			}
-		}
-		calendarWeeklyViewPanel.add(calendarTimes);
-		calendarTimes.setBounds(0,80+35,40,520);
 
 		//calendar week days numbers
 		if(calendarDay > 0){
@@ -2919,6 +2874,62 @@ public class FlexiBookPage extends JFrame {
 			calendarOwnerButton.setForeground(darkGrey);
 			//refresh page
 			refreshData();
+
+			//set calendar
+			try{
+				FlexiBookController.setUpBusinessHours(new Time(7,0,0),new Time(15,0,0), DayOfWeek.Monday);
+				FlexiBookController.setUpBusinessHours(new Time(8,0,0),new Time(9,0,0), DayOfWeek.Tuesday);
+				FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(10,0,0), DayOfWeek.Wednesday);
+				FlexiBookController.setUpBusinessHours(new Time(10,0,0),new Time(11,0,0), DayOfWeek.Thursday);
+				FlexiBookController.setUpBusinessHours(new Time(11,0,0),new Time(12,0,0), DayOfWeek.Friday);
+				FlexiBookController.setUpBusinessHours(new Time(5,0,0),new Time(13,0,0), DayOfWeek.Saturday);
+				FlexiBookController.setUpBusinessHours(new Time(13,0,0),new Time(14,0,0), DayOfWeek.Sunday);
+			} catch(Exception e){	
+
+			}		
+		
+			//time bar
+			List<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
+			Time minStartTime = businessHourList.get(0).getStartTime();
+			Time maxEndTime = businessHourList.get(0).getEndTime();
+			for(TOBusinessHour b: businessHourList){
+				if(b.getStartTime().before(minStartTime)){
+					minStartTime = b.getStartTime();
+				}
+				if(b.getEndTime().after(maxEndTime)){
+					maxEndTime = b.getEndTime();
+				}
+			}
+			calendarTimes = new JPanel();
+			calendarTimes.setLayout(null);
+			calendarTimes.setPreferredSize(new Dimension(40,520));
+			calendarTimes.setBackground(Color.WHITE);
+			int minHour = minStartTime.getHours();
+			int maxHour = maxEndTime.getHours();;
+			int minute = 0;
+			int hour = minStartTime.getHours();
+			double deltaY = 520.0/((maxHour-minHour)*2+1);
+			JLabel p = new JLabel();
+			for(int i = 0; i < (maxHour-minHour)*2+1; i++){
+				p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
+				if(minute < 10){
+					p = new JLabel(hour + ":0" + minute, SwingConstants.RIGHT);
+				}
+				p.setPreferredSize(new Dimension(40,(int)Math.round(deltaY)));
+				calendarTimes.add(p);
+				p.setBounds(0,(int)Math.round(i*deltaY),40,(int)Math.round(deltaY));
+				minute += 30;
+				if(minute > 59){
+					hour ++;
+					minute -= 60;
+				}
+				if(hour > 12){
+					hour -= 12;
+				}
+			}
+			calendarWeeklyViewPanel.add(calendarTimes);
+			calendarTimes.setBounds(0,80+35,40,520);
+
 		}
 
 
