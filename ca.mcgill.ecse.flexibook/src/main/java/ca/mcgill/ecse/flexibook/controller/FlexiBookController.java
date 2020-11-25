@@ -512,6 +512,10 @@ public class FlexiBookController {
 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
 
 		// Scenario: check if the current user is tweaking his/her own appointment
 		if(FlexiBookApplication.getCurrentLoginUser() instanceof Owner) {
@@ -542,6 +546,42 @@ public class FlexiBookController {
 		
 		return ret;
 
+	}
+	 /**
+	  * added in the last iteration
+	  * @param serviceName
+	  * @param date
+	  * @param time
+	  * @return
+	  * @throws InvalidInputException
+	  */
+	public static void registerNoShowForApp(String serviceName, Date date, Time time) throws InvalidInputException{
+		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
+		Appointment appInSystem = findAppointment(serviceName,date, time);
+		// Add at last iteration
+		if(appInSystem == null) {
+			throw new InvalidInputException("Error: No appointment with name " + serviceName + " exist at " + date.toString() + time.toString());
+		}
+		
+		TimeSlot timeSlot = appInSystem.getTimeSlot();
+		LocalDateTime current = ControllerUtils.combineDateAndTime(FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
+		LocalDateTime appStartAt = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+		
+		if(current.isBefore(appStartAt)) {
+			throw new InvalidInputException("Error: Please wait for appointment with name " + serviceName + " to start at " + date.toString() + time.toString());
+		}
+		
+		appInSystem.registeredNoShow();
+		
+		//add by Mike start --- 
+		try {
+			FlexiBookPersistence.save(flexiBook);
+		} catch(RuntimeException e) {
+			throw new InvalidInputException(e.getMessage());
+		}
+		//add by Mike end ---	
+
+		
 	}
 
 
@@ -1598,6 +1638,7 @@ public class FlexiBookController {
 		return appointments;
 
 	}
+	
 	
 	/**
 	 * Add in the last iteration

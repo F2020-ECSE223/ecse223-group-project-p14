@@ -72,6 +72,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel LoginPane;
 	//panel for set-up business information
 	private JPanel setUpInPanel;
+	private JPanel backgroundPanel;
 	//panel for each button on top bar
 	private JPanel infoOwnerPanel;
 	private JPanel infoCustomerPanel;
@@ -158,6 +159,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel endTimeLabel;
 	private JLabel or;
 	private JLabel updateBusinessHours;
+
 	
 	private JTextField startTime;
 	private JTextField endTime;
@@ -271,6 +273,7 @@ public class FlexiBookPage extends JFrame {
 	private String appSectionError;
 	private JComboBox<String> updateActionComboBox;
 	private JLabel errorMsgLabel;
+	private JButton cancelAppB;
 	
 	private double initLogInPageScalingFactor = 740/490;
 	/**
@@ -586,23 +589,48 @@ public class FlexiBookPage extends JFrame {
 	
 	//initialize the business information set-up
 	private void initSetBusinessInfo() {
-
+		
+		//JLayeredPane lpane = new JLayeredPane();
+		//backgroundPanel = new JPanel();
+		//lpane.setBounds(0,0,1100,740);
+		//backgroundPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		//backgroundPanel.setLayout(null);
+		// backgroundPanel.setPreferredSize(new Dimension(1100,740));
+		//backgroundPanel.setBounds(0, 0, 1100, 740);
+		
+//		JLabel initSetBusinesslabel = new JLabel("");
+//		initSetBusinesslabel.setBounds(0, 0, 1100, 740);
+//		initSetBusinesslabel.setVerticalAlignment(SwingConstants.TOP);
+//		initSetBusinesslabel.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
+		//backgroundPanel.add(initSetBusinesslabel);
+		//backgroundPanel.setOpaque(true);
+		
 		setUpInPanel = new JPanel();
+		setUpInPanel.setBackground(Color.DARK_GRAY);
+		setUpInPanel.setBorder (new EmptyBorder(5, 5, 5, 5));
 		setUpInPanel.setLayout(null);
 		setUpBusinessInfoLabel = new JLabel("Info Page");
-		setUpInPanel.setPreferredSize(new Dimension(1100,700));
-		setUpInPanel.setBackground(Color.WHITE);
-		setUpInPanel.setOpaque(true);
-		setUpInPanel.setForeground(Color.WHITE);
+		
+		//setUpInPanel.setBounds(400,200,400,700);
+
+		//setUpInPanel.setOpaque(true);
 		setUpInPanel.add(setUpBusinessInfoLabel);
 
 		setDetailBtn = new JButton("Set");
 		setDetailBtn.setBounds(500,400,89,23);
+		setDetailBtn.setBackground(Color.GREEN);
+		setDetailBtn.setForeground(Color.DARK_GRAY);
 		setUpInPanel.add(setDetailBtn);
+		//backgroundPanel.add(setUpInPanel,BorderLayout.CENTER);
 
+
+		//lpane.add(backgroundPanel, 0, 0);
+		//lpane.add(setUpInPanel, 1, 0);
+		
 		//Setting the UI for setting business information
 		JLabel businessNameSet = new JLabel("Business name");
 		businessNameSet.setBounds(500, 100, 150, 23);
+		businessNameSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(businessNameSet);
 
 		txtBusinessNameSet = new JTextField();
@@ -612,6 +640,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel adressSet = new JLabel("Address");
 		adressSet.setBounds(500, 170, 70, 23);
+		adressSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(adressSet);
 
 		txtAdressSet= new JTextField();
@@ -622,6 +651,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel phoneNumberSet  = new JLabel("Phone Number");
 		phoneNumberSet.setBounds(500, 230, 150, 23);
+		phoneNumberSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(phoneNumberSet);
 
 		txtPhoneNumberSet = new JTextField();
@@ -631,6 +661,7 @@ public class FlexiBookPage extends JFrame {
 
 		JLabel emailSet = new JLabel("Email");
 		emailSet.setBounds(500, 290, 200, 23);
+		emailSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(emailSet);
 
 		txtEmailSet = new JTextField();
@@ -644,6 +675,7 @@ public class FlexiBookPage extends JFrame {
 					setUpBusinessInformation(evt);
 				}
 			});
+		
 		
 	}
 	
@@ -1535,37 +1567,37 @@ public class FlexiBookPage extends JFrame {
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(0+35,35,90,40);
+		n.setBounds(0+50,35,90,40);
 		n = new JLabel("Tue", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(90+35,35,90,40);
+		n.setBounds(90+50,35,90,40);
 		n = new JLabel("Wed", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(180+35,35,90,40);
+		n.setBounds(180+50,35,90,40);
 		n = new JLabel("Thu", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(270+35,35,90,40);
+		n.setBounds(270+50,35,90,40);
 		n = new JLabel("Fri", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(360+35,35,90,40);
+		n.setBounds(360+50,35,90,40);
 		n = new JLabel("Sat", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(450+35,35,90,40);
+		n.setBounds(450+50,35,90,40);
 		n = new JLabel("Sun", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(540+35,35,90,40);
+		n.setBounds(540+50,35,90,40);
 		JLabel p;
 		for(int i = 0; i < 6; i++){
 			p = new JLabel("I");
@@ -1573,8 +1605,62 @@ public class FlexiBookPage extends JFrame {
 			p.setBackground(new Color(200,200,200));
 			p.setOpaque(true);
 			calendarWeeklyViewPanel.add(p);
-			p.setBounds(90+35+i*90,35,1,600);
+			p.setBounds(90+50+i*90,35,1,600);
 		}
+		p = new JLabel("I");
+		p.setPreferredSize(new Dimension(630,1));
+		p.setBackground(new Color(200,200,200));
+		p.setOpaque(true);
+		calendarWeeklyViewPanel.add(p);
+		p.setBounds(50,80+35,630,1);
+		//time bar
+		/*
+		ArrayList<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
+		Time minStartTime;
+		Time maxEndTime;
+		for(TOBusinessHour b: businessHourList){
+			if(minStartTime == null){
+				minStartTime = b.getStartTime();
+				maxStartTime = b.getEndTime();
+			}
+			if(b.getStartTime().before(minStartTime)){
+				minStartTime = b.getStartTime();
+			}
+			if(b.getEndTime().after(maxStartTime){
+				maxStartTime = b.getEndTime();
+			}
+		}
+		*/
+		JPanel calendarTimes = new JPanel();
+		calendarTimes.setLayout(null);
+		calendarTimes.setPreferredSize(new Dimension(40,520));
+		calendarTimes.setBackground(Color.WHITE);
+		int minHour = 9;
+		int maxHour = 17;
+		int minute = 0;
+		int hour = 9;
+		double deltaY = 520.0/((maxHour-minHour)*2+1);
+		for(int i = 0; i < (maxHour-minHour)*2+1; i++){
+			p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
+			if(minute < 10){
+				p = new JLabel(hour + ":0" + minute, SwingConstants.RIGHT);
+			}
+			p.setPreferredSize(new Dimension(40,(int)Math.round(deltaY)));
+			calendarTimes.add(p);
+			p.setBounds(0,(int)Math.round(i*deltaY),40,(int)Math.round(deltaY));
+			minute += 30;
+			if(minute > 59){
+				hour ++;
+				minute -= 60;
+			}
+			if(hour > 12){
+				hour -= 12;
+			}
+		}
+		calendarWeeklyViewPanel.add(calendarTimes);
+		calendarTimes.setBounds(0,80+35,40,520);
+
+		//calendar week days numbers
 		if(calendarDay > 0){
 			int tempNum = LocalDate.of(calendarYear,calendarMonth,calendarDay).getDayOfWeek().getValue();
 			int tempDay = calendarDay-tempNum+1;
@@ -1595,7 +1681,7 @@ public class FlexiBookPage extends JFrame {
 				n.setFont(new Font("Roboto", Font.BOLD, 20));
 				calendarWeeklyViewPanel.add(n);
 				dayLabelList.add(n);
-				n.setBounds(i*90+35,35+40,90,40);
+				n.setBounds(i*90+50,35+40,90,40);
 				tempDay++;
 			}
 		} else {
@@ -1618,17 +1704,16 @@ public class FlexiBookPage extends JFrame {
 				n.setFont(new Font("Roboto", Font.BOLD, 20));
 				calendarWeeklyViewPanel.add(n);
 				dayLabelList.add(n);
-				n.setBounds(i*90+35,35+40,90,40);
+				n.setBounds(i*90+50,35+40,90,40);
 				tempDay++;
 			}
 		}
-
 		
 		calendarWeeklyViewPanel.setBackground(Color.WHITE);
 		calendarWeeklyViewPanel.setOpaque(true);
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(406,0,700,700);
+		calendarWeeklyViewPanel.setBounds(400,0,700,700);
 
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
@@ -1742,7 +1827,7 @@ public class FlexiBookPage extends JFrame {
 		calendarMonthlyViewTopPanel.setBounds(0,0,350,50);
 		//add monthly view panel to calendar panel
 		calendarOwnerPanel.add(calendarMonthlyViewPanel);
-		calendarMonthlyViewPanel.setBounds(50,60,350,350);
+		calendarMonthlyViewPanel.setBounds(30,60,350,350);
 
 		ActionListener calendarLeftRightButtonListener = new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2339,6 +2424,10 @@ public class FlexiBookPage extends JFrame {
 		updateTimeB.setBounds(18, 456, 215, 23);
 		bookAppointmentPanel.add(updateTimeB);
 		
+		updateTimeB = new JButton("Update to new time");
+		updateTimeB.setBounds(18, 456, 215, 23);
+		bookAppointmentPanel.add(updateTimeB);
+		
 		updateActionComboBox = new JComboBox<String>();
 		updateActionComboBox.setToolTipText("Select an action");
 		updateActionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"add ", "remove"}));
@@ -2364,6 +2453,10 @@ public class FlexiBookPage extends JFrame {
 		updateContentB = new JButton("Update to new service content");
 		updateContentB.setBounds(415, 456, 215, 23);
 		bookAppointmentPanel.add(updateContentB);
+		
+		cancelAppB = new JButton("Cancel");
+		cancelAppB.setBounds(700, 456, 100, 23);
+		bookAppointmentPanel.add(cancelAppB);
 		
 		//----------------------- table--------------
 		viewAppForCurCustomerTable = new JTable() {
@@ -2497,6 +2590,12 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
         
+        cancelAppB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				cancelAppPerformed(evt);
+			}
+		});
+        
         newDatePicker.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				pickNewDateForUpdatePerformed(evt);
@@ -2589,7 +2688,7 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 		refreshSingleServiceData();
-
+		refreshAppointmentPage();
 	}
 	
 	private void refreshAccount() {
@@ -2843,7 +2942,14 @@ public class FlexiBookPage extends JFrame {
 					try {
 						FlexiBookController.signUpOwner(textField_1.getText(), String.valueOf(passwordField.getPassword()));
 						addSignUpSuccess = "Success!";
-						logInOwnerButtonActionPerformed(evt);
+						if(textField_1.getText().equals("owner")) {
+							if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
+								logInOwnerButtonToSetUpActionPerformed(evt);
+							}
+							else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
+								logInOwnerButtonActionPerformed(evt);
+							}
+						}
 					}  catch (InvalidInputException e) {
 						String errorMessageCatched = e.getMessage();
 							addSignUpError = errorMessageCatched;
@@ -3514,7 +3620,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(action);
 		System.out.println(optservicename);
-		refreshAppointmentPage();
+		refreshData();
 		
 		
 	}
@@ -3550,7 +3656,7 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(newDate);
 		System.out.println(newtime);
-		refreshAppointmentPage();
+		refreshData();
 		
     	
  	
@@ -3706,7 +3812,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 
 		
 	}
@@ -3734,7 +3840,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		refreshAppointmentPage();
+		refreshData();
 		System.out.println(serviceName);
 		System.out.println(date);
 		System.out.println(time);
@@ -3744,6 +3850,31 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	
+	private void cancelAppPerformed(java.awt.event.ActionEvent evt) {
+		String serviceName = serviceNameT.getText();
+		Date date = stringToDate(selectedAppDateT.getText());
+		JSpinner.DateEditor editor = new JSpinner.DateEditor(selectTimeSpinner, "HH:mm");
+        DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
+        String timeString = "";
+    	try {
+			timeString = formatter.valueToString(selectTimeSpinner.getValue());
+		} catch (ParseException e) {
+			appSectionError = e.getMessage();
+		}
+    	
+    	Time time = stringToTime(timeString);
+    	
+    	try {
+			FlexiBookController.cancelAppointment(serviceName, date, time);
+		} catch (InvalidInputException e) {
+			appSectionError = appSectionError + e.getMessage();
+		}
+    	refreshData();
+    	
+		
+		
+	}
 	
 	
 	private void pickNewDateForUpdatePerformed(java.awt.event.ActionEvent evt) {
