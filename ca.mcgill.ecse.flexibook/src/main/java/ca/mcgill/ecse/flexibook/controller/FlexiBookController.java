@@ -1599,7 +1599,7 @@ public class FlexiBookController {
 	 */
 	public static List<TOBusinessHour> getTOBusinessHour(){
 		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
-		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours()) {
+		for (BusinessHour BH: FlexiBookApplication.getFlexiBook().getHours()) {
 			TOBusinessHour BusinessHour = new TOBusinessHour(BH.getDayOfWeek(),BH.getStartTime(),BH.getEndTime());
 			businessHours.add(BusinessHour);
 		}
