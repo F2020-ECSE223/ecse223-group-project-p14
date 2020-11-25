@@ -1595,37 +1595,37 @@ public class FlexiBookPage extends JFrame {
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(0+35,35,90,40);
+		n.setBounds(0+50,35,90,40);
 		n = new JLabel("Tue", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(90+35,35,90,40);
+		n.setBounds(90+50,35,90,40);
 		n = new JLabel("Wed", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(180+35,35,90,40);
+		n.setBounds(180+50,35,90,40);
 		n = new JLabel("Thu", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(270+35,35,90,40);
+		n.setBounds(270+50,35,90,40);
 		n = new JLabel("Fri", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(360+35,35,90,40);
+		n.setBounds(360+50,35,90,40);
 		n = new JLabel("Sat", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(450+35,35,90,40);
+		n.setBounds(450+50,35,90,40);
 		n = new JLabel("Sun", SwingConstants.CENTER);
 		n.setPreferredSize(new Dimension(90,40));
 		n.setFont(new Font("Roboto", Font.BOLD, 20));
 		calendarWeeklyViewPanel.add(n);
-		n.setBounds(540+35,35,90,40);
+		n.setBounds(540+50,35,90,40);
 		JLabel p;
 		for(int i = 0; i < 6; i++){
 			p = new JLabel("I");
@@ -1633,8 +1633,62 @@ public class FlexiBookPage extends JFrame {
 			p.setBackground(new Color(200,200,200));
 			p.setOpaque(true);
 			calendarWeeklyViewPanel.add(p);
-			p.setBounds(90+35+i*90,35,1,600);
+			p.setBounds(90+50+i*90,35,1,600);
 		}
+		p = new JLabel("I");
+		p.setPreferredSize(new Dimension(630,1));
+		p.setBackground(new Color(200,200,200));
+		p.setOpaque(true);
+		calendarWeeklyViewPanel.add(p);
+		p.setBounds(50,80+35,630,1);
+		//time bar
+		/*
+		ArrayList<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
+		Time minStartTime;
+		Time maxEndTime;
+		for(TOBusinessHour b: businessHourList){
+			if(minStartTime == null){
+				minStartTime = b.getStartTime();
+				maxStartTime = b.getEndTime();
+			}
+			if(b.getStartTime().before(minStartTime)){
+				minStartTime = b.getStartTime();
+			}
+			if(b.getEndTime().after(maxStartTime){
+				maxStartTime = b.getEndTime();
+			}
+		}
+		*/
+		JPanel calendarTimes = new JPanel();
+		calendarTimes.setLayout(null);
+		calendarTimes.setPreferredSize(new Dimension(40,520));
+		calendarTimes.setBackground(Color.WHITE);
+		int minHour = 9;
+		int maxHour = 17;
+		int minute = 0;
+		int hour = 9;
+		double deltaY = 520.0/((maxHour-minHour)*2+1);
+		for(int i = 0; i < (maxHour-minHour)*2+1; i++){
+			p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
+			if(minute < 10){
+				p = new JLabel(hour + ":0" + minute, SwingConstants.RIGHT);
+			}
+			p.setPreferredSize(new Dimension(40,(int)Math.round(deltaY)));
+			calendarTimes.add(p);
+			p.setBounds(0,(int)Math.round(i*deltaY),40,(int)Math.round(deltaY));
+			minute += 30;
+			if(minute > 59){
+				hour ++;
+				minute -= 60;
+			}
+			if(hour > 12){
+				hour -= 12;
+			}
+		}
+		calendarWeeklyViewPanel.add(calendarTimes);
+		calendarTimes.setBounds(0,80+35,40,520);
+
+		//calendar week days numbers
 		if(calendarDay > 0){
 			int tempNum = LocalDate.of(calendarYear,calendarMonth,calendarDay).getDayOfWeek().getValue();
 			int tempDay = calendarDay-tempNum+1;
@@ -1655,7 +1709,7 @@ public class FlexiBookPage extends JFrame {
 				n.setFont(new Font("Roboto", Font.BOLD, 20));
 				calendarWeeklyViewPanel.add(n);
 				dayLabelList.add(n);
-				n.setBounds(i*90+35,35+40,90,40);
+				n.setBounds(i*90+50,35+40,90,40);
 				tempDay++;
 			}
 		} else {
@@ -1678,17 +1732,16 @@ public class FlexiBookPage extends JFrame {
 				n.setFont(new Font("Roboto", Font.BOLD, 20));
 				calendarWeeklyViewPanel.add(n);
 				dayLabelList.add(n);
-				n.setBounds(i*90+35,35+40,90,40);
+				n.setBounds(i*90+50,35+40,90,40);
 				tempDay++;
 			}
 		}
-
 		
 		calendarWeeklyViewPanel.setBackground(Color.WHITE);
 		calendarWeeklyViewPanel.setOpaque(true);
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(406,0,700,700);
+		calendarWeeklyViewPanel.setBounds(400,0,700,700);
 
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
@@ -1802,7 +1855,7 @@ public class FlexiBookPage extends JFrame {
 		calendarMonthlyViewTopPanel.setBounds(0,0,350,50);
 		//add monthly view panel to calendar panel
 		calendarOwnerPanel.add(calendarMonthlyViewPanel);
-		calendarMonthlyViewPanel.setBounds(50,60,350,350);
+		calendarMonthlyViewPanel.setBounds(30,60,350,350);
 
 		ActionListener calendarLeftRightButtonListener = new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
