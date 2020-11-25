@@ -118,6 +118,7 @@ public class FlexiBookPage extends JFrame {
 	private JButton logOutOwnerButton;
 	private JButton logOutCustomerButton;
 	private JButton bookAppointmentButton;
+	
 	//list of variables for calendar month view
 	private ArrayList<JButton> calendarButtonList = new ArrayList<JButton>();
 	private JButton calendarLeftButton;
@@ -130,7 +131,6 @@ public class FlexiBookPage extends JFrame {
 	private ArrayList<JLabel> dayLabelList = new ArrayList<JLabel>();
 
 	//log in page buttons
-
 	private JButton signUpButton;
 	private JButton LogInButton;
 	private JButton logInOwnerButton;
@@ -216,13 +216,16 @@ public class FlexiBookPage extends JFrame {
 	private JLabel infoLabel; //manage your account	
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
+	private JLabel confirmPasswordLabel;
 	private JTextField usernameBox; 
-	private JTextField passwordBox; 
+	private JPasswordField passwordBox; 
+	private JPasswordField confirmPasswordBox;
 	private JButton saveAccountButton; //Save button
 	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
 	private JLabel updateSuccessful; 
+	private String successful = null;
 
 	//tracking last page
 	private JButton previousButton;
@@ -1119,30 +1122,42 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(FlexiBookController.getCurrentLogInUsername());
+		passwordBox = new JPasswordField();
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
+		confirmPasswordLabel = new JLabel("Confirm Password");
+		confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		confirmPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		confirmPasswordLabel.setBounds(350, 450, 80, 30);
+		confirmPasswordLabel.setBackground(Color.WHITE);
+		confirmPasswordLabel.setOpaque(true);
+		confirmPasswordLabel.setForeground(Color.darkGray);
+		confirmPasswordLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		confirmPasswordBox = new JPasswordField();
+		confirmPasswordBox.setColumns(20);
+		confirmPasswordBox.setBounds(470, 450, 250, 30);
+		
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		saveAccountButton.setBounds(500, 450, 100, 30);
+		saveAccountButton.setBounds(500, 500, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
+		errorMessage.setText(error);
 		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		errorMessage.setBounds(470, 500, 200, 30);
-		errorMessage.setAlignmentX(CENTER_ALIGNMENT);
+		errorMessage.setBounds(SwingConstants.CENTER, 550, 500, 30);
 		
-		updateSuccessful = new JLabel();
+		updateSuccessful = new JLabel(successful);
 		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		updateSuccessful.setForeground(Color.GREEN);
 		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
-		updateSuccessful.setBounds(470, 500, 200, 30);
-		updateSuccessful.setAlignmentX(CENTER_ALIGNMENT);
+		updateSuccessful.setBounds(SwingConstants.CENTER, 550, 500, 30);
 		
 		infoOwnerPanel.add(infoUserLabel);
 		infoOwnerPanel.add(infoLabel);
@@ -1150,6 +1165,8 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.add(usernameBox);
 		infoOwnerPanel.add(passwordLabel);
 		infoOwnerPanel.add(passwordBox);
+		infoOwnerPanel.add(confirmPasswordLabel);
+		infoOwnerPanel.add(confirmPasswordBox);
 		infoOwnerPanel.add(saveAccountButton);
 		infoOwnerPanel.add(errorMessage);
 		infoOwnerPanel.add(updateSuccessful);
@@ -1166,7 +1183,7 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize info panel for customer
 	private void initInfoCustomerPanel(){
-		
+
 		infoCustomerPanel = new JPanel();
 		infoCustomerPanel.setLayout(null);
 		infoCustomerPanel.setPreferredSize(new Dimension(1100,700));
@@ -1179,7 +1196,7 @@ public class FlexiBookPage extends JFrame {
 			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
 
 		} catch(Exception exp) {
-			error += exp.getMessage();
+			System.out.println(exp.getMessage());
 		}
 
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
@@ -1221,13 +1238,26 @@ public class FlexiBookPage extends JFrame {
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		passwordBox = new JTextField(FlexiBookController.getCurrentLogInUsername()); 
+		passwordBox = new JPasswordField();
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
 		
+		confirmPasswordLabel = new JLabel("Confirm Password");
+		confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		confirmPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		confirmPasswordLabel.setBounds(350, 450, 80, 30);
+		confirmPasswordLabel.setBackground(Color.WHITE);
+		confirmPasswordLabel.setOpaque(true);
+		confirmPasswordLabel.setForeground(Color.darkGray);
+		confirmPasswordLabel.setAlignmentX(SwingConstants.CENTER);
+		
+		confirmPasswordBox = new JPasswordField();
+		confirmPasswordBox.setColumns(20);
+		confirmPasswordBox.setBounds(470, 450, 250, 30);
+		
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		saveAccountButton.setBounds(550, 450, 100, 30);
+		saveAccountButton.setBounds(550, 500, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
@@ -1236,22 +1266,23 @@ public class FlexiBookPage extends JFrame {
 		
 		deleteAccountButton = new JButton("Delete");
 		deleteAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		deleteAccountButton.setBounds(400, 450, 100, 30);
+		deleteAccountButton.setBounds(400, 500, 100, 30);
 		deleteAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		deleteAccountButton.setBorder(new LineBorder(Color.darkGray));
 		deleteAccountButton.setBackground(Color.WHITE);
 		deleteAccountButton.setOpaque(true);
 		deleteAccountButton.setForeground(Color.darkGray);
 		
+		errorMessage.setText(error);
 		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		errorMessage.setBounds(SwingConstants.CENTER, 500, errorMessage.getText().length(), 30);
+		errorMessage.setBounds(SwingConstants.CENTER, 550, 500, 30);
 		
-		updateSuccessful = new JLabel();
+		updateSuccessful = new JLabel(successful);
 		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		updateSuccessful.setForeground(Color.GREEN);
 		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
-		updateSuccessful.setBounds(SwingConstants.CENTER, 500, updateSuccessful.getText().length(), 30);
+		updateSuccessful.setBounds(SwingConstants.CENTER, 550, 500, 30);
 		
 		infoCustomerPanel.add(infoUserLabel);
 		infoCustomerPanel.add(infoLabel);
@@ -1259,6 +1290,8 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.add(usernameBox);
 		infoCustomerPanel.add(passwordLabel);
 		infoCustomerPanel.add(passwordBox);
+		infoCustomerPanel.add(confirmPasswordLabel);
+		infoCustomerPanel.add(confirmPasswordBox);
 		infoCustomerPanel.add(saveAccountButton);
 		infoCustomerPanel.add(deleteAccountButton);
 		infoOwnerPanel.add(errorMessage);
@@ -2548,6 +2581,8 @@ public class FlexiBookPage extends JFrame {
 //			modelUpdateService.getDataVector().removeAllElements();
 //		}
 	}
+	
+	
 	//refresh frame
 	private void refreshData() {
 		
@@ -2555,6 +2590,21 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 		refreshSingleServiceData();
 
+	}
+	
+	private void refreshAccount() {
+		//if customer, refresh that way
+		//if owner, refresh that way
+		//set error message
+		//clear textboxes
+		
+		//maybe just reinitiaize????
+		if (FlexiBookController.getCurrentLogInUsername().equals("owner")) {
+			initInfoOwnerPanel();
+		}
+		else {
+			initInfoCustomerPanel();
+		}
 	}
 	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
@@ -3368,34 +3418,44 @@ public class FlexiBookPage extends JFrame {
 	
 	//method called when save button pressed while editing an account
 	private void saveAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear error message
+		// clear message
 		error = null;
+		successful = null;
 
-		// call the controller
-		try {
-			FlexiBookController.updateUserAccount(FlexiBookApplication.getCurrentLoginUser().getUsername(), usernameBox.getText(), passwordBox.getText());
-			updateSuccessful.setText("Success!");
-		} catch (InvalidInputException e) {
-			error = e.getMessage();
-			errorMessage.setText(error);
+		if (usernameBox.getText().equals("") || String.valueOf(passwordBox.getPassword()).equals("") || String.valueOf(confirmPasswordBox.getPassword()).equals("")) { 
+			error = "Fill in all fields to update your account";
+			
+		} 
+		else if (! String.valueOf(passwordBox.getPassword()).equals(String.valueOf(confirmPasswordBox.getPassword()))) {
+			error = "Passwords do not match";
+		}
+		else {
+			try {
+				FlexiBookController.updateUserAccount(FlexiBookController.getCurrentLogInUsername(), usernameBox.getText(), String.valueOf(passwordBox.getPassword()));
+				successful = "Success!";
+			}  catch (InvalidInputException e) {
+				error = e.getMessage();
+				
+			}
+			
 		}
 
-		// update visuals
-		refreshData();
-
+		refreshAccount();
+		
 	}
 	
 	//method called when delete button pressed while editing an account
 	private void deleteAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear error message
+		// clear message
 		error = null;
+		successful = null;
 		
 		//pop up confirm message?
 				
 //		// call the controller
 		try {
-			FlexiBookController.deleteCustomerAccount(usernameBox.getText());
-			// log out panel
+			FlexiBookController.deleteCustomerAccount(FlexiBookController.getCurrentLogInUsername()); //if we need to see error messages, get the username textbox content and refresh
+			successful = "Success!";
 			//reset previous button to dark grey background
 			previousButton.setBorder(new LineBorder(darkGrey));
 			previousButton.setBackground(darkGrey);
@@ -3418,7 +3478,7 @@ public class FlexiBookPage extends JFrame {
 				}
 		
 		//refresh page
-		refreshData();
+		refreshAccount();
 		
 	}
 	
