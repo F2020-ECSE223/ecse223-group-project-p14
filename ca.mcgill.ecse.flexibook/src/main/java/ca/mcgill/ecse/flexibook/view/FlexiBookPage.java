@@ -56,6 +56,7 @@ import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOService;
+import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 
 public class FlexiBookPage extends JFrame {
 	
@@ -1659,6 +1660,12 @@ public class FlexiBookPage extends JFrame {
 		p.setOpaque(true);
 		calendarWeeklyViewPanel.add(p);
 		p.setBounds(50,80+35,630,1);
+		p = new JLabel("I");
+		p.setPreferredSize(new Dimension(630,1));
+		p.setBackground(new Color(200,200,200));
+		p.setOpaque(true);
+		calendarWeeklyViewPanel.add(p);
+		p.setBounds(50,80+35+520,630,1);
 
 		//calendar week days numbers
 		if(calendarDay > 0){
@@ -2875,16 +2882,16 @@ public class FlexiBookPage extends JFrame {
 
 			//set calendar
 			try{
-				FlexiBookController.setUpBusinessHours(new Time(8,0,0),new Time(17,0,0), DayOfWeek.Monday);
-				FlexiBookController.setUpBusinessHours(new Time(8,0,0),new Time(17,0,0), DayOfWeek.Tuesday);
-				FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Wednesday);
-				FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Thursday);
-				FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Friday);
-				FlexiBookController.setUpBusinessHours(new Time(12,0,0),new Time(16,0,0), DayOfWeek.Saturday);
+				//FlexiBookController.setUpBusinessHours(new Time(8,0,0),new Time(17,0,0), DayOfWeek.Monday);
+				//FlexiBookController.setUpBusinessHours(new Time(8,0,0),new Time(17,0,0), DayOfWeek.Tuesday);
+				//FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Wednesday);
+				//FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Thursday);
+				//FlexiBookController.setUpBusinessHours(new Time(9,0,0),new Time(17,0,0), DayOfWeek.Friday);
+				//FlexiBookController.setUpBusinessHours(new Time(12,0,0),new Time(16,0,0), DayOfWeek.Saturday);
 				//FlexiBookController.setUpBusinessHours(new Time(13,0,0),new Time(14,0,0), DayOfWeek.Sunday);
 			} catch(Exception e){	
-
-			}		
+				System.out.println(e.getMessage());
+			}
 		
 			//time bar
 			int minHour = 0;
@@ -2911,9 +2918,9 @@ public class FlexiBookPage extends JFrame {
 				maxHour = maxEndTime.getHours();;
 				hour = minStartTime.getHours();
 			}
-			double deltaY = 520.0/((maxHour-minHour)*2+1);
+			double deltaY = 520.0/((maxHour-minHour)*2);
 			JLabel p = new JLabel();
-			for(int i = 0; i < (maxHour-minHour)*2+1; i++){
+			for(int i = 0; i < (maxHour-minHour)*2; i++){
 				p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
 				if(minute < 10){
 					p = new JLabel(hour + ":0" + minute, SwingConstants.RIGHT);
@@ -2971,9 +2978,9 @@ public class FlexiBookPage extends JFrame {
 				p.setBackground(new Color(230,230,230));
 				p.setOpaque(true);
 				p.setForeground(new Color(230,230,230));
-				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(0.5+maxHour-bh.getEndTime().getHours()))));
+				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours()))));
 				calendarWeeklyViewPanel.add(p);
-				p.setBounds(n*90+50,35+80+520-(int)Math.round(deltaY*2*(0.5+maxHour-bh.getEndTime().getHours())),90,(int)Math.round(deltaY*2*(0.5+maxHour-bh.getEndTime().getHours())));
+				p.setBounds(n*90+50,35+80+520-(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())),90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())));
 			}
 			for(int i = 0; i < 7; i++){
 				if(!dayList.contains(i)){
@@ -2984,6 +2991,93 @@ public class FlexiBookPage extends JFrame {
 					p.setPreferredSize(new Dimension(90,520));
 					calendarWeeklyViewPanel.add(p);
 					p.setBounds(i*90+50,35+80,90,520);
+				}
+			}
+			//add customer appointments
+			int actualDay = calendarDay;
+			int actualMonth = calendarMonth;
+			int actualYear = calendarYear;
+			if(calendarDay > 0){
+				int tempNum = LocalDate.of(calendarYear,calendarMonth,calendarDay).getDayOfWeek().getValue();
+				int tempDay = calendarDay-tempNum+1;
+				for(int i = 0; i < 7; i++){
+					if(tempDay < 1){
+						if(calendarMonth-1 < 1){
+							actualDay = tempDay+LocalDate.of(calendarYear-1,12,1).lengthOfMonth();
+							actualMonth = 12;
+							actualYear -= 1;
+						} else {
+							actualDay = tempDay+LocalDate.of(calendarYear,calendarMonth-1,1).lengthOfMonth();
+							actualMonth -= 1;
+						}
+					} else if(tempDay > LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()){
+						if(calendarMonth+1 > 12){
+							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
+							actualMonth = 1;
+							actualYear += 1;
+						} else {
+							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
+							actualMonth += 1;
+						}
+					}
+					for(TOAppointment appointment: FlexiBookController.getTOAppointment()){
+						TOTimeSlot ts = appointment.getTimeSlot();
+						if(ts.getStartDate().equals(new Date(actualYear, actualMonth, actualDay))){
+							p = new JLabel("I");
+							p.setBackground(lightBlue);
+							p.setOpaque(true);
+							p.setForeground(lightBlue);
+							int hourStart = ts.getStartTime().getHours();
+							int minuteStart = ts.getStartTime().getMinutes();
+							int hourEnd = ts.getEndTime().getHours();
+							int minuteEnd = ts.getEndTime().getMinutes();
+							p.setPreferredSize(new Dimension(90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY)));
+							calendarWeeklyViewPanel.add(p);
+							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
+						}
+					}
+					tempDay++;
+				}
+			} else {
+				int tempNum = LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue();
+				int tempDay = 1-tempNum+1;
+				for(int i = 0; i < 7; i++){
+					if(tempDay < 1){
+						if(calendarMonth-1 < 1){
+							actualDay = tempDay+LocalDate.of(calendarYear-1,12,1).lengthOfMonth();
+							actualMonth = 12;
+							actualYear -= 1;
+						} else {
+							actualDay = tempDay+LocalDate.of(calendarYear,calendarMonth-1,1).lengthOfMonth();
+							actualMonth -= 1;
+						}
+					} else if(tempDay > LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()){
+						if(calendarMonth+1 > 12){
+							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
+							actualMonth = 1;
+							actualYear += 1;
+						} else {
+							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
+							actualMonth += 1;
+						}
+					}
+					for(TOAppointment appointment: FlexiBookController.getTOAppointment()){
+						TOTimeSlot ts = appointment.getTimeSlot();
+						if(ts.getStartDate().equals(new Date(actualYear, actualMonth, actualDay))){
+							p = new JLabel("I");
+							p.setBackground(lightBlue);
+							p.setOpaque(true);
+							p.setForeground(lightBlue);
+							int hourStart = ts.getStartTime().getHours();
+							int minuteStart = ts.getStartTime().getMinutes();
+							int hourEnd = ts.getEndTime().getHours();
+							int minuteEnd = ts.getEndTime().getMinutes();
+							p.setPreferredSize(new Dimension(90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY)));
+							calendarWeeklyViewPanel.add(p);
+							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
+						}
+					}
+					tempDay++;
 				}
 			}
 			refreshData();
@@ -3144,7 +3238,6 @@ public class FlexiBookPage extends JFrame {
 						addLoginError = "<html>Username/password not found, please try again. <br/>If you don't have an account, please try sign up</html>";
 					}
 				}
-				
 			refreshLogin();
 			}
 			
