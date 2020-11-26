@@ -1390,7 +1390,7 @@ public class FlexiBookController {
 		}
 		else if (currentUser instanceof Owner){
 			//currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
-			//flexiBook.removeHour(isTheBusinessHour(day, startTime));
+			flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
 			try {
 				FlexiBookPersistence.save(flexiBook);
@@ -2506,7 +2506,7 @@ public class FlexiBookController {
 	 */
 	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
-		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getHours();
 		for(BusinessHour x: hoursList) {
 			if(x.getDayOfWeek().equals(day) && x.getStartTime().equals(startTime)) {
 				return x;
