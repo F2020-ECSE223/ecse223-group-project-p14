@@ -1256,13 +1256,7 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.setForeground(Color.darkGray);
 		
 		//initialize image icon
-		try{
-			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
-
-		} catch(Exception exp) {
-			System.out.println(exp.getMessage());
-		}
-
+		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 
 		infoUserLabel = new JLabel();
