@@ -491,6 +491,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
 		
+		
 		boolean ret = appInSystem.updateAppointmentContent(action, optService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
 		
 		try {
@@ -528,7 +529,11 @@ public class FlexiBookController {
 
 		Date today = FlexiBookApplication.getCurrentDate(true);
 		
+		TimeSlot ts = appInSystem.getTimeSlot();
 		boolean ret = appInSystem.cancelAppointment(today);
+		if(ret == true) {
+			ts.delete();
+		}
 		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1402,8 +1407,8 @@ public class FlexiBookController {
 	 */
 	public static List<TOCustomer> getTOCustomers(){
 		ArrayList<TOCustomer> Customers = new ArrayList<TOCustomer>();
-		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			TOCustomer toCustomer = new TOCustomer(user.getUsername(), user.getPassword());
+		for (Customer customer : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			TOCustomer toCustomer = new TOCustomer(customer.getUsername(), customer.getPassword(), customer.getNoShowCount(), customer.getShowCount());
 			Customers.add(toCustomer);
 		}
 		return Customers;

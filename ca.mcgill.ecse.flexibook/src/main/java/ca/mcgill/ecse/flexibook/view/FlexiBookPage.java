@@ -1140,13 +1140,7 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.setForeground(Color.darkGray);
 		
 		//initialize image icon
-		try{
-			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
-		
-		} catch(Exception exp) {
-			error = exp.getMessage();
-		}
-		
+		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 		
 		infoUserLabel = new JLabel();
@@ -1256,13 +1250,7 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.setForeground(Color.darkGray);
 		
 		//initialize image icon
-		try{
-			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
-
-		} catch(Exception exp) {
-			System.out.println(exp.getMessage());
-		}
-
+		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 
 		infoUserLabel = new JLabel();
@@ -2478,6 +2466,15 @@ public class FlexiBookPage extends JFrame {
 		cancelAppB.setBounds(700, 456, 100, 23);
 		bookAppointmentPanel.add(cancelAppB);
 		
+		JButton refreshB = new JButton("Refresh");
+		refreshB.setBounds(900, 630, 100, 23);
+		bookAppointmentPanel.add(refreshB);
+		refreshB.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				refreshAppointmentPage();
+			}
+		});
+		
 		//----------------------- table--------------
 		viewAppForCurCustomerTable = new JTable() {
 			private static final long serialVersionUID = 3493726593135015542L;
@@ -2489,7 +2486,7 @@ public class FlexiBookPage extends JFrame {
 					Object obj = getModel().getValueAt(row, column);
 					if (obj instanceof java.lang.String) {
 						//String str = (String)obj;
-						c.setBackground(Color.GRAY);
+						c.setBackground(Color.WHITE);
 					}
 				}
 				return c;
@@ -2506,7 +2503,7 @@ public class FlexiBookPage extends JFrame {
 		bookAppointmentPanel.add(viewAppForCurCustomerScrollPane);
 //		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
 //		viewAppForCurCustomerScrollPane.setPreferredSize(d);
-		viewAppForCurCustomerScrollPane.setBounds(700, 50, 400, 400);
+		viewAppForCurCustomerScrollPane.setBounds(10, 520, 1000, 100);
 		viewAppForCurCustomerScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 
@@ -2723,7 +2720,7 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 	private void refreshSignOut() {
-		initComponents();
+//		initComponents();
 		refreshData();
 //		textField.setText("");
 //		textField.setText("");
@@ -2773,7 +2770,7 @@ public class FlexiBookPage extends JFrame {
 		if(FlexiBookController.getTOBusinessHour().isEmpty()) {
 			deleteBusinessHourBox.removeAllItems();
 			updateBusinessHourBox.removeAllItems();
-			modelModifySingleService.getDataVector().removeAllElements();
+			modelBusHour.getDataVector().removeAllElements();
 		}
 //		
 //		if (errorMessageSingleService == null || errorMessageSingleService.length() == 0) {
@@ -4022,10 +4019,17 @@ public class FlexiBookPage extends JFrame {
 		for(TOAppointment appto: FlexiBookController.getTOAppointmentForCurrentCustomer()) {
 			String name = appto.getServiceName();
 			String startAt = appto.getTimeSlot().getStartDate().toString() + " " + appto.getTimeSlot().getStartTime().toString();
+			
 			String downTime = "-";
-			if(appto.getDownTimeTimeSlot().size() != 0) {
-				downTime = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime() + "->"
-						+ appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+			String startDT = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime();
+			String endDT = appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+			if(startDT.equals(endDT)) {
+				
+
+//				downTime = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime() + "->"
+//						+ appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+			}else {
+				downTime = startDT + "->" + endDT;
 			}
 			String endAt = appto.getTimeSlot().getEndDate().toString() + " " + appto.getTimeSlot().getEndTime().toString();
 			
@@ -4045,7 +4049,7 @@ public class FlexiBookPage extends JFrame {
 //		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
 //			System.out.println(ts);
 //		}
-		
+//		
 
 //			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {
 //				String busText = item.getLicencePlate();
