@@ -1407,8 +1407,8 @@ public class FlexiBookController {
 	 */
 	public static List<TOCustomer> getTOCustomers(){
 		ArrayList<TOCustomer> Customers = new ArrayList<TOCustomer>();
-		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			TOCustomer toCustomer = new TOCustomer(user.getUsername(), user.getPassword());
+		for (Customer customer : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			TOCustomer toCustomer = new TOCustomer(customer.getUsername(), customer.getPassword(), customer.getNoShowCount(), customer.getShowCount());
 			Customers.add(toCustomer);
 		}
 		return Customers;
