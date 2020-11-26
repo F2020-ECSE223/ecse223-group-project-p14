@@ -526,10 +526,20 @@ public class FlexiBookController {
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("A customer can only cancel their own appointments");
 		}
-
+		
 		Date today = FlexiBookApplication.getCurrentDate(true);
 		
+		// Note:
+		// Here all checks and actions have been performed by the state machine
+		// This if statement does a repeat check to the current date
+		// the reason why we leave this one is to guarantee the test from iteration 2 is still passed.
+		// (certain tests in iter 2 checks exception string)
+		if(date.toString().equals(today.toString()) && appInSystem.getAppointmentStatus() != AppointmentStatus.InProgress) {
+			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
+		}
+
 		TimeSlot ts = appInSystem.getTimeSlot();
+		
 		boolean ret = appInSystem.cancelAppointment(today);
 		if(ret == true) {
 			ts.delete();
@@ -542,14 +552,7 @@ public class FlexiBookController {
 		}
 		//add by Mike end ---			
 		
-		// Note:
-		// Here all checks and actions have been performed by the state machine
-		// This if statement does a repeat check to the current date
-		// the reason why we leave this one is to guarantee the test from iteration 2 is still passed.
-		// (certain tests in iter 2 checks exception string)
-		if(date.equals(today) && appInSystem.getAppointmentStatus() != AppointmentStatus.InProgress) {
-			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
-		}
+
 		
 		return ret;
 
@@ -1965,14 +1968,13 @@ public class FlexiBookController {
 		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour bh: bhList) {
 			// check weekday
-
 			if(dOfWeek .equals(bh.getDayOfWeek())) {
 				// if the appointment is on that day, compare if the time slot is included by business hour
 				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
 						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
 						&&
-						timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
-						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime())) {
+						(timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
+						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime()))) {
 					isDuringWorkTime = true;
 					break;
 				}

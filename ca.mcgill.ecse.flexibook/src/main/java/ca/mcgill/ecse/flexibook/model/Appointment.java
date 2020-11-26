@@ -650,6 +650,7 @@ public class Appointment implements Serializable
 		if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 			//getFlexiBook().removeTimeSlot(timeSlot);
 			timeSlot.delete();
+			
 			return false;
 		}
 		timeSlot.delete();
@@ -659,14 +660,15 @@ public class Appointment implements Serializable
     List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
     List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
     //check if overlapping with other appointment
-		for(Appointment a : getFlexiBook().getAppointments()){
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
-					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
-					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
-					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
-				return false;
-			}
-		}
+//		for(Appointment a : getFlexiBook().getAppointments()){
+//			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
+//					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
+//					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
+//					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
+//				System.out.println("here");
+//				return false;
+//			}
+//		}
 	// check vacations
 		for (TimeSlot vacation: vacations) {
 			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
