@@ -2732,7 +2732,7 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 	private void refreshSignOut() {
-		initComponents();
+//		initComponents();
 		refreshData();
 //		textField.setText("");
 //		textField.setText("");
