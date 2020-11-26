@@ -14,15 +14,20 @@ public class TOCustomer
   //TOCustomer Attributes
   private String userName;
   private String password;
+  private int noShowCount;
+  private int showCount;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public TOCustomer(String aUserName, String aPassword)
+  public TOCustomer(String aUserName, String aPassword, int aNoShowCount, int aShowCount)
   {
     userName = aUserName;
     password = aPassword;
+    noShowCount = aNoShowCount;
+    showCount = aShowCount;
+    
   }
 
   //------------------------
@@ -44,7 +49,21 @@ public class TOCustomer
     wasSet = true;
     return wasSet;
   }
-
+  
+  public boolean setNoShowCount(int aNoShowCount) {
+	  boolean wasSet = false;
+	  noShowCount = aNoShowCount;
+	  wasSet = true;
+	  return wasSet;
+  }
+  
+  public boolean setShowCount(int aShowCount) {
+	  boolean wasSet = false;
+	  showCount = aShowCount;
+	  wasSet = true;
+	  return wasSet;
+  }
+  
   public String getUserName()
   {
     return userName;
@@ -53,6 +72,16 @@ public class TOCustomer
   public String getPassword()
   {
     return password;
+  }
+  
+  public int getNoShowCount()
+  {
+    return noShowCount;
+  }
+  
+  public int getShowCount()
+  {
+    return showCount;
   }
 
   public void delete()
@@ -63,6 +92,8 @@ public class TOCustomer
   {
     return super.toString() + "["+
             "userName" + ":" + getUserName()+ "," +
-            "password" + ":" + getPassword()+ "]";
+            "password" + ":" + getPassword()+ "," +
+            "noShowCount" + ":" + getNoShowCount() + "," +
+            "showCount" + ":" + getShowCount() + "]";
   }
 }

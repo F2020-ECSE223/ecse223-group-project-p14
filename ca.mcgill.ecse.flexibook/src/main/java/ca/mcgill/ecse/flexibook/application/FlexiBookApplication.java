@@ -111,7 +111,13 @@ public class FlexiBookApplication {
      * @author AntoineW
      */
     public static Time getCurrentTime(boolean isForTesting) {
-    	return currentTime;
+    	
+    	if(currentTime != null) {
+    		return currentTime;
+    	}else {
+    		return getCurrentTime();
+    	}
+    	
     }
     
     /**
@@ -121,7 +127,12 @@ public class FlexiBookApplication {
      * @author AntoineW
      */
     public static Date getCurrentDate(boolean isForTesting) {
-    	return currentDate;
+    	
+    	if(currentDate != null) {
+    		return currentDate;
+    	}else {
+    		return getCurrentDate();
+    	}
     }
     
     

@@ -306,6 +306,7 @@ public class FlexiBookController {
 		if(!isInGoodTiming(timeSlot, index,-1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			flexiBook.removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
 				throw new InvalidInputException("There are no available slots for " + serviceName + " on "+ date + " at " + timeStr);
@@ -376,6 +377,7 @@ public class FlexiBookController {
 		if(!isInGoodTiming(timeSlot,index, -1)) {
 			// the added timeslot is not good. So we remove it because the appointment booking fails
 			flexiBook.removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			// tweak format to pass tests
 			if(time.toString().charAt(0) == '0') {
 				String timeStr = (new StringBuilder(time.toString())).deleteCharAt(0).toString();
@@ -489,6 +491,7 @@ public class FlexiBookController {
 			throw new InvalidInputException("Error: A customer can only update their own appointments");
 		}
 		
+		
 		boolean ret = appInSystem.updateAppointmentContent(action, optService, FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
 		
 		try {
@@ -526,7 +529,11 @@ public class FlexiBookController {
 
 		Date today = FlexiBookApplication.getCurrentDate(true);
 		
+		TimeSlot ts = appInSystem.getTimeSlot();
 		boolean ret = appInSystem.cancelAppointment(today);
+		if(ret == true) {
+			ts.delete();
+		}
 		//add by Mike start --- 
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1402,8 +1409,8 @@ public class FlexiBookController {
 	 */
 	public static List<TOCustomer> getTOCustomers(){
 		ArrayList<TOCustomer> Customers = new ArrayList<TOCustomer>();
-		for (User user : FlexiBookApplication.getFlexiBook().getCustomers()) {
-			TOCustomer toCustomer = new TOCustomer(user.getUsername(), user.getPassword());
+		for (Customer customer : FlexiBookApplication.getFlexiBook().getCustomers()) {
+			TOCustomer toCustomer = new TOCustomer(customer.getUsername(), customer.getPassword(), customer.getNoShowCount(), customer.getShowCount());
 			Customers.add(toCustomer);
 		}
 		return Customers;
@@ -2387,8 +2394,13 @@ public class FlexiBookController {
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
 
+
 		if(!FlexiBookApplication.getFlexiBook().hasHours()) {
 			isOverlapping = false;
+
+		//if(hoursList.size() == 0){
+		//	isOverlapping = false;
+		//}
 
 		}
 
