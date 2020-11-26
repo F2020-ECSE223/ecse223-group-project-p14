@@ -1659,11 +1659,14 @@ public class FlexiBookController {
 	public static List<TOAppointment> getTOAppointmentForCurrentCustomer(){
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		List<TOAppointment> Allappointments = getTOAppointment();
-		for(TOAppointment toApp: Allappointments) {
-			if(toApp.getCustomerName().equals(FlexiBookApplication.getCurrentLoginUser().getUsername())) {
-				appointments.add(toApp);
+		if(FlexiBookApplication.getCurrentLoginUser()!=null) {
+			for(TOAppointment toApp: Allappointments) {
+				if(toApp.getCustomerName().equals(FlexiBookApplication.getCurrentLoginUser().getUsername())) {
+					appointments.add(toApp);
+				}
 			}
 		}
+	
 		return appointments;
 		
 	}
