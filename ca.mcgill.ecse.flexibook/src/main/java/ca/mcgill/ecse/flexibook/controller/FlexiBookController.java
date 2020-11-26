@@ -1382,6 +1382,8 @@ public class FlexiBookController {
 		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to update business information");
 		}
 		else if (currentUser instanceof Owner){
+			//currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
+			//flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
 			try {
 				FlexiBookPersistence.save(flexiBook);
@@ -1596,6 +1598,7 @@ public class FlexiBookController {
 	 * this is an qurey method with returns the BusinessHour 
 	 * @return
 	 * @author mikewang
+	 * @author jedla later made a small change
 	 */
 	public static List<TOBusinessHour> getTOBusinessHour(){
 		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
@@ -2378,31 +2381,38 @@ public class FlexiBookController {
 	 */
 	private static boolean isOverlappingWithBusinessHours(DayOfWeek day, Time startTime, Time endTime, BusinessHour notToInclude) {
 
-		boolean isOverlapping = false;
+		boolean isOverlapping = true;
 		Business business = FlexiBookApplication.getFlexiBook().getBusiness();
 		List<BusinessHour> hoursList = business.getBusinessHours();
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
 
+		if(!FlexiBookApplication.getFlexiBook().hasHours()) {
+			isOverlapping = false;
 
-		for(BusinessHour x: hoursList) {
-			// check weekday
-			if(x.getDayOfWeek() == day && business.indexOfBusinessHour(notToInclude) != business.indexOfBusinessHour(x)) {
-				LocalTime currentStartTime = x.getStartTime().toLocalTime();
-				LocalTime currentEndTime = x.getEndTime().toLocalTime();
-				// if the appointment is on that day, compare if the time slot is included by business hour
-				if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
-						(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
-					isOverlapping = true;
-					break;
+		}
+
+		else {
+			for(BusinessHour x: hoursList) {
+				// check weekday
+				if(x.getDayOfWeek() == day && business.indexOfBusinessHour(notToInclude) != business.indexOfBusinessHour(x)) {
+					LocalTime currentStartTime = x.getStartTime().toLocalTime();
+					LocalTime currentEndTime = x.getEndTime().toLocalTime();
+					// if the appointment is on that day, compare if the time slot is included by business hour
+					if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
+							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
+						isOverlapping = true;
+						break;
+					}
+					else {
+						isOverlapping = false;}
 				}
 				else {
-					isOverlapping = false;}
+					isOverlapping = false;
+				}
 			}
-			else {
-				isOverlapping = false;
-			}
-		}return isOverlapping;
+		}
+		return isOverlapping;
 	}
 
 	/**
