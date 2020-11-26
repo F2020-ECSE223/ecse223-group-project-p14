@@ -253,14 +253,11 @@ public class FlexiBookPage extends JFrame {
 	/**
 	 * Appointment page
 	 */
-	private JTextField newAppTimeT;
 	private JTextField newAppDateT;
 	private JTextField optionalServiceNamesT; // optional service name
 	private JTextField serviceNameT; // service Name
-	private JTextField selectedAppTimeT;
 	private JTextField selectedAppDateT;
 	private JTextField newUpdateAppDateT;
-	private JTextField newUpdateAppTimeT;
 	private JTextField updateComboItemNameL;
 	private JTable viewAppForCurCustomerTable;
 	private JScrollPane  viewAppForCurCustomerScrollPane;
@@ -278,6 +275,7 @@ public class FlexiBookPage extends JFrame {
 	private JButton addAppForComboB;
 	private String appSectionError;
 	private JComboBox<String> updateActionComboBox;
+	private JComboBox<String> existingCb;
 	private JLabel errorMsgLabel;
 	private JButton cancelAppB;
 	
@@ -2451,6 +2449,22 @@ public class FlexiBookPage extends JFrame {
 		updateActionComboBox.setMaximumRowCount(2);
 		updateActionComboBox.setBounds(564, 384, 70, 17);
 		bookAppointmentPanel.add(updateActionComboBox);
+		
+		existingCb = new JComboBox<String>();
+		existingCb.setBounds(113, 50, 120, 27);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				existingCb.addItem(service.getName());
+			}
+		}
+		existingCb.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				serviceNameT.setText((String)existingCb.getSelectedItem());
+			}
+		});
+		bookAppointmentPanel.add(existingCb);
+		
+		
 		
 		JLabel updateActionLabel = new JLabel("Update action");
 		updateActionLabel.setLabelFor(updateActionComboBox);
