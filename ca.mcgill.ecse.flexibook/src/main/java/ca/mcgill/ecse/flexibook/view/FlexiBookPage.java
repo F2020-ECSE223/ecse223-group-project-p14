@@ -2782,7 +2782,7 @@ public class FlexiBookPage extends JFrame {
 		if(FlexiBookController.getTOBusinessHour().isEmpty()) {
 			deleteBusinessHourBox.removeAllItems();
 			updateBusinessHourBox.removeAllItems();
-			modelModifySingleService.getDataVector().removeAllElements();
+			modelBusHour.getDataVector().removeAllElements();
 		}
 //		
 //		if (errorMessageSingleService == null || errorMessageSingleService.length() == 0) {
