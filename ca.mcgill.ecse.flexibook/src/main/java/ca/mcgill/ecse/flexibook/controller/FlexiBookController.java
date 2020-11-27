@@ -526,10 +526,20 @@ public class FlexiBookController {
 		}else if(! (appInSystem.getCustomer().getUsername() .equals( FlexiBookApplication.getCurrentLoginUser().getUsername()))) {
 			throw new InvalidInputException("A customer can only cancel their own appointments");
 		}
-
+		
 		Date today = FlexiBookApplication.getCurrentDate(true);
 		
+		// Note:
+		// Here all checks and actions have been performed by the state machine
+		// This if statement does a repeat check to the current date
+		// the reason why we leave this one is to guarantee the test from iteration 2 is still passed.
+		// (certain tests in iter 2 checks exception string)
+		if(date.toString().equals(today.toString()) && appInSystem.getAppointmentStatus() != AppointmentStatus.InProgress) {
+			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
+		}
+
 		TimeSlot ts = appInSystem.getTimeSlot();
+		
 		boolean ret = appInSystem.cancelAppointment(today);
 		if(ret == true) {
 			ts.delete();
@@ -542,14 +552,7 @@ public class FlexiBookController {
 		}
 		//add by Mike end ---			
 		
-		// Note:
-		// Here all checks and actions have been performed by the state machine
-		// This if statement does a repeat check to the current date
-		// the reason why we leave this one is to guarantee the test from iteration 2 is still passed.
-		// (certain tests in iter 2 checks exception string)
-		if(date.equals(today) && appInSystem.getAppointmentStatus() != AppointmentStatus.InProgress) {
-			throw new InvalidInputException("Cannot cancel an appointment on the appointment date");
-		}
+
 		
 		return ret;
 
@@ -1389,7 +1392,9 @@ public class FlexiBookController {
 		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to update business information");
 		}
 		else if (currentUser instanceof Owner){
+			flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
+			//isTheBusinessHour(day,startTime).delete();
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
@@ -1603,6 +1608,7 @@ public class FlexiBookController {
 	 * this is an qurey method with returns the BusinessHour 
 	 * @return
 	 * @author mikewang
+	 * @author jedla later made a small change
 	 */
 	public static List<TOBusinessHour> getTOBusinessHour(){
 		ArrayList<TOBusinessHour> businessHours = new ArrayList<TOBusinessHour>();
@@ -1656,11 +1662,14 @@ public class FlexiBookController {
 	public static List<TOAppointment> getTOAppointmentForCurrentCustomer(){
 		ArrayList<TOAppointment> appointments = new ArrayList<TOAppointment>();
 		List<TOAppointment> Allappointments = getTOAppointment();
-		for(TOAppointment toApp: Allappointments) {
-			if(toApp.getCustomerName().equals(FlexiBookApplication.getCurrentLoginUser().getUsername())) {
-				appointments.add(toApp);
+		if(FlexiBookApplication.getCurrentLoginUser()!=null) {
+			for(TOAppointment toApp: Allappointments) {
+				if(toApp.getCustomerName().equals(FlexiBookApplication.getCurrentLoginUser().getUsername())) {
+					appointments.add(toApp);
+				}
 			}
 		}
+	
 		return appointments;
 		
 	}
@@ -1962,14 +1971,13 @@ public class FlexiBookController {
 		List<BusinessHour> bhList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour bh: bhList) {
 			// check weekday
-
 			if(dOfWeek .equals(bh.getDayOfWeek())) {
 				// if the appointment is on that day, compare if the time slot is included by business hour
 				if((timeSlot.getStartTime().toLocalTime().isAfter(bh.getStartTime().toLocalTime())
 						|| timeSlot.getStartTime().toLocalTime().equals(bh.getStartTime().toLocalTime()))
 						&&
-						timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
-						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime())) {
+						(timeSlot.getEndTime().toLocalTime().isBefore(bh.getEndTime().toLocalTime())
+						|| timeSlot.getEndTime().toLocalTime().equals(bh.getEndTime().toLocalTime()))) {
 					isDuringWorkTime = true;
 					break;
 				}
@@ -2391,28 +2399,37 @@ public class FlexiBookController {
 		LocalTime newStartTime = startTime.toLocalTime();
 		LocalTime newEndTime = endTime.toLocalTime();
 
-		if(hoursList.size() == 0){
+
+		if(!FlexiBookApplication.getFlexiBook().hasHours()) {
 			isOverlapping = false;
+
+		//if(hoursList.size() == 0){
+		//	isOverlapping = false;
+		//}
+
 		}
 
-		for(BusinessHour x: hoursList) {
-			// check weekday
-			if(x.getDayOfWeek() == day && business.indexOfBusinessHour(notToInclude) != business.indexOfBusinessHour(x)) {
-				LocalTime currentStartTime = x.getStartTime().toLocalTime();
-				LocalTime currentEndTime = x.getEndTime().toLocalTime();
-				// if the appointment is on that day, compare if the time slot is included by business hour
-				if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
-						(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
-					isOverlapping = true;
-					break;
+		else {
+			for(BusinessHour x: hoursList) {
+				// check weekday
+				if(x.getDayOfWeek() == day && business.indexOfBusinessHour(notToInclude) != business.indexOfBusinessHour(x)) {
+					LocalTime currentStartTime = x.getStartTime().toLocalTime();
+					LocalTime currentEndTime = x.getEndTime().toLocalTime();
+					// if the appointment is on that day, compare if the time slot is included by business hour
+					if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
+							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
+						isOverlapping = true;
+						break;
+					}
+					else {
+						isOverlapping = false;}
 				}
 				else {
-					isOverlapping = false;}
+					isOverlapping = false;
+				}
 			}
-			else {
-				isOverlapping = false;
-			}
-		}return isOverlapping;
+		}
+		return isOverlapping;
 	}
 
 	/**

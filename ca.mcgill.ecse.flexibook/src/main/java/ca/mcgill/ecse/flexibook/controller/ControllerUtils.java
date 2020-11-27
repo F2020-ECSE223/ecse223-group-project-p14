@@ -112,7 +112,7 @@ public class ControllerUtils {
 				ret = DayOfWeek.Wednesday;
 				break;
 			case THURSDAY:
-				ret = DayOfWeek.Tuesday;
+				ret = DayOfWeek.Thursday;
 				break;
 			case FRIDAY:
 				ret = DayOfWeek.Friday;
