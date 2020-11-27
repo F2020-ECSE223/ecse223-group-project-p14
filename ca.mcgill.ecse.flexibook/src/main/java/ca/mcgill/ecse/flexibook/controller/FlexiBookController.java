@@ -1413,6 +1413,7 @@ public class FlexiBookController {
 		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to update business information");
 		}
 		else if (currentUser instanceof Owner){
+
 			BusinessHour bh = isTheBusinessHour(day, startTime);
 			flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
@@ -2450,7 +2451,7 @@ public class FlexiBookController {
 					LocalTime currentEndTime = x.getEndTime().toLocalTime();
 					// if the appointment is on that day, compare if the time slot is included by business hour
 					if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
-							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
+							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))||(newEndTime.isAfter(currentEndTime)&&newStartTime.isBefore(currentStartTime))) {
 						isOverlapping = true;
 						break;
 					}
@@ -2544,7 +2545,7 @@ public class FlexiBookController {
 	 */
 	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
-		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getHours();
 		for(BusinessHour x: hoursList) {
 			if(x.getDayOfWeek().equals(day) && x.getStartTime().equals(startTime)) {
 				return x;
@@ -2607,6 +2608,67 @@ public class FlexiBookController {
 		}
 		return isFuture;
 
+	}
+	
+	/**
+	 * This method wraps the dayOfWeek type for the FlexiBookPage, where we need to go from a string to a dayOfWeek
+	 * @param day
+	 * @return
+	 * @author jedla
+	 */
+	
+	public static DayOfWeek getDayFromString(String day) {
+		DayOfWeek dw = null;
+		if (day.equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (day.equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (day.equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (day.equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (day.equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (day.equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (day.equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		return dw;
+	}
+	
+	/**
+	 * Wraps the DayOfWeek type, FlexiBookPage needs to have a string instead of a dayOfWeek
+	 * @param day
+	 * @return
+	 */
+	
+	public static String dayToString(DayOfWeek day) {
+		String dw = null;
+		if(day.equals(DayOfWeek.Monday)) {
+			dw = "Monday";
+		}
+		else if (day.equals(DayOfWeek.Tuesday)) {
+			dw = "Tuesday";
+		}
+		else if (day.equals(DayOfWeek.Wednesday)) {
+			dw = "Wednesday";
+		}
+		else if (day.equals(DayOfWeek.Thursday)) {
+			dw = "Thursday";
+		}
+		else if (day.equals(DayOfWeek.Friday)) {
+			dw = "Friday";	
+		}
+		else if (day.equals(DayOfWeek.Saturday)) {
+			dw = "Saturday";
+		}
+		else if (day.equals(DayOfWeek.Sunday)) {
+			dw = "Sunday";
+		}
+		return dw;
+	
+		
 	}
 
 
