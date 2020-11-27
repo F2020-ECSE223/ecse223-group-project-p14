@@ -189,6 +189,11 @@ public class FlexiBookPage extends JFrame {
 	private JLabel adress;
 	private JLabel phoneNumber;
 	private JLabel email;
+	private JLabel viewBusinessName;
+	private JLabel viewAdress;
+	private JLabel viewPhoneNumber;
+	private JLabel viewEmail;
+	
 
 	//update and remove business hours components
 	private JButton updateBusinessHour;
@@ -2131,7 +2136,22 @@ public class FlexiBookPage extends JFrame {
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
 		calendarOwnerPanel.add(calendarWeeklyViewPanel);
 		calendarWeeklyViewPanel.setBounds(400,0,700,700);
-
+		
+		viewBusinessName = new JLabel("");
+		calendarOwnerPanel.add(viewBusinessName);
+		viewBusinessName.setBounds(50, 400, 300, 25);
+		viewAdress = new JLabel("");
+		calendarOwnerPanel.add(viewAdress);
+		viewAdress.setBounds(50, 450, 300, 25);
+		viewPhoneNumber = new JLabel("");
+		calendarOwnerPanel.add(viewPhoneNumber);
+		viewPhoneNumber.setBounds(50, 500, 300, 25);
+		viewAdress = new JLabel(" ");
+		calendarOwnerPanel.add(viewAdress);
+		viewAdress.setBounds(50, 550, 300, 25);
+		
+		
+		
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
 		calendarMonthlyViewPanel.setLayout(null);
@@ -3214,6 +3234,13 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	private void refreshBusinessDetailsCustomer(){
+		viewBusinessName.setText(FlexiBookController.getBusinessInfo().getName());
+		viewPhoneNumber.setText(FlexiBookController.getBusinessInfo().getPhoneNumber());
+		viewEmail.setText(FlexiBookController.getBusinessInfo().getEmail());
+		viewAdress.setText(FlexiBookController.getBusinessInfo().getAdress());
+	}
+	
 	//refresh frame
 	private void refreshData() {
 		pack();
@@ -4201,6 +4228,7 @@ public class FlexiBookPage extends JFrame {
 		previousPanel = calendarOwnerPanel;
 		//refresh page
 		refreshCalendarWeeklyView();
+		refreshBusinessDetailsCustomer();
 		refreshData();
 	}
 
