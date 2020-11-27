@@ -1030,6 +1030,7 @@ public class FlexiBookController {
 //			throw new InvalidInputException("Cannot start an appointment before start time.");
 //		}
 		Boolean ret = a.startAppointment(currentDate, currentTime);
+
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
@@ -1053,13 +1054,13 @@ public class FlexiBookController {
 //		if(!a.getAppointmentStatusFullName().equals("InProgress")){
 //			throw new InvalidInputException("Cannot end an appointment before it starts.");
 //		}
+
 		TimeSlot ts = a.getTimeSlot();	
 		Boolean ret = a.finishedAppointment();
 		if(ret == true) {
 			ts.delete();
 		}
-		
-		
+	
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
@@ -1777,10 +1778,12 @@ public class FlexiBookController {
 				}
 				sc.addService(comboItemTO);
 			}
+
 //			ComboItem mainService = s.getMainService();
 //			TOComboItem toMainService = new TOComboItem(true, mainService.getService().getName(), 
 //																	sc);
 			
+
 			
 			serviceCombosTO.add(sc);
 		}
@@ -2241,9 +2244,12 @@ public class FlexiBookController {
 	 */
 	public static String getCurrentLogInUsername() {
 		if (FlexiBookApplication.getCurrentLoginUser() == null) {
-			return "";
+			System.out.println("if");
+			return "owner"; 
 		}
 		else {
+			System.out.println("else");
+			System.out.println(FlexiBookApplication.getCurrentLoginUser().getUsername());
 			return FlexiBookApplication.getCurrentLoginUser().getUsername();
 		}
 	}
@@ -2606,8 +2612,3 @@ public class FlexiBookController {
 
 
 }
-
-
-
-
-
