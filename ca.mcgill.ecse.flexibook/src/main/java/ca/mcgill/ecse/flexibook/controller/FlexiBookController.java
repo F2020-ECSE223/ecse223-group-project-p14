@@ -2089,7 +2089,7 @@ public class FlexiBookController {
 		return true;
 	}
 
-	/**
+	/** 
 	 * This method is a helper method determining the actual time of a appointment
 	 * It will only be used for a serviceCombo.<p>
 	 * This is implemented because customer can choose to not have certain optional services in a combo.
@@ -2245,12 +2245,9 @@ public class FlexiBookController {
 	 */
 	public static String getCurrentLogInUsername() {
 		if (FlexiBookApplication.getCurrentLoginUser() == null) {
-			System.out.println("if");
-			return "owner"; 
+			return ""; 
 		}
 		else {
-			System.out.println("else");
-			System.out.println(FlexiBookApplication.getCurrentLoginUser().getUsername());
 			return FlexiBookApplication.getCurrentLoginUser().getUsername();
 		}
 	}
