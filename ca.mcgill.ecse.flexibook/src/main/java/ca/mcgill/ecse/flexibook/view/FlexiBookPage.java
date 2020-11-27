@@ -24,12 +24,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.net.URL;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -44,19 +42,13 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
 
 import javax.swing.*;
-import javax.imageio.ImageIO;
 
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 
-import ca.mcgill.ecse.flexibook.model.Service;
-import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
-import ca.mcgill.ecse.flexibook.model.Owner;
-import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
-import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOCustomer;
 import ca.mcgill.ecse.flexibook.controller.TOService;
