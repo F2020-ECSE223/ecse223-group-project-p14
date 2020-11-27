@@ -1093,6 +1093,7 @@ public class FlexiBookPage extends JFrame {
 	
 
 	/**
+	 * Initialize the Owner Account Page
 	 * @author Catherine
 	 */
 	private void initInfoOwnerPanel(){
@@ -1210,7 +1211,7 @@ public class FlexiBookPage extends JFrame {
 	}
 
 	/** 
-	 * 
+	 * Initialize the Customer Account Page
 	 * @author Catherine
 	 */
 	private void initInfoCustomerPanel(){
@@ -1368,7 +1369,6 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.add(errorMessage);
 		infoCustomerPanel.add(updateSuccessful);
 		
-		
 		saveAccountButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				saveCustomerAccountInfoActionPerformed(evt);
@@ -1381,7 +1381,6 @@ public class FlexiBookPage extends JFrame {
 			}
 		});
 		
-
 	}
 
 
