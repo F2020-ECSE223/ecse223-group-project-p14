@@ -48,7 +48,15 @@ import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 
+
+import ca.mcgill.ecse.flexibook.model.Service;
+import ca.mcgill.ecse.flexibook.model.TimeSlot;
+//import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+import ca.mcgill.ecse.flexibook.model.Owner;
+import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
+import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
+import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOCustomer;
@@ -133,6 +141,8 @@ public class FlexiBookPage extends JFrame {
 	private int calendarDay;
 	private JLabel monthNameLabel;
 	private ArrayList<JLabel> dayLabelList = new ArrayList<JLabel>();
+	private String eca;
+	private JLabel ecaLabel;
 
 	//log in page buttons
 	private JButton signUpButton;
@@ -291,6 +301,7 @@ public class FlexiBookPage extends JFrame {
 	private JComboBox<String> existingCb;
 	private JLabel errorMsgLabel;
 	private JButton cancelAppB;
+	private JLabel noShowLabel;
 	
 	private double initLogInPageScalingFactor = 740/490;
 	/**
@@ -1943,7 +1954,7 @@ public class FlexiBookPage extends JFrame {
 		});
 		
 		
-
+		refreshData();
 
 	}
 
@@ -2765,6 +2776,10 @@ public class FlexiBookPage extends JFrame {
 		addAppForComboB.setBounds(415, 186, 250, 23);
 		bookAppointmentPanel.add(addAppForComboB);
 		
+		noShowLabel = new JLabel("");
+		noShowLabel.setBounds(750, 120, 300, 23);
+		bookAppointmentPanel.add(noShowLabel);
+		
 		serviceNameT = new JTextField();
 		serviceNameT.setColumns(10);
 		serviceNameT.setBounds(113, 12, 120, 27);
@@ -2893,6 +2908,8 @@ public class FlexiBookPage extends JFrame {
 		refreshB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				refreshAppointmentPage();
+				existingCb = new JComboBox<String>();
+				existingCb.setBounds(113, 50, 120, 27);
 				if (!FlexiBookController.getTOServices().isEmpty()) {
 					for (TOService service:FlexiBookController.getTOServices()) {
 						existingCb.addItem(service.getName());
@@ -3055,13 +3072,6 @@ public class FlexiBookPage extends JFrame {
 				pickDateForSelectAppPerformed(evt);
 			}
 		});
-        // will be using this later
-//        try {
-//			System.out.println(newformatter.valueToString(newTimeSpinner.getValue()));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
 
 	}
@@ -3275,7 +3285,7 @@ public class FlexiBookPage extends JFrame {
 			errorMessageServiceCombo = e.getMessage();
 		}
 		
-		refreshServiceComboData();
+		refreshData();
 		
 	
 		
@@ -3292,7 +3302,7 @@ public class FlexiBookPage extends JFrame {
 		} catch (InvalidInputException e) {
 			errorMessageServiceCombo = e.getMessage();
 		}
-		refreshServiceComboData();
+		refreshData();
 	}
 	
 	public void defineServiceComboButtonActionPerformed(ActionEvent evt) {
@@ -3316,7 +3326,7 @@ public class FlexiBookPage extends JFrame {
 			errorMessageServiceCombo = e.getMessage();
 		}
 		
-		refreshServiceComboData();
+		refreshData();
 	}
 	
 	
@@ -3329,6 +3339,10 @@ public class FlexiBookPage extends JFrame {
 		updateMainServiceComboBox.removeAllItems();
 		updateServiceComboComboBox.removeAllItems();
 		deleteServiceComboComboBox.removeAllItems();
+		newMandatoryComboItemListModel.removeAllElements();
+		updateMandatoryComboItemListModel.removeAllElements();
+		newComboListModel.removeAllElements();
+		updateComboListModel.removeAllElements();
 		updateModelModifyServiceCombo();
 		
 		if (!FlexiBookController.getTOServices().isEmpty()) {
@@ -3354,6 +3368,16 @@ public class FlexiBookPage extends JFrame {
 				updateServiceComboComboBox.addItem(toServiceCombo.getName());
 			}
 		}
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				newMandatoryComboItemListModel.addElement(service.getName());
+				updateMandatoryComboItemListModel.addElement(service.getName());
+				newComboListModel.addElement(service.getName());
+				updateComboListModel.addElement(service.getName());
+			}
+		}
+		
 		
 		
 		
@@ -3390,22 +3414,22 @@ public class FlexiBookPage extends JFrame {
 	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
 		errorMessageBussinessHour = " "; 
-		DayOfWeek dw = null;
-		if (addDayOfWeek.getSelectedItem().equals("Monday")) {
-			dw = DayOfWeek.Monday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
-			dw= DayOfWeek.Tuesday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
-			dw = DayOfWeek.Wednesday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
-			dw = DayOfWeek.Thursday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
-			dw = DayOfWeek.Friday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
-			dw = DayOfWeek.Saturday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
-			dw = DayOfWeek.Sunday;
-		}
+//		DayOfWeek dw = null;
+//		if (addDayOfWeek.getSelectedItem().equals("Monday")) {
+//			dw = DayOfWeek.Monday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+//			dw= DayOfWeek.Tuesday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+//			dw = DayOfWeek.Wednesday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+//			dw = DayOfWeek.Thursday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+//			dw = DayOfWeek.Friday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+//			dw = DayOfWeek.Saturday;
+//		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+//			dw = DayOfWeek.Sunday;
+//		}
 		
 		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
         DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
@@ -3419,7 +3443,7 @@ public class FlexiBookPage extends JFrame {
 		}
 		
 		try {
-			FlexiBookController.setUpBusinessHours(stringToTime(startTimeString), stringToTime(endTimeString), dw);
+			FlexiBookController.setUpBusinessHours(stringToTime(startTimeString), stringToTime(endTimeString), FlexiBookController.getDayFromString(addDayOfWeek.getSelectedItem().toString()));
 			errorMessageBussinessHour = "Success!";
 		} catch (InvalidInputException e) {
 			errorMessageBussinessHour = e.getMessage();
@@ -3445,23 +3469,24 @@ public class FlexiBookPage extends JFrame {
 	
 	private void updateBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
 		errorMessageBussinessHour = " "; 
-		DayOfWeek dw = null;
+		//DayOfWeek dw = null;
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
-		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
-			dw = DayOfWeek.Monday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Tuesday")) {
-			dw= DayOfWeek.Tuesday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Wednesday")) {
-			dw = DayOfWeek.Wednesday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Thursday")) {
-			dw = DayOfWeek.Thursday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Friday")) {
-			dw = DayOfWeek.Friday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Saturday")) {
-			dw = DayOfWeek.Saturday;
-		} else if (updateDayOfWeek.getSelectedItem().equals("Sunday")) {
-			dw = DayOfWeek.Sunday;
-		}
+		
+//		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
+//			dw = DayOfWeek.Monday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Tuesday")) {
+//			dw= DayOfWeek.Tuesday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Wednesday")) {
+//			dw = DayOfWeek.Wednesday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Thursday")) {
+//			dw = DayOfWeek.Thursday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Friday")) {
+//			dw = DayOfWeek.Friday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Saturday")) {
+//			dw = DayOfWeek.Saturday;
+//		} else if (updateDayOfWeek.getSelectedItem().equals("Sunday")) {
+//			dw = DayOfWeek.Sunday;
+//		}
 		
 		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
         DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
@@ -3476,7 +3501,7 @@ public class FlexiBookPage extends JFrame {
 		
 		try {
 			FlexiBookController.updateBusinessHour(
-					FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getStartTime(),dw,
+					FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getStartTime(),FlexiBookController.getDayFromString(updateDayOfWeek.getSelectedItem().toString()),
 					stringToTime(startTimeString), stringToTime(endTimeString));
 			//addBHSuccess = "Success!";
 		} catch (InvalidInputException e) {
@@ -4136,6 +4161,7 @@ public class FlexiBookPage extends JFrame {
 		//set this panel as the current panel
 		previousPanel = businessHoursPanel;
 		//refresh page
+		refreshBusinessHourData();
 		refreshData();
 	}
 
@@ -4172,6 +4198,7 @@ public class FlexiBookPage extends JFrame {
 		adress.setText("Adress: " +FlexiBookController.getBusinessInfo().getAdress());
 
 		//refresh page
+		refreshBusinessSetUp();
 		refreshData();
 	}
 
@@ -4550,11 +4577,6 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(action);
-		System.out.println(optservicename);
 		refreshData();
 		refreshAppointmentPage();
 		
@@ -4589,12 +4611,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
     	
-    
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(newDate);
-		System.out.println(newtime);
+
 		refreshData();
 		refreshAppointmentPage();
 		
@@ -4784,10 +4801,7 @@ public class FlexiBookPage extends JFrame {
 		
 		refreshData();
 		refreshAppointmentPage();
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(optServices);
+
 		
 	}
 	
@@ -4840,22 +4854,29 @@ public class FlexiBookPage extends JFrame {
 		List<TOAppointment> appointmentTOList = FlexiBookController.getTOAppointment();
 		TOAppointment specificTOAppointment = appointmentTOList.get(numAppointment);
 		TOTimeSlot specificTOTimeSlot = specificTOAppointment.getTimeSlot();
-		String eca = "";
+		eca = " ";
 		if(command.equals("start")){
 			try{
-				FlexiBookController.startAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.startAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				if(ret == false) {
+					eca = eca + "Cannot start an appointment before start time.";
+				}
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
 		} else if(command.equals("stop")){
 			try{
-				FlexiBookController.endAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.endAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				if(ret == false) {
+					eca = eca + "Cannot end an appointment before it starts.";
+				}
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
 		} else if(command.equals("noShow")){
 			try{
-				FlexiBookController.registerNoShowForApp(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.registerNoShowForApp(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
@@ -4887,10 +4908,7 @@ public class FlexiBookPage extends JFrame {
 			String startDT = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime();
 			String endDT = appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
 			if(startDT.equals(endDT)) {
-				
-
-//				downTime = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime() + "->"
-//						+ appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+				// do nothing
 			}else {
 				downTime = startDT + "->" + endDT;
 			}
@@ -4904,6 +4922,9 @@ public class FlexiBookPage extends JFrame {
 		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
 		viewAppForCurCustomerScrollPane.setPreferredSize(d);
 		
+		for (TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+			System.out.println(ts);
+		}
 		
 		// Show error Message
 		if(appSectionError.equals(" ")) {
@@ -4913,6 +4934,14 @@ public class FlexiBookPage extends JFrame {
 			errorMsgLabel.setText(appSectionError);
 			errorMsgLabel.setForeground(Color.RED);
 		}
+		
+		int noshowcount =0;
+		for(TOCustomer toc: FlexiBookController.getTOCustomers()) {
+			if(toc.getUserName().equals( FlexiBookController.getCurrentLogInUsername())) {
+				noshowcount = toc.getNoShowCount();
+			}
+		}
+		noShowLabel.setText("You have " + noshowcount + " no-show count");
 		
 		appSectionError = " ";
 		
@@ -4972,25 +5001,25 @@ public class FlexiBookPage extends JFrame {
 			int n = 0;
 			List<Integer> dayList = new ArrayList<Integer>();
 			for(TOBusinessHour bh: bhList){
-				if(bh.getDayOfWeek().equals(DayOfWeek.Monday)){
+				if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Monday")){
 					n = 0;
 					dayList.add(0);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Tuesday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Tuesday")){
 					n = 1;
 					dayList.add(1);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Wednesday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Wednesday")){
 					n = 2;
 					dayList.add(2);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Thursday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Thursday")){
 					n = 3;
 					dayList.add(3);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Friday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Friday")){
 					n = 4;
 					dayList.add(4);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Saturday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Saturday")){
 					n = 5;
 					dayList.add(5);
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Sunday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Sunday")){
 					n = 6;
 					dayList.add(6);
 				}
@@ -5220,6 +5249,12 @@ public class FlexiBookPage extends JFrame {
 					
 				}
 			}
+			ecaLabel = new JLabel(eca);
+			ecaLabel.setBounds(0, 0, 200, 23);
+			ecaLabel.setForeground(Color.RED);
+			calendarWeeklyViewPanel.add(ecaLabel);
+			
+			
 			calendarWeeklyViewPanel.add(calendarAppointments);
 			calendarAppointments.setBounds(0,0,700,700);
 			refreshData();
