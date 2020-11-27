@@ -459,6 +459,7 @@ public class Appointment implements Serializable
 		Time newEndTime = Time.valueOf(newStartTime.toLocalTime().plusMinutes(durationMinutes));
 		TimeSlot timeSlot = new TimeSlot(newDate, newStartTime, newDate, newEndTime, getFlexiBook());
 		setTimeSlot(timeSlot);
+		oldTimeSlot.delete();
   }
 
 
@@ -544,6 +545,7 @@ public class Appointment implements Serializable
 					newEndTime, getFlexiBook());
 			
 			setTimeSlot(timeSlot);
+			oldTimeSlot.delete();
 
 	  }else if(getBookableService() instanceof Service) {
 		  Service s = null;
@@ -617,22 +619,24 @@ public class Appointment implements Serializable
 
 		if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 			getFlexiBook().removeTimeSlot(timeSlot);
+			timeSlot.delete();
 			return false;
 		}
+		timeSlot.delete();
 
 	   
     //--------------------------------- Implemented by Mike Wang & -----------------------------------------------------------------
     List<TimeSlot> vacations = getFlexiBook().getBusiness().getVacation();
     List<TimeSlot> holidays = getFlexiBook().getBusiness().getHolidays();
     //check if overlapping with other appointment
-		for(Appointment a : getFlexiBook().getAppointments()){
-			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
-					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
-					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
-					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
-				return false;
-			}
-		}
+//		for(Appointment a : getFlexiBook().getAppointments()){
+//			if(a.getTimeSlot().getStartDate().equals(getTimeSlot().getStartDate()) 
+//					&& getTimeSlot().getStartTime().before(a.getTimeSlot().getStartTime())  
+//					&& getTimeSlot().getEndTime().after(a.getTimeSlot().getStartTime())
+//					&& (getFlexiBook().getAppointments().indexOf(a) != getFlexiBook().getAppointments().indexOf(this))){
+//				return false;
+//			}
+//		}
 	// check vacations
 		for (TimeSlot vacation: vacations) {
 			if(vacation.getStartDate().equals(getTimeSlot().getStartDate()) 
@@ -668,7 +672,8 @@ public class Appointment implements Serializable
    public boolean hasReachedStartTime(Date date, Time time){
     Time tempTime = getTimeSlot().getStartTime();
 		boolean check = false;
-		if ((time.after(tempTime) || time.equals(tempTime)) && date.equals(getTimeSlot().getStartDate())) {
+		//if ((time.after(tempTime) || time.equals(tempTime)) && date.equals(getTimeSlot().getStartDate())) {
+		if ((time.toLocalTime().isAfter(tempTime.toLocalTime()) || time.equals(tempTime)) && !date.before(getTimeSlot().getStartDate())) {
 			check = true;
 		}
 		return check;
@@ -776,8 +781,10 @@ public class Appointment implements Serializable
 			int oldIndex = getFlexiBook().indexOfTimeSlot(oldTimeSlot);
 			if (!isInGoodTiming(timeSlot, index, oldIndex, this.getAppointmentStatus(),currentDate, currentTime)) {
 				getFlexiBook().removeTimeSlot(timeSlot);
+				timeSlot.delete();
 				return false;
 			}
+			timeSlot.delete();
 			
 		}else {
 
@@ -803,8 +810,10 @@ public class Appointment implements Serializable
 						removeChosenItem(item);
 					}
 				}
+				timeSlot.delete();
 				return false;
 			}
+			timeSlot.delete();
 
 		}
 		
