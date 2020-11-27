@@ -890,16 +890,20 @@ public class FlexiBookPage extends JFrame {
 		//initialize log out panel
 		initLogOutOwnerPanel();
 
-		//initialize image icons
-		try{
-			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
-			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
-			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
-			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
-		} catch(Exception exp) {
-			error += exp.getMessage();
-		}
+//		//initialize image icons
+//		try{
+//			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+//			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+//			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+//			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+//		} catch(Exception exp) {
+//			error += exp.getMessage();
+//		}
 		
+		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
+		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
+		logOutIconDark = new ImageIcon("src/main/resources/logOutIconDark.jpg");
+		logOutIconLight = new ImageIcon("src/main/resources/logOutIconLight.jpg");
 		//initialize info button
 		infoOwnerButton = new JButton();
 		infoOwnerButton.setIcon(infoIconDark);
@@ -1046,15 +1050,19 @@ public class FlexiBookPage extends JFrame {
 		initLogOutCustomerPanel();
 
 		//initialize image icons
-		try{
-			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
-			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
-			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
-			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
-		} catch(Exception exp) {
-			error += exp.getMessage();
-		}
-		
+//		try{
+//			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
+//			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
+//			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
+//			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
+//		} catch(Exception exp) {
+//			error += exp.getMessage();
+//		}
+//		
+		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
+		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
+		logOutIconDark = new ImageIcon("src/main/resources/logOutIconDark.jpg");
+		logOutIconLight = new ImageIcon("src/main/resources/logOutIconLight.jpg");
 		//initialize info button
 		infoCustomerButton = new JButton();
 		infoCustomerButton.setBorder(BorderFactory.createEmptyBorder());
@@ -1133,22 +1141,27 @@ public class FlexiBookPage extends JFrame {
 	//initialize info panel for owner
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
+		//JLabel infoUserLabelIcon = new JLabel();
+		//infoUserLabelIcon.setText("");
 		infoOwnerPanel.setLayout(null);
 		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
 		infoOwnerPanel.setBackground(Color.WHITE);
 		infoOwnerPanel.setOpaque(true);
 		infoOwnerPanel.setForeground(Color.darkGray);
 		
-		//initialize image icon
-		try{
-			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
+//		//initialize image icon
+//		try{
+//			infoUserIcon = new ImageIcon(getClass().getResource(("src/main/java/user.png")));
+//		
+//		} catch(Exception exp) {
+//			error = exp.getMessage();
+//		}
 		
-		} catch(Exception exp) {
-			error = exp.getMessage();
-		}
+//		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+//		
 		
+		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
-		
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
 		infoUserLabel.setBounds(445, 50, 200, 200);
@@ -1255,16 +1268,17 @@ public class FlexiBookPage extends JFrame {
 		infoCustomerPanel.setOpaque(true);
 		infoCustomerPanel.setForeground(Color.darkGray);
 		
-		//initialize image icon
-		try{
-			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
-
-		} catch(Exception exp) {
-			System.out.println(exp.getMessage());
-		}
-
+//		//initialize image icon
+//		try{
+//			infoUserIcon = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/user.png?token=AKNITXCFNOYTLCI5UYHGA227YXMVU")));
+//
+//		} catch(Exception exp) {
+//			System.out.println(exp.getMessage());
+//		}
+//
+//		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
-
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
 		infoUserLabel.setBounds(445, 50, 200, 200);
@@ -3541,6 +3555,7 @@ public class FlexiBookPage extends JFrame {
 
 	//method called when owner log out button pressed
 	private void logOutOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		logOutOwnerButton.setIcon(logOutIconLight);
 		logOutErrorMessage = null; 
 		logOutSuccessMessage = null; 
 		try{
@@ -3574,6 +3589,7 @@ public class FlexiBookPage extends JFrame {
 	//method called when customer log out button pressed
 	private void logOutCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
+		logOutCustomerButton.setIcon(logOutIconLight);
 		logOutErrorMessage = null; 
 		logOutSuccessMessage = null; 
 		try{
