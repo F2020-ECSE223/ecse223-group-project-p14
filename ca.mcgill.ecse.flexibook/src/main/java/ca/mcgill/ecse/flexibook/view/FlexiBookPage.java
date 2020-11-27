@@ -1209,7 +1209,8 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
-	/**
+	/** 
+	 * 
 	 * @author Catherine
 	 */
 	private void initInfoCustomerPanel(){
@@ -4457,33 +4458,44 @@ public class FlexiBookPage extends JFrame {
 		error = null;
 		successful = null;
 
-		//pop up confirm message?
+		Object[] options = {"Confirm Delete", "Cancel"};
+		int n = JOptionPane.showOptionDialog(frame,
+				"Are you sure you want to delete your account? \n" + "This action cannot be undone.",
+				"Warning",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE,
+				null,     //do not use a custom Icon
+				options,  //the titles of buttons
+				options[1]); //default button title
+		if (n == JOptionPane.YES_OPTION) {
+			try {
+				FlexiBookController.deleteCustomerAccount(FlexiBookController.getCurrentLogInUsername()); //if we need to see error messages, get the username textbox content and refresh
+				successful = "Success!";
+				//reset previous button to dark grey background
+				previousButton.setBorder(new LineBorder(darkGrey));
+				previousButton.setBackground(darkGrey);
+				previousButton.setOpaque(true);
+				previousButton.setForeground(Color.WHITE);
+				if(previousButton.equals(infoCustomerButton)){
+					previousButton.setIcon(infoIconDark);
+				} else if(previousButton.equals(logOutCustomerButton)){
+					previousButton.setIcon(logOutIconDark);
+				}
+				//remove previous panels
+				getContentPane().remove(previousPanel);
+				getContentPane().remove(topPanelCustomer);
+				//set new panel
+				getContentPane().add(LoginPane);
 
-		try {
-			FlexiBookController.deleteCustomerAccount(FlexiBookController.getCurrentLogInUsername()); //if we need to see error messages, get the username textbox content and refresh
-			successful = "Success!";
-			//reset previous button to dark grey background
-			previousButton.setBorder(new LineBorder(darkGrey));
-			previousButton.setBackground(darkGrey);
-			previousButton.setOpaque(true);
-			previousButton.setForeground(Color.WHITE);
-			if(previousButton.equals(infoCustomerButton)){
-				previousButton.setIcon(infoIconDark);
-			} else if(previousButton.equals(logOutCustomerButton)){
-				previousButton.setIcon(logOutIconDark);
+			} catch (InvalidInputException e) {
+				error = e.getMessage();
 			}
-			//remove previous panels
-			getContentPane().remove(previousPanel);
-			getContentPane().remove(topPanelCustomer);
-			//set new panel
-			getContentPane().add(LoginPane);
 
-		} catch (InvalidInputException e) {
-			error = e.getMessage();
+			refreshCustomerAccount();
 		}
-
-		refreshCustomerAccount();
-
+		else if (n == JOptionPane.NO_OPTION) {
+			refreshCustomerAccount();
+		}
 	}
 	
 
