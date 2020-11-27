@@ -16,8 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import org.checkerframework.checker.formatter.qual.Format;
-import org.checkerframework.common.value.qual.StringVal;
+//import org.checkerframework.checker.formatter.qual.Format;
+//import org.checkerframework.common.value.qual.StringVal;
 
 //import com.jgoodies.forms.builder.ListViewBuilder;
 

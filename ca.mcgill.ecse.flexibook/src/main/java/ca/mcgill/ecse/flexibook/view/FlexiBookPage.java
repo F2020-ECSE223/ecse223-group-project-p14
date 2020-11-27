@@ -85,6 +85,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel customerSignUpPanel;
 	//panels for calendar tab
 	private JPanel calendarWeeklyViewPanel;
+	private JScrollPane calendarScrollPanel;
 	private JPanel calendarMonthlyViewPanel;
 	private JPanel calendarMonthlyViewGridPanel;
 	private JPanel calendarMonthlyViewTopPanel;
@@ -1664,6 +1665,8 @@ public class FlexiBookPage extends JFrame {
 		calendarWeeklyViewPanel = new JPanel();
 		calendarWeeklyViewPanel.setLayout(null);
 		calendarWeeklyViewPanel.setPreferredSize(new Dimension(700,700));
+		calendarScrollPanel = new JScrollPane();
+		calendarScrollPanel.setViewportView(calendarWeeklyViewPanel);
 		//create calendar business slot panel
 		calendarBusinessSlots = new JPanel();
 		calendarBusinessSlots.setLayout(null);
@@ -1800,8 +1803,8 @@ public class FlexiBookPage extends JFrame {
 		calendarWeeklyViewPanel.setBackground(Color.WHITE);
 		calendarWeeklyViewPanel.setOpaque(true);
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
-		calendarOwnerPanel.add(calendarWeeklyViewPanel);
-		calendarWeeklyViewPanel.setBounds(400,0,700,700);
+		calendarOwnerPanel.add(calendarScrollPanel);
+		calendarScrollPanel.setBounds(400,0,700,700);
 
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
