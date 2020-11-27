@@ -21,7 +21,7 @@ class Appointment{
   	updateAppointmentContent(String action, String optService, Date currentDate, Time currentTime)
   	[isGoodForContentUpdate(action, optService, currentDate,currentTime ) && !isOnSameDayAsAppointment(currentDate) ]/{doUpdateContent(action, optService);}->Booked;
   
-  	startAppointment(Date currentDate, Time currentTime)[hasReachedStartTime(currentDate, currentTime)] -> InProgress;
+  	startAppointment(Date currentDate, Time currentTime)[hasReachedStartTime(currentDate, currentTime)]/{incrementShow();} -> InProgress;
 
   	registeredNoShow()/{incrementNoShow();} -> FinalState; 
  
@@ -652,4 +652,16 @@ class Appointment{
 
 		return isInFuture;
   }
+  
+     /**
+    * Increments the ShowCount of the customer assciated to the account
+    * 
+    * @author mikewang
+    */
+   
+   public void incrementShow() {
+	   int showCount = this.getCustomer().getShowCount();
+	   showCount++;
+	   this.getCustomer().setShowCount(showCount);
+   }
  }
