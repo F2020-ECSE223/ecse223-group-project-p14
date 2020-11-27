@@ -531,23 +531,12 @@ public class FlexiBookPage extends JFrame {
 			});		
 	}
 	
-	//initialize the business information set-up
+	
+	/**
+	 * initialize the business information set-up
+	 * @author mikewang & Jedla
+	 */
 	private void initSetBusinessInfo() {
-
-		//JLayeredPane lpane = new JLayeredPane();
-		//backgroundPanel = new JPanel();
-		//lpane.setBounds(0,0,1100,740);
-		//backgroundPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		//backgroundPanel.setLayout(null);
-		// backgroundPanel.setPreferredSize(new Dimension(1100,740));
-		//backgroundPanel.setBounds(0, 0, 1100, 740);
-
-		//		JLabel initSetBusinesslabel = new JLabel("");
-		//		initSetBusinesslabel.setBounds(0, 0, 1100, 740);
-		//		initSetBusinesslabel.setVerticalAlignment(SwingConstants.TOP);
-		//		initSetBusinesslabel.setIcon(new ImageIcon("src/main/resources/bg.jpg"));
-		//backgroundPanel.add(initSetBusinesslabel);
-		//backgroundPanel.setOpaque(true);
 
 		setUpInPanel = new JPanel();
 		setUpInPanel.setBackground(Color.DARK_GRAY);
@@ -574,8 +563,6 @@ public class FlexiBookPage extends JFrame {
 		initSetUpBusinessInfoBackgroundLabel.setIcon(new ImageIcon("src/main/resources/businessSetUpInfo_3.png"));
 		backgroundPanel.add(initSetUpBusinessInfoBackgroundLabel);
 		
-
-
 		//setUpInPanel.setOpaque(true);
 		setUpInPanel.add(setUpBusinessInfoLabel);
 
@@ -588,9 +575,6 @@ public class FlexiBookPage extends JFrame {
 		
 		errorMessageSetUpInfo = new JLabel();
 		errorMessageSetUpInfo.setBounds(575,400,89,23);
-
-		//lpane.add(backgroundPanel, 0, 0);
-		//lpane.add(setUpInPanel, 1, 0);
 
 		//Setting the UI for setting business information
 		JLabel businessNameSet = new JLabel("Business name");
@@ -663,158 +647,11 @@ public class FlexiBookPage extends JFrame {
 
 	}
 	
-	
-//	/**
-//	 * @TODO For Mike Login Owner page
-//	 */
-//	//initialize Login Owner page
-//	private void initLogInOwnerPanel(){
-////		infoOwnerPanel = new JPanel();
-////		infoLabel = new JLabel("Info Page");
-////		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
-////		infoOwnerPanel.setBackground(Color.WHITE);
-////		infoOwnerPanel.setOpaque(true);
-////		infoOwnerPanel.setForeground(Color.WHITE);
-////		infoOwnerPanel.add(infoLabel);
-//		
-//		// Mike add this start --- 
-////		setBackground(Color.WHITE);
-////		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-////		setBounds(100, 100, 729, 476);
-//		LoginPane = new JPanel();
-//		LoginPane.setBackground(Color.WHITE);
-//		LoginPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-//		setContentPane(LoginPane);
-//		LoginPane.setLayout(null);
-//		
-//		JPanel panel = new JPanel();
-//		panel.setBackground(Color.DARK_GRAY);
-//		panel.setBounds(0, 0, 346, 490);
-//		LoginPane.add(panel);
-//		panel.setLayout(null);
-//		
-//		JLabel lblNewLabel = new JLabel("KeepToo");
-//		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-//		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-//		lblNewLabel.setForeground(new Color(240, 248, 255));
-//		lblNewLabel.setBounds(139, 305, 84, 27);
-//		panel.add(lblNewLabel);
-//		
-////		JLabel label = new JLabel("");
-////		
-////		label.addMouseListener(new MouseAdapter() {
-////			@Override
-////			public void mousePressed(MouseEvent e) {
-////				
-////				 xx = e.getX();
-////			     xy = e.getY();
-////			}
-////		});
-////		label.addMouseMotionListener(new MouseMotionAdapter() {
-////			@Override
-////			public void mouseDragged(MouseEvent arg0) {
-////				
-////				int x = arg0.getXOnScreen();
-////	            int y = arg0.getYOnScreen();
-////	            FlexiBookPage.this.setLocation(x - xx, y - xy);  
-////			}
-////		});
-////		label.setBounds(-38, 0, 420, 275);
-////		label.setVerticalAlignment(SwingConstants.TOP);
-////		// label.setIcon(new ImageIcon(FlexiBookPage.class.getResource("/images/bg.jpg")));
-////		panel.add(label);
-//		
-//		JLabel lblWeGotYou = new JLabel("....We got you....");
-//		lblWeGotYou.setHorizontalAlignment(SwingConstants.CENTER);
-//		lblWeGotYou.setForeground(new Color(240, 248, 255));
-//		lblWeGotYou.setFont(new Font("Tahoma", Font.PLAIN, 13));
-//		lblWeGotYou.setBounds(111, 343, 141, 27);
-//		panel.add(lblWeGotYou);
-//		
-//		Button button = new Button("SignUp");
-//		button.setForeground(Color.WHITE);
-//		button.setBackground(new Color(241, 57, 83));
-//		button.setBounds(395, 363, 283, 36);
-//		LoginPane.add(button);
-//		
-//		textField = new JTextField();
-//		textField.setBounds(395, 83, 283, 36);
-//		LoginPane.add(textField);
-//		textField.setColumns(10);
-//		
-//		JLabel lblUsername = new JLabel("USERNAME");
-//		lblUsername.setBounds(395, 58, 114, 14);
-//		LoginPane.add(lblUsername);
-//		
-//		JLabel lblEmail = new JLabel("EMAIL");
-//		lblEmail.setBounds(395, 132, 54, 14);
-//		LoginPane.add(lblEmail);
-//		
-//		textField_1 = new JTextField();
-//		textField_1.setColumns(10);
-//		textField_1.setBounds(395, 157, 283, 36);
-//		LoginPane.add(textField_1);
-//		
-//		JLabel lblPassword = new JLabel("PASSWORD");
-//		lblPassword.setBounds(395, 204, 96, 14);
-//		LoginPane.add(lblPassword);
-//		
-//		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
-//		lblRepeatPassword.setBounds(395, 275, 133, 14);
-//		LoginPane.add(lblRepeatPassword);
-//		
-//		passwordField = new JPasswordField();
-//		passwordField.setBounds(395, 229, 283, 36);
-//		LoginPane.add(passwordField);
-//		
-//		passwordField_1 = new JPasswordField();
-//		passwordField_1.setBounds(395, 293, 283, 36);
-//		LoginPane.add(passwordField_1);
-//		
-//		JLabel lbl_close = new JLabel("Back");
-//		lbl_close.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent arg0) {
-//				
-//				System.exit(0);
-//			}
-//		});
-//		lbl_close.setHorizontalAlignment(SwingConstants.CENTER);
-//		lbl_close.setForeground(new Color(241, 57, 83));
-//		lbl_close.setFont(new Font("Tahoma", Font.PLAIN, 18));
-//		lbl_close.setBounds(691, 0, 37, 27);
-//		LoginPane.add(lbl_close);
-//		// Mike add this end ---
-//	}
-	
-	
-//	/**
-//	 * @TODO For Mike Login Customer page
-//	 */
-//	//initialize Login Customer page
-//	private void initLogInCustomerPanel(){
-//		infoOwnerPanel = new JPanel();
-//		infoLabel = new JLabel("Info Page");
-//		infoOwnerPanel.setPreferredSize(new Dimension(1100,700));
-//		infoOwnerPanel.setBackground(Color.WHITE);
-//		infoOwnerPanel.setOpaque(true);
-//		infoOwnerPanel.setForeground(Color.WHITE);
-//		infoOwnerPanel.add(infoLabel);
-//
-//		//TO DO
-//	}
 	/**
-	 * @TODO 
-	 * 		- define loginOwnerComfirmeInputButton && Button related action performed method 
-	 * 		- define loginCustomerComfirmeInoutButton && Button related action performed method 
-	 * 		- Relink the ownerbutton pressed in login inital set page to initLogInOwnerPanel()
-	 * 		- Relink the customerbutton pressed in login inital set page to initLogInCustomerPanel()
-	 * 		- Link initLogInOwnerPanel() with initTopBarOwner()
-	 * 		- Link initLogInCustomerPanel() with initTopBarCustomer()
+	 * initialize top bar for owner
+	 * @author gtjarvis
 	 */
-
-
-	//initialize top bar for owner
+	//
 	private void initTopBarOwner(){
 		//initialize top bar layout
 		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
@@ -842,16 +679,6 @@ public class FlexiBookPage extends JFrame {
 
 		//initialize log out panel
 		initLogOutOwnerPanel();
-
-//		//initialize image icons
-//		try{
-//			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
-//			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
-//			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
-//			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
-//		} catch(Exception exp) {
-//			error += exp.getMessage();
-//		}
 		
 		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
 		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
@@ -1002,16 +829,6 @@ public class FlexiBookPage extends JFrame {
 		//initialize log out panel
 		initLogOutCustomerPanel();
 
-		//initialize image icons
-//		try{
-//			infoIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconDark.jpg?token=AHN6XYAHZPYQ3EVVJGPEYFS7YPOBW")));
-//			infoIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/infoIconLight.jpg?token=AHN6XYGVK75VSGPSLW4HYY27YPOF4")));
-//			logOutIconDark = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconDark.jpg?token=AHN6XYFMB5RAZPE6ORTWDGK7YPOI2")));
-//			logOutIconLight = new ImageIcon(ImageIO.read(new URL("https://raw.githubusercontent.com/F2020-ECSE223/ecse223-group-project-p14/master/ca.mcgill.ecse.flexibook/src/main/java/logOutIconLight.jpg?token=AHN6XYA4BHIRTJSLSM2QN2C7YPOKI")));
-//		} catch(Exception exp) {
-//			error += exp.getMessage();
-//		}
-//		
 		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
 		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
 		logOutIconDark = new ImageIcon("src/main/resources/logOutIconDark.jpg");
@@ -1094,6 +911,7 @@ public class FlexiBookPage extends JFrame {
 
 	/**
 	 * @author Catherine
+	 * @coAuthor mikewang
 	 */
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
@@ -2393,7 +2211,10 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsPanel.add(email);		
 	}
 	
-	//initialize business details panel for an owner
+	/**
+	 * initialize business details panel for an owner
+	 * @CoAuthor mikewang 
+	 */
 	//@TODO need to put half of that page on the other businessDetailsPanelfor customer  and delete the BusinessHour update stuff
 	private void initBusinessDetailsPanelForUpdate(){
 		
@@ -2420,55 +2241,6 @@ public class FlexiBookPage extends JFrame {
 		businessHoursPanelBG.add(BHPBG);
 		
 		updateInfoError = " ";
-		
-		
-		//initializing the business hours for the owner 
-		
-		//toSelect = new JLabel("Select a business hour to update or remove");
-		//toSelect.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-	//	toSelect.setBounds(100, 300, 500, 25);
-	//	businessDetailsPanel.add(toSelect);
-		
-	//	startTimeLabel = new JLabel("New Start Time:");
-	//	startTimeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 11));
-	//	startTimeLabel.setBounds(100, 400, 500, 25);
-	//	businessDetailsPanel.add(startTimeLabel);
-		
-		//startTime = new JTextField();
-	//	startTime.setText("");
-	//	startTime.setBounds(225, 400, 100, 25);
-	//	businessDetailsPanel.add(startTime);
-	//	startTime.setColumns(10);
-		
-		//endTimeLabel = new JLabel("New End Time:");
-	//	endTimeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 11));
-		//endTimeLabel.setBounds(100, 450, 500, 25);
-	//	businessDetailsPanel.add(endTimeLabel);
-		
-	//	endTime= new JTextField();
-	//	endTime.setText("");
-	//	endTime.setBounds(225, 450, 100, 25);
-	//	businessDetailsPanel.add(endTime);
-	//	endTime.setColumns(10);
-		
-		//or = new JLabel("OR ");
-	//	or.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-	//	or.setBounds(100, 550, 500, 25);
-	//	businessDetailsPanel.add(or);
-		
-//		JComboBox comboBoxBusinessHours = new JComboBox();
-//		comboBoxBusinessHours.setBounds(200, 350, 90, 23);
-//		businessDetailsPanel.add(comboBoxBusinessHours);
-//		
-		//removeBusinessHour = new JButton("Remove");
-		//removeBusinessHour.setBounds(100,600,90,23);
-		//businessDetailsPanel.add(removeBusinessHour);
-		
-		//updateBusinessHour = new JButton("Update");
-		//updateBusinessHour.setBounds(100,500,90,23);
-		//businessDetailsPanel.add(updateBusinessHour);
-		
-		//current the business hours of the business
 		
 		updateBusinessHours = new JLabel("This BH can be used for customer, but I don't think we need");
 		updateBusinessHours.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
@@ -2604,37 +2376,7 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
-	/**
-	 * @TODO For Mike log out page for owner 
-	 */
-	//initialize log out panel for owner
-	private void initLogOutOwnerPanel(){
-		logOutOwnerPanel = new JPanel();
-		logOutLabel = new JLabel("Log Out Page");
-		logOutOwnerPanel.setPreferredSize(new Dimension(1100,700));
-		logOutOwnerPanel.setBackground(Color.WHITE);
-		logOutOwnerPanel.setOpaque(true);
-		logOutOwnerPanel.setForeground(Color.WHITE);
-		logOutOwnerPanel.add(logOutLabel);
 
-		//TO DO
-	}
-
-	/**
-	 * @TODO For Mike log out page for customer 
-	 */
-	//initialize log out panel for customer
-	private void initLogOutCustomerPanel(){
-		logOutCustomerPanel = new JPanel();
-		logOutLabel = new JLabel("Log Out Page");
-		logOutCustomerPanel.setPreferredSize(new Dimension(1100,700));
-		logOutCustomerPanel.setBackground(Color.WHITE);
-		logOutCustomerPanel.setOpaque(true);
-		logOutCustomerPanel.setForeground(Color.WHITE);
-		logOutCustomerPanel.add(logOutLabel);
-
-		//TO DO
-	}
 
 	//initialize business details panel
 	/**
@@ -3004,7 +2746,10 @@ public class FlexiBookPage extends JFrame {
 
 	}
 
-	
+	/**
+	 * This method refreshes the loginPage
+	 * @author mikewang
+	 */
 	private void refreshLogin() {
 		
 		successMessageLogInLabel.setText(addLoginSuccess);
@@ -3013,49 +2758,12 @@ public class FlexiBookPage extends JFrame {
 		errorMessageSignInLabel.setText(addSignUpError);
 		pack();
 		repaint();
-		
-//		deleteServiceComboBox.removeAllItems();
-//		updateServiceComboBox.removeAllItems();
-//		modelAddService.getDataVector().removeAllElements();
-//		modelDeleteService.getDataVector().removeAllElements();
-//		modelUpdateService.getDataVector().removeAllElements();
-//		if (!FlexiBookController.getTOServices().isEmpty()) {
-//			List<TOService> toServices = FlexiBookController.getTOServices();
-//			for (TOService service : toServices) {
-//				String name = service.getName();
-//				String duration = Integer.toString(service.getDuration());
-//				String downtimeDuration = Integer.toString(service.getDowntimeDuration());
-//				String downtimeStart = Integer.toString(service.getDowntimeStart());
-//				Object[] obj = {name, duration, downtimeDuration, downtimeStart};
-//				modelAddService.addRow(obj);
-//				modelDeleteService.addRow(obj);
-//				modelUpdateService.addRow(obj);
-//			}
-//		}
-//		if (!FlexiBookController.getTOServices().isEmpty()) {
-//			for (TOService service:FlexiBookController.getTOServices()) {
-//				deleteServiceComboBox.addItem(service.getName());
-//				updateServiceComboBox.addItem(service.getName());
-//			}
-//		}
-//		
-//		
-//		if (addError == null || addError.length() == 0) {
-//			newServiceDowntimeDurationTextField.setText("");
-//			newServiceDowntimeStartTextField.setText("");
-//			newServiceDurationTextField.setText("");
-//			newServiceNameTextField.setText("");		
-//		}
-//		
-//		if(FlexiBookController.getTOServices().isEmpty()) {
-//			deleteServiceComboBox.removeAllItems();
-//			updateServiceComboBox.removeAllItems();
-//			modelAddService.getDataVector().removeAllElements();
-//			modelDeleteService.getDataVector().removeAllElements();
-//			modelUpdateService.getDataVector().removeAllElements();
-//		}
 	}
 	
+	/**
+	 * This method refreshes the businessSetUpPage 
+	 * @author mikewang
+	 */
 	private void refreshBusinessSetUp() {
 		errorMessageSetUpLabel.setText(addSetUpError);
 		pack();
@@ -3092,11 +2800,12 @@ public class FlexiBookPage extends JFrame {
 
 	}
 	
+	/**
+	 * this method refreshes the signout process
+	 * @author mikewang
+	 */
 	private void refreshSignOut() {
-//		initComponents();
 		refreshData();
-//		textField.setText("");
-//		textField.setText("");
 	}
 	/** 
 	 * Set error messages, update progress bar, and update noShowCount for Customer Account Page
@@ -3132,6 +2841,7 @@ public class FlexiBookPage extends JFrame {
 	/**
 	 * Set error messages for Owner Account Page
 	 * @author Catherine
+	 * @CoAuther mikewang
 	 */
 	private void refreshOwnerAccount() {
 		errorChangeOwnerInfo.setText(error);
@@ -3144,6 +2854,7 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 	}
+	
 	
 	private void refreshBusinessHourData() {
 		errorMessageBusinessHourLabel.setText(errorMessageBussinessHour);
@@ -3497,7 +3208,10 @@ public class FlexiBookPage extends JFrame {
 			refreshBusinessSetUp();
 		}
 
-		
+		/**
+		 * @author mikewang
+		 * @param evt
+		 */
 		//method called when set-up info is done 
 		private void logInOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 			//remove log in panel
@@ -3523,61 +3237,10 @@ public class FlexiBookPage extends JFrame {
 		}
 
 
-//	/**
-//	 * @TODO For Mike: After user pressed the Owner button on the login page
-//	 * @param evt
-//	 */
-//	//method called when log in owner button pressed
-//	private void logInSetUpOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-//		//remove log in panel
-//		getContentPane().remove(LoginPane);
-//		//add owner top bar and calendar panel to frame
-//		getContentPane().add(topPanelOwner);
-//		topPanelOwner.setBounds(0,0,1100,40);
-//		getContentPane().add(calendarOwnerPanel);
-//		calendarOwnerPanel.setBounds(0,40,1100,700);
-//		//set calendar to initial state
-//		previousPanel = calendarOwnerPanel;
-//		previousButton = calendarOwnerButton;
-//		//reset calendar button
-//		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
-//		calendarOwnerButton.setBackground(Color.WHITE);
-//		calendarOwnerButton.setOpaque(true);
-//		calendarOwnerButton.setForeground(darkGrey);
-//		//refresh page
-//		refreshData();
-//	}
-//	
-		
-		
-		
-//		private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
-//			addError = null;
-//			addSuccess = null;
-//			FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
-//			if (newServiceDowntimeDurationTextField.getText().equals("")||
-//					newServiceDowntimeStartTextField.getText().equals("")||
-//					newServiceDurationTextField.getText().equals("")||
-//					newServiceNameTextField.getText().equals("")) {
-//				addError = "one of the fields is empty";
-//				
-//			}
-//			else {
-//				try {
-//					FlexiBookController.addService(newServiceNameTextField.getText(), Integer.parseInt(newServiceDurationTextField.getText()), 
-//							Integer.parseInt(newServiceDowntimeStartTextField.getText()), 
-//							Integer.parseInt(newServiceDowntimeDurationTextField.getText()));
-//					addSuccess = "Success!";
-//				}  catch (InvalidInputException e) {
-//					addError = e.getMessage();
-//				}
-//			}
-//				
-//			refreshData();
-//
-//
-//		}
-		
+		/**
+		 * @author mikewang
+		 * @param evt
+		 */
 		// When signUp button is pressed 
 		private void signUpCustomerButtonPerformed(ActionEvent evt) {
 			addSignUpError = null;
@@ -3640,6 +3303,10 @@ public class FlexiBookPage extends JFrame {
 		}
 		
 		
+		/**
+		 * @author mikewang
+		 * @param evt
+		 */
 		private void loginUserButtonPerformed(ActionEvent evt) {
 			addLoginError = null;
 			addLoginSuccess = null;
@@ -3686,34 +3353,10 @@ public class FlexiBookPage extends JFrame {
 			
 		}
 		
-		
-//	/**
-//	 * @TODO For Mike After user pressed the owner button on the intial login page
-//	 * @param evt
-//	 */
-//	//method called when log in customer button pressed
-//		private void logInSetUpCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-//			//remove log in panel
-//			getContentPane().remove(LoginPane);
-//			//add customer top bar and calendar panel to frame
-//			getContentPane().add(topPanelCustomer);
-//			topPanelCustomer.setBounds(0,0,1100,40);
-//			getContentPane().add(calendarCustomerPanel);
-//			calendarCustomerPanel.setBounds(0,40,1100,700);
-//			//set calendar to initial state
-//			previousPanel = calendarCustomerPanel;
-//			previousButton = calendarCustomerButton;
-//			//reset calendar button
-//			calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
-//			calendarCustomerButton.setBackground(Color.WHITE);
-//			calendarCustomerButton.setOpaque(true);
-//			calendarCustomerButton.setForeground(darkGrey);
-//			//refresh page
-//			refreshData();
-//		}
-//		
+
+	
 	/**
-	 * @TODO For MIKE merge the logInOwnerButtonToSetUpActionPerformed() with logInCustomerButtonActionPerformed()
+	 * @author mikewang
 	 * @param evt
 	 */
 	//method called when log in owner button pressed
@@ -3723,24 +3366,15 @@ public class FlexiBookPage extends JFrame {
 		//add owner top bar and calendar panel to frame
 		getContentPane().add(setUpInPanel);
 		setUpInPanel.setBounds(0,0,1100,700);
-//		c.gridx = 0;
-//		c.gridy = 1;
-//		c.ipady = 687;
-//		c.ipadx = 1100;
-//		getContentPane().add(calendarOwnerPanel, c);
-		//set calendar to initial state
 		previousPanel = setUpInPanel;
-//		previousButton = calendarOwnerButton;
-		//reset calendar button
-//		calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
-//		calendarOwnerButton.setBackground(Color.WHITE);
-//		calendarOwnerButton.setOpaque(true);
-//		calendarOwnerButton.setForeground(darkGrey);
-		//refresh page
 		refreshData();
 		refreshOwnerAccount();
 	}
 
+	/**
+	 * @author mikewang
+	 * @param evt
+	 */
 	//method called when log in customer button pressed
 	private void logInCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//remove log in panel
@@ -3763,6 +3397,8 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 		refreshCustomerAccount();
 	}
+	
+	
 
 	//method called when owner info button pressed
 	private void infoOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -3794,6 +3430,8 @@ public class FlexiBookPage extends JFrame {
 		//refresh page
 		refreshOwnerAccount();
 	}
+	
+	
 	
 	//method called when customer info button pressed
 	private void infoCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -4138,6 +3776,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
+	/**
+	 * @author mikewang & jedla & gtjarvis
+	 * @param evt
+	 */
 	//method called when owner log out button pressed
 	private void logOutOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		logOutOwnerButton.setIcon(logOutIconDark);
@@ -4246,6 +3888,10 @@ public class FlexiBookPage extends JFrame {
 		//refreshData();
 	}
 
+	/**
+	 * @author mikewang & jedla & gtjarvis
+	 * @param evt
+	 */
 	//method called when customer log out button pressed
 	private void logOutCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
