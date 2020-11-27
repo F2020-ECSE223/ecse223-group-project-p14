@@ -1,19 +1,11 @@
 package ca.mcgill.ecse.flexibook.view;
 
-import java.awt.BorderLayout;
-
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.sql.Date;
@@ -28,35 +20,20 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Locale;
-
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.DateFormatter;
-
-
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
-
 import javax.swing.*;
-
 import ca.mcgill.ecse.flexibook.application.FlexiBookApplication;
 import ca.mcgill.ecse.flexibook.controller.FlexiBookController;
 import ca.mcgill.ecse.flexibook.controller.InvalidInputException;
 import ca.mcgill.ecse.flexibook.controller.TOAppointment;
-
-
-import ca.mcgill.ecse.flexibook.model.Service;
-import ca.mcgill.ecse.flexibook.model.TimeSlot;
-//import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
-import ca.mcgill.ecse.flexibook.model.Owner;
-import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
-import ca.mcgill.ecse.flexibook.controller.TOBusiness;
-import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
-import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOCustomer;
