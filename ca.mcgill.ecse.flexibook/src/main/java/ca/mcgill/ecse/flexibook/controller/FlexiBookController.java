@@ -1753,17 +1753,23 @@ public class FlexiBookController {
 	public static List<TOServiceCombo> getTOServiceCombos(){
 		List<ServiceCombo> serviceCombos = getServiceCombos();
 		List<TOServiceCombo> serviceCombosTO = new ArrayList<TOServiceCombo>();
-		List<ComboItem> comboItems;
-		TOServiceCombo sc;
+		
+		
 		for(ServiceCombo s: serviceCombos){
-			comboItems = s.getServices();
-			sc = new TOServiceCombo(s.getName());
+			List<ComboItem> comboItems = s.getServices();
+			TOServiceCombo sc = new TOServiceCombo(s.getName());
 			for(ComboItem c: comboItems){
 				TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName(), sc);
+				if (comboItemTO.getServiceName().equals(s.getMainService().getService().getName())) {
+					sc.setMainService(comboItemTO);
+				}
 				sc.addService(comboItemTO);
 			}
-			ComboItem mainService = s.getMainService();
-			sc.setMainService(new TOComboItem(mainService.getMandatory(), mainService.getService().getName(), sc));
+//			ComboItem mainService = s.getMainService();
+//			TOComboItem toMainService = new TOComboItem(true, mainService.getService().getName(), 
+//																	sc);
+			
+			
 			serviceCombosTO.add(sc);
 		}
 		return serviceCombosTO;

@@ -1497,6 +1497,10 @@ public class FlexiBookPage extends JFrame {
 		singleServicesPanel.add(newServiceDowntimeStartTextField);
 
 		JButton confirmAddServiceButton = new JButton("Confirm");
+		confirmAddServiceButton.setBorder(new LineBorder(Color.darkGray));
+		confirmAddServiceButton.setBackground(Color.darkGray);
+		confirmAddServiceButton.setOpaque(true);
+		confirmAddServiceButton.setForeground(Color.WHITE);
 		confirmAddServiceButton.setBounds(171, 264, 95, 29);
 		singleServicesPanel.add(confirmAddServiceButton);
 		
@@ -1524,6 +1528,10 @@ public class FlexiBookPage extends JFrame {
 		
 		JButton confirmDeleteServiceButton = new JButton("Confirm");
 		confirmDeleteServiceButton.setBounds(750, 625, 95, 29);
+		confirmDeleteServiceButton.setBorder(new LineBorder(Color.darkGray));
+		confirmDeleteServiceButton.setBackground(Color.darkGray);
+		confirmDeleteServiceButton.setOpaque(true);
+		confirmDeleteServiceButton.setForeground(Color.WHITE);
 		singleServicesPanel.add(confirmDeleteServiceButton);
 		
 		deleteSuccessLabel = new JLabel("");
@@ -1583,6 +1591,10 @@ public class FlexiBookPage extends JFrame {
 		
 		JButton confirmUpdateServiceButton = new JButton("Confirm");
 		confirmUpdateServiceButton.setBounds(166, 625, 117, 29);
+		confirmUpdateServiceButton.setBorder(new LineBorder(Color.darkGray));
+		confirmUpdateServiceButton.setBackground(Color.darkGray);
+		confirmUpdateServiceButton.setOpaque(true);
+		confirmUpdateServiceButton.setForeground(Color.WHITE);
 		singleServicesPanel.add(confirmUpdateServiceButton);
 		
 		updateSuccessLabel = new JLabel("");
@@ -1591,20 +1603,14 @@ public class FlexiBookPage extends JFrame {
 		singleServicesPanel.add(updateSuccessLabel);
 		
 		JLabel addServiceIcon = new JLabel("Add Service");
-		addServiceIcon.setForeground(Color.BLUE);
-		addServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
 		addServiceIcon.setBounds(166, 101, 134, 26);
 		singleServicesPanel.add(addServiceIcon);
 		
 		JLabel updateServiceIcon = new JLabel("Update Service");
-		updateServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
-		updateServiceIcon.setForeground(Color.BLUE);
 		updateServiceIcon.setBounds(150, 394, 207, 45);
 		singleServicesPanel.add(updateServiceIcon);
 		
 		JLabel deleteServiceIcon = new JLabel("Delete Service");
-		deleteServiceIcon.setFont(new Font("Kokonor", Font.PLAIN, 20));
-		deleteServiceIcon.setForeground(Color.BLUE);
 		deleteServiceIcon.setBounds(732, 451, 176, 38);
 		singleServicesPanel.add(deleteServiceIcon);
 		
