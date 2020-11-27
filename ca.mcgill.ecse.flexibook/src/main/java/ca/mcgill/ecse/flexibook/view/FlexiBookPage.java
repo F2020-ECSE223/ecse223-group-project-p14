@@ -1937,7 +1937,7 @@ public class FlexiBookPage extends JFrame {
 		});
 		
 		
-
+		refreshData();
 
 	}
 
@@ -3254,7 +3254,7 @@ public class FlexiBookPage extends JFrame {
 			errorMessageServiceCombo = e.getMessage();
 		}
 		
-		refreshServiceComboData();
+		refreshData();
 		
 	
 		
@@ -3271,7 +3271,7 @@ public class FlexiBookPage extends JFrame {
 		} catch (InvalidInputException e) {
 			errorMessageServiceCombo = e.getMessage();
 		}
-		refreshServiceComboData();
+		refreshData();
 	}
 	
 	public void defineServiceComboButtonActionPerformed(ActionEvent evt) {
@@ -3295,7 +3295,7 @@ public class FlexiBookPage extends JFrame {
 			errorMessageServiceCombo = e.getMessage();
 		}
 		
-		refreshServiceComboData();
+		refreshData();
 	}
 	
 	
@@ -3308,6 +3308,10 @@ public class FlexiBookPage extends JFrame {
 		updateMainServiceComboBox.removeAllItems();
 		updateServiceComboComboBox.removeAllItems();
 		deleteServiceComboComboBox.removeAllItems();
+		newMandatoryComboItemListModel.removeAllElements();
+		updateMandatoryComboItemListModel.removeAllElements();
+		newComboListModel.removeAllElements();
+		updateComboListModel.removeAllElements();
 		updateModelModifyServiceCombo();
 		
 		if (!FlexiBookController.getTOServices().isEmpty()) {
@@ -3333,6 +3337,16 @@ public class FlexiBookPage extends JFrame {
 				updateServiceComboComboBox.addItem(toServiceCombo.getName());
 			}
 		}
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				newMandatoryComboItemListModel.addElement(service.getName());
+				updateMandatoryComboItemListModel.addElement(service.getName());
+				newComboListModel.addElement(service.getName());
+				updateComboListModel.addElement(service.getName());
+			}
+		}
+		
 		
 		
 		
