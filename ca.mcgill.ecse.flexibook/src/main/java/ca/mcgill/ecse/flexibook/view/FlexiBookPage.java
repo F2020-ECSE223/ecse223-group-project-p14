@@ -819,7 +819,10 @@ public class FlexiBookPage extends JFrame {
 
 	}
 
-	//initialize top bar for customer
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void initTopBarCustomer(){
 		//initialize top bar layout
 		FlowLayout topLayout = new FlowLayout(FlowLayout.LEFT, 0, 0);
@@ -1989,7 +1992,10 @@ public class FlexiBookPage extends JFrame {
 
 	}
 
-	//initialize calendar services panel for customer
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void initCalendarCustomerPanel(){
 		calendarCustomerPanel = new JPanel();
 		calendarLabel = new JLabel("Calendar Page");
@@ -3793,6 +3799,8 @@ public class FlexiBookPage extends JFrame {
 		calendarDay = -1;
 		calendarMonth = 11;
 		calendarYear = 2020;
+		eca = " ";
+		ecaLabel.setText(eca);
 		monthNameLabel.setText(LocalDate.of(calendarYear,calendarMonth,1).getMonth().getDisplayName(TextStyle.FULL,Locale.CANADA) + " " + calendarYear);
 		//reset panel
 		calendarMonthlyViewGridPanel.removeAll();
@@ -4604,7 +4612,11 @@ public class FlexiBookPage extends JFrame {
 		
 	
 	}
-
+	
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void refreshCalendarWeeklyView(){
 		//time bar
 			int minHour = 0;
