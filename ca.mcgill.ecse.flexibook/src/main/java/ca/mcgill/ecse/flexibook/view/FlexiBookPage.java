@@ -213,7 +213,12 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon infoIconLight;
 	private ImageIcon logOutIconDark;
 	private ImageIcon logOutIconLight;
-	
+
+	//buttons on appointment
+	private ImageIcon startButtonIcon;
+	private ImageIcon stopButtonIcon;
+	private ImageIcon noShowButtonIcon;
+
 	//calendar page icons
 	private ImageIcon calendarWithTimesIcon;
 	private ImageIcon calendarWithoutTimesIcon;
@@ -2024,8 +2029,11 @@ public class FlexiBookPage extends JFrame {
 		buttonPanel.setPreferredSize(new Dimension(700,700));
 		//initialize image icons
 		try{
-			calendarLeftIcon = new ImageIcon("Calendar_LeftIcon.jpg");
-			calendarRightIcon = new ImageIcon("Calendar_RightIcon.jpg");
+			calendarLeftIcon = new ImageIcon("src/main/resources/Calendar_LeftIcon.jpg");
+			calendarRightIcon = new ImageIcon("src/main/resources/Calendar_RightIcon.jpg");
+			startButtonIcon = new ImageIcon("src/main/resources/startButton.jpg");
+			stopButtonIcon = new ImageIcon("src/main/resources/stopButton.jpg");
+			noShowButtonIcon = new ImageIcon("src/main/resources/noShowButton.jpg");
 		} catch(Exception exp) {
 			error += exp.getMessage();
 		}
@@ -4945,8 +4953,10 @@ public class FlexiBookPage extends JFrame {
 	 * @author AntoineW
 	 */
 	private void appointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		String command = evt.getActionCommand().substring(0,evt.getActionCommand().length()-1);
-		int numAppointment = Integer.parseInt(evt.getActionCommand().substring(evt.getActionCommand().length()-1,evt.getActionCommand().length()));
+		JButton tempB = (JButton)evt.getSource();
+		String command = tempB.getName().substring(0,tempB.getName().length()-1);
+		int numAppointment = Integer.parseInt(tempB.getName().substring(tempB.getName().length()-1,tempB.getName().length()));
+		System.out.println(command + " " + numAppointment);
 		List<TOAppointment> appointmentTOList = FlexiBookController.getTOAppointment();
 		TOAppointment specificTOAppointment = appointmentTOList.get(numAppointment);
 		TOTimeSlot specificTOTimeSlot = specificTOAppointment.getTimeSlot();
@@ -5239,10 +5249,13 @@ public class FlexiBookPage extends JFrame {
 							}
 							
 							if(FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner")){
-								JButton startButton = new JButton("start" + appointmentTOList.indexOf(appointment));
-								JButton stopButton = new JButton("stop" + appointmentTOList.indexOf(appointment));
-								JButton noShowButton = new JButton("noShow" + appointmentTOList.indexOf(appointment));
-								
+								JButton startButton = new JButton();
+								startButton.setName("start" + appointmentTOList.indexOf(appointment));
+								JButton stopButton = new JButton();
+								stopButton.setName("stop" + appointmentTOList.indexOf(appointment));
+								JButton noShowButton = new JButton();
+								noShowButton.setName("noShow" + appointmentTOList.indexOf(appointment));
+
 								appointmentButtonList.add(startButton);
 								appointmentButtonList.add(stopButton);
 								appointmentButtonList.add(noShowButton);
@@ -5251,23 +5264,29 @@ public class FlexiBookPage extends JFrame {
 										appointmentButtonActionPerformed(evt);
 									}
 								};
+								startButton.setBackground(Color.WHITE);
+								startButton.setForeground(Color.WHITE);
+								startButton.setOpaque(true);
 								startButton.addActionListener(appointmentButtonListener);
-								startButton.setPreferredSize(new Dimension(50,40));
+								startButton.setPreferredSize(new Dimension(25,25));
 								startButton.setBorder(new LineBorder(Color.black));
+								startButton.setIcon(startButtonIcon);
 								buttonPanel.add(startButton);
 								startButton.setBounds(i*90+50+2,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								stopButton.addActionListener(appointmentButtonListener);
-								stopButton.setPreferredSize(new Dimension(50,40));
+								stopButton.setPreferredSize(new Dimension(25,25));
 								stopButton.setBorder(new LineBorder(Color.black));
+								stopButton.setIcon(stopButtonIcon);
 								buttonPanel.add(stopButton);
 								stopButton.setBounds(i*90+50+32,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								noShowButton.addActionListener(appointmentButtonListener);
-								noShowButton.setPreferredSize(new Dimension(50,40));
+								noShowButton.setPreferredSize(new Dimension(25,25));
 								noShowButton.setBorder(new LineBorder(Color.black));
+								noShowButton.setIcon(noShowButtonIcon);
 								buttonPanel.add(noShowButton);
 								noShowButton.setBounds(i*90+50+62,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								calendarWeeklyViewPanel.add(buttonPanel);
-								buttonPanel.setBounds(0,0,700,deltaY*24*2);
+								buttonPanel.setBounds(0,0,700,24*deltaY*2);
 							}
 
 						}
@@ -5360,9 +5379,12 @@ public class FlexiBookPage extends JFrame {
 								p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
 							}
 							if(FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner")){
-								JButton startButton = new JButton("start" + appointmentTOList.indexOf(appointment));
-								JButton stopButton = new JButton("stop" + appointmentTOList.indexOf(appointment));
-								JButton noShowButton = new JButton("noShow" + appointmentTOList.indexOf(appointment));
+								JButton startButton = new JButton();
+								startButton.setName("start" + appointmentTOList.indexOf(appointment));
+								JButton stopButton = new JButton();
+								stopButton.setName("stop" + appointmentTOList.indexOf(appointment));
+								JButton noShowButton = new JButton();
+								noShowButton.setName("noShow" + appointmentTOList.indexOf(appointment));
 								
 								appointmentButtonList.add(startButton);
 								appointmentButtonList.add(stopButton);
@@ -5373,18 +5395,21 @@ public class FlexiBookPage extends JFrame {
 									}
 								};
 								startButton.addActionListener(appointmentButtonListener);
-								startButton.setPreferredSize(new Dimension(50,40));
+								startButton.setPreferredSize(new Dimension(25,25));
 								startButton.setBorder(new LineBorder(Color.black));
+								startButton.setIcon(startButtonIcon);
 								buttonPanel.add(startButton);
 								startButton.setBounds(i*90+50+2,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								stopButton.addActionListener(appointmentButtonListener);
-								stopButton.setPreferredSize(new Dimension(50,40));
+								stopButton.setPreferredSize(new Dimension(25,25));
 								stopButton.setBorder(new LineBorder(Color.black));
+								stopButton.setIcon(stopButtonIcon);
 								buttonPanel.add(stopButton);
 								stopButton.setBounds(i*90+50+32,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								noShowButton.addActionListener(appointmentButtonListener);
-								noShowButton.setPreferredSize(new Dimension(50,40));
+								noShowButton.setPreferredSize(new Dimension(25,25));
 								noShowButton.setBorder(new LineBorder(Color.black));
+								noShowButton.setIcon(noShowButtonIcon);
 								buttonPanel.add(noShowButton);
 								noShowButton.setBounds(i*90+50+62,30+100+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),25,25);
 								calendarWeeklyViewPanel.add(buttonPanel);
