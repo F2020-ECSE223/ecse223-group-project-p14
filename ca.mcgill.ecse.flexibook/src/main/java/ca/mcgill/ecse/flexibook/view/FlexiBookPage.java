@@ -1175,7 +1175,7 @@ public class FlexiBookPage extends JFrame {
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
 		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(470, 300, 150, 30);
+		infoLabel.setBounds(470, 300, 200, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
