@@ -1392,9 +1392,10 @@ public class FlexiBookController {
 		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to update business information");
 		}
 		else if (currentUser instanceof Owner){
+			BusinessHour bh = isTheBusinessHour(day, startTime);
 			flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
-			//isTheBusinessHour(day,startTime).delete();
+			bh.delete();
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
