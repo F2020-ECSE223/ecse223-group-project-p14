@@ -5128,19 +5128,19 @@ public class FlexiBookPage extends JFrame {
 			calendarBusinessSlotsFull.add(bhp);
 			bhp.setBounds(50,80+35,90*7,(maxHour-minHour)*2*deltaY);
 			for(TOBusinessHour bh: bhList){
-				if(bh.getDayOfWeek().equals(DayOfWeek.Monday)){
+				if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Monday")){
 					n=0;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Tuesday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Tuesday")){
 					n=1;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Wednesday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Wednesday")){
 					n=2;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Thursday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Thursday")){
 					n=3;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Friday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Friday")){
 					n=4;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Saturday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Saturday")){
 					n=5;
-				} else if(bh.getDayOfWeek().equals(DayOfWeek.Sunday)){
+				} else if(FlexiBookController.dayToString(bh.getDayOfWeek()).equals("Sunday")){
 					n=6;
 				}
 				bhp = new JLabel("I");
