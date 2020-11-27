@@ -217,7 +217,7 @@ public class FlexiBookPage extends JFrame {
 	private JLabel businessDetailsLabel;
 	private JLabel logOutLabel;
 	
-	//Info panels
+	//Customer info panel
 	private ImageIcon infoUserIcon;
 	private JLabel infoUserIconLabel; 
 	private JLabel infoLabel; //manage your account	
@@ -229,13 +229,25 @@ public class FlexiBookPage extends JFrame {
 	private JPasswordField passwordBox; 
 	private JPasswordField confirmPasswordBox;
 	private JButton saveAccountButton; 
-	private JButton saveOwnerAccountButton;
 	private JButton deleteAccountButton; 
-	private JLabel bookAppointmentLabel;
-	private JLabel setUpBusinessInfoLabel;
 	private JLabel noShowCount;
 	private JLabel updateSuccessful; 
 	private String successful = null;
+	
+	//Owner info panel
+	private ImageIcon infoOwnerUserIcon;
+	private JLabel infoOwnerUserIconLabel; 
+	private JLabel infoOwnerLabel; //manage your account	
+	private JLabel infoOwnerWelcomeLabel;
+	private JLabel usernameOwnerLabel;
+	private JLabel passwordOwnerLabel;
+	private JLabel confirmPasswordOwnerLabel;
+	private JTextField usernameOwnerBox; 
+	private JPasswordField passwordOwnerBox; 
+	private JPasswordField confirmPasswordOwnerBox;
+	private JButton saveOwnerAccountButton;
+	private JLabel errorChangeOwnerInfo;
+	private JLabel successChangeOwnerInfo;
 	
 	// bonus show count
 	private JLabel bonusTitleLabel;
@@ -245,6 +257,9 @@ public class FlexiBookPage extends JFrame {
 	//tracking last page
 	private JButton previousButton;
 	private JPanel previousPanel;
+	
+	private JLabel bookAppointmentLabel;
+	private JLabel setUpBusinessInfoLabel;
 
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
@@ -256,11 +271,7 @@ public class FlexiBookPage extends JFrame {
 	// Error message 
 	private JLabel errorMessage;
 	private String error = null;
-	
-	private JLabel errorChangeOwnerInfo;
-	private JLabel successChangeOwnerInfo;
-	private JLabel errorChangeUserInfo;
-	private JLabel successChangeUserInfo;
+
 	
 
 	/**
@@ -1210,71 +1221,69 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.setOpaque(true);
 		infoOwnerPanel.setForeground(Color.darkGray);
 
-		infoUserIcon = new ImageIcon("src/main/resources/user.png");
-		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
-
-		infoUserIconLabel = new JLabel();
-		infoUserIconLabel.setIcon(infoUserIcon);
-		infoUserIconLabel.setBounds(445, 50, 200, 200);
-		infoUserIconLabel.setOpaque(false);
-		infoUserIconLabel.setForeground(Color.darkGray);
-		infoUserIconLabel.setAlignmentX(SwingConstants.CENTER);
-
+		infoOwnerUserIcon = new ImageIcon("src/main/resources/user.png");
+		infoOwnerUserIcon.setImage(infoOwnerUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+		infoOwnerUserIconLabel = new JLabel();
+		infoOwnerUserIconLabel.setIcon(infoOwnerUserIcon);
+		infoOwnerUserIconLabel.setBounds(445, 50, 200, 200);
+		infoOwnerUserIconLabel.setOpaque(false);
+		infoOwnerUserIconLabel.setForeground(Color.darkGray);
+		infoOwnerUserIconLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		infoWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
-		infoWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 18));
-		infoWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoWelcomeLabel.setBounds(445, 250, 200, 40);
-		infoWelcomeLabel.setBackground(Color.WHITE);
-		infoWelcomeLabel.setOpaque(true);
-		infoWelcomeLabel.setForeground(Color.darkGray);
+		infoOwnerWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		infoOwnerWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 18));
+		infoOwnerWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoOwnerWelcomeLabel.setBounds(300, 250, 500, 40);
+		infoOwnerWelcomeLabel.setBackground(Color.WHITE);
+		infoOwnerWelcomeLabel.setOpaque(true);
+		infoOwnerWelcomeLabel.setForeground(Color.darkGray);
 
-		infoLabel = new JLabel("Manage Your Account");
-		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
-		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(470, 300, 200, 30);
-		infoLabel.setBackground(Color.WHITE);
-		infoLabel.setOpaque(true);
-		infoLabel.setForeground(Color.darkGray);
+		infoOwnerLabel = new JLabel("Manage Your Account");
+		infoOwnerLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
+		infoOwnerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoOwnerLabel.setBounds(460, 300, 200, 30);
+		infoOwnerLabel.setBackground(Color.WHITE);
+		infoOwnerLabel.setOpaque(true);
+		infoOwnerLabel.setForeground(Color.darkGray);
 
-		usernameLabel = new JLabel("Username");
-		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		usernameLabel.setBounds(300, 350, 80, 30);
-		usernameLabel.setBackground(Color.WHITE);
-		usernameLabel.setOpaque(true);
-		usernameLabel.setForeground(Color.darkGray);
-		usernameLabel.setAlignmentX(SwingConstants.CENTER);
+		usernameOwnerLabel = new JLabel("Username");
+		usernameOwnerLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		usernameOwnerLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		usernameOwnerLabel.setBounds(300, 350, 80, 30);
+		usernameOwnerLabel.setBackground(Color.WHITE);
+		usernameOwnerLabel.setOpaque(true);
+		usernameOwnerLabel.setForeground(Color.darkGray);
+		usernameOwnerLabel.setAlignmentX(SwingConstants.CENTER);
 
-		usernameBox = new JTextField(); 
-		usernameBox.setColumns(20);
-		usernameBox.setBounds(470, 350, 250, 30);
+		usernameOwnerBox = new JTextField(); 
+		usernameOwnerBox.setColumns(20);
+		usernameOwnerBox.setBounds(470, 350, 250, 30);
 
-		passwordLabel = new JLabel("Password");
-		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		passwordLabel.setBounds(300, 400, 80, 30);
-		passwordLabel.setBackground(Color.WHITE);
-		passwordLabel.setOpaque(true);
-		passwordLabel.setForeground(Color.darkGray);
-		passwordLabel.setAlignmentX(SwingConstants.CENTER);
+		passwordOwnerLabel = new JLabel("Password");
+		passwordOwnerLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		passwordOwnerLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		passwordOwnerLabel.setBounds(300, 400, 80, 30);
+		passwordOwnerLabel.setBackground(Color.WHITE);
+		passwordOwnerLabel.setOpaque(true);
+		passwordOwnerLabel.setForeground(Color.darkGray);
+		passwordOwnerLabel.setAlignmentX(SwingConstants.CENTER);
 
-		passwordBox = new JPasswordField();
-		passwordBox.setColumns(20);
-		passwordBox.setBounds(470, 400, 250, 30);
+		passwordOwnerBox = new JPasswordField();
+		passwordOwnerBox.setColumns(20);
+		passwordOwnerBox.setBounds(470, 400, 250, 30);
 
-		confirmPasswordLabel = new JLabel("Confirm Password");
-		confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		confirmPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		confirmPasswordLabel.setBounds(300, 450, 145, 30);
-		confirmPasswordLabel.setBackground(Color.WHITE);
-		confirmPasswordLabel.setOpaque(true);
-		confirmPasswordLabel.setForeground(Color.darkGray);
-		confirmPasswordLabel.setAlignmentX(SwingConstants.CENTER);
+		confirmPasswordOwnerLabel = new JLabel("Confirm Password");
+		confirmPasswordOwnerLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		confirmPasswordOwnerLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		confirmPasswordOwnerLabel.setBounds(300, 450, 145, 30);
+		confirmPasswordOwnerLabel.setBackground(Color.WHITE);
+		confirmPasswordOwnerLabel.setOpaque(true);
+		confirmPasswordOwnerLabel.setForeground(Color.darkGray);
+		confirmPasswordOwnerLabel.setAlignmentX(SwingConstants.CENTER);
 
-		confirmPasswordBox = new JPasswordField();
-		confirmPasswordBox.setColumns(20);
-		confirmPasswordBox.setBounds(470, 450, 250, 30);
+		confirmPasswordOwnerBox = new JPasswordField();
+		confirmPasswordOwnerBox.setColumns(20);
+		confirmPasswordOwnerBox.setBounds(470, 450, 250, 30);
 
 		saveOwnerAccountButton = new JButton("Save");
 		saveOwnerAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
@@ -1295,15 +1304,15 @@ public class FlexiBookPage extends JFrame {
 		successChangeOwnerInfo.setForeground(Color.GREEN);
 		successChangeOwnerInfo.setBounds(470, 550, 500, 30);
 		
-		infoOwnerPanel.add(infoWelcomeLabel);
-		infoOwnerPanel.add(infoUserIconLabel);
-		infoOwnerPanel.add(infoLabel);
-		infoOwnerPanel.add(usernameLabel);
-		infoOwnerPanel.add(usernameBox);
-		infoOwnerPanel.add(passwordLabel);
-		infoOwnerPanel.add(passwordBox);
-		infoOwnerPanel.add(confirmPasswordLabel);
-		infoOwnerPanel.add(confirmPasswordBox);
+		infoOwnerPanel.add(infoOwnerWelcomeLabel);
+		infoOwnerPanel.add(infoOwnerUserIconLabel);
+		infoOwnerPanel.add(infoOwnerLabel);
+		infoOwnerPanel.add(usernameOwnerLabel);
+		infoOwnerPanel.add(usernameOwnerBox);
+		infoOwnerPanel.add(passwordOwnerLabel);
+		infoOwnerPanel.add(passwordOwnerBox);
+		infoOwnerPanel.add(confirmPasswordOwnerLabel);
+		infoOwnerPanel.add(confirmPasswordOwnerBox);
 		infoOwnerPanel.add(saveOwnerAccountButton);
 		infoOwnerPanel.add(errorChangeOwnerInfo);
 		infoOwnerPanel.add(successChangeOwnerInfo);
@@ -3193,10 +3202,10 @@ public class FlexiBookPage extends JFrame {
 	private void refreshOwnerAccount() {
 		errorChangeOwnerInfo.setText(error);
 		successChangeOwnerInfo.setText(successful);
-		infoWelcomeLabel.setText("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
-		usernameBox.setText("");
-		passwordBox.setText("");
-		confirmPasswordBox.setText("");
+		infoOwnerWelcomeLabel.setText("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		usernameOwnerBox.setText("");
+		passwordOwnerBox.setText("");
+		confirmPasswordOwnerBox.setText("");
 		
 		pack();
 		repaint();
@@ -4415,16 +4424,16 @@ public class FlexiBookPage extends JFrame {
 		error = null;
 		successful = null;
 
-		if (usernameBox.getText().equals("") || String.valueOf(passwordBox.getPassword()).equals("") || String.valueOf(confirmPasswordBox.getPassword()).equals("")) { 
+		if (usernameOwnerBox.getText().equals("") || String.valueOf(passwordOwnerBox.getPassword()).equals("") || String.valueOf(confirmPasswordOwnerBox.getPassword()).equals("")) { 
 			error = "Fill in all fields to update your account";
 
 		} 
-		else if (! String.valueOf(passwordBox.getPassword()).equals(String.valueOf(confirmPasswordBox.getPassword()))) {
+		else if (! String.valueOf(passwordOwnerBox.getPassword()).equals(String.valueOf(confirmPasswordOwnerBox.getPassword()))) {
 			error = "Passwords do not match";
 		}
 		else {
 			try {
-				FlexiBookController.updateUserAccount(FlexiBookController.getCurrentLogInUsername(), usernameBox.getText(), String.valueOf(passwordBox.getPassword()));
+				FlexiBookController.updateUserAccount(FlexiBookController.getCurrentLogInUsername(), usernameOwnerBox.getText(), String.valueOf(passwordOwnerBox.getPassword()));
 				successful = "Success!";
 			}  catch (InvalidInputException e) {
 				error = e.getMessage();
