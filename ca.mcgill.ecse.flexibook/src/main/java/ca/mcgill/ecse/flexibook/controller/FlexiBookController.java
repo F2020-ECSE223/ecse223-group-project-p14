@@ -1020,6 +1020,9 @@ public class FlexiBookController {
 		Appointment a = findAppointment(serviceName, date, time);
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+		if(isInTheFuture(a.getTimeSlot())){
+			throw new InvalidInputException("Cannot start an appointment before start time.");
+		}
 		a.startAppointment(currentDate, currentTime);
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1039,6 +1042,11 @@ public class FlexiBookController {
 	public static boolean endAppointment(String serviceName, Date date, Time time) throws InvalidInputException{ 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment a = findAppointment(serviceName, date, time);
+		Time currentTime = FlexiBookApplication.getCurrentTime(true);
+		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+		if(!a.getAppointmentStatusFullName().equals("InProgress")){
+			throw new InvalidInputException("Cannot end an appointment before it starts.");
+		}
 		a.finishedAppointment();
 		try {
 			FlexiBookPersistence.save(flexiBook);
