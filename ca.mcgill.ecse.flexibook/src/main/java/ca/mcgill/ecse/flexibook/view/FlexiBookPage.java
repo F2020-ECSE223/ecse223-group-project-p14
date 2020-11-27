@@ -2844,11 +2844,6 @@ public class FlexiBookPage extends JFrame {
 		
 		existingCb = new JComboBox<String>();
 		existingCb.setBounds(113, 50, 120, 27);
-		if (!FlexiBookController.getTOServices().isEmpty()) {
-			for (TOService service:FlexiBookController.getTOServices()) {
-				existingCb.addItem(service.getName());
-			}
-		}
 		existingCb.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				serviceNameT.setText((String)existingCb.getSelectedItem());
@@ -2886,13 +2881,22 @@ public class FlexiBookPage extends JFrame {
 		refreshB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				refreshAppointmentPage();
+				bookAppointmentPanel.remove(existingCb);
 				existingCb = new JComboBox<String>();
 				existingCb.setBounds(113, 50, 120, 27);
+				existingCb.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						serviceNameT.setText((String)existingCb.getSelectedItem());
+					}
+				});
+				
 				if (!FlexiBookController.getTOServices().isEmpty()) {
 					for (TOService service:FlexiBookController.getTOServices()) {
 						existingCb.addItem(service.getName());
 					}
 				}
+				
+				bookAppointmentPanel.add(existingCb);
 			}
 		});
 		
@@ -4897,9 +4901,9 @@ public class FlexiBookPage extends JFrame {
 		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
 		viewAppForCurCustomerScrollPane.setPreferredSize(d);
 		
-		for (TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-			System.out.println(ts);
-		}
+//		for (TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+//			System.out.println(ts);
+//		}
 		
 		// Show error Message
 		if(appSectionError.equals(" ")) {
@@ -4916,6 +4920,7 @@ public class FlexiBookPage extends JFrame {
 				noshowcount = toc.getNoShowCount();
 			}
 		}
+		
 		noShowLabel.setText("You have " + noshowcount + " no-show count");
 		
 		appSectionError = " ";
