@@ -2150,8 +2150,7 @@ public class FlexiBookPage extends JFrame {
 		calendarOwnerPanel.add(viewAdress);
 		viewAdress.setBounds(50, 550, 300, 25);
 		
-		
-		
+	
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
 		calendarMonthlyViewPanel.setLayout(null);
