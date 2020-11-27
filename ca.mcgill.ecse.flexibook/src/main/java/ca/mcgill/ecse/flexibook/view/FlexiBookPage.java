@@ -2593,6 +2593,11 @@ public class FlexiBookPage extends JFrame {
 		refreshB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				refreshAppointmentPage();
+				if (!FlexiBookController.getTOServices().isEmpty()) {
+					for (TOService service:FlexiBookController.getTOServices()) {
+						existingCb.addItem(service.getName());
+					}
+				}
 			}
 		});
 		
