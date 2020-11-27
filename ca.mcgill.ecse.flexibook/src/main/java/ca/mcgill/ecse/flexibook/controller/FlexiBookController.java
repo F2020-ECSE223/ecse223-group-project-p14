@@ -647,7 +647,7 @@ public class FlexiBookController {
 	 * @param newPassword
 	 * @return updateSuccessful boolean
 	 * @throws InvalidInputException
-	 * 
+	 *  
 	 * @author Catherine
 	 */
 	public static boolean updateUserAccount(String currentUsername, String newUsername, String newPassword) throws InvalidInputException { 
@@ -667,7 +667,7 @@ public class FlexiBookController {
 		else if (newPassword == null || newPassword.replaceAll("\\s+", "").length() == 0) {
 			throw new InvalidInputException("The password cannot be empty");
 		}
-		else if (findCustomer(newUsername) != null) { 
+		else if ( !newUsername.equals(currentUsername) && findCustomer(newUsername) != null ) { 
 			throw new InvalidInputException("Username not available");
 		}
 		else {
