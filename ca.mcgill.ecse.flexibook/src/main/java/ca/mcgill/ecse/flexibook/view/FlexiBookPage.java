@@ -1338,7 +1338,8 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
-	/**
+	/** 
+	 * 
 	 * @author Catherine
 	 */
 	private void initInfoCustomerPanel(){
