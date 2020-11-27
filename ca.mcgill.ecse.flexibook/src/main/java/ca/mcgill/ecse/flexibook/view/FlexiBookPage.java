@@ -489,7 +489,7 @@ public class FlexiBookPage extends JFrame {
 		JLabel lblRepeatPassword = new JLabel("REPEAT PASSWORD");
 		lblRepeatPassword.setBounds(600, (int)(275*initLogInPageScalingFactor), (int)(133*initLogInPageScalingFactor), (int)(14*initLogInPageScalingFactor));
 		lblRepeatPassword.setForeground(new Color(240, 248, 255));
-		lblRepeatPassword.setText("");
+		//lblRepeatPassword.setText("");
 		LoginPane.add(lblRepeatPassword);
 		
 		
@@ -3252,6 +3252,7 @@ public class FlexiBookPage extends JFrame {
 				addLoginError = "one of the fields is empty";
 				textField_1.setText("");
 				passwordField.setText("");
+				passwordField_1.setText("");
 			} 
 			else {
 				try {
@@ -3261,17 +3262,20 @@ public class FlexiBookPage extends JFrame {
 						if (FlexiBookApplication.getFlexiBook().getBusiness()==null) {
 							textField_1.setText("");
 							passwordField.setText("");
+							passwordField_1.setText("");
 							logInOwnerButtonToSetUpActionPerformed(evt);
 						}
 						else if (FlexiBookApplication.getFlexiBook().getBusiness()!=null) {
 							textField_1.setText("");
 							passwordField.setText("");
+							passwordField_1.setText("");
 							logInOwnerButtonActionPerformed(evt);
 						}
 					}
 					else {
 						textField_1.setText("");
 						passwordField.setText("");
+						passwordField_1.setText("");
 						logInCustomerButtonActionPerformed(evt);
 					}
 				}  catch (InvalidInputException e) {
