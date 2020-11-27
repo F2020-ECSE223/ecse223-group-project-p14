@@ -1121,6 +1121,7 @@ public class FlexiBookPage extends JFrame {
 		logOutCustomerButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				logOutCustomerButtonActionPerformed(evt);
+				refreshAppointmentPage(); // AntoineW added This
 			}
 		});
 
@@ -4112,38 +4113,16 @@ public class FlexiBookPage extends JFrame {
 		
 		
 		// Show error Message
-		errorMsgLabel.setText(appSectionError);
+		if(appSectionError.equals(" ")) {
+			errorMsgLabel.setText("Success");
+			errorMsgLabel.setForeground(Color.GREEN);
+		}else {
+			errorMsgLabel.setText(appSectionError);
+			errorMsgLabel.setForeground(Color.RED);
+		}
+		
 		appSectionError = " ";
 		
-//		for(TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-//			System.out.println(ts);
-//		}
-//		
-
-//			for (TODailyOverviewItem item : BtmsController.getDailyOverview((Date) overviewDatePicker.getModel().getValue())) {
-//				String busText = item.getLicencePlate();
-//				String shiftText = "---";
-//				String driverText = "---";
-//				if (item.isInRepairShop()) {
-//					busText = busText + " (in repair)";
-//				}
-//				if (item.getShift() != null) {
-//					shiftText = item.getShift();
-//				}
-//				if (item.getName() != null) {
-//					driverText = "#" + item.getId() + " " + item.getName();
-//					if (item.isSick()) {
-//						driverText = driverText + " (sick)";
-//					}
-//				}
-//				Object[] obj = {item.getNumber(), busText, shiftText, driverText};
-//				overviewDtm.addRow(obj);
-//			}
-		
-		
-		
-//		Dimension d = overviewTable.getPreferredSize();
-//		overviewScrollPane.setPreferredSize(new Dimension(d.width, HEIGHT_OVERVIEW_TABLE));
 		
 	
 	}
