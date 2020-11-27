@@ -1765,10 +1765,12 @@ public class FlexiBookController {
 				}
 				sc.addService(comboItemTO);
 			}
+
 //			ComboItem mainService = s.getMainService();
 //			TOComboItem toMainService = new TOComboItem(true, mainService.getService().getName(), 
 //																	sc);
 			
+
 			
 			serviceCombosTO.add(sc);
 		}
