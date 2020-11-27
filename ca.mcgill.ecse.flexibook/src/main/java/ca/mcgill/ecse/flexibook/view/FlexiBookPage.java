@@ -90,6 +90,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel calendarMonthlyViewGridPanel;
 	private JPanel calendarMonthlyViewTopPanel;
 	private JPanel calendarTimes;
+	private JPanel calendarBusinessSlotsFull;
 	private JPanel calendarBusinessSlots;
 	private JPanel calendarAppointments;
 	private JPanel buttonPanel;
@@ -1672,6 +1673,11 @@ public class FlexiBookPage extends JFrame {
 		calendarBusinessSlots.setLayout(null);
 		calendarBusinessSlots.setOpaque(false);
 		calendarBusinessSlots.setPreferredSize(new Dimension(700,700));
+
+		calendarBusinessSlotsFull = new JPanel();
+		calendarBusinessSlotsFull.setLayout(null);
+		calendarBusinessSlotsFull.setOpaque(false);
+		calendarBusinessSlotsFull.setPreferredSize(new Dimension(700,700));
 
 		calendarTimes = new JPanel();
 		calendarTimes.setLayout(null);
@@ -4475,11 +4481,14 @@ public class FlexiBookPage extends JFrame {
 	private void refreshCalendarWeeklyView(){
 		//time bar
 			int minHour = 0;
+			int minMinute = 0;
 			int maxHour = 0;
+			int maxMinute = 0;
 			int minute = 0;
 			int hour = 0;
 			calendarTimes.removeAll();
 			calendarBusinessSlots.removeAll();
+			calendarBusinessSlotsFull.removeAll();
 			calendarAppointments.removeAll();
 			buttonPanel.removeAll();
 			List<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
@@ -4495,10 +4504,21 @@ public class FlexiBookPage extends JFrame {
 					}
 				}
 				minHour = minStartTime.getHours();
+				minMinute = minStartTime.getMinutes();
 				maxHour = maxEndTime.getHours();;
+				maxMinute = maxEndTime.getMinutes();
 				hour = minStartTime.getHours();
 			}
-			double deltaY = 520.0/((maxHour-minHour)*2);
+
+			minHour = 0;
+			maxHour = 24;
+			hour = 0;
+			int deltaY = 30;
+			calendarWeeklyViewPanel.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY+80+35+10));
+			calendarTimes.setPreferredSize(new Dimension(40,(maxHour-minHour)*2*deltaY));
+			calendarBusinessSlots.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY));
+			calendarAppointments.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY));
+			calendarBusinessSlotsFull.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY));
 			JLabel p = new JLabel();
 			for(int i = 0; i < (maxHour-minHour)*2; i++){
 				p = new JLabel(hour + ":" + minute, SwingConstants.RIGHT);
@@ -4518,63 +4538,44 @@ public class FlexiBookPage extends JFrame {
 				}
 			}
 			calendarWeeklyViewPanel.add(calendarTimes);
-			calendarTimes.setBounds(0,80+35,40,520);
+			calendarTimes.setBounds(0,80+35,40,(maxHour-minHour)*2*deltaY);
 			//add business hours times
 			List<TOBusinessHour> bhList = FlexiBookController.getTOBusinessHour();
 			int n = 0;
-			List<Integer> dayList = new ArrayList<Integer>();
+			JLabel bhp = new JLabel("I");
+			bhp.setBackground(new Color(230,230,230));
+			bhp.setForeground(new Color(230,230,230));
+			bhp.setOpaque(true);
+			calendarBusinessSlotsFull.add(bhp);
+			bhp.setBounds(50,80+35,90*7,(maxHour-minHour)*2*deltaY);
 			for(TOBusinessHour bh: bhList){
 				if(bh.getDayOfWeek().equals(DayOfWeek.Monday)){
-					n = 0;
-					dayList.add(0);
+					n=0;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Tuesday)){
-					n = 1;
-					dayList.add(1);
+					n=1;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Wednesday)){
-					n = 2;
-					dayList.add(2);
+					n=2;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Thursday)){
-					n = 3;
-					dayList.add(3);
+					n=3;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Friday)){
-					n = 4;
-					dayList.add(4);
+					n=4;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Saturday)){
-					n = 5;
-					dayList.add(5);
+					n=5;
 				} else if(bh.getDayOfWeek().equals(DayOfWeek.Sunday)){
-					n = 6;
-					dayList.add(6);
+					n=6;
 				}
-				p = new JLabel("I");
-				p.setBackground(new Color(230,230,230));
-				p.setOpaque(true);
-				p.setForeground(new Color(230,230,230));
-				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(bh.getStartTime().getHours()-minHour))));
-				calendarBusinessSlots.add(p);
-				p.setBounds(n*90+50,35+80,90,(int)Math.round(deltaY*2*(bh.getStartTime().getHours()-minHour)));
-
-				p = new JLabel("I");
-				p.setBackground(new Color(230,230,230));
-				p.setOpaque(true);
-				p.setForeground(new Color(230,230,230));
-				p.setPreferredSize(new Dimension(90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours()))));
-				calendarBusinessSlots.add(p);
-				p.setBounds(n*90+50,35+80+520-(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())),90,(int)Math.round(deltaY*2*(maxHour-bh.getEndTime().getHours())));
-			}
-			for(int i = 0; i < 7; i++){
-				if(!dayList.contains(i)){
-					p = new JLabel("I");
-					p.setBackground(new Color(230,230,230));
-					p.setOpaque(true);
-					p.setForeground(new Color(230,230,230));
-					p.setPreferredSize(new Dimension(90,520));
-					calendarBusinessSlots.add(p);
-					p.setBounds(i*90+50,35+80,90,520);
-				}
+				bhp = new JLabel("I");
+				bhp.setBackground(Color.WHITE);
+				bhp.setForeground(Color.WHITE);
+				bhp.setOpaque(true);
+				calendarBusinessSlots.add(bhp);
+				bhp.setBounds(n*90+50,80+35+bh.getStartTime().getHours()*deltaY*2, 90, (bh.getEndTime().getHours()-bh.getStartTime().getHours())*deltaY*2);
 			}
 			calendarWeeklyViewPanel.add(calendarBusinessSlots);
-			calendarBusinessSlots.setBounds(0,0,700,700);
+			calendarBusinessSlots.setBounds(0,0,700,(maxHour-minHour)*2*deltaY+80+35+10);
+			calendarWeeklyViewPanel.add(calendarBusinessSlotsFull);
+			calendarBusinessSlotsFull.setBounds(0,0,700,(maxHour-minHour)*2*deltaY+80+35+10);
+			
 			//add customer appointments
 			int actualDay = calendarDay;
 			int actualMonth = calendarMonth;
