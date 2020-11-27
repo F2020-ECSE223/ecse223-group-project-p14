@@ -50,8 +50,10 @@ import ca.mcgill.ecse.flexibook.controller.TOAppointment;
 
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOCustomer;
 import ca.mcgill.ecse.flexibook.controller.TOService;
+import ca.mcgill.ecse.flexibook.controller.TOServiceCombo;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 
 public class FlexiBookPage extends JFrame {
@@ -314,6 +316,36 @@ public class FlexiBookPage extends JFrame {
 	JLabel updateErrorLabel;
 	JLabel updateSuccessLabel;
 	DefaultTableModel modelModifySingleService;
+	
+	// service combo
+	private JPanel serviceComboPanel;
+	private JTextField newServiceComboNameTextField;
+	private JComboBox<String> deleteServiceComboComboBox;
+	private String errorMessageServiceCombo = null;
+	private JLabel deleteServiceComboSuccessLabel;
+	private JLabel defineServiceComboSuccessLabel;
+	private JLabel errorMessageServiceComboLabel; 
+	private JComboBox<String> updateMainServiceComboBox;
+	private String defineComboSuccess = null;
+	private String deleteComboSuccess = null;
+	private String updateComboSuccess = null;
+	private JTable existingServiceComboTable;
+	JComboBox<String> updateServiceComboComboBox;
+	JLabel updateServiceComboSuccessLabel;
+	DefaultTableModel modelModifySingleServiceCombo;
+	JList<String> newComboItemList;
+	JComboBox<String> MainServiceComboBox;
+	JList<String> newMandatoryList;
+	DefaultListModel<String> newComboListModel;
+	DefaultListModel<String> newMandatoryComboItemListModel;
+	private JFrame frame;
+	private JScrollPane newComboItemScrollPane;
+	private JScrollPane newMandatoryScrollPane;
+	JList<String> updateMandatoryList;
+	JList<String> updateComboItemList;
+	DefaultListModel<String> updateComboListModel;
+	DefaultListModel<String> updateMandatoryComboItemListModel;
+	private JTextField updateServiceComboNameTextField;
 	
 
 	/** Creates new form FlexiBookPage */
@@ -1660,13 +1692,251 @@ public class FlexiBookPage extends JFrame {
 
 	//initialize combo services panel
 	private void initComboServicesPanel(){
-		comboServicesPanel = new JPanel();
-		comboServicesLabel = new JLabel("Combo Service Page");
-		comboServicesPanel.setPreferredSize(new Dimension(1100,700));
-		comboServicesPanel.setBackground(Color.WHITE);
-		comboServicesPanel.setOpaque(true);
-		comboServicesPanel.setForeground(Color.WHITE);
-		comboServicesPanel.add(comboServicesLabel);
+		
+		serviceComboPanel = new JPanel();
+		serviceComboPanel.setPreferredSize(new Dimension(1100,700));
+		serviceComboPanel.setBackground(Color.WHITE);
+		serviceComboPanel.setOpaque(true);
+		serviceComboPanel.setForeground(Color.WHITE);
+		serviceComboPanel.setLayout(null);
+		
+		
+		JScrollPane serviceComboScrollPane = new JScrollPane();
+		serviceComboScrollPane.setBounds(479, 6, 524, 404);
+		serviceComboPanel.add(serviceComboScrollPane);
+		
+		
+		errorMessageServiceComboLabel = new JLabel("");
+		errorMessageServiceComboLabel.setForeground(Color.RED);
+		errorMessageServiceComboLabel.setBounds(47, 17, 366, 16);
+		serviceComboPanel.add(errorMessageServiceComboLabel);
+		
+		existingServiceComboTable = new JTable();
+		modelModifySingleServiceCombo = new DefaultTableModel();
+		Object[] col = {"Name","MainService","ComboItem","isMandatory"};
+		modelModifySingleServiceCombo.setColumnIdentifiers(col);
+		existingServiceComboTable.setModel(modelModifySingleServiceCombo);
+		
+		serviceComboScrollPane.setViewportView(existingServiceComboTable);
+		
+		
+		newServiceComboNameTextField = new JTextField();
+		newServiceComboNameTextField.setColumns(10);
+		newServiceComboNameTextField.setBounds(254, 78, 130, 26);
+		serviceComboPanel.add(newServiceComboNameTextField);
+
+		JLabel newMainServiceLabel = new JLabel("New Main Service");
+		newMainServiceLabel.setBounds(35, 111, 134, 16);
+		serviceComboPanel.add(newMainServiceLabel);
+
+		JLabel newComboItemLabel = new JLabel("New Combo Items");
+		newComboItemLabel.setBounds(35, 139, 202, 16);
+		serviceComboPanel.add(newComboItemLabel);
+
+		JLabel newMandatoryLabel = new JLabel("New Mandatory Combo Items");
+		newMandatoryLabel.setBounds(35, 231, 202, 16);
+		serviceComboPanel.add(newMandatoryLabel);
+
+		JButton confirmDefineServiceComboButton = new JButton("Confirm");
+		confirmDefineServiceComboButton.setBorder(new LineBorder(Color.darkGray));
+		confirmDefineServiceComboButton.setBackground(Color.darkGray);
+		confirmDefineServiceComboButton.setOpaque(true);
+		confirmDefineServiceComboButton.setForeground(Color.WHITE);
+		confirmDefineServiceComboButton.setBounds(33, 264, 95, 29);
+		serviceComboPanel.add(confirmDefineServiceComboButton);
+		
+		JLabel newServiceComboNameLabel = new JLabel("New Service Combo Name");
+		newServiceComboNameLabel.setBounds(35, 83, 176, 16);
+		serviceComboPanel.add(newServiceComboNameLabel);
+		
+		defineServiceComboSuccessLabel = new JLabel("");
+		defineServiceComboSuccessLabel.setForeground(Color.GREEN);
+		defineServiceComboSuccessLabel.setBounds(131, 259, 106, 26);
+		serviceComboPanel.add(defineServiceComboSuccessLabel);
+		
+		deleteServiceComboComboBox = new JComboBox<String>();
+		deleteServiceComboComboBox.setBounds(605, 545, 262, 48);
+		if (!FlexiBookController.getTOServiceCombos().isEmpty()) {
+			for (TOServiceCombo toServiceCombo:FlexiBookController.getTOServiceCombos()) {
+				deleteServiceComboComboBox.addItem(toServiceCombo.getName());
+			}
+		}
+		serviceComboPanel.add(deleteServiceComboComboBox);
+		
+		JLabel selectDeleteServiceComboLabel = new JLabel("Select the service you want to delete:");
+		selectDeleteServiceComboLabel.setBounds(615, 500, 252, 38);
+		serviceComboPanel.add(selectDeleteServiceComboLabel);
+		
+		JButton confirmDeleteServiceComboButton = new JButton("Confirm");
+		confirmDeleteServiceComboButton.setBorder(new LineBorder(Color.darkGray));
+		confirmDeleteServiceComboButton.setBackground(Color.darkGray);
+		confirmDeleteServiceComboButton.setOpaque(true);
+		confirmDeleteServiceComboButton.setForeground(Color.WHITE);
+		confirmDeleteServiceComboButton.setBounds(681, 625, 95, 29);
+		serviceComboPanel.add(confirmDeleteServiceComboButton);
+		
+		deleteServiceComboSuccessLabel = new JLabel("");
+		deleteServiceComboSuccessLabel.setForeground(Color.GREEN);
+		deleteServiceComboSuccessLabel.setBounds(809, 616, 150, 26);
+		serviceComboPanel.add(deleteServiceComboSuccessLabel);
+		
+		updateServiceComboComboBox = new JComboBox<String>();
+		updateServiceComboComboBox.setBounds(75, 349, 235, 27);
+		if (!FlexiBookController.getTOServiceCombos().isEmpty()) {
+			for (TOServiceCombo toServiceCombo:FlexiBookController.getTOServiceCombos()) {
+				updateServiceComboComboBox.addItem(toServiceCombo.getName());
+			}
+		}
+		serviceComboPanel.add(updateServiceComboComboBox);
+		
+		JLabel selectServiceComboUpdateLabel = new JLabel("Select the service you want to update:");
+		selectServiceComboUpdateLabel.setBounds(19, 321, 312, 16);
+		serviceComboPanel.add(selectServiceComboUpdateLabel);
+		
+		JButton confirmUpdateServiceComboButton = new JButton("Confirm");
+		confirmUpdateServiceComboButton.setBorder(new LineBorder(Color.darkGray));
+		confirmUpdateServiceComboButton.setBackground(Color.darkGray);
+		confirmUpdateServiceComboButton.setOpaque(true);
+		confirmUpdateServiceComboButton.setForeground(Color.WHITE);
+		confirmUpdateServiceComboButton.setBounds(47, 625, 117, 29);
+		serviceComboPanel.add(confirmUpdateServiceComboButton);
+		
+		updateServiceComboSuccessLabel = new JLabel("");
+		updateServiceComboSuccessLabel.setForeground(Color.GREEN);
+		updateServiceComboSuccessLabel.setBounds(166, 637, 123, 26);
+		serviceComboPanel.add(updateServiceComboSuccessLabel);
+		
+		JLabel defineServiceComboIcon = new JLabel("Define Service Combo");
+		defineServiceComboIcon.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+
+		defineServiceComboIcon.setBounds(118, 45, 192, 26);
+		serviceComboPanel.add(defineServiceComboIcon);
+		
+		JLabel updateServiceComboIcon = new JLabel("Update Service Combo");
+		updateServiceComboIcon.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		updateServiceComboIcon.setForeground(Color.BLACK);
+		updateServiceComboIcon.setBounds(113, 289, 176, 48);
+		serviceComboPanel.add(updateServiceComboIcon);
+		
+		JLabel deleteServiceIcon = new JLabel("Delete Service Combo");
+		deleteServiceIcon.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		deleteServiceIcon.setForeground(new Color(0, 0, 0));
+		deleteServiceIcon.setBounds(663, 451, 176, 38);
+		serviceComboPanel.add(deleteServiceIcon);
+		
+		newComboListModel = new DefaultListModel<String>();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				newComboListModel.addElement(service.getName());
+			}
+		}
+		
+		
+		MainServiceComboBox = new JComboBox<String>();
+		MainServiceComboBox.setBounds(254, 107, 133, 26);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService toService:FlexiBookController.getTOServices()) {
+				MainServiceComboBox.addItem(toService.getName());
+			}
+		}
+		
+		serviceComboPanel.add(MainServiceComboBox);
+		
+		newMandatoryScrollPane = new JScrollPane();
+		newMandatoryScrollPane.setBounds(254, 231, 130, 62);
+		serviceComboPanel.add(newMandatoryScrollPane);
+		
+		newMandatoryComboItemListModel = new DefaultListModel<String>();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				newMandatoryComboItemListModel.addElement(service.getName());
+			}
+		}
+		newMandatoryList = new JList<String>(newMandatoryComboItemListModel);
+		newMandatoryScrollPane.setViewportView(newMandatoryList);
+		
+		newComboItemScrollPane = new JScrollPane();
+		newComboItemScrollPane.setBounds(254, 143, 130, 55);
+		serviceComboPanel.add(newComboItemScrollPane);
+		newComboItemList = new JList<String>(newComboListModel);
+		newComboItemScrollPane.setViewportView(newComboItemList);
+		newComboItemList.setBackground(Color.WHITE);
+		
+		JLabel updateMainServiceLabel = new JLabel("Update Main Service");
+		updateMainServiceLabel.setBounds(19, 455, 134, 16);
+		serviceComboPanel.add(updateMainServiceLabel);
+		
+		JLabel updateComboItemLabel_1 = new JLabel("Update Combo Items");
+		updateComboItemLabel_1.setBounds(19, 483, 202, 16);
+		serviceComboPanel.add(updateComboItemLabel_1);
+		
+		JLabel updateMandatoryLabel = new JLabel("Update Mandatory Combo Items");
+		updateMandatoryLabel.setBounds(19, 575, 202, 16);
+		serviceComboPanel.add(updateMandatoryLabel);
+		
+		updateMainServiceComboBox = new JComboBox<String>();
+		updateMainServiceComboBox.setBounds(238, 451, 133, 26);
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService toService:FlexiBookController.getTOServices()) {
+				updateMainServiceComboBox.addItem(toService.getName());
+			}
+		}
+		serviceComboPanel.add(updateMainServiceComboBox);
+		
+		JScrollPane updateMandatoryScrollPane = new JScrollPane();
+		updateMandatoryScrollPane.setBounds(249, 577, 135, 48);
+		serviceComboPanel.add(updateMandatoryScrollPane);
+		
+		updateMandatoryComboItemListModel = new DefaultListModel<String>();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				updateMandatoryComboItemListModel.addElement(service.getName());
+			}
+		}
+		updateMandatoryList = new JList<String>(updateMandatoryComboItemListModel);
+		updateMandatoryScrollPane.setViewportView(updateMandatoryList);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(254, 500, 131, 44);
+		serviceComboPanel.add(scrollPane);
+		
+		updateComboListModel = new DefaultListModel<String>();
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				updateComboListModel.addElement(service.getName());
+			}
+		}
+		updateComboItemList = new JList<String>(updateComboListModel);
+		scrollPane.setViewportView(updateComboItemList);
+		
+		updateServiceComboNameTextField = new JTextField();
+		updateServiceComboNameTextField.setColumns(10);
+		updateServiceComboNameTextField.setBounds(238, 401, 130, 26);
+		serviceComboPanel.add(updateServiceComboNameTextField);
+		
+		JLabel updateServiceComboNameLabel = new JLabel("Update Service Combo Name");
+		updateServiceComboNameLabel.setBounds(19, 406, 192, 16);
+		serviceComboPanel.add(updateServiceComboNameLabel);
+		
+		confirmDefineServiceComboButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					defineServiceComboButtonActionPerformed(evt);			
+			}		
+		});
+		
+		confirmDeleteServiceComboButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					deleteServiceComboButtonActionPerformed(evt);			
+			}		
+		});
+		
+		confirmUpdateServiceComboButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+					updateServiceComboButtonActionPerformed(evt);			
+			}		
+		});
+		
+		
 
 
 	}
@@ -2866,6 +3136,7 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 		refreshSingleServiceData();
+		refreshServiceComboData();
 		//refreshAppointmentPage();
 		//refreshBusinessHourData();
 		//refreshBusinessSetUp();
@@ -2961,7 +3232,140 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 }
 				
+	public void updateServiceComboButtonActionPerformed(ActionEvent evt) {
+		errorMessageServiceCombo = null;
+		updateComboSuccess = null;
+		List<Boolean> isMandatory = new ArrayList<Boolean>();
+		for (String comboItem:updateComboItemList.getSelectedValuesList()) {
+			if (updateMandatoryList.getSelectedValuesList().contains(comboItem)) {
+				isMandatory.add(true);
+			}
+			else {
+				isMandatory.add(false);
+			}
+		}
+		try {
+			FlexiBookController.updateServiceCombo((String)updateServiceComboComboBox.getSelectedItem(), 
+					updateServiceComboNameTextField.getText(), 
+					(String) updateMainServiceComboBox.getSelectedItem(), 
+					updateComboItemList.getSelectedValuesList(), isMandatory);
+			updateComboSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			errorMessageServiceCombo = e.getMessage();
+		}
+		
+		refreshServiceComboData();
+		
+	
+		
+		
+	}
+	
+	
+	public void deleteServiceComboButtonActionPerformed(ActionEvent evt) {
+		errorMessageServiceCombo = null;
+		deleteComboSuccess = null;
+		try {
+			FlexiBookController.deleteServiceCombo((String) deleteServiceComboComboBox.getSelectedItem());
+			deleteComboSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			errorMessageServiceCombo = e.getMessage();
+		}
+		refreshServiceComboData();
+	}
+	
+	public void defineServiceComboButtonActionPerformed(ActionEvent evt) {
+		errorMessageServiceCombo = null;
+		defineComboSuccess = null;
+		List<Boolean> isMandatory = new ArrayList<Boolean>();
+		for (String comboItem:newComboItemList.getSelectedValuesList()) {
+			if (newMandatoryList.getSelectedValuesList().contains(comboItem)) {
+				isMandatory.add(true);
+			}
+			else {
+				isMandatory.add(false);
+			}
+		}
+		try {
+			FlexiBookController.defineServiceCombo(newServiceComboNameTextField.getText(), 
+					(String) MainServiceComboBox.getSelectedItem(), newComboItemList.getSelectedValuesList()
+					, isMandatory);
+			defineComboSuccess = "Success!";
+		} catch (InvalidInputException e) {
+			errorMessageServiceCombo = e.getMessage();
+		}
+		
+		refreshServiceComboData();
+	}
+	
+	
+	public void refreshServiceComboData() {
+		errorMessageServiceComboLabel.setText(errorMessageServiceCombo);
+		defineServiceComboSuccessLabel.setText(defineComboSuccess);
+		deleteServiceComboSuccessLabel.setText(deleteComboSuccess);
+		updateServiceComboSuccessLabel.setText(updateComboSuccess);
+		MainServiceComboBox.removeAllItems();
+		updateMainServiceComboBox.removeAllItems();
+		updateServiceComboComboBox.removeAllItems();
+		deleteServiceComboComboBox.removeAllItems();
+		updateModelModifyServiceCombo();
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				MainServiceComboBox.addItem(service.getName());
+			}
+		}
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOService service:FlexiBookController.getTOServices()) {
+				updateMainServiceComboBox.addItem(service.getName());
+			}
+		}
+		
+		if (!FlexiBookController.getTOServices().isEmpty()) {
+			for (TOServiceCombo toServiceCombo:FlexiBookController.getTOServiceCombos()) {
+				deleteServiceComboComboBox.addItem(toServiceCombo.getName());
+			}
+		}
+		
+		if (!FlexiBookController.getTOServiceCombos().isEmpty()) {
+			for (TOServiceCombo toServiceCombo:FlexiBookController.getTOServiceCombos()) {
+				updateServiceComboComboBox.addItem(toServiceCombo.getName());
+			}
+		}
+		
+		
+		
+		
+	}
 
+	private void updateModelModifyServiceCombo() {
+		modelModifySingleServiceCombo.getDataVector().removeAllElements();
+		
+		if (!FlexiBookController.getTOServiceCombos().isEmpty()) {
+			for (TOServiceCombo toServiceCombo : FlexiBookController.getTOServiceCombos()) {
+				List<String> comboItemString = new ArrayList<String>();
+				List<String> isMandatoryString = new ArrayList<String>();
+				String name = toServiceCombo.getName();
+				String mainService = toServiceCombo.getMainService().getServiceName();
+				for (TOComboItem toComboItem:toServiceCombo.getServices()) {
+					if (toServiceCombo.getServices().contains(toComboItem)) {
+						comboItemString.add(toComboItem.getServiceName());
+						if (toComboItem.isIsMandatory()) {
+							isMandatoryString.add("true");
+						}
+						else {
+							isMandatoryString.add("false");
+						}
+					}
+				}
+
+				Object[] obj = {name, mainService, comboItemString, isMandatoryString};
+				modelModifySingleServiceCombo.addRow(obj);
+
+			}
+		}
+	}
 	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
 		errorMessageBussinessHour = " "; 
@@ -3501,10 +3905,10 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		getContentPane().add(comboServicesPanel);
-		comboServicesPanel.setBounds(0,40,1100,700);
+		getContentPane().add(serviceComboPanel);
+		serviceComboPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
-		previousPanel = comboServicesPanel;
+		previousPanel = serviceComboPanel;
 		//refresh page
 		refreshData();
 	}
