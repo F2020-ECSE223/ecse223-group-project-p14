@@ -2394,12 +2394,6 @@ public class FlexiBookPage extends JFrame {
 		bookAppointmentPanel.setLayout(null);
 		
 		
-//		newAppTimeT = new JTextField();
-//		newAppTimeT.setBounds(174, 145, 86, 20);
-//		newAppTimeT.setText("HH:MM");
-//		newAppTimeT.setColumns(10);
-		//bookAppointmentPanel.add(newAppTimeT);
-		
 		JLabel registerTime = new JLabel("Time of New Appointment");
 		registerTime.setBounds(22, 148, 150, 14);
 		bookAppointmentPanel.add(registerTime);
@@ -2529,7 +2523,7 @@ public class FlexiBookPage extends JFrame {
 				serviceNameT.setText((String)existingCb.getSelectedItem());
 			}
 		});
-		bookAppointmentPanel.add(existingCb);
+		//bookAppointmentPanel.add(existingCb);
 		
 		
 		
@@ -2591,7 +2585,7 @@ public class FlexiBookPage extends JFrame {
 					}
 				}
 				
-				bookAppointmentPanel.add(existingCb);
+				//bookAppointmentPanel.add(existingCb);
 			}
 		});
 		
