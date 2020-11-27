@@ -2269,6 +2269,11 @@ public class FlexiBookPage extends JFrame {
 
 		JButton confirmAddBusinessHour= new JButton("Add");
 		confirmAddBusinessHour.setBounds(50, 550, 117, 30);
+		confirmAddBusinessHour.setAlignmentX(CENTER_ALIGNMENT);
+		confirmAddBusinessHour.setBorder(new LineBorder(Color.darkGray));
+		confirmAddBusinessHour.setBackground(Color.darkGray);
+		confirmAddBusinessHour.setOpaque(true);
+		confirmAddBusinessHour.setForeground(Color.WHITE);
 		businessHoursPanel.add(confirmAddBusinessHour);
 		
 		JLabel updateDayOfWeekLabel = new JLabel("Update the selected business hour");
@@ -2293,10 +2298,20 @@ public class FlexiBookPage extends JFrame {
 		
 		JButton confirmUpdateBusinessHour = new JButton("Update");
 		confirmUpdateBusinessHour.setBounds(700, 300, 150, 29);
+		confirmUpdateBusinessHour.setAlignmentX(CENTER_ALIGNMENT);
+		confirmUpdateBusinessHour.setBorder(new LineBorder(Color.darkGray));
+		confirmUpdateBusinessHour.setBackground(Color.darkGray);
+		confirmUpdateBusinessHour.setOpaque(true);
+		confirmUpdateBusinessHour.setForeground(Color.WHITE);
 		businessHoursPanel.add(confirmUpdateBusinessHour);
 		
 		JButton confirmRemoveBusinessHour = new JButton("Remove");
 		confirmRemoveBusinessHour.setBounds(700, 550, 117, 29);
+		confirmRemoveBusinessHour.setAlignmentX(CENTER_ALIGNMENT);
+		confirmRemoveBusinessHour.setBorder(new LineBorder(Color.darkGray));
+		confirmRemoveBusinessHour.setBackground(Color.darkGray);
+		confirmRemoveBusinessHour.setOpaque(true);
+		confirmRemoveBusinessHour.setForeground(Color.WHITE);
 		businessHoursPanel.add(confirmRemoveBusinessHour);
 
 		JScrollPane scrollPane = new JScrollPane();
