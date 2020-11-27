@@ -2606,6 +2606,11 @@ public class FlexiBookPage extends JFrame {
 		
 		JButton updateDetailBtn = new JButton("Update");
 		updateDetailBtn.setBounds(750,500,89,23);
+		updateDetailBtn.setAlignmentX(CENTER_ALIGNMENT);
+		updateDetailBtn.setBorder(new LineBorder(Color.darkGray));
+		updateDetailBtn.setBackground(Color.darkGray);
+		updateDetailBtn.setOpaque(true);
+		updateDetailBtn.setForeground(Color.WHITE);
 		businessDetailsPanel.add(updateDetailBtn);
 		
 		errorMessageUpdateLabel = new JLabel();
@@ -2756,6 +2761,11 @@ public class FlexiBookPage extends JFrame {
 		
 		addAppForSingleServiceB = new JButton("Add new appointment (Single Service)");
 		addAppForSingleServiceB.setBounds(22, 186, 250, 23);
+		addAppForSingleServiceB.setAlignmentX(CENTER_ALIGNMENT);
+		addAppForSingleServiceB.setBorder(new LineBorder(Color.darkGray));
+		addAppForSingleServiceB.setBackground(Color.darkGray);
+		addAppForSingleServiceB.setOpaque(true);
+		addAppForSingleServiceB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(addAppForSingleServiceB);
 		
 		JLabel comboAppPanelLabel = new JLabel("Select optional combo items");
@@ -2774,6 +2784,11 @@ public class FlexiBookPage extends JFrame {
 		
 		addAppForComboB = new JButton("Add new appointment (Combo)");
 		addAppForComboB.setBounds(415, 186, 250, 23);
+		addAppForComboB.setAlignmentX(CENTER_ALIGNMENT);
+		addAppForComboB.setBorder(new LineBorder(Color.darkGray));
+		addAppForComboB.setBackground(Color.darkGray);
+		addAppForComboB.setOpaque(true);
+		addAppForComboB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(addAppForComboB);
 		
 		noShowLabel = new JLabel("");
@@ -2854,6 +2869,11 @@ public class FlexiBookPage extends JFrame {
 		
 		updateTimeB = new JButton("Update to new time");
 		updateTimeB.setBounds(18, 456, 215, 23);
+		updateTimeB.setAlignmentX(CENTER_ALIGNMENT);
+		updateTimeB.setBorder(new LineBorder(Color.darkGray));
+		updateTimeB.setBackground(Color.darkGray);
+		updateTimeB.setOpaque(true);
+		updateTimeB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(updateTimeB);
 		
 		updateActionComboBox = new JComboBox<String>();
@@ -2896,14 +2916,29 @@ public class FlexiBookPage extends JFrame {
 		
 		updateContentB = new JButton("Update to new service content");
 		updateContentB.setBounds(415, 456, 215, 23);
+		updateContentB.setAlignmentX(CENTER_ALIGNMENT);
+		updateContentB.setBorder(new LineBorder(Color.darkGray));
+		updateContentB.setBackground(Color.darkGray);
+		updateContentB.setOpaque(true);
+		updateContentB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(updateContentB);
 		
 		cancelAppB = new JButton("Cancel");
 		cancelAppB.setBounds(700, 456, 100, 23);
+		cancelAppB.setAlignmentX(CENTER_ALIGNMENT);
+		cancelAppB.setBorder(new LineBorder(Color.darkGray));
+		cancelAppB.setBackground(Color.darkGray);
+		cancelAppB.setOpaque(true);
+		cancelAppB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(cancelAppB);
 		
 		JButton refreshB = new JButton("Refresh");
 		refreshB.setBounds(900, 630, 100, 23);
+		refreshB.setAlignmentX(CENTER_ALIGNMENT);
+		refreshB.setBorder(new LineBorder(Color.darkGray));
+		refreshB.setBackground(Color.darkGray);
+		refreshB.setOpaque(true);
+		refreshB.setForeground(Color.WHITE);
 		bookAppointmentPanel.add(refreshB);
 		refreshB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
