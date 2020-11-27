@@ -2241,7 +2241,7 @@ public class FlexiBookPage extends JFrame {
 		JLabel BHPBG = new JLabel("");
 		BHPBG.setBounds(-50, -35, 1000, 1000);
 		BHPBG.setVerticalAlignment(SwingConstants.TOP);
-		BHPBG.setIcon(new ImageIcon("src/main/resources/businessInfoIcon.jpg"));
+		BHPBG.setIcon(new ImageIcon("src/main/resources/businessInfoIcon_3.jpg"));
 		businessHoursPanelBG.add(BHPBG);
 		
 		updateInfoError = " ";
