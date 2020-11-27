@@ -1676,8 +1676,7 @@ public class FlexiBookPage extends JFrame {
 	
 	/**
 	 * @author thomas
-	 * @coauthor jedla
-	 * later added Businessinformation @jedla
+	 * @Coauthor jedla
 	 */
 
 	//initialize calendar services panel for owner
@@ -2002,7 +2001,11 @@ public class FlexiBookPage extends JFrame {
 		//TO DO
 	}
 
-	//initialize business hours services panel
+	/**
+	 * initialize business hours services panel
+	 * @author jedla
+	 */
+	
 	private void initBusinessHoursPanel(){
 		businessHoursPanel = new JPanel();
 		businessHoursPanel.setLayout(null);
@@ -2218,36 +2221,7 @@ public class FlexiBookPage extends JFrame {
 		}		
 	});
 	}
-	
-	//initialize business information for customer
-	private void initBusinessDetailsPanel(){
-		businessDetailsPanel = new JPanel();
-		businessDetailsPanel.setLayout(null);
-		businessDetailsLabel = new JLabel("Business Detail Page");
-		businessDetailsPanel.setPreferredSize(new Dimension(1100,600));
-		businessDetailsPanel.setBackground(Color.WHITE);
-		businessDetailsPanel.setOpaque(true);
-		businessDetailsPanel.setForeground(Color.WHITE);
-		businessDetailsPanel.add(businessDetailsLabel);
 		
-		//Current business details 
-		JLabel businessName = new JLabel("");
-		businessName.setBounds(500, 50, 500, 23);
-		businessDetailsPanel.add(businessName);
-
-		JLabel adress =  new JLabel("");
-		adress.setBounds(500, 100, 500, 23);
-		businessDetailsPanel.add(adress);
-
-		JLabel phoneNumber  = new JLabel("");
-		phoneNumber.setBounds(500, 150, 500, 23);
-		businessDetailsPanel.add(phoneNumber);
-
-		JLabel email = new JLabel("");
-		email.setBounds(500, 200, 500, 23);
-		businessDetailsPanel.add(email);		
-	}
-	
 	/**
 	 * initialize business details panel for an owner
 	 * @author jedla
@@ -2754,6 +2728,7 @@ public class FlexiBookPage extends JFrame {
 	/**
 	 * This method refreshes the businessSetUpPage 
 	 * @author mikewang
+	 * @autor jedla
 	 */
 	private void refreshBusinessSetUp() {
 		errorMessageSetUpLabel.setText(addSetUpError);
@@ -2761,6 +2736,9 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 	}
 	
+	/**
+	 * @author jedla
+	 */
 	private void refreshBusinessUpdate() {
 		errorMessageUpdateLabel.setText(updateInfoError);
 		businessName.setText("Business Name: " + FlexiBookController.getBusinessInfo().getName());
@@ -2778,6 +2756,10 @@ public class FlexiBookPage extends JFrame {
 		updateInfoError = " ";
 		
 	}
+	
+	/**
+	 * @author jedla
+	 */
 	
 	private void refreshBusinessDetailsCustomer(){
 		viewBusinessName.setText(FlexiBookController.getBusinessInfo().getName());
@@ -2853,7 +2835,9 @@ public class FlexiBookPage extends JFrame {
 		repaint();
 	}
 	
-	
+	/**
+	 * @author jedla
+	 */
 	private void refreshBusinessHourData() {
 		errorMessageBusinessHourLabel.setText(errorMessageBussinessHour);
 		deleteBusinessHourBox.removeAllItems();
@@ -2889,7 +2873,11 @@ public class FlexiBookPage extends JFrame {
 		pack();
 		repaint();
 }
-				
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
+
 	public void updateServiceComboButtonActionPerformed(ActionEvent evt) {
 		errorMessageServiceCombo = null;
 		updateComboSuccess = null;
@@ -2919,6 +2907,11 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
+
 	
 	public void deleteServiceComboButtonActionPerformed(ActionEvent evt) {
 		errorMessageServiceCombo = null;
@@ -3047,25 +3040,13 @@ public class FlexiBookPage extends JFrame {
 		}
 	}
 	
+	/**
+	 * @author jedla
+	 * @param evt
+	 */
+	
 	private void addBusinessHourActionPerformed(java.awt.event.ActionEvent evt){
-		errorMessageBussinessHour = " "; 
-//		DayOfWeek dw = null;
-//		if (addDayOfWeek.getSelectedItem().equals("Monday")) {
-//			dw = DayOfWeek.Monday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
-//			dw= DayOfWeek.Tuesday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
-//			dw = DayOfWeek.Wednesday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
-//			dw = DayOfWeek.Thursday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
-//			dw = DayOfWeek.Friday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
-//			dw = DayOfWeek.Saturday;
-//		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
-//			dw = DayOfWeek.Sunday;
-//		}
-		
+		errorMessageBussinessHour = " "; 		
 		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
         DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
         String startTimeString = "";
@@ -3088,7 +3069,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
-	
+	/**
+	 * @author jedla
+	 * @param evt
+	 */
 	private void removeBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
 		errorMessageBussinessHour = " "; 
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
@@ -3102,26 +3086,13 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 		}
 	
+	/**
+	 * @author jedla
+	 * @param evt
+	 */
 	private void updateBusinessHourActionPerformed(java.awt.event.ActionEvent evt) {
 		errorMessageBussinessHour = " "; 
-		//DayOfWeek dw = null;
-		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
-		
-//		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
-//			dw = DayOfWeek.Monday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Tuesday")) {
-//			dw= DayOfWeek.Tuesday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Wednesday")) {
-//			dw = DayOfWeek.Wednesday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Thursday")) {
-//			dw = DayOfWeek.Thursday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Friday")) {
-//			dw = DayOfWeek.Friday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Saturday")) {
-//			dw = DayOfWeek.Saturday;
-//		} else if (updateDayOfWeek.getSelectedItem().equals("Sunday")) {
-//			dw = DayOfWeek.Sunday;
-//		}
+				FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
 		
 		JSpinner.DateEditor editor = new JSpinner.DateEditor(addStartTimeSpin, "HH:mm");
         DateFormatter formatter = (DateFormatter)editor.getTextField().getFormatter();
@@ -3146,6 +3117,11 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	/**
+	 * @author jedla
+	 * @param evt
+	 */
+	
 	private void updateBusinessDetailActionPerformed(java.awt.event.ActionEvent evt) {
 		
 		if 	(txtPhoneNumberUpdate.getText().equals("")|| txtEmailUpdate.getText().equals("") ||
@@ -3162,24 +3138,12 @@ public class FlexiBookPage extends JFrame {
 		refreshBusinessUpdate();
 	}
 
-	//method called when set-up info is done 
+	/**
+	 * method called when set-up info is done 
+	 * @param evt
+	 * @author jedla
+	 */
 		private void setUpBusinessInformationActionPerformed(java.awt.event.ActionEvent evt) {
-//			//remove log in panel
-//			getContentPane().remove(setUpInPanel);
-//			//add owner top bar and calendar panel to frame
-//			getContentPane().add(topPanelOwner);
-//			topPanelOwner.setBounds(0,0,1100,40);
-//			getContentPane().add(calendarOwnerPanel);
-//			calendarOwnerPanel.setBounds(0,40,1100,700);
-//			//set calendar to initial state
-//			previousPanel = calendarOwnerPanel;
-//			previousButton = calendarOwnerButton;
-//			//reset calendar button
-//			calendarOwnerButton.setBorder(new LineBorder(Color.WHITE));
-//			calendarOwnerButton.setBackground(Color.WHITE);
-//			calendarOwnerButton.setOpaque(true);
-//			calendarOwnerButton.setForeground(darkGrey);
-			//create business
 			try {//Need to add the errors here 
 				if(FlexiBookApplication.getFlexiBook().getBusiness()==null) 
 					FlexiBookController.setUpBusinessInfo(txtBusinessNameSet.getText(), txtAdressSet.getText(), txtPhoneNumberSet.getText(), txtEmailSet.getText());
@@ -3707,7 +3671,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when business hours button pressed
+	/**
+	 * method called when business hours button pressed
+	 * @author jedla
+	 */
 	private void businessHoursButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3738,7 +3705,12 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when business details button pressed
+	/**
+	 * method called when business details button pressed
+	 * @param evt
+	 * @author jedla
+	 */
+	
 	private void businessDetailsButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
