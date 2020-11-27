@@ -2867,12 +2867,9 @@ public class FlexiBookPage extends JFrame {
 		try {
 			FlexiBookController.removeBusinessHour(FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) deleteBusinessHourBox.getSelectedItem()).getStartTime()
 					);
-			//deleteService((String)deleteServiceComboBox.getSelectedItem());
-			//deleteBHSuccess = "Success!";
 		} catch (InvalidInputException e) {
 			errorMessageBussinessHour = e.getMessage();
 		}
-		
 		refreshBusinessHourData();
 		refreshData();
 		}
@@ -2883,17 +2880,17 @@ public class FlexiBookPage extends JFrame {
 		FlexiBookApplication.setCurrentLoginUser(FlexiBookApplication.getFlexiBook().getOwner());
 		if (updateDayOfWeek.getSelectedItem().equals("Monday")) {
 			dw = DayOfWeek.Monday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Tuesday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Tuesday")) {
 			dw= DayOfWeek.Tuesday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Wednesday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Wednesday")) {
 			dw = DayOfWeek.Wednesday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Thursday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Thursday")) {
 			dw = DayOfWeek.Thursday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Friday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Friday")) {
 			dw = DayOfWeek.Friday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Saturday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Saturday")) {
 			dw = DayOfWeek.Saturday;
-		} else if (addDayOfWeek.getSelectedItem().equals("Sunday")) {
+		} else if (updateDayOfWeek.getSelectedItem().equals("Sunday")) {
 			dw = DayOfWeek.Sunday;
 		}
 		

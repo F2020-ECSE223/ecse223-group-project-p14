@@ -1392,9 +1392,9 @@ public class FlexiBookController {
 		if (currentUser instanceof Customer) { throw new InvalidInputException("No permission to update business information");
 		}
 		else if (currentUser instanceof Owner){
-			//currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
 			flexiBook.removeHour(isTheBusinessHour(day, startTime));
 			currentBusiness.removeBusinessHour(isTheBusinessHour(day, startTime));	
+			//isTheBusinessHour(day,startTime).delete();
 			try {
 				FlexiBookPersistence.save(flexiBook);
 			} catch(RuntimeException e) {
@@ -2508,7 +2508,7 @@ public class FlexiBookController {
 	 */
 	private static BusinessHour isTheBusinessHour(DayOfWeek day, Time startTime) {
 
-		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getHours();
+		List<BusinessHour> hoursList = FlexiBookApplication.getFlexiBook().getBusiness().getBusinessHours();
 		for(BusinessHour x: hoursList) {
 			if(x.getDayOfWeek().equals(day) && x.getStartTime().equals(startTime)) {
 				return x;
