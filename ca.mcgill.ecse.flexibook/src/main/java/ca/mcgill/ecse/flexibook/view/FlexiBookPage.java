@@ -95,6 +95,7 @@ public class FlexiBookPage extends JFrame {
 	private JPasswordField passwordField;
 	private JPasswordField passwordField_1;
 	int xx,xy;
+	private int deltaY = 120;
 	
 	//top bar buttons
 	private JButton infoOwnerButton;
@@ -1757,11 +1758,11 @@ public class FlexiBookPage extends JFrame {
 		JLabel p;
 		for(int i = 0; i < 6; i++){
 			p = new JLabel("I");
-			p.setPreferredSize(new Dimension(1,80+24*60*2));
+			p.setPreferredSize(new Dimension(1,80+24*deltaY*2));
 			p.setBackground(lightGrey);
 			p.setOpaque(true);
 			calendarWeeklyViewPanel.add(p);
-			p.setBounds(90+50+i*90,35,1,80+24*60*2);
+			p.setBounds(90+50+i*90,35,1,80+24*deltaY*2);
 		}
 		p = new JLabel("I");
 		p.setPreferredSize(new Dimension(630,1));
@@ -1774,7 +1775,7 @@ public class FlexiBookPage extends JFrame {
 		p.setBackground(lightGrey);
 		p.setOpaque(true);
 		calendarWeeklyViewPanel.add(p);
-		p.setBounds(50,80+35+(24*60*2),630,1);
+		p.setBounds(50,80+35+(24*deltaY*2),630,1);
 
 		//calendar week days numbers
 		if(calendarDay > 0){
@@ -4631,7 +4632,6 @@ public class FlexiBookPage extends JFrame {
 			minHour = 0;
 			maxHour = 24;
 			hour = 0;
-			int deltaY = 60;
 			calendarWeeklyViewPanel.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY+80+35+10));
 			calendarTimes.setPreferredSize(new Dimension(40,(maxHour-minHour)*2*deltaY));
 			calendarBusinessSlots.setPreferredSize(new Dimension(700,(maxHour-minHour)*2*deltaY));
