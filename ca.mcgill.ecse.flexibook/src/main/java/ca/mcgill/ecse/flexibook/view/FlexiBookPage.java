@@ -632,74 +632,93 @@ public class FlexiBookPage extends JFrame {
 		setUpInPanel.setLayout(null);
 		setUpBusinessInfoLabel = new JLabel("Info Page");
 
+		JPanel backgroundPanel = new JPanel();
+		backgroundPanel.setBackground(Color.DARK_GRAY);
+		backgroundPanel.setBounds(0,0,500,740);
+		setUpInPanel.add(backgroundPanel);
+		backgroundPanel.setLayout(null);
 		//setUpInPanel.setBounds(400,200,400,700);
+		
+		JLabel bkNewLabel = new JLabel("<html>SETUP YOUR <br/>BUSINESS</html>");
+		bkNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		bkNewLabel.setForeground(new Color(240, 248, 255));
+		bkNewLabel.setBounds(15,300, 250,250);
+		backgroundPanel.add(bkNewLabel);
+		
+		JLabel initSetUpBusinessInfoBackgroundLabel = new JLabel("");
+		initSetUpBusinessInfoBackgroundLabel.setBounds(0, 0, 500, 740);
+		initSetUpBusinessInfoBackgroundLabel.setVerticalAlignment(SwingConstants.TOP);
+		initSetUpBusinessInfoBackgroundLabel.setIcon(new ImageIcon("src/main/resources/businessSetUpInfo_3.png"));
+		backgroundPanel.add(initSetUpBusinessInfoBackgroundLabel);
+		
+
 
 		//setUpInPanel.setOpaque(true);
 		setUpInPanel.add(setUpBusinessInfoLabel);
 
 		setDetailBtn = new JButton("Set");
-		setDetailBtn.setBounds(500,400,89,23);
+		setDetailBtn.setBounds(600,400,89,23);
 		setDetailBtn.setBackground(Color.GREEN);
 		setDetailBtn.setForeground(Color.DARK_GRAY);
 		setUpInPanel.add(setDetailBtn);
 		//backgroundPanel.add(setUpInPanel,BorderLayout.CENTER);
 		
 		errorMessageSetUpInfo = new JLabel();
-		errorMessageSetUpInfo.setBounds(475,400,89,23);
+		errorMessageSetUpInfo.setBounds(575,400,89,23);
 
 		//lpane.add(backgroundPanel, 0, 0);
 		//lpane.add(setUpInPanel, 1, 0);
 
 		//Setting the UI for setting business information
 		JLabel businessNameSet = new JLabel("Business name");
-		businessNameSet.setBounds(500, 100, 150, 23);
+		businessNameSet.setBounds(600, 100, 150, 23);
 		businessNameSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(businessNameSet);
 
 		txtBusinessNameSet = new JTextField();
-		txtBusinessNameSet.setBounds(500, 130, 200, 23);
+		txtBusinessNameSet.setBounds(600, 130, 200, 23);
 		setUpInPanel.add(txtBusinessNameSet);
 		txtBusinessNameSet.setColumns(10);
 
 		JLabel adressSet = new JLabel("Address");
-		adressSet.setBounds(500, 170, 70, 23);
+		adressSet.setBounds(600, 170, 70, 23);
 		adressSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(adressSet);
 
 		txtAdressSet= new JTextField();
 		txtAdressSet.setText("");
-		txtAdressSet.setBounds(500, 200, 200, 23);
+		txtAdressSet.setBounds(600, 200, 200, 23);
 		setUpInPanel.add(txtAdressSet);
 		txtAdressSet.setColumns(10);
 
 		JLabel phoneNumberSet  = new JLabel("Phone Number");
-		phoneNumberSet.setBounds(500, 230, 150, 23);
+		phoneNumberSet.setBounds(600, 230, 150, 23);
 		phoneNumberSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(phoneNumberSet);
 
 		txtPhoneNumberSet = new JTextField();
-		txtPhoneNumberSet.setBounds(500, 260, 200, 23);
+		txtPhoneNumberSet.setBounds(600, 260, 200, 23);
 		setUpInPanel.add(txtPhoneNumberSet);
 		txtPhoneNumberSet.setColumns(10);
 
 		JLabel emailSet = new JLabel("Email");
-		emailSet.setBounds(500, 290, 200, 23);
+		emailSet.setBounds(600, 290, 200, 23);
 		emailSet.setForeground(new Color(240, 248, 255));
 		setUpInPanel.add(emailSet);
 
 		txtEmailSet = new JTextField();
-		txtEmailSet.setBounds(500, 320, 200, 23);
+		txtEmailSet.setBounds(600, 320, 200, 23);
 		setUpInPanel.add(txtEmailSet);
 		txtEmailSet.setColumns(10);	
 
 		successMessageSetUpLabel = new JLabel("");
 		successMessageSetUpLabel.setForeground(Color.GREEN);
-		successMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		successMessageSetUpLabel.setBounds(575, 600, 600, 50);
 		setUpInPanel.add(successMessageSetUpLabel);
 
 		errorMessageSetUpLabel = new JLabel("");
 		errorMessageSetUpLabel.setForeground(Color.RED);
-		errorMessageSetUpLabel.setBounds(600, 600, 600, 50);
+		errorMessageSetUpLabel.setBounds(575, 600, 600, 50);
 		setUpInPanel.add(errorMessageSetUpLabel);
 
 		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
