@@ -1721,6 +1721,11 @@ public class FlexiBookPage extends JFrame {
 		calendarAppointments.setPreferredSize(new Dimension(700,700));
 		calendarAppointments.setOpaque(false);
 
+		ecaLabel = new JLabel(" ");
+		ecaLabel.setForeground(Color.RED);
+		calendarOwnerPanel.add(ecaLabel);
+		ecaLabel.setBounds(50,600,300,50);
+
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(null);
 		buttonPanel.setOpaque(false);
@@ -2270,7 +2275,7 @@ public class FlexiBookPage extends JFrame {
 		JLabel BHPBG = new JLabel("");
 		BHPBG.setBounds(-50, -35, 1000, 1000);
 		BHPBG.setVerticalAlignment(SwingConstants.TOP);
-		BHPBG.setIcon(new ImageIcon("src/main/resources/businessInfoIcon.jpg"));
+		BHPBG.setIcon(new ImageIcon("src/main/resources/businessInfoIcon_3.jpg"));
 		businessHoursPanelBG.add(BHPBG);
 		
 		updateInfoError = " ";
@@ -4488,10 +4493,10 @@ public class FlexiBookPage extends JFrame {
 		JButton tempB = (JButton)evt.getSource();
 		String command = tempB.getName().substring(0,tempB.getName().length()-1);
 		int numAppointment = Integer.parseInt(tempB.getName().substring(tempB.getName().length()-1,tempB.getName().length()));
-		System.out.println(command + " " + numAppointment);
 		List<TOAppointment> appointmentTOList = FlexiBookController.getTOAppointment();
 		TOAppointment specificTOAppointment = appointmentTOList.get(numAppointment);
 		TOTimeSlot specificTOTimeSlot = specificTOAppointment.getTimeSlot();
+		System.out.println(command + " " + numAppointment);
 		eca = " ";
 		if(command.equals("start")){
 			try{
@@ -4519,7 +4524,10 @@ public class FlexiBookPage extends JFrame {
 				eca = e.getMessage();
 			}
 		}
-		System.out.println(eca);
+		if(eca == null){
+			eca = " ";
+		}
+		refreshCalendarWeeklyView();
 	}
 
 	/**
@@ -4956,7 +4964,11 @@ public class FlexiBookPage extends JFrame {
 					
 				}
 			}
-			
+			if(eca == null){
+				eca = " ";
+			}
+			ecaLabel.setText("<html>" + eca + "</html>");
+		
 			calendarWeeklyViewPanel.add(calendarAppointments);
 			calendarAppointments.setBounds(0,0,700,24*deltaY*2);
 			calendarWeeklyViewPanel.add(calendarBusinessSlots);
