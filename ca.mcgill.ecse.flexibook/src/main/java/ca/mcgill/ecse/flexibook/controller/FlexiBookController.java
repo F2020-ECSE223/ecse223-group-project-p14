@@ -2245,12 +2245,9 @@ public class FlexiBookController {
 	 */
 	public static String getCurrentLogInUsername() {
 		if (FlexiBookApplication.getCurrentLoginUser() == null) {
-			System.out.println("if");
 			return "owner"; 
 		}
 		else {
-			System.out.println("else");
-			System.out.println(FlexiBookApplication.getCurrentLoginUser().getUsername());
 			return FlexiBookApplication.getCurrentLoginUser().getUsername();
 		}
 	}
