@@ -1020,9 +1020,9 @@ public class FlexiBookController {
 		Appointment a = findAppointment(serviceName, date, time);
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		Date currentDate = FlexiBookApplication.getCurrentDate(true);
-		if(isInTheFuture(a.getTimeSlot())){
-			throw new InvalidInputException("Cannot start an appointment before start time.");
-		}
+//		if(isInTheFuture(a.getTimeSlot())){
+//			throw new InvalidInputException("Cannot start an appointment before start time.");
+//		}
 		a.startAppointment(currentDate, currentTime);
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1042,11 +1042,11 @@ public class FlexiBookController {
 	public static boolean endAppointment(String serviceName, Date date, Time time) throws InvalidInputException{ 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment a = findAppointment(serviceName, date, time);
-		Time currentTime = FlexiBookApplication.getCurrentTime(true);
-		Date currentDate = FlexiBookApplication.getCurrentDate(true);
-		if(!a.getAppointmentStatusFullName().equals("InProgress")){
-			throw new InvalidInputException("Cannot end an appointment before it starts.");
-		}
+//		Time currentTime = FlexiBookApplication.getCurrentTime(true);
+//		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+//		if(!a.getAppointmentStatusFullName().equals("InProgress")){
+//			throw new InvalidInputException("Cannot end an appointment before it starts.");
+//		}
 		a.finishedAppointment();
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1765,6 +1765,12 @@ public class FlexiBookController {
 				}
 				sc.addService(comboItemTO);
 			}
+
+//			ComboItem mainService = s.getMainService();
+//			TOComboItem toMainService = new TOComboItem(true, mainService.getService().getName(), 
+//																	sc);
+			
+
 			
 			serviceCombosTO.add(sc);
 		}
@@ -2225,9 +2231,12 @@ public class FlexiBookController {
 	 */
 	public static String getCurrentLogInUsername() {
 		if (FlexiBookApplication.getCurrentLoginUser() == null) {
-			return "";
+			System.out.println("if");
+			return "owner"; 
 		}
 		else {
+			System.out.println("else");
+			System.out.println(FlexiBookApplication.getCurrentLoginUser().getUsername());
 			return FlexiBookApplication.getCurrentLoginUser().getUsername();
 		}
 	}
@@ -2590,8 +2599,3 @@ public class FlexiBookController {
 
 
 }
-
-
-
-
-
