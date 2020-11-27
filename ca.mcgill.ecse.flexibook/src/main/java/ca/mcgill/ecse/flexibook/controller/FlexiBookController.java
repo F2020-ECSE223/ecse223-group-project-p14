@@ -2577,6 +2577,67 @@ public class FlexiBookController {
 		return isFuture;
 
 	}
+	
+	/**
+	 * This method wraps the dayOfWeek type for the FlexiBookPage, where we need to go from a string to a dayOfWeek
+	 * @param day
+	 * @return
+	 * @author jedla
+	 */
+	
+	public static DayOfWeek getDayFromString(String day) {
+		DayOfWeek dw = null;
+		if (day.equals("Monday")) {
+			dw = DayOfWeek.Monday;
+		} else if (day.equals("Tuesday")) {
+			dw= DayOfWeek.Tuesday;
+		} else if (day.equals("Wednesday")) {
+			dw = DayOfWeek.Wednesday;
+		} else if (day.equals("Thursday")) {
+			dw = DayOfWeek.Thursday;
+		} else if (day.equals("Friday")) {
+			dw = DayOfWeek.Friday;
+		} else if (day.equals("Saturday")) {
+			dw = DayOfWeek.Saturday;
+		} else if (day.equals("Sunday")) {
+			dw = DayOfWeek.Sunday;
+		}
+		return dw;
+	}
+	
+	/**
+	 * Wraps the DayOfWeek type, FlexiBookPage needs to have a string instead of a dayOfWeek
+	 * @param day
+	 * @return
+	 */
+	
+	public static String dayToString(DayOfWeek day) {
+		String dw = null;
+		if(day.equals(DayOfWeek.Monday)) {
+			dw = "Monday";
+		}
+		else if (day.equals(DayOfWeek.Tuesday)) {
+			dw = "Tuesday";
+		}
+		else if (day.equals(DayOfWeek.Wednesday)) {
+			dw = "Wednesday";
+		}
+		else if (day.equals(DayOfWeek.Thursday)) {
+			dw = "Thursday";
+		}
+		else if (day.equals(DayOfWeek.Friday)) {
+			dw = "Friday";	
+		}
+		else if (day.equals(DayOfWeek.Saturday)) {
+			dw = "Saturday";
+		}
+		else if (day.equals(DayOfWeek.Sunday)) {
+			dw = "Sunday";
+		}
+		return dw;
+	
+		
+	}
 
 
 
