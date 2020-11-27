@@ -2451,7 +2451,7 @@ public class FlexiBookController {
 					LocalTime currentEndTime = x.getEndTime().toLocalTime();
 					// if the appointment is on that day, compare if the time slot is included by business hour
 					if(currentStartTime.equals(newStartTime)|| currentEndTime.equals(newEndTime)||(newStartTime.isAfter(currentStartTime)&&newStartTime.isBefore(currentEndTime))||
-							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))) {
+							(newEndTime.isAfter(currentStartTime)&&newEndTime.isBefore(currentEndTime))||(newEndTime.isAfter(currentEndTime)&&newStartTime.isBefore(currentStartTime))) {
 						isOverlapping = true;
 						break;
 					}
