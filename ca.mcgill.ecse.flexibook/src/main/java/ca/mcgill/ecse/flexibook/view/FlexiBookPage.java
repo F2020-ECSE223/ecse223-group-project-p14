@@ -2745,6 +2745,9 @@ public class FlexiBookPage extends JFrame {
 	}
 
 	//initialize business details panel
+	/**
+	 * @author AntoineW
+	 */
 	private void initBookAppointmentPanel(){
 		
 		appSectionError = " ";
@@ -2843,12 +2846,7 @@ public class FlexiBookPage extends JFrame {
 		JLabel oldDate = new JLabel("Date of the Appointment");
 		oldDate.setBounds(277, 307, 190, 14);
 		bookAppointmentPanel.add(oldDate);
-		
-//		selectedAppTimeT = new JTextField();
-//		selectedAppTimeT.setText("HH:MM");
-//		selectedAppTimeT.setColumns(10);
-//		selectedAppTimeT.setBounds(447, 332, 86, 20);
-		//bookAppointmentPanel.add(selectedAppTimeT);
+
 		
 		selectedAppDateT = new JTextField();
 		selectedAppDateT.setText("YYYY-MM-DD");
@@ -2870,19 +2868,11 @@ public class FlexiBookPage extends JFrame {
 		newUpdateAppDateT.setBounds(174, 382, 86, 20);
 		bookAppointmentPanel.add(newUpdateAppDateT);
 		
-//		newUpdateAppTimeT = new JTextField();
-//		newUpdateAppTimeT.setText("HH:MM");
-//		newUpdateAppTimeT.setColumns(10);
-//		newUpdateAppTimeT.setBounds(174, 410, 86, 20);
-		//bookAppointmentPanel.add(newUpdateAppTimeT);
 		
 		JLabel newTimeLabel = new JLabel("New Time");
 		newTimeLabel.setBounds(19, 413, 123, 14);
 		bookAppointmentPanel.add(newTimeLabel);
-		
-//		updateTimeB = new JButton("Update to new time");
-//		updateTimeB.setBounds(18, 456, 215, 23);
-//		bookAppointmentPanel.add(updateTimeB);
+
 		
 		updateTimeB = new JButton("Update to new time");
 		updateTimeB.setBounds(18, 456, 215, 23);
@@ -2984,7 +2974,6 @@ public class FlexiBookPage extends JFrame {
 				if (!c.getBackground().equals(getSelectionBackground())) {
 					Object obj = getModel().getValueAt(row, column);
 					if (obj instanceof java.lang.String) {
-						//String str = (String)obj;
 						c.setBackground(Color.WHITE);
 					}
 				}
@@ -3000,8 +2989,6 @@ public class FlexiBookPage extends JFrame {
 		
 		viewAppForCurCustomerScrollPane = new JScrollPane(viewAppForCurCustomerTable);
 		bookAppointmentPanel.add(viewAppForCurCustomerScrollPane);
-//		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
-//		viewAppForCurCustomerScrollPane.setPreferredSize(d);
 		viewAppForCurCustomerScrollPane.setBounds(10, 520, 1000, 100);
 		viewAppForCurCustomerScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
@@ -3077,14 +3064,7 @@ public class FlexiBookPage extends JFrame {
         newTimeSpinner.setEditor(neweditor);
         bookAppointmentPanel.add(newTimeSpinner);
         newTimeSpinner.setBounds(174, 410, 86, 20);
-        
-//    	private JButton updateContentB;
-//    	private JButton updateTimeB;
-//    	private JButton addAppForSingleServiceB;
-//    	private JButton addAppForComboB;
-//    	private JDatePickerImpl newDatePicker;
-//    	private JDatePickerImpl registerDatePicker;
-//    	private JDatePickerImpl selectDatePicker;
+
         
         updateContentB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -3132,16 +3112,6 @@ public class FlexiBookPage extends JFrame {
 
 	}
 
-//	private JLabel successMessageLogInLabel;
-//	private JLabel errorMessageLogInLabel;
-//	private JLabel successMessageSignInLabel;
-//	private JLabel errorMessageSignInLabel;
-//	private String addLoginError;
-//	private String addLoginSuccess;
-//	private String addSignUpError;
-//	private String addSignUpSuccess;
-//	private String logOutErrorMessage; 
-//	private String logOutSuccessMessage; 
 	
 	private void refreshLogin() {
 		
@@ -4626,7 +4596,11 @@ public class FlexiBookPage extends JFrame {
 	
 
 	
-	//--------------------------- Add Appointment part ----------------
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void updateAppointmentContentActionPerformed(java.awt.event.ActionEvent evt) {
 		String serviceName =  serviceNameT.getText();
 		String optservicename = updateComboItemNameL.getText();
@@ -4657,6 +4631,11 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void updateAppointmentTimeActionPerformed(java.awt.event.ActionEvent evt) {
 		String serviceName =  serviceNameT.getText();
 		Date date = stringToDate(selectedAppDateT.getText());
@@ -4822,6 +4801,11 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void addAppSingleServicePerformed(java.awt.event.ActionEvent evt) {
 		
 		String serviceName = serviceNameT.getText();
@@ -4850,6 +4834,11 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void addAppServiceComboPerformed(java.awt.event.ActionEvent evt) {
 		
 		String serviceName = serviceNameT.getText();
@@ -4879,7 +4868,11 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void cancelAppPerformed(java.awt.event.ActionEvent evt) {
 		String serviceName = serviceNameT.getText();
 		Date date = stringToDate(selectedAppDateT.getText());
@@ -4903,25 +4896,45 @@ public class FlexiBookPage extends JFrame {
     	refreshAppointmentPage();
 	}
 	
-	
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void pickNewDateForUpdatePerformed(java.awt.event.ActionEvent evt) {
 		if (newDatePicker.getModel().getValue() != null) {
 			newUpdateAppDateT.setText(newDatePicker.getModel().getValue().toString());
 		}
 	}
 
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void pickDateForAddAppPerformed(java.awt.event.ActionEvent evt) {
 		if (registerDatePicker.getModel().getValue() != null) {
 			newAppDateT.setText(registerDatePicker.getModel().getValue().toString());
 		}
 		
 	}
+	
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void pickDateForSelectAppPerformed(java.awt.event.ActionEvent evt) {
 		if (selectDatePicker.getModel().getValue() != null) {
 			selectedAppDateT.setText(selectDatePicker.getModel().getValue().toString());
 		}
 	}
 
+	/**
+	 * 
+	 * @param evt
+	 * @author AntoineW
+	 */
 	private void appointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		String command = evt.getActionCommand().substring(0,evt.getActionCommand().length()-1);
 		int numAppointment = Integer.parseInt(evt.getActionCommand().substring(evt.getActionCommand().length()-1,evt.getActionCommand().length()));
@@ -4958,10 +4971,19 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(eca);
 	}
 
+	/**
+	 * 
+	 * @author AntoineW
+	 */
 	private static Date stringToDate(String str) {
 		return (Date.valueOf(LocalDate.parse(str, DateTimeFormatter.ISO_DATE)));
 	}
+	
 
+	/**
+	 * 
+	 * @author AntoineW
+	 */
 	private static Time stringToTime(String str) {
 		if (str.charAt(2) != ':') {
 			str = "0" + str;
@@ -4969,6 +4991,10 @@ public class FlexiBookPage extends JFrame {
 		return (Time.valueOf(LocalTime.parse(str, DateTimeFormatter.ISO_TIME)));
 	}
 	
+	/**
+	 * 
+	 * @author AntoineW
+	 */
 	private void refreshAppointmentPage() {
 		vAFCCTableModel = new DefaultTableModel(0, 0);
 		viewAppForCurCustomerTable.setModel(vAFCCTableModel);
@@ -4995,10 +5021,6 @@ public class FlexiBookPage extends JFrame {
 		
 		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
 		viewAppForCurCustomerScrollPane.setPreferredSize(d);
-		
-//		for (TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
-//			System.out.println(ts);
-//		}
 		
 		// Show error Message
 		if(appSectionError.equals(" ")) {
@@ -5324,11 +5346,6 @@ public class FlexiBookPage extends JFrame {
 					
 				}
 			}
-			ecaLabel = new JLabel(eca);
-			ecaLabel.setBounds(0, 0, 200, 23);
-			ecaLabel.setForeground(Color.RED);
-			calendarWeeklyViewPanel.add(ecaLabel);
-			
 			
 			calendarWeeklyViewPanel.add(calendarAppointments);
 			calendarAppointments.setBounds(0,0,700,700);
