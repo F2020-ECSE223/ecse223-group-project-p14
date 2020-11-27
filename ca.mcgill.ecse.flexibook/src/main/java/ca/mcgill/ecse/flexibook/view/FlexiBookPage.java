@@ -3638,9 +3638,83 @@ public class FlexiBookPage extends JFrame {
 
 	//method called when owner log out button pressed
 	private void logOutOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		logOutOwnerButton.setIcon(logOutIconLight);
+		logOutOwnerButton.setIcon(logOutIconDark);
 		logOutErrorMessage = null; 
 		logOutSuccessMessage = null; 
+		calendarDay = -1;
+		calendarMonth = 11;
+		calendarYear = 2020;
+		monthNameLabel.setText(LocalDate.of(calendarYear,calendarMonth,1).getMonth().getDisplayName(TextStyle.FULL,Locale.CANADA) + " " + calendarYear);
+		//reset panel
+		calendarMonthlyViewGridPanel.removeAll();
+
+			JLabel n = new JLabel("Mo", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Tu", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("We", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Th", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Fr", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Sa", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Su", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue(); i++){
+			n = new JLabel("", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,40));
+			calendarMonthlyViewGridPanel.add(n);
+		}
+		JButton b = new JButton();
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()+1; i++){
+			b = calendarButtonList.get(i-1);;
+			calendarMonthlyViewGridPanel.add(b);
+		}
+		if(previousCalendarButton != null){
+			previousCalendarButton.setBackground(Color.WHITE);
+			previousCalendarButton.setForeground(Color.BLACK);
+			previousCalendarButton = null;
+		}
+		calendarDay = -1;
+		int tempNum = LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue();
+		int tempDay = 1-tempNum+1;
+		for(int i = 0; i < 7; i++){
+			n = dayLabelList.get(i);
+			if(tempDay < 1){
+				if(calendarMonth-1 < 1){
+					n.setText(Integer.toString(tempDay+LocalDate.of(calendarYear-1,12,1).lengthOfMonth()));
+				} else {
+					n.setText(Integer.toString(tempDay+LocalDate.of(calendarYear,calendarMonth-1,1).lengthOfMonth()));
+				}
+			} else if(tempDay > LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()){
+				n.setText(Integer.toString(tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()));
+			} else {
+				n.setText(Integer.toString(tempDay));
+			}
+			n.setBackground(Color.WHITE);
+			n.setOpaque(true);
+			n.setForeground(Color.BLACK);
+			tempDay++;
+		}
+		refreshCalendarWeeklyView();
+		refreshData();
 		
 		try{
 			FlexiBookController.logOut();
@@ -3673,9 +3747,83 @@ public class FlexiBookPage extends JFrame {
 	//method called when customer log out button pressed
 	private void logOutCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
-		logOutCustomerButton.setIcon(logOutIconLight);
+		logOutCustomerButton.setIcon(logOutIconDark);
 		logOutErrorMessage = null; 
-		logOutSuccessMessage = null; 
+		logOutSuccessMessage = null;
+		calendarDay = -1;
+		calendarMonth = 11;
+		calendarYear = 2020;
+		monthNameLabel.setText(LocalDate.of(calendarYear,calendarMonth,1).getMonth().getDisplayName(TextStyle.FULL,Locale.CANADA) + " " + calendarYear);
+		//reset panel
+		calendarMonthlyViewGridPanel.removeAll();
+
+			JLabel n = new JLabel("Mo", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Tu", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("We", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Th", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Fr", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Sa", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+			n = new JLabel("Su", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,50));
+			n.setFont(new Font("Roboto", Font.BOLD, 16));
+			calendarMonthlyViewGridPanel.add(n);
+
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue(); i++){
+			n = new JLabel("", SwingConstants.CENTER);
+			n.setPreferredSize(new Dimension(50,40));
+			calendarMonthlyViewGridPanel.add(n);
+		}
+		JButton b = new JButton();
+		for(int i = 1; i < LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()+1; i++){
+			b = calendarButtonList.get(i-1);;
+			calendarMonthlyViewGridPanel.add(b);
+		}
+		if(previousCalendarButton != null){
+			previousCalendarButton.setBackground(Color.WHITE);
+			previousCalendarButton.setForeground(Color.BLACK);
+			previousCalendarButton = null;
+		}
+		calendarDay = -1;
+		int tempNum = LocalDate.of(calendarYear,calendarMonth,1).getDayOfWeek().getValue();
+		int tempDay = 1-tempNum+1;
+		for(int i = 0; i < 7; i++){
+			n = dayLabelList.get(i);
+			if(tempDay < 1){
+				if(calendarMonth-1 < 1){
+					n.setText(Integer.toString(tempDay+LocalDate.of(calendarYear-1,12,1).lengthOfMonth()));
+				} else {
+					n.setText(Integer.toString(tempDay+LocalDate.of(calendarYear,calendarMonth-1,1).lengthOfMonth()));
+				}
+			} else if(tempDay > LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()){
+				n.setText(Integer.toString(tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth()));
+			} else {
+				n.setText(Integer.toString(tempDay));
+			}
+			n.setBackground(Color.WHITE);
+			n.setOpaque(true);
+			n.setForeground(Color.BLACK);
+			tempDay++;
+		}
+		refreshCalendarWeeklyView();
+		refreshData();
 
 		try{
 			FlexiBookController.logOut();
