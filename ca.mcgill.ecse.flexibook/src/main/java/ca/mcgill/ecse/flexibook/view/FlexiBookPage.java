@@ -255,6 +255,10 @@ public class FlexiBookPage extends JFrame {
 	private JLabel errorMessage;
 	private String error = null;
 	
+	private JLabel errorChangeOwnerInfo;
+	private JLabel successChangeOwnerInfo;
+	private JLabel errorChangeUserInfo;
+	private JLabel successChangeUserInfo;
 	
 
 	/**
@@ -339,6 +343,7 @@ public class FlexiBookPage extends JFrame {
 		// initialize error message
 		errorMessage = new JLabel();
 		errorMessage.setForeground(Color.RED);
+		
 
 		
 		//initialize frame
@@ -1183,10 +1188,11 @@ public class FlexiBookPage extends JFrame {
 		infoUserIconLabel.setForeground(Color.darkGray);
 		infoUserIconLabel.setAlignmentX(SwingConstants.CENTER);
 
+		
 		infoWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
 		infoWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 18));
 		infoWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoWelcomeLabel.setBounds(470, 250, 150, 40);
+		infoWelcomeLabel.setBounds(445, 250, 200, 40);
 		infoWelcomeLabel.setBackground(Color.WHITE);
 		infoWelcomeLabel.setOpaque(true);
 		infoWelcomeLabel.setForeground(Color.darkGray);
@@ -1247,15 +1253,15 @@ public class FlexiBookPage extends JFrame {
 		saveOwnerAccountButton.setOpaque(true);
 		saveOwnerAccountButton.setForeground(Color.WHITE);
 		
-		errorMessage = new JLabel(error);
-		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		errorMessage.setForeground(Color.RED);
-		errorMessage.setBounds(470, 550, 500, 30);
+		errorChangeOwnerInfo = new JLabel(error);
+		errorChangeOwnerInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		errorChangeOwnerInfo.setForeground(Color.RED);
+		errorChangeOwnerInfo.setBounds(470, 550, 500, 30);
 		
-		updateSuccessful = new JLabel(successful);
-		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		updateSuccessful.setForeground(Color.GREEN);
-		updateSuccessful.setBounds(470, 550, 500, 30);
+		successChangeOwnerInfo = new JLabel(successful);
+		successChangeOwnerInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		successChangeOwnerInfo.setForeground(Color.GREEN);
+		successChangeOwnerInfo.setBounds(470, 550, 500, 30);
 		
 		infoOwnerPanel.add(infoWelcomeLabel);
 		infoOwnerPanel.add(infoUserIconLabel);
@@ -1267,8 +1273,8 @@ public class FlexiBookPage extends JFrame {
 		infoOwnerPanel.add(confirmPasswordLabel);
 		infoOwnerPanel.add(confirmPasswordBox);
 		infoOwnerPanel.add(saveOwnerAccountButton);
-		infoOwnerPanel.add(errorMessage);
-		infoOwnerPanel.add(updateSuccessful);
+		infoOwnerPanel.add(errorChangeOwnerInfo);
+		infoOwnerPanel.add(successChangeOwnerInfo);
 		
 
 		saveOwnerAccountButton.addActionListener(new java.awt.event.ActionListener() {
@@ -1304,7 +1310,7 @@ public class FlexiBookPage extends JFrame {
 		infoWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
 		infoWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 18));
 		infoWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoWelcomeLabel.setBounds(470, 220, 150, 40);
+		infoWelcomeLabel.setBounds(295, 220, 500, 40);
 		infoWelcomeLabel.setBackground(Color.WHITE);
 		infoWelcomeLabel.setOpaque(true);
 		infoWelcomeLabel.setForeground(Color.darkGray);
@@ -2892,9 +2898,9 @@ public class FlexiBookPage extends JFrame {
 				currentNoShow = customer.getNoShowCount();
 			}
 		}	
-		showCountProgress.setValue(currentShowCount);
+		showCountProgress.setValue(currentShowCount%10);
 		
-		int difference = 10 - currentShowCount;
+		int difference = 10 - currentShowCount%10;
 		progressLabel.setText("You're only " + difference + " points away from a discount!");
 
 		noShowCount.setText(currentNoShow + " appointments missed");
@@ -2908,8 +2914,8 @@ public class FlexiBookPage extends JFrame {
 	 * @author Catherine
 	 */
 	private void refreshOwnerAccount() {
-		errorMessage.setText(error);
-		updateSuccessful.setText(successful);
+		errorChangeOwnerInfo.setText(error);
+		successChangeOwnerInfo.setText(successful);
 		infoWelcomeLabel.setText("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
 		usernameBox.setText("");
 		passwordBox.setText("");
@@ -3135,7 +3141,8 @@ public class FlexiBookPage extends JFrame {
 			calendarOwnerButton.setForeground(darkGrey);
 			refreshCalendarWeeklyView();
 			
-			refreshData();
+			refreshLogin();
+			//refreshData();
 			refreshOwnerAccount();
 		}
 

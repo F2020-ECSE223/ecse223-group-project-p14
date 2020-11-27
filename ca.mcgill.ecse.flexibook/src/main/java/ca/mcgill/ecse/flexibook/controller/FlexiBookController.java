@@ -1020,9 +1020,9 @@ public class FlexiBookController {
 		Appointment a = findAppointment(serviceName, date, time);
 		Time currentTime = FlexiBookApplication.getCurrentTime(true);
 		Date currentDate = FlexiBookApplication.getCurrentDate(true);
-		if(isInTheFuture(a.getTimeSlot())){
-			throw new InvalidInputException("Cannot start an appointment before start time.");
-		}
+//		if(isInTheFuture(a.getTimeSlot())){
+//			throw new InvalidInputException("Cannot start an appointment before start time.");
+//		}
 		a.startAppointment(currentDate, currentTime);
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1042,11 +1042,11 @@ public class FlexiBookController {
 	public static boolean endAppointment(String serviceName, Date date, Time time) throws InvalidInputException{ 
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment a = findAppointment(serviceName, date, time);
-		Time currentTime = FlexiBookApplication.getCurrentTime(true);
-		Date currentDate = FlexiBookApplication.getCurrentDate(true);
-		if(!a.getAppointmentStatusFullName().equals("InProgress")){
-			throw new InvalidInputException("Cannot end an appointment before it starts.");
-		}
+//		Time currentTime = FlexiBookApplication.getCurrentTime(true);
+//		Date currentDate = FlexiBookApplication.getCurrentDate(true);
+//		if(!a.getAppointmentStatusFullName().equals("InProgress")){
+//			throw new InvalidInputException("Cannot end an appointment before it starts.");
+//		}
 		a.finishedAppointment();
 		try {
 			FlexiBookPersistence.save(flexiBook);
@@ -1753,17 +1753,23 @@ public class FlexiBookController {
 	public static List<TOServiceCombo> getTOServiceCombos(){
 		List<ServiceCombo> serviceCombos = getServiceCombos();
 		List<TOServiceCombo> serviceCombosTO = new ArrayList<TOServiceCombo>();
-		List<ComboItem> comboItems;
-		TOServiceCombo sc;
+		
+		
 		for(ServiceCombo s: serviceCombos){
-			comboItems = s.getServices();
-			sc = new TOServiceCombo(s.getName());
+			List<ComboItem> comboItems = s.getServices();
+			TOServiceCombo sc = new TOServiceCombo(s.getName());
 			for(ComboItem c: comboItems){
 				TOComboItem comboItemTO = new TOComboItem(c.getMandatory(),c.getService().getName(), sc);
+				if (comboItemTO.getServiceName().equals(s.getMainService().getService().getName())) {
+					sc.setMainService(comboItemTO);
+				}
 				sc.addService(comboItemTO);
 			}
-			ComboItem mainService = s.getMainService();
-			sc.setMainService(new TOComboItem(mainService.getMandatory(), mainService.getService().getName(), sc));
+//			ComboItem mainService = s.getMainService();
+//			TOComboItem toMainService = new TOComboItem(true, mainService.getService().getName(), 
+//																	sc);
+			
+			
 			serviceCombosTO.add(sc);
 		}
 		return serviceCombosTO;
@@ -2223,9 +2229,12 @@ public class FlexiBookController {
 	 */
 	public static String getCurrentLogInUsername() {
 		if (FlexiBookApplication.getCurrentLoginUser() == null) {
-			return "";
+			System.out.println("if");
+			return "owner"; 
 		}
 		else {
+			System.out.println("else");
+			System.out.println(FlexiBookApplication.getCurrentLoginUser().getUsername());
 			return FlexiBookApplication.getCurrentLoginUser().getUsername();
 		}
 	}
@@ -2588,8 +2597,3 @@ public class FlexiBookController {
 
 
 }
-
-
-
-
-
