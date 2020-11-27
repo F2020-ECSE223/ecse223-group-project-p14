@@ -178,6 +178,10 @@ public class FlexiBookPage extends JFrame {
 	private JTextField txtAdressSet;
 	private JTextField txtPhoneNumberSet;
 	private JTextField txtEmailSet;
+	private JLabel viewBusinessName;
+	private JLabel viewAdress;
+	private JLabel viewPhoneNumber;
+	private JLabel viewEmail;
 	
 	
 	//update business information JLabels and text
@@ -539,7 +543,8 @@ public class FlexiBookPage extends JFrame {
 	
 	/**
 	 * initialize the business information set-up
-	 * @author mikewang & Jedla
+	 * @author Jedla
+	 * later @mikewang added the image
 	 */
 	private void initSetBusinessInfo() {
 
@@ -630,7 +635,7 @@ public class FlexiBookPage extends JFrame {
 
 		errorMessageSetUpLabel = new JLabel("");
 		errorMessageSetUpLabel.setForeground(Color.RED);
-		errorMessageSetUpLabel.setBounds(575, 600, 600, 50);
+		errorMessageSetUpLabel.setBounds(800, 400, 600, 50);
 		setUpInPanel.add(errorMessageSetUpLabel);
 
 		setDetailBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -1668,6 +1673,12 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 
 	}
+	
+	/**
+	 * @author thomas
+	 * @coauthor jedla
+	 * later added Businessinformation @jedla
+	 */
 
 	//initialize calendar services panel for owner
 	private void initCalendarOwnerPanel(){
@@ -1835,6 +1846,19 @@ public class FlexiBookPage extends JFrame {
 		calendarWeeklyViewPanel.setForeground(Color.WHITE);
 		calendarOwnerPanel.add(calendarScrollPanel);
 		calendarScrollPanel.setBounds(400,0,700,700);
+		
+		viewBusinessName = new JLabel("");
+		calendarOwnerPanel.add(viewBusinessName);
+		viewBusinessName.setBounds(50, 500, 500, 25);
+		viewAdress = new JLabel("");
+		calendarOwnerPanel.add(viewAdress);
+		viewAdress.setBounds(50, 530, 500, 25);
+		viewPhoneNumber = new JLabel("");
+		calendarOwnerPanel.add(viewPhoneNumber);
+		viewPhoneNumber.setBounds(50, 560, 500, 25);
+		viewEmail = new JLabel(" ");
+		calendarOwnerPanel.add(viewEmail);
+		viewEmail.setBounds(50, 590, 500, 25);
 
 		//create calendar monthly view panel
 		calendarMonthlyViewPanel = new JPanel();
@@ -2203,24 +2227,25 @@ public class FlexiBookPage extends JFrame {
 		
 		//Current business details 
 		JLabel businessName = new JLabel("");
-		businessName.setBounds(500, 50, 150, 23);
+		businessName.setBounds(500, 50, 500, 23);
 		businessDetailsPanel.add(businessName);
 
 		JLabel adress =  new JLabel("");
-		adress.setBounds(500, 100, 150, 23);
+		adress.setBounds(500, 100, 500, 23);
 		businessDetailsPanel.add(adress);
 
 		JLabel phoneNumber  = new JLabel("");
-		phoneNumber.setBounds(500, 150, 150, 23);
+		phoneNumber.setBounds(500, 150, 500, 23);
 		businessDetailsPanel.add(phoneNumber);
 
 		JLabel email = new JLabel("");
-		email.setBounds(500, 200, 250, 23);
+		email.setBounds(500, 200, 500, 23);
 		businessDetailsPanel.add(email);		
 	}
 	
 	/**
 	 * initialize business details panel for an owner
+	 * @author jedla
 	 * @CoAuthor mikewang 
 	 */
 	//@TODO need to put half of that page on the other businessDetailsPanelfor customer  and delete the BusinessHour update stuff
@@ -2249,47 +2274,6 @@ public class FlexiBookPage extends JFrame {
 		businessHoursPanelBG.add(BHPBG);
 		
 		updateInfoError = " ";
-		
-		updateBusinessHours = new JLabel("This BH can be used for customer, but I don't think we need");
-		updateBusinessHours.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
-		updateBusinessHours.setBounds(100, 50, 500, 25);
-		businessDetailsPanel.add(updateBusinessHours);
-		
-	
-		JLabel Monday = new JLabel("Mon:");
-		Monday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Monday.setBounds(100, 90, 150, 23);
-		businessDetailsPanel.add(Monday);
-		
-		JLabel Tuesday = new JLabel("Tue:");
-		Tuesday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Tuesday.setBounds(100, 120, 150, 23);
-		businessDetailsPanel.add(Tuesday);
-		
-		JLabel Wednesday = new JLabel("Wed:");
-		Wednesday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Wednesday.setBounds(100, 150, 150, 23);
-		businessDetailsPanel.add(Wednesday);
-		
-		JLabel Thursday = new JLabel("Thu:");
-		Thursday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Thursday.setBounds(100, 180, 150, 23);
-		businessDetailsPanel.add(Thursday);
-		
-		JLabel Friday = new JLabel("Fri:");
-		Friday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Friday.setBounds(100, 210, 150, 23);
-		businessDetailsPanel.add(Friday);
-		
-		JLabel Saturday = new JLabel("Sat:");
-		Saturday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Saturday.setBounds(100, 240, 150, 23);
-		businessDetailsPanel.add(Saturday);
-		
-		JLabel Sunday = new JLabel("Sun:");
-		Sunday.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		Sunday.setBounds(100, 270, 150, 23);
-		businessDetailsPanel.add(Sunday);
 
 		//initializing the business information page for the owner 
 		
@@ -2311,20 +2295,20 @@ public class FlexiBookPage extends JFrame {
 		
 		JLabel updateBusinessInfo = new JLabel("Updating Business Information");
 		updateBusinessInfo.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 14));
-		updateBusinessInfo.setBounds(700, 230, 300, 25);
+		updateBusinessInfo.setBounds(700, 230, 500, 25);
 		businessDetailsPanel.add(updateBusinessInfo); 
 		
 		JLabel businessNameUpdate = new JLabel("Business name");
-		businessNameUpdate.setBounds(700, 260, 150, 23);
+		businessNameUpdate.setBounds(700, 260, 500, 23);
 		businessDetailsPanel.add(businessNameUpdate);
 		
 		txtBusinessNameUpdate = new JTextField();
-		txtBusinessNameUpdate.setBounds(700, 290, 250, 23);
+		txtBusinessNameUpdate.setBounds(700, 290, 300, 23);
 		businessDetailsPanel.add(txtBusinessNameUpdate);
 		txtBusinessNameUpdate.setColumns(10);
 		
 		JLabel adressUpdate = new JLabel("Address");
-		adressUpdate.setBounds(700, 320, 100, 23);
+		adressUpdate.setBounds(700, 320, 500, 23);
 		businessDetailsPanel.add(adressUpdate);
 		
 		txtAdressUpdate= new JTextField();
@@ -2334,20 +2318,20 @@ public class FlexiBookPage extends JFrame {
 		txtAdressUpdate.setColumns(10);
 		
 		JLabel phoneNumberUpdate  = new JLabel("Phone Number");
-		phoneNumberUpdate.setBounds(700, 380, 150, 23);
+		phoneNumberUpdate.setBounds(700, 380, 500, 23);
 		businessDetailsPanel.add(phoneNumberUpdate);
 		
 		txtPhoneNumberUpdate = new JTextField();
-		txtPhoneNumberUpdate.setBounds(700, 410, 150, 23);
+		txtPhoneNumberUpdate.setBounds(700, 410, 300, 23);
 		businessDetailsPanel.add(txtPhoneNumberUpdate);
 		txtPhoneNumberUpdate.setColumns(10);
 		
 		JLabel emailUpdate = new JLabel("Email");
-		emailUpdate.setBounds(700, 440, 280, 23);
+		emailUpdate.setBounds(700, 440, 500, 23);
 		businessDetailsPanel.add(emailUpdate);
 		
 		txtEmailUpdate = new JTextField();
-		txtEmailUpdate.setBounds(700, 470, 310, 23);
+		txtEmailUpdate.setBounds(700, 470, 300, 23);
 		businessDetailsPanel.add(txtEmailUpdate);
 		txtEmailUpdate.setColumns(10);
 		
@@ -2359,19 +2343,19 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsPanel.add(currentBusinessInfo);
 		
 		businessName = new JLabel("");//+ FlexiBookController.getBusinessInfo().getName()); THIS WILL BE A STRING
-		businessName.setBounds(700, 70, 150, 23);
+		businessName.setBounds(700, 70, 500, 23);
 		businessDetailsPanel.add(businessName);
 		
 		adress =  new JLabel("");//+ FlexiBookController.getBusinessInfo().getAdress());
-		adress.setBounds(700, 100, 150, 23);
+		adress.setBounds(700, 100, 500, 23);
 		businessDetailsPanel.add(adress);
 
 		phoneNumber  = new JLabel("");//+FlexiBookController.getBusinessInfo().getPhoneNumber());
-		phoneNumber.setBounds(700, 130, 150, 23);
+		phoneNumber.setBounds(700, 130, 500, 23);
 		businessDetailsPanel.add(phoneNumber);
 
 		email = new JLabel("");//+FlexiBookController.getBusinessInfo().getEmail());
-		email.setBounds(700, 160, 250, 23);
+		email.setBounds(700, 160, 500, 23);
 		businessDetailsPanel.add(email);
 		
 		updateDetailBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -2796,6 +2780,13 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	private void refreshBusinessDetailsCustomer(){
+		viewBusinessName.setText(FlexiBookController.getBusinessInfo().getName());
+		viewPhoneNumber.setText(FlexiBookController.getBusinessInfo().getPhoneNumber());
+		viewEmail.setText(FlexiBookController.getBusinessInfo().getEmail());
+		viewAdress.setText(FlexiBookController.getBusinessInfo().getAdress());
+	}
+	
 	//refresh frame
 	private void refreshData() {
 		pack();
@@ -3089,7 +3080,7 @@ public class FlexiBookPage extends JFrame {
 		
 		try {
 			FlexiBookController.setUpBusinessHours(stringToTime(startTimeString), stringToTime(endTimeString), FlexiBookController.getDayFromString(addDayOfWeek.getSelectedItem().toString()));
-			errorMessageBussinessHour = "Success!";
+			errorMessageBussinessHour = "";
 		} catch (InvalidInputException e) {
 			errorMessageBussinessHour = e.getMessage();
 		}
@@ -3148,7 +3139,6 @@ public class FlexiBookPage extends JFrame {
 			FlexiBookController.updateBusinessHour(
 					FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getDayOfWeek(), FlexiBookController.getTOBusinessHour().get((int) updateBusinessHourBox.getSelectedItem()).getStartTime(),FlexiBookController.getDayFromString(updateDayOfWeek.getSelectedItem().toString()),
 					stringToTime(startTimeString), stringToTime(endTimeString));
-			//addBHSuccess = "Success!";
 		} catch (InvalidInputException e) {
 			errorMessageBussinessHour = e.getMessage();
 		}
@@ -3209,6 +3199,7 @@ public class FlexiBookPage extends JFrame {
 				calendarOwnerButton.setBackground(Color.WHITE);
 				calendarOwnerButton.setOpaque(true);
 				calendarOwnerButton.setForeground(darkGrey);
+				refreshBusinessDetailsCustomer();
 			}
 			catch (InvalidInputException e) {
 				addSetUpError = e.getMessage();
@@ -3242,6 +3233,7 @@ public class FlexiBookPage extends JFrame {
 			refreshLogin();
 			//refreshData();
 			refreshOwnerAccount();
+			refreshBusinessDetailsCustomer();
 		}
 
 
