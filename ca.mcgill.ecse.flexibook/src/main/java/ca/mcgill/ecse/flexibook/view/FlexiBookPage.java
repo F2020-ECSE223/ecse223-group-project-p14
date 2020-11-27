@@ -56,7 +56,7 @@ import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.model.BusinessHour.DayOfWeek;
-
+import ca.mcgill.ecse.flexibook.model.TimeSlot;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
 import ca.mcgill.ecse.flexibook.controller.TOComboItem;
 import ca.mcgill.ecse.flexibook.controller.TOCustomer;
@@ -141,6 +141,8 @@ public class FlexiBookPage extends JFrame {
 	private int calendarDay;
 	private JLabel monthNameLabel;
 	private ArrayList<JLabel> dayLabelList = new ArrayList<JLabel>();
+	private String eca;
+	private JLabel ecaLabel;
 
 	//log in page buttons
 	private JButton signUpButton;
@@ -299,6 +301,7 @@ public class FlexiBookPage extends JFrame {
 	private JComboBox<String> existingCb;
 	private JLabel errorMsgLabel;
 	private JButton cancelAppB;
+	private JLabel noShowLabel;
 	
 	private double initLogInPageScalingFactor = 740/490;
 	/**
@@ -2758,6 +2761,10 @@ public class FlexiBookPage extends JFrame {
 		addAppForComboB.setBounds(415, 186, 250, 23);
 		bookAppointmentPanel.add(addAppForComboB);
 		
+		noShowLabel = new JLabel("");
+		noShowLabel.setBounds(750, 120, 300, 23);
+		bookAppointmentPanel.add(noShowLabel);
+		
 		serviceNameT = new JTextField();
 		serviceNameT.setColumns(10);
 		serviceNameT.setBounds(113, 12, 120, 27);
@@ -2886,6 +2893,8 @@ public class FlexiBookPage extends JFrame {
 		refreshB.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				refreshAppointmentPage();
+				existingCb = new JComboBox<String>();
+				existingCb.setBounds(113, 50, 120, 27);
 				if (!FlexiBookController.getTOServices().isEmpty()) {
 					for (TOService service:FlexiBookController.getTOServices()) {
 						existingCb.addItem(service.getName());
@@ -3048,13 +3057,6 @@ public class FlexiBookPage extends JFrame {
 				pickDateForSelectAppPerformed(evt);
 			}
 		});
-        // will be using this later
-//        try {
-//			System.out.println(newformatter.valueToString(newTimeSpinner.getValue()));
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
 
 	}
@@ -4560,11 +4562,6 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
 		
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(action);
-		System.out.println(optservicename);
 		refreshData();
 		refreshAppointmentPage();
 		
@@ -4599,12 +4596,7 @@ public class FlexiBookPage extends JFrame {
 			appSectionError = appSectionError + e.getMessage();
 		}
     	
-    
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(newDate);
-		System.out.println(newtime);
+
 		refreshData();
 		refreshAppointmentPage();
 		
@@ -4794,10 +4786,7 @@ public class FlexiBookPage extends JFrame {
 		
 		refreshData();
 		refreshAppointmentPage();
-		System.out.println(serviceName);
-		System.out.println(date);
-		System.out.println(time);
-		System.out.println(optServices);
+
 		
 	}
 	
@@ -4850,22 +4839,29 @@ public class FlexiBookPage extends JFrame {
 		List<TOAppointment> appointmentTOList = FlexiBookController.getTOAppointment();
 		TOAppointment specificTOAppointment = appointmentTOList.get(numAppointment);
 		TOTimeSlot specificTOTimeSlot = specificTOAppointment.getTimeSlot();
-		String eca = "";
+		eca = " ";
 		if(command.equals("start")){
 			try{
-				FlexiBookController.startAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.startAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				if(ret == false) {
+					eca = eca + "Cannot start an appointment before start time.";
+				}
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
 		} else if(command.equals("stop")){
 			try{
-				FlexiBookController.endAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.endAppointment(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				if(ret == false) {
+					eca = eca + "Cannot end an appointment before it starts.";
+				}
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
 		} else if(command.equals("noShow")){
 			try{
-				FlexiBookController.registerNoShowForApp(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+				Boolean ret = FlexiBookController.registerNoShowForApp(specificTOAppointment.getServiceName(), specificTOTimeSlot.getStartDate(), specificTOTimeSlot.getStartTime());
+
 			} catch(InvalidInputException e){
 				eca = e.getMessage();
 			}
@@ -4897,10 +4893,7 @@ public class FlexiBookPage extends JFrame {
 			String startDT = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime();
 			String endDT = appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
 			if(startDT.equals(endDT)) {
-				
-
-//				downTime = appto.getDownTimeTimeSlot().get(0).getStartDate() + " " + appto.getDownTimeTimeSlot().get(0).getStartTime() + "->"
-//						+ appto.getDownTimeTimeSlot().get(0).getEndDate() + " " + appto.getDownTimeTimeSlot().get(0).getEndTime();
+				// do nothing
 			}else {
 				downTime = startDT + "->" + endDT;
 			}
@@ -4914,6 +4907,9 @@ public class FlexiBookPage extends JFrame {
 		Dimension d = viewAppForCurCustomerTable.getPreferredSize();
 		viewAppForCurCustomerScrollPane.setPreferredSize(d);
 		
+		for (TimeSlot ts: FlexiBookApplication.getFlexiBook().getTimeSlots()) {
+			System.out.println(ts);
+		}
 		
 		// Show error Message
 		if(appSectionError.equals(" ")) {
@@ -4923,6 +4919,14 @@ public class FlexiBookPage extends JFrame {
 			errorMsgLabel.setText(appSectionError);
 			errorMsgLabel.setForeground(Color.RED);
 		}
+		
+		int noshowcount =0;
+		for(TOCustomer toc: FlexiBookController.getTOCustomers()) {
+			if(toc.getUserName().equals( FlexiBookController.getCurrentLogInUsername())) {
+				noshowcount = toc.getNoShowCount();
+			}
+		}
+		noShowLabel.setText("You have " + noshowcount + " no-show count");
 		
 		appSectionError = " ";
 		
@@ -5230,6 +5234,12 @@ public class FlexiBookPage extends JFrame {
 					
 				}
 			}
+			ecaLabel = new JLabel(eca);
+			ecaLabel.setBounds(0, 0, 200, 23);
+			ecaLabel.setForeground(Color.RED);
+			calendarWeeklyViewPanel.add(ecaLabel);
+			
+			
 			calendarWeeklyViewPanel.add(calendarAppointments);
 			calendarAppointments.setBounds(0,0,700,700);
 			refreshData();

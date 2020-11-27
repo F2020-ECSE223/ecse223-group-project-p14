@@ -565,7 +565,7 @@ public class FlexiBookController {
 	  * @return
 	  * @throws InvalidInputException
 	  */
-	public static void registerNoShowForApp(String serviceName, Date date, Time time) throws InvalidInputException{
+	public static boolean registerNoShowForApp(String serviceName, Date date, Time time) throws InvalidInputException{
 		FlexiBook flexiBook = FlexiBookApplication.getFlexiBook();
 		Appointment appInSystem = findAppointment(serviceName,date, time);
 		// Add at last iteration
@@ -575,13 +575,19 @@ public class FlexiBookController {
 		
 		TimeSlot timeSlot = appInSystem.getTimeSlot();
 		LocalDateTime current = ControllerUtils.combineDateAndTime(FlexiBookApplication.getCurrentDate(), FlexiBookApplication.getCurrentTime());
-		LocalDateTime appStartAt = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+		//LocalDateTime appStartAt = ControllerUtils.combineDateAndTime(timeSlot.getEndDate(), timeSlot.getEndTime());
+		LocalDateTime appStartAt = ControllerUtils.combineDateAndTime(timeSlot.getStartDate(), timeSlot.getStartTime());
 		
 		if(current.isBefore(appStartAt)) {
 			throw new InvalidInputException("Error: Please wait for appointment with name " + serviceName + " to start at " + date.toString() + time.toString());
 		}
 		
-		appInSystem.registeredNoShow();
+		TimeSlot ts = appInSystem.getTimeSlot();
+		Boolean ret = appInSystem.registeredNoShow();
+		if(ret == true) {
+			ts.delete();
+		}
+		
 		
 		//add by Mike start --- 
 		try {
@@ -590,7 +596,7 @@ public class FlexiBookController {
 			throw new InvalidInputException(e.getMessage());
 		}
 		//add by Mike end ---	
-
+		return ret;
 		
 	}
 
@@ -1023,13 +1029,14 @@ public class FlexiBookController {
 //		if(isInTheFuture(a.getTimeSlot())){
 //			throw new InvalidInputException("Cannot start an appointment before start time.");
 //		}
-		a.startAppointment(currentDate, currentTime);
+		Boolean ret = a.startAppointment(currentDate, currentTime);
+
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}
-		return true;
+		return ret;
 	}
 
 	/**
@@ -1047,13 +1054,19 @@ public class FlexiBookController {
 //		if(!a.getAppointmentStatusFullName().equals("InProgress")){
 //			throw new InvalidInputException("Cannot end an appointment before it starts.");
 //		}
-		a.finishedAppointment();
+
+		TimeSlot ts = a.getTimeSlot();	
+		Boolean ret = a.finishedAppointment();
+		if(ret == true) {
+			ts.delete();
+		}
+	
 		try {
 			FlexiBookPersistence.save(flexiBook);
 		} catch(RuntimeException e) {
 			throw new InvalidInputException(e.getMessage());
 		}	
-		return true;
+		return ret;
 	}
 
 
