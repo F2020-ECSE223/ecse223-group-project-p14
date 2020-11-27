@@ -678,7 +678,7 @@ public class FlexiBookPage extends JFrame {
 		initBusinessDetailsPanelForUpdate();
 
 		//initialize log out panel
-		initLogOutOwnerPanel();
+		//initLogOutOwnerPanel();
 		
 		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
 		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
@@ -827,7 +827,7 @@ public class FlexiBookPage extends JFrame {
 		initBookAppointmentPanel();
 
 		//initialize log out panel
-		initLogOutCustomerPanel();
+		//initLogOutCustomerPanel();
 
 		infoIconDark = new ImageIcon("src/main/resources/infoIconDark.jpg");
 		infoIconLight = new ImageIcon("src/main/resources/infoIconLight.jpg"); 
