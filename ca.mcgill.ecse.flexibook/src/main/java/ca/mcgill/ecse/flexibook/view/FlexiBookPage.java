@@ -2751,7 +2751,10 @@ public class FlexiBookPage extends JFrame {
 		viewAdress.setText(FlexiBookController.getBusinessInfo().getAdress());
 	}
 	
-	//refresh frame
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void refreshData() {
 		pack();
 		repaint();
@@ -3346,7 +3349,10 @@ public class FlexiBookPage extends JFrame {
 	
 	
 
-	//method called when owner info button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void infoOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3379,7 +3385,10 @@ public class FlexiBookPage extends JFrame {
 	
 	
 	
-	//method called when customer info button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void infoCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3410,7 +3419,10 @@ public class FlexiBookPage extends JFrame {
 		refreshCustomerAccount();
 	}
 
-	//method called when single service button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void singleServicesButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3440,7 +3452,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when combo service button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void comboServicesButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3470,6 +3485,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	/**
+	 * 
+	 * @author chengchen
+	 */
 	private void deleteSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null; 
 		deleteSuccess = null;
@@ -3592,7 +3611,10 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 
-	//method called when owner calendar button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void calendarOwnerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3623,7 +3645,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
-	//method called when customer calendar button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void calendarCustomerButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -3955,7 +3980,10 @@ public class FlexiBookPage extends JFrame {
 		//refreshData();
 	}
 
-	//method called when book appointment button pressed
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void bookAppointmentButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		//reset previous button to dark grey background
 		previousButton.setBorder(new LineBorder(darkGrey));
@@ -4177,6 +4205,10 @@ public class FlexiBookPage extends JFrame {
  	
 	}
 
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void monthlyCalendarButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		if(previousCalendarButton != null){
 			previousCalendarButton.setBackground(Color.WHITE);
@@ -4220,6 +4252,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 
+	/**
+	 * 
+	 * @author gtjarvis
+	 */
 	private void calendarLeftRightButtonActionPerformed(java.awt.event.ActionEvent evt){
 		if(evt.getActionCommand().equals("Left")){
 			calendarMonth--;
