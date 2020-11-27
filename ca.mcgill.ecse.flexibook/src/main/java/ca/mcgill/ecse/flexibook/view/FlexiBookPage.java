@@ -33,9 +33,11 @@ import java.net.URL;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.text.DateFormatter;
+
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -56,6 +58,7 @@ import ca.mcgill.ecse.flexibook.model.Owner;
 import ca.mcgill.ecse.flexibook.model.Service;  // @ TODO remove model stuff
 import ca.mcgill.ecse.flexibook.controller.TOBusiness;
 import ca.mcgill.ecse.flexibook.controller.TOBusinessHour;
+import ca.mcgill.ecse.flexibook.controller.TOCustomer;
 import ca.mcgill.ecse.flexibook.controller.TOService;
 import ca.mcgill.ecse.flexibook.controller.TOTimeSlot;
 
@@ -95,6 +98,7 @@ public class FlexiBookPage extends JFrame {
 	private JPanel calendarMonthlyViewTopPanel;
 	private JPanel calendarTimes;
 	private JPanel calendarBusinessSlots;
+	private JPanel calendarAppointments;
 	
 	
 	// initial login panel
@@ -126,6 +130,7 @@ public class FlexiBookPage extends JFrame {
 	
 	//list of variables for calendar month view
 	private ArrayList<JButton> calendarButtonList = new ArrayList<JButton>();
+	private ArrayList<JButton> AppointmentButtonList = new ArrayList<JButton>();
 	private JButton calendarLeftButton;
 	private JButton calendarRightButton;
 	private JButton previousCalendarButton;
@@ -222,6 +227,7 @@ public class FlexiBookPage extends JFrame {
 	private ImageIcon infoUserIcon;
 	private JLabel infoUserLabel; // holds the icon
 	private JLabel infoLabel; //manage your account	
+	private JLabel infoWelcomeLabel;
 	private JLabel usernameLabel;
 	private JLabel passwordLabel;
 	private JLabel confirmPasswordLabel;
@@ -232,8 +238,14 @@ public class FlexiBookPage extends JFrame {
 	private JButton deleteAccountButton; //delete button
 	private JLabel bookAppointmentLabel;
 	private JLabel setUpBusinessInfoLabel;
+	private JLabel noShowCount;
 	private JLabel updateSuccessful; 
 	private String successful = null;
+	
+	// bonus show count
+	private JLabel bonusTitleLabel;
+	private JProgressBar showCountProgress; // at 10, you can claim a discount! Woohoo!
+	private JLabel progressLabel;
 
 	//tracking last page
 	private JButton previousButton;
@@ -241,6 +253,8 @@ public class FlexiBookPage extends JFrame {
 
 	//color of top bar
 	private Color darkGrey = new Color(62,62,62);
+	private Color lightGrey = new Color(200,200,200);
+	private Color yellow = new Color(238,191,60);
 	private Color lightBlue = new Color(31,184,252);
 	
 
@@ -1136,7 +1150,9 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 
-	//initialize info panel for owner
+	/**
+	 * @author Catherine
+	 */
 	private void initInfoOwnerPanel(){
 		infoOwnerPanel = new JPanel();
 		//JLabel infoUserLabelIcon = new JLabel();
@@ -1160,13 +1176,22 @@ public class FlexiBookPage extends JFrame {
 		
 		infoUserIcon = new ImageIcon("src/main/resources/user.png");
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
+
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
 		infoUserLabel.setBounds(445, 50, 200, 200);
 		infoUserLabel.setOpaque(false);
 		infoUserLabel.setForeground(Color.darkGray);
 		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
-		
+
+		infoWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		infoWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
+		infoWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoWelcomeLabel.setBounds(470, 250, 150, 40);
+		infoWelcomeLabel.setBackground(Color.WHITE);
+		infoWelcomeLabel.setOpaque(true);
+		infoWelcomeLabel.setForeground(Color.darkGray);
+
 		infoLabel = new JLabel("Manage Your Account");
 		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1174,66 +1199,66 @@ public class FlexiBookPage extends JFrame {
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
-		
+
 		usernameLabel = new JLabel("Username");
 		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBounds(300, 350, 80, 30);
 		usernameLabel.setBackground(Color.WHITE);
 		usernameLabel.setOpaque(true);
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
-		
-		usernameBox = new JTextField(FlexiBookController.getCurrentLogInUsername());
+
+		usernameBox = new JTextField(); 
 		usernameBox.setColumns(20);
 		usernameBox.setBounds(470, 350, 250, 30);
-		
+
 		passwordLabel = new JLabel("Password");
 		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBounds(300, 400, 80, 30);
 		passwordLabel.setBackground(Color.WHITE);
 		passwordLabel.setOpaque(true);
 		passwordLabel.setForeground(Color.darkGray);
 		passwordLabel.setAlignmentX(SwingConstants.CENTER);
-		
+
 		passwordBox = new JPasswordField();
 		passwordBox.setColumns(20);
 		passwordBox.setBounds(470, 400, 250, 30);
-		
+
 		confirmPasswordLabel = new JLabel("Confirm Password");
 		confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		confirmPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		confirmPasswordLabel.setBounds(350, 450, 80, 30);
+		confirmPasswordLabel.setBounds(300, 450, 145, 30);
 		confirmPasswordLabel.setBackground(Color.WHITE);
 		confirmPasswordLabel.setOpaque(true);
 		confirmPasswordLabel.setForeground(Color.darkGray);
 		confirmPasswordLabel.setAlignmentX(SwingConstants.CENTER);
-		
+
 		confirmPasswordBox = new JPasswordField();
 		confirmPasswordBox.setColumns(20);
 		confirmPasswordBox.setBounds(470, 450, 250, 30);
-		
+
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		saveAccountButton.setBounds(500, 500, 100, 30);
+		saveAccountButton.setBounds(620, 500, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
 		saveAccountButton.setOpaque(true);
 		saveAccountButton.setForeground(Color.WHITE);
 		
-		errorMessage.setText(error);
+		errorMessage = new JLabel(error);
 		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		errorMessage.setBounds(SwingConstants.CENTER, 550, 500, 30);
+		errorMessage.setForeground(Color.RED);
+		errorMessage.setBounds(470, 550, 500, 30);
 		
 		updateSuccessful = new JLabel(successful);
 		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		updateSuccessful.setForeground(Color.GREEN);
-		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
-		updateSuccessful.setBounds(SwingConstants.CENTER, 550, 500, 30);
+		updateSuccessful.setBounds(470, 550, 500, 30);
 		
+		infoOwnerPanel.add(infoWelcomeLabel);
 		infoOwnerPanel.add(infoUserLabel);
 		infoOwnerPanel.add(infoLabel);
 		infoOwnerPanel.add(usernameLabel);
@@ -1256,7 +1281,9 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 
-	//initialize info panel for customer
+	/**
+	 * @author Catherine
+	 */
 	private void initInfoCustomerPanel(){
 
 		infoCustomerPanel = new JPanel();
@@ -1279,15 +1306,22 @@ public class FlexiBookPage extends JFrame {
 		infoUserIcon.setImage(infoUserIcon.getImage().getScaledInstance(200, 200, java.awt.Image.SCALE_SMOOTH)); //resize
 		infoUserLabel = new JLabel();
 		infoUserLabel.setIcon(infoUserIcon);
-		infoUserLabel.setBounds(445, 50, 200, 200);
+		infoUserLabel.setBounds(445, 20, 200, 200);
 		infoUserLabel.setOpaque(false);
 		infoUserLabel.setForeground(Color.darkGray);
 		infoUserLabel.setAlignmentX(SwingConstants.CENTER);
 		
+		infoWelcomeLabel = new JLabel("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		infoWelcomeLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 18));
+		infoWelcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		infoWelcomeLabel.setBounds(470, 220, 150, 40);
+		infoWelcomeLabel.setBackground(Color.WHITE);
+		infoWelcomeLabel.setOpaque(true);
+		infoWelcomeLabel.setForeground(Color.darkGray);
+		
 		infoLabel = new JLabel("Manage Your Account");
-		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		infoLabel.setBounds(470, 300, 150, 30);
+		infoLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 16));
+		infoLabel.setBounds(460, 310, 200, 30);
 		infoLabel.setBackground(Color.WHITE);
 		infoLabel.setOpaque(true);
 		infoLabel.setForeground(Color.darkGray);
@@ -1295,20 +1329,20 @@ public class FlexiBookPage extends JFrame {
 		usernameLabel = new JLabel("Username");
 		usernameLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		usernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		usernameLabel.setBounds(350, 350, 80, 30);
+		usernameLabel.setBounds(300, 400, 80, 30);
 		usernameLabel.setBackground(Color.WHITE);
 		usernameLabel.setOpaque(true);
 		usernameLabel.setForeground(Color.darkGray);
 		usernameLabel.setAlignmentX(SwingConstants.CENTER);
 		
-		usernameBox = new JTextField(FlexiBookController.getCurrentLogInUsername()); 
+		usernameBox = new JTextField(); 
 		usernameBox.setColumns(20);
-		usernameBox.setBounds(470, 350, 250, 30);
+		usernameBox.setBounds(470, 400, 250, 30);
 		
 		passwordLabel = new JLabel("Password");
 		passwordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		passwordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		passwordLabel.setBounds(350, 400, 80, 30);
+		passwordLabel.setBounds(300, 450, 80, 30);
 		passwordLabel.setBackground(Color.WHITE);
 		passwordLabel.setOpaque(true);
 		passwordLabel.setForeground(Color.darkGray);
@@ -1316,12 +1350,12 @@ public class FlexiBookPage extends JFrame {
 		
 		passwordBox = new JPasswordField();
 		passwordBox.setColumns(20);
-		passwordBox.setBounds(470, 400, 250, 30);
+		passwordBox.setBounds(470, 450, 250, 30);
 		
 		confirmPasswordLabel = new JLabel("Confirm Password");
 		confirmPasswordLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		confirmPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		confirmPasswordLabel.setBounds(350, 450, 80, 30);
+		confirmPasswordLabel.setBounds(300, 500, 145, 30);
 		confirmPasswordLabel.setBackground(Color.WHITE);
 		confirmPasswordLabel.setOpaque(true);
 		confirmPasswordLabel.setForeground(Color.darkGray);
@@ -1329,11 +1363,11 @@ public class FlexiBookPage extends JFrame {
 		
 		confirmPasswordBox = new JPasswordField();
 		confirmPasswordBox.setColumns(20);
-		confirmPasswordBox.setBounds(470, 450, 250, 30);
+		confirmPasswordBox.setBounds(470, 500, 250, 30);
 		
 		saveAccountButton = new JButton("Save");
 		saveAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		saveAccountButton.setBounds(550, 500, 100, 30);
+		saveAccountButton.setBounds(620, 550, 100, 30);
 		saveAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		saveAccountButton.setBorder(new LineBorder(Color.darkGray));
 		saveAccountButton.setBackground(Color.darkGray);
@@ -1342,24 +1376,65 @@ public class FlexiBookPage extends JFrame {
 		
 		deleteAccountButton = new JButton("Delete");
 		deleteAccountButton.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		deleteAccountButton.setBounds(400, 500, 100, 30);
+		deleteAccountButton.setBounds(470, 550, 100, 30);
 		deleteAccountButton.setAlignmentX(CENTER_ALIGNMENT);
 		deleteAccountButton.setBorder(new LineBorder(Color.darkGray));
 		deleteAccountButton.setBackground(Color.WHITE);
 		deleteAccountButton.setOpaque(true);
 		deleteAccountButton.setForeground(Color.darkGray);
 		
-		errorMessage.setText(error);
+		errorMessage = new JLabel(error);
 		errorMessage.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
-		errorMessage.setHorizontalAlignment(SwingConstants.CENTER);
-		errorMessage.setBounds(SwingConstants.CENTER, 550, 500, 30);
+		errorMessage.setForeground(Color.RED);
+		errorMessage.setBounds(470, 600, 500, 30);
 		
 		updateSuccessful = new JLabel(successful);
 		updateSuccessful.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
 		updateSuccessful.setForeground(Color.GREEN);
-		updateSuccessful.setHorizontalAlignment(SwingConstants.CENTER);
-		updateSuccessful.setBounds(SwingConstants.CENTER, 550, 500, 30);
+		updateSuccessful.setBounds(470, 600, 500, 30);
 		
+		bonusTitleLabel = new JLabel("Your Rewards Points");
+		bonusTitleLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		bonusTitleLabel.setBounds(300, 270, 150, 30);
+		bonusTitleLabel.setBackground(Color.WHITE);
+		bonusTitleLabel.setOpaque(true);
+		bonusTitleLabel.setForeground(Color.darkGray);
+		
+		showCountProgress = new JProgressBar(0,10); //arbitrary max of 10
+		int currentShowCount = 0;
+		int currentNoShow = 0;
+		for (TOCustomer customer:FlexiBookController.getTOCustomers()) {
+			if (FlexiBookController.getCurrentLogInUsername().equals(customer.getUserName())) {
+				currentShowCount = customer.getShowCount();
+				currentNoShow = customer.getNoShowCount();
+			}
+		}	
+		showCountProgress.setValue(currentShowCount);
+		showCountProgress.setString(currentShowCount + " points");
+		showCountProgress.setBounds(470, 270, 150, 20);
+		
+		int difference = 10 - currentShowCount;
+		progressLabel = new JLabel("You're only " + difference + " points away from a discount!");
+		progressLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		progressLabel.setPreferredSize(new Dimension(300,30));
+		progressLabel.setBackground(Color.WHITE);
+		progressLabel.setOpaque(true);
+		progressLabel.setForeground(Color.darkGray);;
+		progressLabel.setBounds(650, 270, 400, 30);
+		
+		noShowCount = new JLabel(currentNoShow + " appointments missed");
+		noShowCount.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 13));
+		noShowCount.setPreferredSize(new Dimension(300,30));
+		noShowCount.setBackground(Color.WHITE);
+		noShowCount.setOpaque(true);
+		noShowCount.setForeground(Color.darkGray);
+		noShowCount.setBounds(300, 350, 400, 30);
+		
+		infoCustomerPanel.add(bonusTitleLabel);
+		infoCustomerPanel.add(showCountProgress);
+		infoCustomerPanel.add(progressLabel);
+		infoCustomerPanel.add(noShowCount);
+		infoCustomerPanel.add(infoWelcomeLabel);
 		infoCustomerPanel.add(infoUserLabel);
 		infoCustomerPanel.add(infoLabel);
 		infoCustomerPanel.add(usernameLabel);
@@ -1628,6 +1703,11 @@ public class FlexiBookPage extends JFrame {
 		calendarTimes.setLayout(null);
 		calendarTimes.setPreferredSize(new Dimension(40,520));
 		calendarTimes.setBackground(Color.WHITE);
+
+		calendarAppointments = new JPanel();
+		calendarAppointments.setLayout(null);
+		calendarAppointments.setPreferredSize(new Dimension(700,700));
+		calendarAppointments.setOpaque(false);
 		//initialize image icons
 		try{
 			calendarLeftIcon = new ImageIcon("Calendar_LeftIcon.jpg");
@@ -1674,20 +1754,20 @@ public class FlexiBookPage extends JFrame {
 		for(int i = 0; i < 6; i++){
 			p = new JLabel("I");
 			p.setPreferredSize(new Dimension(1,600));
-			p.setBackground(new Color(200,200,200));
+			p.setBackground(lightGrey);
 			p.setOpaque(true);
 			calendarWeeklyViewPanel.add(p);
 			p.setBounds(90+50+i*90,35,1,600);
 		}
 		p = new JLabel("I");
 		p.setPreferredSize(new Dimension(630,1));
-		p.setBackground(new Color(200,200,200));
+		p.setBackground(lightGrey);
 		p.setOpaque(true);
 		calendarWeeklyViewPanel.add(p);
 		p.setBounds(50,80+35,630,1);
 		p = new JLabel("I");
 		p.setPreferredSize(new Dimension(630,1));
-		p.setBackground(new Color(200,200,200));
+		p.setBackground(lightGrey);
 		p.setOpaque(true);
 		calendarWeeklyViewPanel.add(p);
 		p.setBounds(50,80+35+520,630,1);
@@ -2792,20 +2872,46 @@ public class FlexiBookPage extends JFrame {
 //		textField.setText("");
 //		textField.setText("");
 	}
-	
-	private void refreshAccount() {
-		//if customer, refresh that way
-		//if owner, refresh that way
-		//set error message
-		//clear textboxes
+	/** 
+	 * Set error messages, update progress bar, and update noShowCount for Customer Account Page
+	 * @author Catherine
+	 */
+	private void refreshCustomerAccount() {
+		errorMessage.setText(error);
+		updateSuccessful.setText(successful);
 		
-		//maybe just reinitiaize????
-		if (FlexiBookController.getCurrentLogInUsername().equals("owner")) {
-			initInfoOwnerPanel();
-		}
-		else {
-			initInfoCustomerPanel();
-		}
+		infoWelcomeLabel.setText("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		
+		int currentShowCount = 0;
+		int currentNoShow = 0;
+		for (TOCustomer customer:FlexiBookController.getTOCustomers()) {
+			if (FlexiBookController.getCurrentLogInUsername().equals(customer.getUserName())) {
+				currentShowCount = customer.getShowCount();
+				currentNoShow = customer.getNoShowCount();
+			}
+		}	
+		showCountProgress.setValue(currentShowCount);
+		
+		int difference = 10 - currentShowCount;
+		progressLabel.setText("You're only " + difference + " points away from a discount!");
+
+		noShowCount.setText(currentNoShow + " appointments missed");
+		
+		pack();
+		repaint();
+	}
+	/**
+	 * Set error messages for Owner Account Page
+	 * @author Catherine
+	 */
+	private void refreshOwnerAccount() {
+		errorMessage.setText(error);
+		updateSuccessful.setText(successful);
+		
+		infoWelcomeLabel.setText("Welcome, " + FlexiBookController.getCurrentLogInUsername() + "!");
+		
+		pack();
+		repaint();
 	}
 	
 	private void refreshBusinessHourData() {
@@ -3138,7 +3244,7 @@ public class FlexiBookPage extends JFrame {
 					}
 				}
 			}
-
+			refreshCalendarWeeklyView();
 			refreshLogin();
 
 
@@ -3252,10 +3358,10 @@ public class FlexiBookPage extends JFrame {
 		//add customer top bar and calendar panel to frame
 		getContentPane().add(topPanelCustomer);
 		topPanelCustomer.setBounds(0,0,1100,40);
-		getContentPane().add(calendarCustomerPanel);
-		calendarCustomerPanel.setBounds(0,40,1100,700);
+		getContentPane().add(calendarOwnerPanel);
+		calendarOwnerPanel.setBounds(0,40,1100,700);
 		//set calendar to initial state
-		previousPanel = calendarCustomerPanel;
+		previousPanel = calendarOwnerPanel;
 		previousButton = calendarCustomerButton;
 		//reset calendar button
 		calendarCustomerButton.setBorder(new LineBorder(Color.WHITE));
@@ -3263,6 +3369,7 @@ public class FlexiBookPage extends JFrame {
 		calendarCustomerButton.setOpaque(true);
 		calendarCustomerButton.setForeground(darkGrey);
 		//refresh page
+		refreshCalendarWeeklyView();
 		refreshData();
 	}
 
@@ -3553,11 +3660,12 @@ public class FlexiBookPage extends JFrame {
 		//remove previous panel
 		getContentPane().remove(previousPanel);
 		//set new panel
-		getContentPane().add(calendarCustomerPanel);
-		calendarCustomerPanel.setBounds(0,40,1100,700);
+		getContentPane().add(calendarOwnerPanel);
+		calendarOwnerPanel.setBounds(0,40,1100,700);
 		//set this panel as the current panel
-		previousPanel = calendarCustomerPanel;
+		previousPanel = calendarOwnerPanel;
 		//refresh page
+		refreshCalendarWeeklyView();
 		refreshData();
 	}
 
@@ -3632,6 +3740,7 @@ public class FlexiBookPage extends JFrame {
 		logOutOwnerButton.setIcon(logOutIconLight);
 		logOutErrorMessage = null; 
 		logOutSuccessMessage = null; 
+		
 		try{
 			FlexiBookController.logOut();
 			logOutSuccessMessage = "Logout Success!";
@@ -3666,6 +3775,7 @@ public class FlexiBookPage extends JFrame {
 		logOutCustomerButton.setIcon(logOutIconLight);
 		logOutErrorMessage = null; 
 		logOutSuccessMessage = null; 
+
 		try{
 			FlexiBookController.logOut();
 			logOutSuccessMessage = "Logout Success!";
@@ -3722,15 +3832,19 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
-	//method called when save button pressed while editing an account
+	/**
+	 * Method called when save button is pressed while editing Owner or Customer account
+	 * @param evt
+	 * @author Catherine
+	 */
 	private void saveAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear message
+		// clear messages
 		error = null;
 		successful = null;
 
 		if (usernameBox.getText().equals("") || String.valueOf(passwordBox.getPassword()).equals("") || String.valueOf(confirmPasswordBox.getPassword()).equals("")) { 
 			error = "Fill in all fields to update your account";
-			
+
 		} 
 		else if (! String.valueOf(passwordBox.getPassword()).equals(String.valueOf(confirmPasswordBox.getPassword()))) {
 			error = "Passwords do not match";
@@ -3741,24 +3855,31 @@ public class FlexiBookPage extends JFrame {
 				successful = "Success!";
 			}  catch (InvalidInputException e) {
 				error = e.getMessage();
-				
+
 			}
-			
+
+		}
+		if (FlexiBookController.getCurrentLogInUsername().equals("owner")) {
+			refreshOwnerAccount();
+		}
+		else {
+			refreshCustomerAccount();
 		}
 
-		refreshAccount();
-		
 	}
 	
-	//method called when delete button pressed while editing an account
+	/**
+	 * Method called when delete button pressed while editing a Customer account
+	 * @param evt
+	 * @author Catherine
+	 */
 	private void deleteAccountInfoActionPerformed(java.awt.event.ActionEvent evt) {
-		// clear message
+		//clear messages
 		error = null;
 		successful = null;
-		
+
 		//pop up confirm message?
-				
-//		// call the controller
+
 		try {
 			FlexiBookController.deleteCustomerAccount(FlexiBookController.getCurrentLogInUsername()); //if we need to see error messages, get the username textbox content and refresh
 			successful = "Success!";
@@ -3777,15 +3898,13 @@ public class FlexiBookPage extends JFrame {
 			getContentPane().remove(topPanelCustomer);
 			//set new panel
 			getContentPane().add(LoginPane);
-			
-				} catch (InvalidInputException e) {
-					error = e.getMessage();
-					//display error message
-				}
-		
-		//refresh page
-		refreshAccount();
-		
+
+		} catch (InvalidInputException e) {
+			error = e.getMessage();
+		}
+
+		refreshCustomerAccount();
+
 	}
 	
 
@@ -3825,6 +3944,7 @@ public class FlexiBookPage extends JFrame {
 		
 		
 	}
+
 	private void updateAppointmentTimeActionPerformed(java.awt.event.ActionEvent evt) {
 		String serviceName =  serviceNameT.getText();
 		Date date = stringToDate(selectedAppDateT.getText());
@@ -3879,7 +3999,6 @@ public class FlexiBookPage extends JFrame {
 		tempButton.setOpaque(true);
 		previousCalendarButton = tempButton;
 		calendarDay = num;
-		refreshData();
 		int tempNum = LocalDate.of(calendarYear,calendarMonth,calendarDay).getDayOfWeek().getValue();
 		int tempDay = calendarDay-tempNum+1;
 		for(int i = 0; i < 7; i++){
@@ -3906,6 +4025,7 @@ public class FlexiBookPage extends JFrame {
 			}
 			tempDay++;
 		}
+		refreshCalendarWeeklyView();
 		refreshData();
 	}
 
@@ -3991,6 +4111,7 @@ public class FlexiBookPage extends JFrame {
 			n.setForeground(Color.BLACK);
 			tempDay++;
 		}
+		refreshCalendarWeeklyView();
 		refreshData();
 	}
 	
@@ -4052,8 +4173,6 @@ public class FlexiBookPage extends JFrame {
 		System.out.println(time);
 		System.out.println(optServices);
 		
-
-		
 	}
 	
 	
@@ -4078,9 +4197,6 @@ public class FlexiBookPage extends JFrame {
 		}
     	refreshData();
     	refreshAppointmentPage();
-    	
-		
-		
 	}
 	
 	
@@ -4167,6 +4283,7 @@ public class FlexiBookPage extends JFrame {
 			int hour = 0;
 			calendarTimes.removeAll();
 			calendarBusinessSlots.removeAll();
+			calendarAppointments.removeAll();
 			List<TOBusinessHour> businessHourList = FlexiBookController.getTOBusinessHour();
 			if(businessHourList.size() != 0){
 				Time minStartTime = businessHourList.get(0).getStartTime();
@@ -4286,23 +4403,45 @@ public class FlexiBookPage extends JFrame {
 							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
 							actualMonth += 1;
 						}
+					} else {
+						actualDay = tempDay;
 					}
 					for(TOAppointment appointment: FlexiBookController.getTOAppointment()){
 						TOTimeSlot ts = appointment.getTimeSlot();
-						if(ts.getStartDate().equals(new Date(actualYear, actualMonth, actualDay))){
+						if(ts.getStartDate().equals(new Date(actualYear-1900, actualMonth-1, actualDay))){
 							p = new JLabel("I");
-							p.setBackground(lightBlue);
+							if(FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner") || FlexiBookApplication.getCurrentLoginUser().getUsername().equals(appointment.getCustomerName())){
+								p.setBackground(yellow);
+								p.setForeground(yellow);
+							} else {
+								p.setBackground(lightGrey);
+								p.setForeground(lightGrey);
+							}
 							p.setOpaque(true);
-							p.setForeground(lightBlue);
+							String tempTime = String.valueOf(ts.getStartTime().getHours());
+							if(ts.getStartTime().getHours() > 12){
+								tempTime = Integer.toString(ts.getStartTime().getHours()-12);
+							}
+							tempTime += ":" + String.valueOf(ts.getStartTime().getMinutes());
+							if(ts.getStartTime().getMinutes() < 10){
+								tempTime += "0";
+							}
+							tempTime += " " + appointment.getServiceName();
+							TitledBorder t = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), tempTime);
+							t.setTitleJustification(TitledBorder.LEFT);
+							p.setBorder(t);
 							int hourStart = ts.getStartTime().getHours();
 							int minuteStart = ts.getStartTime().getMinutes();
 							int hourEnd = ts.getEndTime().getHours();
 							int minuteEnd = ts.getEndTime().getMinutes();
 							p.setPreferredSize(new Dimension(90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY)));
-							calendarWeeklyViewPanel.add(p);
-							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
+							calendarAppointments.add(p);
+							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
 						}
 					}
+					actualDay = calendarDay;
+					actualMonth = calendarMonth;
+					actualYear = calendarYear;
 					tempDay++;
 				}
 			} else {
@@ -4327,26 +4466,51 @@ public class FlexiBookPage extends JFrame {
 							actualDay = tempDay-LocalDate.of(calendarYear,calendarMonth,1).lengthOfMonth();
 							actualMonth += 1;
 						}
+					} else {
+						actualDay = tempDay;
 					}
 					for(TOAppointment appointment: FlexiBookController.getTOAppointment()){
 						TOTimeSlot ts = appointment.getTimeSlot();
-						if(ts.getStartDate().equals(new Date(actualYear, actualMonth, actualDay))){
+						if(ts.getStartDate().equals(new Date(actualYear-1900, actualMonth-1, actualDay))){
 							p = new JLabel("I");
-							p.setBackground(lightBlue);
+							if(FlexiBookApplication.getCurrentLoginUser().getUsername().equals("owner") || FlexiBookApplication.getCurrentLoginUser().getUsername().equals(appointment.getCustomerName())){
+								p.setBackground(yellow);
+								p.setForeground(yellow);
+							} else {
+								p.setBackground(lightGrey);
+								p.setForeground(lightGrey);
+							}
 							p.setOpaque(true);
-							p.setForeground(lightBlue);
+							String tempTime = String.valueOf(ts.getStartTime().getHours());
+							if(ts.getStartTime().getHours() > 12){
+								tempTime = Integer.toString(ts.getStartTime().getHours()-12);
+							}
+							tempTime += ":" + String.valueOf(ts.getStartTime().getMinutes());
+							if(ts.getStartTime().getMinutes() < 10){
+								tempTime += "0";
+							}
+							tempTime += " " + appointment.getServiceName();
+							TitledBorder t = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), tempTime);
+							t.setTitleJustification(TitledBorder.LEFT);
+							p.setBorder(t);
 							int hourStart = ts.getStartTime().getHours();
 							int minuteStart = ts.getStartTime().getMinutes();
 							int hourEnd = ts.getEndTime().getHours();
 							int minuteEnd = ts.getEndTime().getMinutes();
 							p.setPreferredSize(new Dimension(90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY)));
-							calendarWeeklyViewPanel.add(p);
-							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
+							calendarAppointments.add(p);
+							p.setBounds(i*90+50,35+80+(int)Math.round((hourStart+1.0/60*minuteStart-minHour)*2*deltaY),90,(int)Math.round((hourEnd+1.0/60*minuteEnd-hourStart-1.0/60*minuteStart)*2*deltaY));
 						}
 					}
 					tempDay++;
+					actualDay = actualDay;
+					actualMonth = calendarMonth;
+					actualYear = calendarYear;
+					
 				}
 			}
+			calendarWeeklyViewPanel.add(calendarAppointments);
+			calendarAppointments.setBounds(0,0,700,700);
 	}
 	
 
