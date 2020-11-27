@@ -1493,7 +1493,11 @@ public class FlexiBookPage extends JFrame {
 	}
 
 
-	//initialize single services panel
+	/**
+	 * @author chengchen
+	 * 
+	 * initialize single services panel
+	 */
 	private void initSingleServicesPanel(){
 		singleServicesPanel = new JPanel();
 		singleServicesPanel.setPreferredSize(new Dimension(1100,700));
@@ -1696,7 +1700,11 @@ public class FlexiBookPage extends JFrame {
 	}
 	
 
-	//initialize combo services panel
+	/**
+	 * @author chengchen
+	 * 
+	 * initialize combo services panel
+	 */
 	private void initComboServicesPanel(){
 		
 		serviceComboPanel = new JPanel();
@@ -3280,6 +3288,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	public void defineServiceComboButtonActionPerformed(ActionEvent evt) {
 		errorMessageServiceCombo = null;
 		defineComboSuccess = null;
@@ -3304,7 +3316,9 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
-	
+	/**
+	 * @author chengchen
+	 */
 	public void refreshServiceComboData() {
 		errorMessageServiceComboLabel.setText(errorMessageServiceCombo);
 		defineServiceComboSuccessLabel.setText(defineComboSuccess);
@@ -3358,7 +3372,9 @@ public class FlexiBookPage extends JFrame {
 		
 		
 	}
-
+	/**
+	 * @author chengchen
+	 */
 	private void updateModelModifyServiceCombo() {
 		modelModifySingleServiceCombo.getDataVector().removeAllElements();
 		
@@ -3947,6 +3963,10 @@ public class FlexiBookPage extends JFrame {
 		refreshData();
 	}
 	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	private void addSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		addSuccess = null;
@@ -3972,7 +3992,10 @@ public class FlexiBookPage extends JFrame {
 
 
 	}
-	
+	/**
+	 * @author chengchen
+	 * @param evt
+	 */
 	private void updateSingleServicesButtonActionPerformed(ActionEvent evt) {
 		errorMessageSingleService = null;
 		updateSuccess = null;
@@ -4001,6 +4024,9 @@ public class FlexiBookPage extends JFrame {
 		
 	}
 	
+	/**
+	 * @author chengchen
+	 */
 	private void refreshSingleServiceData() {
 		errorMessageSingleServiceLabel.setText(errorMessageSingleService);
 		addSuccessLabel.setText(addSuccess);
