@@ -2277,6 +2277,7 @@ public class FlexiBookPage extends JFrame {
 		businessHoursPanel.setBackground(Color.WHITE);
 		businessHoursPanel.setOpaque(true);
 		businessHoursPanel.setForeground(Color.WHITE);
+		
 
 		JLabel addBusinessHourLabel = new JLabel("Add a Business Hour");
 		addBusinessHourLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -2527,6 +2528,19 @@ public class FlexiBookPage extends JFrame {
 		businessDetailsPanel.setOpaque(true);
 		businessDetailsPanel.setForeground(Color.WHITE);
 		businessDetailsPanel.add(businessDetailsLabel);
+		
+		JPanel businessHoursPanelBG = new JPanel();
+		businessHoursPanelBG.setBackground(Color.DARK_GRAY);
+		businessHoursPanelBG.setBounds(0, 0, 600, 740);
+		businessHoursPanelBG.setLayout(null);
+		businessDetailsPanel.add(businessHoursPanelBG);
+		
+		JLabel BHPBG = new JLabel("");
+		BHPBG.setBounds(-50, -35, 1000, 1000);
+		BHPBG.setVerticalAlignment(SwingConstants.TOP);
+		BHPBG.setIcon(new ImageIcon("src/main/resources/businessInfoIcon.jpg"));
+		businessHoursPanelBG.add(BHPBG);
+		
 		updateInfoError = " ";
 		
 		
